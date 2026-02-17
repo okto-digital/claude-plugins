@@ -1,0 +1,1715 @@
+# UX Component Schema - Categories 6-10 (Media, Feedback, CTA, Social Proof, E-commerce) + Mappings
+
+# =============================================================================
+# CATEGORY 6: MEDIA & VISUAL
+# =============================================================================
+
+components:
+
+  # ---------------------------------------------------------------------------
+  # IMAGE GALLERY
+  # ---------------------------------------------------------------------------
+  - id: "image-gallery"
+    name: "Image Gallery"
+    category: "media"
+    description: "Collection of images in grid with optional lightbox"
+
+    content_slots:
+      - name: "images"
+        required: true
+        type: "array"
+        min_items: 3
+        item_structure:
+          - name: "src"
+            type: "image"
+          - name: "alt"
+            type: "text"
+            char_max: 125
+          - name: "caption"
+            type: "text"
+            char_max: 100
+            required: false
+        purpose: "Gallery images with metadata"
+
+    best_for:
+      - "Portfolio showcases"
+      - "Product images"
+      - "Event photos"
+      - "Case study visuals"
+
+    content_types:
+      - "gallery"
+      - "portfolio"
+      - "product"
+      - "photos"
+
+    avoid_when:
+      - "Single hero image is sufficient"
+      - "Images don't relate to each other"
+
+    variants:
+      - name: "grid"
+        description: "Uniform grid of thumbnails"
+      - name: "masonry"
+        description: "Varied heights, tight packing"
+      - name: "carousel"
+        description: "Horizontal scrolling gallery"
+
+    pairs_well_with:
+      - "lightbox"
+      - "filter-controls"
+
+    accessibility_notes: "Descriptive alt text for each image"
+    mobile_considerations: "2-column grid, swipe gestures"
+    semantic_structure: "<figure><img alt=''><figcaption></figcaption></figure>"
+
+  # ---------------------------------------------------------------------------
+  # LIGHTBOX
+  # ---------------------------------------------------------------------------
+  - id: "lightbox"
+    name: "Lightbox"
+    category: "media"
+    description: "Full-screen overlay for viewing images or media"
+
+    content_slots:
+      - name: "media"
+        required: true
+        type: "image_or_video"
+        purpose: "Content displayed in lightbox"
+
+      - name: "caption"
+        required: false
+        type: "text"
+        char_max: 150
+        purpose: "Description below media"
+
+      - name: "counter"
+        required: false
+        type: "text"
+        format: "X of Y"
+        purpose: "Position in gallery"
+
+    best_for:
+      - "Enlarging gallery images"
+      - "Product detail views"
+      - "Portfolio pieces"
+
+    content_types:
+      - "gallery"
+      - "product"
+      - "portfolio"
+
+    avoid_when:
+      - "Single image doesn't need enlargement"
+      - "Mobile where pinch-zoom is better"
+
+    variants:
+      - name: "single"
+        description: "Single image view"
+      - name: "gallery"
+        description: "Navigate between multiple images"
+      - name: "with-thumbnails"
+        description: "Thumbnail strip for navigation"
+
+    pairs_well_with:
+      - "image-gallery"
+      - "product-card"
+
+    accessibility_notes: "Focus trap, escape to close, arrow navigation, alt text"
+    mobile_considerations: "Swipe gestures, pinch-to-zoom"
+    semantic_structure: "<dialog><img><figcaption></figcaption></dialog>"
+
+  # ---------------------------------------------------------------------------
+  # VIDEO EMBED
+  # ---------------------------------------------------------------------------
+  - id: "video-embed"
+    name: "Video Embed"
+    category: "media"
+    description: "Embedded video player from YouTube, Vimeo, or self-hosted"
+
+    content_slots:
+      - name: "video_url"
+        required: true
+        type: "url"
+        purpose: "Video source URL"
+
+      - name: "title"
+        required: true
+        type: "text"
+        char_max: 100
+        purpose: "Video title for accessibility"
+
+      - name: "thumbnail"
+        required: false
+        type: "image"
+        purpose: "Custom poster image"
+
+      - name: "caption"
+        required: false
+        type: "text"
+        char_max: 200
+        purpose: "Description below video"
+
+    best_for:
+      - "Product demos"
+      - "Tutorial content"
+      - "Testimonial videos"
+      - "About us videos"
+
+    content_types:
+      - "video"
+      - "demo"
+      - "tutorial"
+      - "testimonial"
+
+    avoid_when:
+      - "Text content would suffice"
+      - "Video auto-plays (accessibility issue)"
+
+    variants:
+      - name: "inline"
+        description: "Within content flow"
+      - name: "hero"
+        description: "Full-width background video"
+      - name: "modal"
+        description: "Opens in lightbox on click"
+
+    pairs_well_with:
+      - "hero"
+      - "feature-section"
+
+    accessibility_notes: "Title attribute on iframe, captions/subtitles available"
+    mobile_considerations: "Responsive aspect ratio, consider data usage"
+    semantic_structure: "<figure><iframe title=''></iframe><figcaption></figcaption></figure>"
+
+  # ---------------------------------------------------------------------------
+  # CAROUSEL / SLIDER
+  # ---------------------------------------------------------------------------
+  - id: "carousel"
+    name: "Carousel / Slider"
+    category: "media"
+    description: "Rotating content display with navigation controls"
+
+    content_slots:
+      - name: "slides"
+        required: true
+        type: "array"
+        min_items: 2
+        max_items: 10
+        recommended_max: 5
+        purpose: "Individual slide content"
+        notes: "Only 1% of users click toggles, 84% engage only with first slide"
+
+      - name: "slide_content"
+        per_slide:
+          - name: "image"
+            type: "image"
+          - name: "title"
+            type: "text"
+            char_max: 60
+          - name: "description"
+            type: "text"
+            char_max: 120
+          - name: "cta"
+            type: "text"
+            char_max: 25
+        purpose: "Content within each slide"
+
+    best_for:
+      - "Hero sections with multiple messages"
+      - "Product showcases"
+      - "Testimonial rotation"
+      - "Feature highlights"
+
+    content_types:
+      - "hero"
+      - "product"
+      - "testimonial"
+      - "features"
+
+    avoid_when:
+      - "Important content that shouldn't be missed"
+      - "Users need to compare slides"
+      - "Mobile-first design (prefer scroll)"
+
+    variants:
+      - name: "auto-play"
+        description: "Rotates automatically (5-7s per slide)"
+      - name: "manual"
+        description: "User controls navigation"
+      - name: "thumbnail-nav"
+        description: "Thumbnail images for navigation"
+
+    pairs_well_with:
+      - "hero"
+      - "testimonial"
+
+    accessibility_notes: "Pause on hover/focus, keyboard navigation, announce slide changes"
+    mobile_considerations: "Swipe gestures, disable autoplay, consider alternatives"
+    semantic_structure: "<section aria-roledescription='carousel'><div role='group'></div></section>"
+
+  # ---------------------------------------------------------------------------
+  # AVATAR
+  # ---------------------------------------------------------------------------
+  - id: "avatar"
+    name: "Avatar"
+    category: "media"
+    description: "User profile image or initials representation"
+
+    content_slots:
+      - name: "image"
+        required: false
+        type: "image"
+        purpose: "User photo"
+
+      - name: "initials"
+        required: false
+        type: "text"
+        char_max: 2
+        purpose: "Fallback when no image"
+
+      - name: "alt_text"
+        required: true
+        type: "text"
+        char_max: 50
+        purpose: "Accessibility description"
+
+      - name: "status"
+        required: false
+        type: "enum"
+        options: ["online", "offline", "away", "busy"]
+        purpose: "Presence indicator"
+
+    best_for:
+      - "User profiles"
+      - "Comment authors"
+      - "Team member cards"
+      - "Navigation user menu"
+
+    content_types:
+      - "user"
+      - "profile"
+      - "team"
+
+    avoid_when:
+      - "User identity isn't relevant"
+
+    variants:
+      - name: "circle"
+        description: "Circular crop (most common)"
+      - name: "square"
+        description: "Square with rounded corners"
+      - name: "with-badge"
+        description: "Status indicator overlay"
+      - name: "stacked"
+        description: "Overlapping avatars for groups"
+
+    pairs_well_with:
+      - "card"
+      - "testimonial"
+      - "comment"
+
+    accessibility_notes: "Descriptive alt text, don't rely on avatar alone for identification"
+    mobile_considerations: "Minimum 32px size, larger for touch targets"
+    semantic_structure: "<img alt='User name' class='avatar'>"
+
+# =============================================================================
+# CATEGORY 7: FEEDBACK & STATUS
+# =============================================================================
+
+  # ---------------------------------------------------------------------------
+  # ALERT / BANNER
+  # ---------------------------------------------------------------------------
+  - id: "alert"
+    name: "Alert / Banner"
+    category: "feedback"
+    description: "Prominent message for important information, warnings, or errors"
+
+    content_slots:
+      - name: "type"
+        required: true
+        type: "enum"
+        options: ["info", "success", "warning", "error"]
+        purpose: "Determines color and icon"
+
+      - name: "title"
+        required: false
+        type: "text"
+        char_max: 60
+        purpose: "Alert heading"
+
+      - name: "message"
+        required: true
+        type: "text"
+        char_max: 200
+        purpose: "Alert content"
+
+      - name: "action"
+        required: false
+        type: "text"
+        char_max: 20
+        purpose: "Optional action link/button"
+
+      - name: "dismissible"
+        required: false
+        type: "boolean"
+        default: true
+        purpose: "Can user close the alert"
+
+    best_for:
+      - "System status messages"
+      - "Form validation feedback"
+      - "Important announcements"
+      - "Error messages"
+
+    content_types:
+      - "status"
+      - "error"
+      - "warning"
+      - "success"
+
+    avoid_when:
+      - "Information is trivial"
+      - "Too many alerts create noise"
+
+    variants:
+      - name: "inline"
+        description: "Within content flow"
+      - name: "page-wide"
+        description: "Full-width banner"
+      - name: "floating"
+        description: "Fixed position overlay"
+
+    pairs_well_with:
+      - "form"
+      - "page-header"
+
+    accessibility_notes: "role='alert' for urgent, aria-live for updates"
+    mobile_considerations: "Full-width, may stack"
+    semantic_structure: "<div role='alert'><p></p></div>"
+
+  # ---------------------------------------------------------------------------
+  # TOAST NOTIFICATION
+  # ---------------------------------------------------------------------------
+  - id: "toast"
+    name: "Toast Notification"
+    category: "feedback"
+    description: "Temporary notification that appears and auto-dismisses"
+
+    content_slots:
+      - name: "message"
+        required: true
+        type: "text"
+        char_max: 60
+        word_max: 10
+        line_max: 2
+        purpose: "Notification content"
+        notes: "Use fewest words possible"
+
+      - name: "type"
+        required: true
+        type: "enum"
+        options: ["success", "error", "info", "warning"]
+        purpose: "Visual style and icon"
+
+      - name: "action"
+        required: false
+        type: "text"
+        char_max: 15
+        purpose: "Single action (e.g., Undo)"
+        notes: "Only one action per toast"
+
+      - name: "duration"
+        required: true
+        type: "number"
+        default: 5000
+        unit: "ms"
+        notes: "500ms per word, no timeout if has action"
+        purpose: "Auto-dismiss timing"
+
+    best_for:
+      - "Action confirmations"
+      - "Non-critical updates"
+      - "Background process completion"
+
+    content_types:
+      - "confirmation"
+      - "status"
+      - "notification"
+
+    avoid_when:
+      - "Critical errors (use alert)"
+      - "Actions requiring immediate attention"
+      - "Content > 3 lines"
+
+    variants:
+      - name: "simple"
+        description: "Text only"
+      - name: "with-icon"
+        description: "Icon indicating type"
+      - name: "with-action"
+        description: "Includes single action button"
+
+    pairs_well_with:
+      - "form"
+      - "button"
+
+    accessibility_notes: "role='status', aria-live='polite', don't interrupt screen readers"
+    mobile_considerations: "Bottom of screen, swipe to dismiss"
+    semantic_structure: "<div role='status' aria-live='polite'></div>"
+
+  # ---------------------------------------------------------------------------
+  # PROGRESS INDICATOR
+  # ---------------------------------------------------------------------------
+  - id: "progress-indicator"
+    name: "Progress Indicator"
+    category: "feedback"
+    description: "Visual representation of completion status"
+
+    content_slots:
+      - name: "value"
+        required: true
+        type: "number"
+        min: 0
+        max: 100
+        purpose: "Current progress percentage"
+
+      - name: "label"
+        required: false
+        type: "text"
+        char_max: 30
+        purpose: "Description of what's progressing"
+
+      - name: "show_percentage"
+        required: false
+        type: "boolean"
+        default: true
+        purpose: "Display numeric percentage"
+
+    best_for:
+      - "File uploads"
+      - "Form completion"
+      - "Loading states"
+      - "Onboarding progress"
+
+    content_types:
+      - "progress"
+      - "loading"
+      - "status"
+
+    avoid_when:
+      - "Duration is unknown (use spinner)"
+      - "Progress is instant"
+
+    variants:
+      - name: "bar"
+        description: "Horizontal progress bar"
+      - name: "circular"
+        description: "Circular/ring progress"
+      - name: "steps"
+        description: "Discrete steps (1 of 5)"
+
+    pairs_well_with:
+      - "multi-step-form"
+      - "upload"
+
+    accessibility_notes: "role='progressbar', aria-valuenow, aria-valuemin, aria-valuemax"
+    mobile_considerations: "Ensure visibility, sufficient size"
+    semantic_structure: "<div role='progressbar' aria-valuenow='' aria-valuemin='0' aria-valuemax='100'></div>"
+
+  # ---------------------------------------------------------------------------
+  # EMPTY STATE
+  # ---------------------------------------------------------------------------
+  - id: "empty-state"
+    name: "Empty State"
+    category: "feedback"
+    description: "Placeholder when no content exists or results found"
+
+    content_slots:
+      - name: "illustration"
+        required: false
+        type: "image_or_icon"
+        purpose: "Visual to soften the empty state"
+
+      - name: "headline"
+        required: true
+        type: "text"
+        char_max: 50
+        purpose: "Brief, witty or clear title"
+        examples: ["No messages... yet", "Nothing here", "No results found"]
+
+      - name: "description"
+        required: true
+        type: "text"
+        char_max: 150
+        purpose: "Explains why empty and what to do"
+
+      - name: "primary_action"
+        required: false
+        type: "text"
+        char_max: 25
+        purpose: "Main action to resolve empty state"
+        examples: ["Create Project", "Upload File", "Try Another Search"]
+
+      - name: "secondary_action"
+        required: false
+        type: "text"
+        char_max: 25
+        purpose: "Alternative action"
+
+    best_for:
+      - "New user experiences"
+      - "Empty search results"
+      - "Empty lists/dashboards"
+      - "Cleared inboxes"
+
+    content_types:
+      - "empty"
+      - "onboarding"
+      - "search"
+      - "dashboard"
+
+    avoid_when:
+      - "Content should always exist"
+      - "Error state is more appropriate"
+
+    variants:
+      - name: "getting-started"
+        description: "For new users, emphasizes first action"
+      - name: "no-results"
+        description: "Search/filter returned nothing"
+      - name: "cleared"
+        description: "User intentionally emptied the list"
+
+    pairs_well_with:
+      - "search-bar"
+      - "filter-controls"
+
+    accessibility_notes: "Ensure message is clear, action is prominent"
+    mobile_considerations: "Centered, adequate spacing"
+    semantic_structure: "<section><img alt=''><h2></h2><p></p><button></button></section>"
+
+  # ---------------------------------------------------------------------------
+  # ERROR STATE
+  # ---------------------------------------------------------------------------
+  - id: "error-state"
+    name: "Error State / Error Page"
+    category: "feedback"
+    description: "Display when something goes wrong (404, 500, etc.)"
+
+    content_slots:
+      - name: "error_code"
+        required: false
+        type: "text"
+        char_max: 10
+        purpose: "Error number (404, 500)"
+
+      - name: "headline"
+        required: true
+        type: "text"
+        char_max: 60
+        purpose: "Human-readable error title"
+        examples: ["Page not found", "Something went wrong"]
+
+      - name: "description"
+        required: true
+        type: "text"
+        char_max: 200
+        purpose: "Explanation and what user can do"
+
+      - name: "primary_action"
+        required: true
+        type: "text"
+        char_max: 25
+        default: "Go Home"
+        purpose: "Main recovery action"
+
+      - name: "secondary_action"
+        required: false
+        type: "text"
+        char_max: 25
+        purpose: "Alternative action (e.g., Report Issue)"
+
+    best_for:
+      - "404 pages"
+      - "Server errors"
+      - "Permission denied"
+      - "Connection issues"
+
+    content_types:
+      - "error"
+      - "404"
+      - "500"
+
+    avoid_when:
+      - "Nothing is wrong"
+
+    variants:
+      - name: "full-page"
+        description: "Dedicated error page"
+      - name: "inline"
+        description: "Error within content area"
+      - name: "retry"
+        description: "Includes retry/refresh action"
+
+    pairs_well_with:
+      - "navigation"
+      - "search-bar"
+
+    accessibility_notes: "Clear explanation, obvious path forward"
+    mobile_considerations: "Simple layout, prominent action"
+    semantic_structure: "<main><h1></h1><p></p><a></a></main>"
+
+  # ---------------------------------------------------------------------------
+  # SKELETON LOADER
+  # ---------------------------------------------------------------------------
+  - id: "skeleton"
+    name: "Skeleton Loader"
+    category: "feedback"
+    description: "Placeholder showing content structure while loading"
+
+    content_slots:
+      - name: "layout"
+        required: true
+        type: "enum"
+        options: ["card", "list", "text", "avatar", "custom"]
+        purpose: "Type of content being loaded"
+
+      - name: "count"
+        required: false
+        type: "number"
+        default: 3
+        purpose: "Number of skeleton items"
+
+    best_for:
+      - "Initial page loads"
+      - "Data fetching"
+      - "Image loading"
+      - "Infinite scroll"
+
+    content_types:
+      - "loading"
+      - "placeholder"
+
+    avoid_when:
+      - "Load time is < 1 second"
+      - "Simple spinner would suffice"
+
+    variants:
+      - name: "pulse"
+        description: "Gentle pulsing animation"
+      - name: "wave"
+        description: "Shimmer wave animation"
+      - name: "static"
+        description: "No animation"
+
+    pairs_well_with:
+      - "card"
+      - "list"
+      - "table"
+
+    accessibility_notes: "aria-busy='true' on container, aria-hidden on skeletons"
+    mobile_considerations: "Match actual content layout"
+    semantic_structure: "<div aria-busy='true'><div class='skeleton'></div></div>"
+
+# =============================================================================
+# CATEGORY 8: CALL-TO-ACTION
+# =============================================================================
+
+  # ---------------------------------------------------------------------------
+  # CTA BUTTON
+  # ---------------------------------------------------------------------------
+  - id: "cta-button"
+    name: "CTA Button"
+    category: "cta"
+    description: "Primary action button for conversions"
+
+    content_slots:
+      - name: "label"
+        required: true
+        type: "text"
+        char_min: 5
+        char_max: 25
+        word_min: 2
+        word_max: 5
+        purpose: "Button text"
+        notes: "Use action verbs: Get, Start, Try, Join. First person ('Get my...') can increase clicks 90%"
+        examples: ["Get Started", "Try Free", "Join Now", "Download Guide"]
+
+      - name: "icon"
+        required: false
+        type: "icon"
+        purpose: "Optional icon (arrow, download, etc.)"
+
+    best_for:
+      - "Primary page actions"
+      - "Conversion points"
+      - "Form submissions"
+
+    content_types:
+      - "conversion"
+      - "action"
+      - "navigation"
+
+    avoid_when:
+      - "Action isn't clear"
+      - "Too many CTAs on page"
+
+    variants:
+      - name: "primary"
+        description: "Filled, high contrast"
+      - name: "secondary"
+        description: "Outlined or lower emphasis"
+      - name: "ghost"
+        description: "Text-only with hover effect"
+
+    pairs_well_with:
+      - "hero"
+      - "cta-section"
+      - "card"
+
+    accessibility_notes: "Sufficient color contrast, focus visible, descriptive label"
+    mobile_considerations: "Min 44x44px touch target, full-width in some contexts"
+    semantic_structure: "<a class='button'>or<button type='button'>"
+
+  # ---------------------------------------------------------------------------
+  # CTA SECTION
+  # ---------------------------------------------------------------------------
+  - id: "cta-section"
+    name: "CTA Section"
+    category: "cta"
+    description: "Dedicated section prompting user action with headline and button"
+
+    content_slots:
+      - name: "headline"
+        required: true
+        type: "text"
+        char_max: 80
+        purpose: "Compelling headline"
+
+      - name: "subheadline"
+        required: false
+        type: "text"
+        char_max: 150
+        purpose: "Supporting text"
+
+      - name: "primary_cta"
+        required: true
+        type: "text"
+        char_max: 25
+        purpose: "Main action button"
+
+      - name: "secondary_cta"
+        required: false
+        type: "text"
+        char_max: 25
+        purpose: "Alternative action"
+
+      - name: "social_proof"
+        required: false
+        type: "text"
+        char_max: 50
+        purpose: "Trust element (e.g., 'Join 10,000+ users')"
+
+    best_for:
+      - "Page closers"
+      - "Between content sections"
+      - "Conversion focus"
+
+    content_types:
+      - "conversion"
+      - "signup"
+      - "trial"
+
+    avoid_when:
+      - "Already have hero CTA visible"
+      - "Page is informational only"
+
+    variants:
+      - name: "centered"
+        description: "Text and button centered"
+      - name: "split"
+        description: "Text left, CTA right"
+      - name: "background-image"
+        description: "CTA over background image"
+
+    pairs_well_with:
+      - "testimonial"
+      - "footer"
+
+    accessibility_notes: "Clear heading hierarchy, descriptive button"
+    mobile_considerations: "Full-width, stacked layout"
+    semantic_structure: "<section><h2></h2><p></p><a></a></section>"
+
+  # ---------------------------------------------------------------------------
+  # STICKY BAR / FLOATING CTA
+  # ---------------------------------------------------------------------------
+  - id: "sticky-cta"
+    name: "Sticky CTA Bar"
+    category: "cta"
+    description: "Fixed-position CTA that remains visible while scrolling"
+
+    content_slots:
+      - name: "message"
+        required: false
+        type: "text"
+        char_max: 60
+        purpose: "Brief text alongside CTA"
+
+      - name: "cta"
+        required: true
+        type: "text"
+        char_max: 20
+        purpose: "Action button"
+
+      - name: "dismiss"
+        required: false
+        type: "boolean"
+        default: false
+        purpose: "Allow user to close"
+
+    best_for:
+      - "Long-form content"
+      - "Product pages"
+      - "Limited-time offers"
+
+    content_types:
+      - "conversion"
+      - "promotion"
+
+    avoid_when:
+      - "Page is short"
+      - "Too many fixed elements"
+      - "Interrupts user flow"
+
+    variants:
+      - name: "top"
+        description: "Fixed to top of viewport"
+      - name: "bottom"
+        description: "Fixed to bottom of viewport"
+      - name: "scroll-triggered"
+        description: "Appears after scrolling threshold"
+
+    pairs_well_with:
+      - "long-form-content"
+      - "product-page"
+
+    accessibility_notes: "Don't cover important content, keyboard accessible"
+    mobile_considerations: "Don't cover too much screen, easy to dismiss"
+    semantic_structure: "<div class='sticky-bar'><p></p><a></a></div>"
+
+  # ---------------------------------------------------------------------------
+  # EXIT INTENT POPUP
+  # ---------------------------------------------------------------------------
+  - id: "exit-popup"
+    name: "Exit Intent Popup"
+    category: "cta"
+    description: "Modal triggered when user moves to leave the page"
+
+    content_slots:
+      - name: "headline"
+        required: true
+        type: "text"
+        char_max: 60
+        purpose: "Attention-grabbing title"
+        examples: ["Wait! Before you go...", "Don't miss out"]
+
+      - name: "offer"
+        required: true
+        type: "text"
+        char_max: 100
+        purpose: "Value proposition or offer"
+
+      - name: "cta"
+        required: true
+        type: "text"
+        char_max: 25
+        purpose: "Action button"
+
+      - name: "dismiss_text"
+        required: true
+        type: "text"
+        char_max: 40
+        purpose: "Close/decline option"
+        examples: ["No thanks", "I'll pass"]
+
+      - name: "image"
+        required: false
+        type: "image"
+        purpose: "Visual element"
+
+    best_for:
+      - "Lead capture"
+      - "Cart abandonment"
+      - "Special offers"
+
+    content_types:
+      - "popup"
+      - "lead-gen"
+      - "offer"
+
+    avoid_when:
+      - "User has already converted"
+      - "Returning visitors (frequency cap)"
+      - "Mobile (exit intent unreliable)"
+
+    variants:
+      - name: "discount"
+        description: "Offers discount code"
+      - name: "newsletter"
+        description: "Email signup focus"
+      - name: "content"
+        description: "Free resource download"
+
+    pairs_well_with:
+      - "newsletter-signup"
+      - "discount-code"
+
+    accessibility_notes: "Focus trap, escape to close, clear dismiss option"
+    mobile_considerations: "Use scroll-triggered instead of exit intent"
+    semantic_structure: "<dialog><h2></h2><p></p><form></form><button></button></dialog>"
+
+# =============================================================================
+# CATEGORY 9: SOCIAL PROOF
+# =============================================================================
+
+  # ---------------------------------------------------------------------------
+  # REVIEW CARD
+  # ---------------------------------------------------------------------------
+  - id: "review-card"
+    name: "Review Card"
+    category: "social-proof"
+    description: "Individual customer review with rating and details"
+
+    content_slots:
+      - name: "rating"
+        required: true
+        type: "number"
+        min: 1
+        max: 5
+        purpose: "Star rating"
+
+      - name: "review_text"
+        required: true
+        type: "text"
+        char_max: 300
+        purpose: "Review content"
+
+      - name: "reviewer_name"
+        required: true
+        type: "text"
+        char_max: 50
+        purpose: "Customer name"
+
+      - name: "reviewer_info"
+        required: false
+        type: "text"
+        char_max: 50
+        purpose: "Title, location, or verified buyer"
+
+      - name: "date"
+        required: false
+        type: "date"
+        purpose: "Review date"
+
+      - name: "helpful_count"
+        required: false
+        type: "number"
+        purpose: "Number of helpful votes"
+
+    best_for:
+      - "Product pages"
+      - "Service pages"
+      - "Third-party review displays"
+
+    content_types:
+      - "review"
+      - "social-proof"
+      - "product"
+
+    avoid_when:
+      - "No reviews available"
+      - "Reviews are negative"
+
+    variants:
+      - name: "compact"
+        description: "Rating and short excerpt only"
+      - name: "detailed"
+        description: "Full review with metadata"
+      - name: "with-response"
+        description: "Includes business response"
+
+    pairs_well_with:
+      - "product-card"
+      - "testimonial-carousel"
+
+    accessibility_notes: "Clear rating communication, not just stars"
+    mobile_considerations: "Truncate long reviews with expand option"
+    semantic_structure: "<article><div role='img' aria-label='4 out of 5 stars'></div><p></p><footer></footer></article>"
+
+  # ---------------------------------------------------------------------------
+  # CASE STUDY PREVIEW
+  # ---------------------------------------------------------------------------
+  - id: "case-study-preview"
+    name: "Case Study Preview Card"
+    category: "social-proof"
+    description: "Summary card linking to full case study"
+
+    content_slots:
+      - name: "client_logo"
+        required: false
+        type: "image"
+        purpose: "Client company logo"
+
+      - name: "title"
+        required: true
+        type: "text"
+        char_max: 80
+        purpose: "Case study title"
+
+      - name: "summary"
+        required: true
+        type: "text"
+        char_max: 150
+        purpose: "Brief outcome or approach"
+
+      - name: "key_metric"
+        required: false
+        type: "object"
+        structure:
+          value: "200%"
+          label: "increase in conversions"
+        purpose: "Highlighted result"
+
+      - name: "cta"
+        required: true
+        type: "text"
+        char_max: 20
+        default: "Read Case Study"
+        purpose: "Link to full story"
+
+    best_for:
+      - "B2B portfolios"
+      - "Services pages"
+      - "Social proof sections"
+
+    content_types:
+      - "case-study"
+      - "portfolio"
+      - "social-proof"
+
+    avoid_when:
+      - "No case studies available"
+      - "Results aren't quantifiable"
+
+    variants:
+      - name: "horizontal"
+        description: "Logo left, content right"
+      - name: "vertical"
+        description: "Stacked layout"
+      - name: "with-quote"
+        description: "Includes client quote"
+
+    pairs_well_with:
+      - "logo-cloud"
+      - "testimonial"
+
+    accessibility_notes: "Descriptive link text, not just 'Read more'"
+    mobile_considerations: "Stack vertically"
+    semantic_structure: "<article><img><h3></h3><p></p><a></a></article>"
+
+  # ---------------------------------------------------------------------------
+  # TRUST BADGES
+  # ---------------------------------------------------------------------------
+  - id: "trust-badges"
+    name: "Trust Badges"
+    category: "social-proof"
+    description: "Security and credibility badges (SSL, awards, certifications)"
+
+    content_slots:
+      - name: "badges"
+        required: true
+        type: "array"
+        min_items: 2
+        max_items: 6
+        item_structure:
+          - name: "image"
+            type: "image"
+          - name: "alt_text"
+            type: "text"
+            char_max: 50
+          - name: "tooltip"
+            type: "text"
+            char_max: 100
+            required: false
+        purpose: "Trust indicator images"
+
+    best_for:
+      - "Checkout pages"
+      - "Footer"
+      - "Pricing pages"
+      - "Contact forms"
+
+    content_types:
+      - "trust"
+      - "security"
+      - "certification"
+
+    avoid_when:
+      - "Badges aren't legitimate"
+      - "Too many badges (looks desperate)"
+
+    variants:
+      - name: "inline"
+        description: "Row of badges"
+      - name: "with-labels"
+        description: "Badges with text labels"
+      - name: "footer-style"
+        description: "Small, grouped in footer"
+
+    pairs_well_with:
+      - "footer"
+      - "checkout-form"
+      - "pricing-table"
+
+    accessibility_notes: "Descriptive alt text for each badge"
+    mobile_considerations: "Smaller sizes, may reduce count"
+    semantic_structure: "<ul><li><img alt=''></li></ul>"
+
+# =============================================================================
+# CATEGORY 10: E-COMMERCE SPECIFIC
+# =============================================================================
+
+  # ---------------------------------------------------------------------------
+  # PRODUCT CARD
+  # ---------------------------------------------------------------------------
+  - id: "product-card"
+    name: "Product Card"
+    category: "ecommerce"
+    description: "E-commerce product listing card with image, title, price, and actions"
+
+    content_slots:
+      - name: "image"
+        required: true
+        type: "image"
+        purpose: "Product photo"
+        notes: "Show product in use when possible"
+
+      - name: "badge"
+        required: false
+        type: "text"
+        char_max: 15
+        purpose: "Sale, New, Best Seller, etc."
+
+      - name: "title"
+        required: true
+        type: "text"
+        char_max: 80
+        purpose: "Product name"
+        notes: "May include key features in name"
+
+      - name: "price"
+        required: true
+        type: "object"
+        structure:
+          current: "$29.99"
+          original: "$39.99"
+          currency: "USD"
+        purpose: "Price display"
+
+      - name: "rating"
+        required: false
+        type: "object"
+        structure:
+          value: 4.5
+          count: 128
+        purpose: "Customer rating"
+
+      - name: "quick_add"
+        required: false
+        type: "boolean"
+        purpose: "Add to cart without going to product page"
+
+      - name: "wishlist"
+        required: false
+        type: "boolean"
+        purpose: "Save to wishlist option"
+
+    best_for:
+      - "Product listings"
+      - "Category pages"
+      - "Search results"
+      - "Related products"
+
+    content_types:
+      - "product"
+      - "ecommerce"
+
+    avoid_when:
+      - "Not selling products"
+
+    variants:
+      - name: "minimal"
+        description: "Image, title, price only"
+      - name: "detailed"
+        description: "Includes rating, badge, quick actions"
+      - name: "horizontal"
+        description: "Image left, details right"
+
+    pairs_well_with:
+      - "filter-controls"
+      - "pagination"
+      - "wishlist-button"
+
+    accessibility_notes: "Product name as link text, price announced properly"
+    mobile_considerations: "2-column grid, tap for quick view"
+    semantic_structure: "<article><img><h3><a></a></h3><p class='price'></p></article>"
+
+  # ---------------------------------------------------------------------------
+  # PRICING TABLE / PRICING CARDS
+  # ---------------------------------------------------------------------------
+  - id: "pricing-table"
+    name: "Pricing Table"
+    category: "ecommerce"
+    description: "Side-by-side pricing plan comparison"
+
+    content_slots:
+      - name: "plans"
+        required: true
+        type: "array"
+        min_items: 2
+        max_items: 4
+        item_structure:
+          - name: "name"
+            type: "text"
+            char_max: 20
+            purpose: "Plan name (Basic, Pro, Enterprise)"
+          - name: "best_for"
+            type: "text"
+            char_max: 50
+            required: false
+            purpose: "Who this plan suits"
+          - name: "price"
+            type: "object"
+            structure:
+              amount: "$29"
+              period: "/month"
+          - name: "features"
+            type: "array"
+            max_items: 10
+            item_char_max: 50
+          - name: "cta"
+            type: "text"
+            char_max: 20
+          - name: "highlighted"
+            type: "boolean"
+            purpose: "Mark as recommended"
+        purpose: "Individual pricing tiers"
+
+      - name: "billing_toggle"
+        required: false
+        type: "object"
+        structure:
+          monthly: "Monthly"
+          annual: "Annual (save 20%)"
+        purpose: "Billing period switcher"
+
+    best_for:
+      - "SaaS pricing pages"
+      - "Subscription services"
+      - "Membership tiers"
+
+    content_types:
+      - "pricing"
+      - "plans"
+      - "subscription"
+
+    avoid_when:
+      - "Single price point"
+      - "Custom/quote-based pricing only"
+
+    variants:
+      - name: "cards"
+        description: "Separate cards per plan"
+      - name: "table"
+        description: "Traditional comparison table"
+      - name: "featured"
+        description: "One plan visually emphasized"
+
+    pairs_well_with:
+      - "comparison-table"
+      - "faq"
+      - "testimonial"
+
+    accessibility_notes: "Clear price announcement, feature list semantic"
+    mobile_considerations: "Stack vertically or horizontal scroll"
+    semantic_structure: "<section><article><h3></h3><p class='price'></p><ul></ul><a></a></article></section>"
+
+  # ---------------------------------------------------------------------------
+  # PRODUCT GALLERY
+  # ---------------------------------------------------------------------------
+  - id: "product-gallery"
+    name: "Product Image Gallery"
+    category: "ecommerce"
+    description: "Multiple product images with thumbnail navigation"
+
+    content_slots:
+      - name: "main_image"
+        required: true
+        type: "image"
+        purpose: "Large primary image"
+
+      - name: "thumbnails"
+        required: true
+        type: "array"
+        min_items: 2
+        max_items: 10
+        purpose: "Thumbnail navigation images"
+
+      - name: "zoom"
+        required: false
+        type: "boolean"
+        default: true
+        purpose: "Enable zoom on hover/click"
+
+      - name: "video"
+        required: false
+        type: "url"
+        purpose: "Product video if available"
+
+    best_for:
+      - "Product detail pages"
+      - "Portfolio items"
+
+    content_types:
+      - "product"
+      - "gallery"
+
+    avoid_when:
+      - "Single product image"
+
+    variants:
+      - name: "thumbnails-below"
+        description: "Thumbnails in row below main image"
+      - name: "thumbnails-side"
+        description: "Thumbnails vertically beside main image"
+      - name: "carousel"
+        description: "Swipeable gallery without thumbnails"
+
+    pairs_well_with:
+      - "lightbox"
+      - "product-info"
+
+    accessibility_notes: "Alt text for all images, keyboard navigation"
+    mobile_considerations: "Swipe gestures, pinch-to-zoom"
+    semantic_structure: "<figure><img><figcaption></figcaption></figure>"
+
+  # ---------------------------------------------------------------------------
+  # CART PREVIEW / MINI CART
+  # ---------------------------------------------------------------------------
+  - id: "cart-preview"
+    name: "Cart Preview / Mini Cart"
+    category: "ecommerce"
+    description: "Dropdown or slide-out cart summary"
+
+    content_slots:
+      - name: "items"
+        required: true
+        type: "array"
+        item_structure:
+          - name: "image"
+            type: "image"
+          - name: "name"
+            type: "text"
+            char_max: 50
+          - name: "quantity"
+            type: "number"
+          - name: "price"
+            type: "text"
+        purpose: "Cart items"
+
+      - name: "subtotal"
+        required: true
+        type: "text"
+        purpose: "Order subtotal"
+
+      - name: "checkout_cta"
+        required: true
+        type: "text"
+        char_max: 20
+        default: "Checkout"
+        purpose: "Proceed to checkout button"
+
+      - name: "view_cart_cta"
+        required: false
+        type: "text"
+        char_max: 15
+        default: "View Cart"
+        purpose: "Link to full cart page"
+
+    best_for:
+      - "E-commerce sites"
+      - "Quick cart access"
+
+    content_types:
+      - "cart"
+      - "ecommerce"
+
+    avoid_when:
+      - "Full cart page is always shown"
+
+    variants:
+      - name: "dropdown"
+        description: "Drops down from cart icon"
+      - name: "slide-out"
+        description: "Slides in from side"
+      - name: "modal"
+        description: "Overlay modal"
+
+    pairs_well_with:
+      - "navbar"
+      - "product-card"
+
+    accessibility_notes: "Announce cart updates, focus management"
+    mobile_considerations: "Full-height slide-out preferred"
+    semantic_structure: "<aside><ul><li></li></ul><p class='subtotal'></p><a></a></aside>"
+
+  # ---------------------------------------------------------------------------
+  # CHECKOUT SUMMARY
+  # ---------------------------------------------------------------------------
+  - id: "checkout-summary"
+    name: "Order Summary / Checkout Summary"
+    category: "ecommerce"
+    description: "Order details panel during checkout"
+
+    content_slots:
+      - name: "items"
+        required: true
+        type: "array"
+        item_structure:
+          - name: "name"
+            type: "text"
+            char_max: 50
+          - name: "quantity"
+            type: "number"
+          - name: "price"
+            type: "text"
+        purpose: "Line items"
+
+      - name: "subtotal"
+        required: true
+        type: "text"
+        purpose: "Items subtotal"
+
+      - name: "shipping"
+        required: false
+        type: "text"
+        purpose: "Shipping cost"
+
+      - name: "tax"
+        required: false
+        type: "text"
+        purpose: "Tax amount"
+
+      - name: "discount"
+        required: false
+        type: "text"
+        purpose: "Discount applied"
+
+      - name: "total"
+        required: true
+        type: "text"
+        purpose: "Order total"
+
+      - name: "promo_code"
+        required: false
+        type: "object"
+        structure:
+          placeholder: "Enter code"
+          button: "Apply"
+        purpose: "Promo code input"
+
+    best_for:
+      - "Checkout pages"
+      - "Order confirmation"
+
+    content_types:
+      - "checkout"
+      - "order"
+      - "ecommerce"
+
+    avoid_when:
+      - "Not an e-commerce checkout"
+
+    variants:
+      - name: "sidebar"
+        description: "Fixed sidebar during checkout"
+      - name: "collapsible"
+        description: "Can expand/collapse on mobile"
+      - name: "sticky"
+        description: "Stays visible while scrolling form"
+
+    pairs_well_with:
+      - "multi-step-form"
+      - "trust-badges"
+
+    accessibility_notes: "Clear price breakdown, screen reader friendly"
+    mobile_considerations: "Collapsible to save space, sticky total"
+    semantic_structure: "<aside><dl><dt></dt><dd></dd></dl></aside>"
+
+---
+# =============================================================================
+# CONTENT TYPE MAPPING
+# =============================================================================
+# Use this index to find components by content type
+
+content_type_index:
+  faq:
+    - accordion
+    - anchor-nav
+    - tabs
+
+  testimonial:
+    - testimonial
+    - review-card
+    - carousel
+
+  features:
+    - feature-grid
+    - bento-grid
+    - tabs
+    - card
+
+  pricing:
+    - pricing-table
+    - comparison-table
+
+  navigation:
+    - navbar
+    - mega-menu
+    - mobile-drawer
+    - breadcrumbs
+    - footer-nav
+    - sidebar-nav
+    - anchor-nav
+    - pagination
+    - tabs
+
+  marketing:
+    - hero
+    - cta-section
+    - value-prop
+    - stats-bar
+    - logo-cloud
+
+  social-proof:
+    - testimonial
+    - review-card
+    - logo-cloud
+    - stats-bar
+    - trust-badges
+    - case-study-preview
+
+  forms:
+    - contact-form
+    - newsletter-signup
+    - search-bar
+    - filter-controls
+    - multi-step-form
+    - rating-input
+
+  product:
+    - product-card
+    - product-gallery
+    - pricing-table
+    - comparison-table
+
+  blog:
+    - card
+    - pagination
+    - quote-block
+    - anchor-nav
+
+  documentation:
+    - sidebar-nav
+    - anchor-nav
+    - tabs
+    - accordion
+    - breadcrumbs
+
+  error:
+    - error-state
+    - empty-state
+
+  feedback:
+    - alert
+    - toast
+    - progress-indicator
+    - skeleton
+
+---
+# =============================================================================
+# PAIRING RECOMMENDATIONS
+# =============================================================================
+# Common component combinations for page sections
+
+page_patterns:
+  homepage:
+    above_fold:
+      - announcement-bar
+      - navbar
+      - hero
+
+    social_proof:
+      - logo-cloud
+      - stats-bar
+      - testimonial
+
+    features:
+      - feature-grid
+      - bento-grid
+
+    conversion:
+      - cta-section
+      - pricing-table
+
+    closing:
+      - testimonial
+      - cta-section
+      - footer-nav
+
+  product_page:
+    - navbar
+    - breadcrumbs
+    - product-gallery
+    - accordion
+    - review-card
+    - cta-section
+    - footer-nav
+
+  pricing_page:
+    - navbar
+    - hero
+    - pricing-table
+    - comparison-table
+    - faq: accordion
+    - testimonial
+    - cta-section
+    - footer-nav
+
+  blog_listing:
+    - navbar
+    - search-bar
+    - filter-controls
+    - card-grid
+    - pagination
+    - newsletter-signup
+    - footer-nav
+
+  documentation:
+    - navbar
+    - sidebar-nav
+    - breadcrumbs
+    - anchor-nav
+    - accordion
+    - footer-nav

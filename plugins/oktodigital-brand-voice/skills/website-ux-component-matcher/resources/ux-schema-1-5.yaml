@@ -1,0 +1,2115 @@
+# UX Component Schema - Categories 1-5 (Navigation, Hero, Content Display, Disclosure, Forms)
+
+# UX Component Knowledge Base - Machine-Parseable Schema
+# Version: 1.0.0
+# Date: 2025-11-26
+# Purpose: Content generator reference for matching content to UX patterns
+# Total Components: 82
+
+---
+metadata:
+  version: "1.0.0"
+  date: "2025-11-26"
+  total_components: 82
+  categories: 10
+  platform: "platform-agnostic"
+
+---
+# =============================================================================
+# CATEGORY 1: NAVIGATION & WAYFINDING
+# =============================================================================
+
+components:
+
+  # ---------------------------------------------------------------------------
+  # NAVBAR
+  # ---------------------------------------------------------------------------
+  - id: "navbar"
+    name: "Navigation Bar"
+    category: "navigation"
+    description: "Primary horizontal navigation containing logo, menu links, and CTAs"
+
+    content_slots:
+      - name: "logo"
+        required: true
+        type: "image"
+        purpose: "Brand identification"
+
+      - name: "nav_items"
+        required: true
+        type: "array"
+        min_items: 3
+        max_items: 7
+        item_char_max: 20
+        purpose: "Primary navigation links"
+
+      - name: "cta_button"
+        required: false
+        type: "text"
+        char_min: 5
+        char_max: 20
+        purpose: "Primary action button (e.g., Sign Up, Get Started)"
+
+    best_for:
+      - "Site-wide navigation"
+      - "Brand presence on every page"
+      - "Quick access to key sections"
+
+    content_types:
+      - "navigation"
+      - "branding"
+      - "site-structure"
+
+    avoid_when:
+      - "Single-page applications with minimal sections"
+      - "Landing pages needing maximum focus on conversion"
+
+    variants:
+      - name: "sticky"
+        description: "Remains visible while scrolling"
+      - name: "transparent"
+        description: "Overlays hero section, becomes solid on scroll"
+      - name: "centered-logo"
+        description: "Logo centered with nav items on both sides"
+
+    pairs_well_with:
+      - "mega-menu"
+      - "mobile-drawer"
+      - "announcement-bar"
+
+    accessibility_notes: "Use semantic nav element, aria-label for landmark"
+    mobile_considerations: "Collapse to hamburger menu below 768px"
+    semantic_structure: "<nav><ul><li><a></li></ul></nav>"
+
+  # ---------------------------------------------------------------------------
+  # MEGA MENU
+  # ---------------------------------------------------------------------------
+  - id: "mega-menu"
+    name: "Mega Menu"
+    category: "navigation"
+    description: "Large dropdown menu displaying multiple navigation groups in columns"
+
+    content_slots:
+      - name: "category_headings"
+        required: true
+        type: "array"
+        min_items: 2
+        max_items: 5
+        item_char_max: 25
+        purpose: "Section headers within dropdown"
+
+      - name: "menu_items"
+        required: true
+        type: "array"
+        items_per_group_max: 8
+        item_char_max: 30
+        purpose: "Navigation links within each category"
+
+      - name: "featured_content"
+        required: false
+        type: "object"
+        purpose: "Promotional image or highlighted content"
+
+    best_for:
+      - "Sites with 20+ pages"
+      - "E-commerce with many categories"
+      - "Enterprise sites with complex hierarchy"
+
+    content_types:
+      - "navigation"
+      - "site-structure"
+      - "product-categories"
+
+    avoid_when:
+      - "Simple sites with < 10 pages"
+      - "Mobile-first designs"
+      - "Sites where touch is primary input"
+
+    variants:
+      - name: "full-width"
+        description: "Spans entire viewport width"
+      - name: "contained"
+        description: "Width limited to content area"
+      - name: "with-featured"
+        description: "Includes promotional image column"
+
+    pairs_well_with:
+      - "navbar"
+      - "search-bar"
+
+    accessibility_notes: "0.5s hover delay, aria-expanded, keyboard navigation with arrow keys"
+    mobile_considerations: "Replace with accordion or mobile drawer on small screens"
+    semantic_structure: "<nav><div role='menu'><div role='group'></div></div></nav>"
+
+  # ---------------------------------------------------------------------------
+  # MOBILE DRAWER / HAMBURGER MENU
+  # ---------------------------------------------------------------------------
+  - id: "mobile-drawer"
+    name: "Mobile Navigation Drawer"
+    category: "navigation"
+    description: "Slide-out panel containing navigation for mobile devices"
+
+    content_slots:
+      - name: "menu_items"
+        required: true
+        type: "array"
+        min_items: 3
+        max_items: 12
+        item_char_max: 25
+        purpose: "Primary navigation links"
+
+      - name: "secondary_links"
+        required: false
+        type: "array"
+        max_items: 6
+        item_char_max: 20
+        purpose: "Utility links (login, contact, etc.)"
+
+      - name: "cta_button"
+        required: false
+        type: "text"
+        char_max: 20
+        purpose: "Primary action at bottom of drawer"
+
+    best_for:
+      - "Mobile navigation"
+      - "Sites with many sections"
+      - "Responsive designs"
+
+    content_types:
+      - "navigation"
+      - "mobile"
+
+    avoid_when:
+      - "Desktop-only sites"
+      - "Sites with only 2-3 pages"
+
+    variants:
+      - name: "left-slide"
+        description: "Slides in from left edge"
+      - name: "right-slide"
+        description: "Slides in from right edge"
+      - name: "full-screen"
+        description: "Covers entire viewport"
+
+    pairs_well_with:
+      - "navbar"
+      - "accordion"
+
+    accessibility_notes: "Focus trap when open, escape to close, aria-modal"
+    mobile_considerations: "Touch-friendly targets min 44x44px"
+    semantic_structure: "<nav role='dialog' aria-modal='true'></nav>"
+
+  # ---------------------------------------------------------------------------
+  # BREADCRUMBS
+  # ---------------------------------------------------------------------------
+  - id: "breadcrumbs"
+    name: "Breadcrumb Navigation"
+    category: "navigation"
+    description: "Hierarchical trail showing current page location within site structure"
+
+    content_slots:
+      - name: "path_items"
+        required: true
+        type: "array"
+        min_items: 2
+        max_items: 6
+        item_char_max: 30
+        purpose: "Page hierarchy from home to current"
+
+      - name: "separator"
+        required: true
+        type: "text"
+        default: ">"
+        options: [">", "/", ">>", "chevron-icon"]
+        purpose: "Visual separator between items"
+
+    best_for:
+      - "Deep hierarchical sites"
+      - "E-commerce category pages"
+      - "Documentation sites"
+
+    content_types:
+      - "navigation"
+      - "wayfinding"
+      - "hierarchy"
+
+    avoid_when:
+      - "Flat site structure"
+      - "Single-level sites"
+      - "Homepage (always omit)"
+
+    variants:
+      - name: "full-path"
+        description: "Shows complete hierarchy"
+      - name: "collapsed"
+        description: "Truncates middle items with ellipsis for deep paths"
+
+    pairs_well_with:
+      - "page-header"
+      - "sidebar-nav"
+
+    accessibility_notes: "Use nav with aria-label='Breadcrumb', ol/li structure, aria-current='page' on last item"
+    mobile_considerations: "May truncate or show only parent on very small screens"
+    semantic_structure: "<nav aria-label='Breadcrumb'><ol><li><a></li></ol></nav>"
+
+  # ---------------------------------------------------------------------------
+  # PAGINATION
+  # ---------------------------------------------------------------------------
+  - id: "pagination"
+    name: "Pagination"
+    category: "navigation"
+    description: "Page-by-page navigation for content split across multiple pages"
+
+    content_slots:
+      - name: "prev_label"
+        required: false
+        type: "text"
+        char_max: 15
+        default: "Previous"
+        purpose: "Previous page button label"
+
+      - name: "next_label"
+        required: false
+        type: "text"
+        char_max: 15
+        default: "Next"
+        purpose: "Next page button label"
+
+      - name: "page_count"
+        required: true
+        type: "number"
+        purpose: "Total number of pages"
+
+    best_for:
+      - "Blog archives"
+      - "Search results"
+      - "Product listings"
+
+    content_types:
+      - "navigation"
+      - "listing"
+      - "archive"
+
+    avoid_when:
+      - "Content fits on single page"
+      - "Infinite scroll is more appropriate"
+      - "< 10 items total"
+
+    variants:
+      - name: "numbered"
+        description: "Shows page numbers with ellipsis"
+      - name: "prev-next-only"
+        description: "Simple previous/next buttons"
+      - name: "load-more"
+        description: "Single button to append more content"
+
+    pairs_well_with:
+      - "card-grid"
+      - "table"
+      - "search-bar"
+
+    accessibility_notes: "Use nav with aria-label='Pagination', aria-current='page' on active"
+    mobile_considerations: "May simplify to prev/next only on small screens"
+    semantic_structure: "<nav aria-label='Pagination'><ul></ul></nav>"
+
+  # ---------------------------------------------------------------------------
+  # TABS
+  # ---------------------------------------------------------------------------
+  - id: "tabs"
+    name: "Tab Navigation"
+    category: "navigation"
+    description: "Horizontal or vertical tabs for switching between content panels"
+
+    content_slots:
+      - name: "tab_labels"
+        required: true
+        type: "array"
+        min_items: 2
+        max_items: 7
+        item_char_min: 3
+        item_char_max: 20
+        purpose: "Labels for each tab"
+
+      - name: "tab_panels"
+        required: true
+        type: "array"
+        purpose: "Content for each tab panel"
+        notes: "Panel content length varies by use case"
+
+    best_for:
+      - "Related content that shouldn't all display at once"
+      - "Feature comparisons"
+      - "Settings/preferences pages"
+      - "Dashboard sections"
+
+    content_types:
+      - "navigation"
+      - "content-organization"
+      - "features"
+      - "settings"
+
+    avoid_when:
+      - "Content should be visible simultaneously for comparison"
+      - "Only 1-2 sections (use headings instead)"
+      - "Deep content that spans multiple screens"
+
+    variants:
+      - name: "horizontal"
+        description: "Tabs arranged horizontally above content"
+      - name: "vertical"
+        description: "Tabs stacked vertically beside content"
+      - name: "underlined"
+        description: "Minimal style with underline indicator"
+      - name: "boxed"
+        description: "Each tab in distinct container"
+
+    pairs_well_with:
+      - "card"
+      - "form"
+      - "table"
+
+    accessibility_notes: "role='tablist', role='tab', role='tabpanel', arrow key navigation, aria-selected"
+    mobile_considerations: "Consider scrollable tabs or converting to accordion"
+    semantic_structure: "<div role='tablist'><button role='tab'></div><div role='tabpanel'></div>"
+
+  # ---------------------------------------------------------------------------
+  # ANCHOR NAVIGATION / TABLE OF CONTENTS
+  # ---------------------------------------------------------------------------
+  - id: "anchor-nav"
+    name: "Anchor Navigation / Table of Contents"
+    category: "navigation"
+    description: "In-page navigation linking to sections within the same page"
+
+    content_slots:
+      - name: "toc_title"
+        required: false
+        type: "text"
+        char_max: 30
+        default: "On this page"
+        purpose: "Heading for the TOC section"
+
+      - name: "anchor_items"
+        required: true
+        type: "array"
+        min_items: 3
+        max_items: 15
+        item_char_max: 50
+        purpose: "Links to page sections"
+
+    best_for:
+      - "Long-form content"
+      - "Documentation"
+      - "FAQ pages"
+      - "Legal/policy pages"
+
+    content_types:
+      - "navigation"
+      - "documentation"
+      - "long-form"
+
+    avoid_when:
+      - "Short pages (< 3 sections)"
+      - "Pages users typically scan quickly"
+
+    variants:
+      - name: "sidebar-sticky"
+        description: "Fixed position in sidebar while scrolling"
+      - name: "inline-top"
+        description: "Placed at top of content area"
+      - name: "collapsible"
+        description: "Can be expanded/collapsed"
+
+    pairs_well_with:
+      - "accordion"
+      - "long-form-content"
+      - "documentation-layout"
+
+    accessibility_notes: "Use nav with aria-label, highlight current section"
+    mobile_considerations: "Often hidden or collapsed on mobile"
+    semantic_structure: "<nav aria-label='Table of contents'><ul></ul></nav>"
+
+  # ---------------------------------------------------------------------------
+  # FOOTER NAVIGATION
+  # ---------------------------------------------------------------------------
+  - id: "footer-nav"
+    name: "Footer Navigation"
+    category: "navigation"
+    description: "Site-wide footer with navigation columns, contact info, and legal links"
+
+    content_slots:
+      - name: "column_headings"
+        required: true
+        type: "array"
+        min_items: 2
+        max_items: 5
+        item_char_max: 20
+        purpose: "Headers for each link column"
+
+      - name: "column_links"
+        required: true
+        type: "array"
+        items_per_column_max: 8
+        item_char_max: 25
+        purpose: "Navigation links within each column"
+
+      - name: "social_links"
+        required: false
+        type: "array"
+        max_items: 6
+        purpose: "Social media profile links"
+
+      - name: "contact_info"
+        required: false
+        type: "object"
+        purpose: "Email, phone, address"
+
+      - name: "legal_links"
+        required: true
+        type: "array"
+        max_items: 4
+        item_char_max: 20
+        purpose: "Privacy, terms, cookie policy"
+
+      - name: "copyright"
+        required: true
+        type: "text"
+        char_max: 80
+        purpose: "Copyright notice"
+
+    best_for:
+      - "Every website"
+      - "Secondary navigation"
+      - "Contact and legal information"
+
+    content_types:
+      - "navigation"
+      - "contact"
+      - "legal"
+      - "social"
+
+    avoid_when:
+      - "Never - every site needs a footer"
+
+    variants:
+      - name: "multi-column"
+        description: "3-5 columns of organized links"
+      - name: "minimal"
+        description: "Single row with essential links"
+      - name: "cta-focused"
+        description: "Includes newsletter signup or conversion CTA"
+
+    pairs_well_with:
+      - "newsletter-signup"
+      - "logo-cloud"
+      - "contact-form"
+
+    accessibility_notes: "Use footer element, role='contentinfo', clear link labels"
+    mobile_considerations: "Stack columns vertically, consider accordion for link groups"
+    semantic_structure: "<footer><nav></nav><address></address></footer>"
+
+  # ---------------------------------------------------------------------------
+  # SIDEBAR NAVIGATION
+  # ---------------------------------------------------------------------------
+  - id: "sidebar-nav"
+    name: "Sidebar Navigation"
+    category: "navigation"
+    description: "Vertical navigation typically used in documentation or dashboards"
+
+    content_slots:
+      - name: "section_headings"
+        required: false
+        type: "array"
+        item_char_max: 25
+        purpose: "Group headings for nav sections"
+
+      - name: "nav_items"
+        required: true
+        type: "array"
+        max_items: 30
+        item_char_max: 35
+        purpose: "Navigation links, can be nested"
+
+    best_for:
+      - "Documentation sites"
+      - "Admin dashboards"
+      - "Settings pages"
+      - "Multi-page wizards"
+
+    content_types:
+      - "navigation"
+      - "documentation"
+      - "dashboard"
+
+    avoid_when:
+      - "Marketing sites"
+      - "Simple brochure sites"
+      - "Mobile-primary experiences"
+
+    variants:
+      - name: "collapsible"
+        description: "Sections can expand/collapse"
+      - name: "icon-only"
+        description: "Collapsed state shows only icons"
+      - name: "nested"
+        description: "Multi-level hierarchy with indentation"
+
+    pairs_well_with:
+      - "anchor-nav"
+      - "search-bar"
+      - "breadcrumbs"
+
+    accessibility_notes: "Use nav element, aria-expanded for collapsible sections"
+    mobile_considerations: "Convert to drawer or hide behind hamburger"
+    semantic_structure: "<nav aria-label='Sidebar'><ul></ul></nav>"
+
+# =============================================================================
+# CATEGORY 2: HERO & LANDING SECTIONS
+# =============================================================================
+
+  # ---------------------------------------------------------------------------
+  # HERO SECTION
+  # ---------------------------------------------------------------------------
+  - id: "hero"
+    name: "Hero Section"
+    category: "hero-landing"
+    description: "Large, prominent section at top of page with headline, subheadline, and CTA"
+
+    content_slots:
+      - name: "headline"
+        required: true
+        type: "text"
+        char_min: 10
+        char_max: 60
+        word_max: 8
+        purpose: "Primary attention-grabbing statement"
+        notes: "Should be understandable in under 5 seconds"
+
+      - name: "subheadline"
+        required: true
+        type: "text"
+        char_min: 50
+        char_max: 200
+        sentence_max: 3
+        purpose: "Supporting text that elaborates on headline"
+
+      - name: "primary_cta"
+        required: true
+        type: "text"
+        char_min: 5
+        char_max: 25
+        word_max: 4
+        purpose: "Primary action button"
+        notes: "Use action verbs: Get, Start, Try, Join"
+
+      - name: "secondary_cta"
+        required: false
+        type: "text"
+        char_max: 25
+        purpose: "Alternative action (e.g., Learn More)"
+
+      - name: "hero_image"
+        required: false
+        type: "image"
+        purpose: "Visual supporting the message"
+
+    best_for:
+      - "Homepage"
+      - "Landing pages"
+      - "Product pages"
+      - "Campaign pages"
+
+    content_types:
+      - "marketing"
+      - "value-proposition"
+      - "conversion"
+
+    avoid_when:
+      - "Documentation pages"
+      - "Utility pages (settings, account)"
+      - "When immediate content access is priority"
+
+    variants:
+      - name: "centered"
+        description: "Text centered, image as background or below"
+      - name: "split"
+        description: "Text on one side, image on other (50/50)"
+      - name: "video-background"
+        description: "Autoplaying video behind text"
+      - name: "minimal"
+        description: "Text-only, no imagery"
+
+    pairs_well_with:
+      - "logo-cloud"
+      - "stats-bar"
+      - "feature-grid"
+
+    accessibility_notes: "Ensure text contrast over images, provide alt text for hero images"
+    mobile_considerations: "Stack vertically, reduce image size, ensure CTA is thumb-reachable"
+    semantic_structure: "<section><h1></h1><p></p><a></a></section>"
+
+  # ---------------------------------------------------------------------------
+  # ANNOUNCEMENT BAR
+  # ---------------------------------------------------------------------------
+  - id: "announcement-bar"
+    name: "Announcement Bar"
+    category: "hero-landing"
+    description: "Thin banner at top of page for promotions, news, or urgent messages"
+
+    content_slots:
+      - name: "message"
+        required: true
+        type: "text"
+        char_min: 20
+        char_max: 100
+        purpose: "Brief announcement text"
+
+      - name: "link_text"
+        required: false
+        type: "text"
+        char_max: 20
+        purpose: "CTA link within message"
+
+      - name: "dismiss_button"
+        required: false
+        type: "boolean"
+        default: true
+        purpose: "Allow users to close the bar"
+
+    best_for:
+      - "Sales and promotions"
+      - "Product launches"
+      - "Important updates"
+      - "Event announcements"
+
+    content_types:
+      - "announcement"
+      - "promotion"
+      - "urgent"
+
+    avoid_when:
+      - "No current announcement needed"
+      - "Message is too long/complex"
+      - "Already have multiple banners"
+
+    variants:
+      - name: "sticky"
+        description: "Remains at top while scrolling"
+      - name: "dismissible"
+        description: "User can close it"
+      - name: "countdown"
+        description: "Includes timer for limited offers"
+
+    pairs_well_with:
+      - "navbar"
+      - "hero"
+
+    accessibility_notes: "role='alert' for urgent, proper color contrast"
+    mobile_considerations: "May wrap to 2 lines, ensure touch target for dismiss"
+    semantic_structure: "<div role='banner'></div>"
+
+  # ---------------------------------------------------------------------------
+  # STATS / METRICS BAR
+  # ---------------------------------------------------------------------------
+  - id: "stats-bar"
+    name: "Statistics Bar / Metrics Section"
+    category: "hero-landing"
+    description: "Row of key metrics or achievements with numbers and labels"
+
+    content_slots:
+      - name: "stats"
+        required: true
+        type: "array"
+        min_items: 3
+        max_items: 5
+        item_structure:
+          - name: "value"
+            type: "text"
+            char_max: 10
+            purpose: "The metric number (e.g., 10K+, 99%)"
+          - name: "label"
+            type: "text"
+            char_max: 25
+            purpose: "What the number represents"
+        purpose: "Collection of impressive statistics"
+
+    best_for:
+      - "Social proof"
+      - "Company achievements"
+      - "Product metrics"
+      - "Trust building"
+
+    content_types:
+      - "social-proof"
+      - "metrics"
+      - "achievements"
+
+    avoid_when:
+      - "Numbers aren't impressive"
+      - "Metrics can't be verified"
+      - "Too many stats dilute impact"
+
+    variants:
+      - name: "inline"
+        description: "Single row, evenly spaced"
+      - name: "boxed"
+        description: "Each stat in its own card"
+      - name: "animated"
+        description: "Numbers count up on scroll"
+
+    pairs_well_with:
+      - "hero"
+      - "testimonial"
+      - "logo-cloud"
+
+    accessibility_notes: "Ensure numbers are readable, not just decorative"
+    mobile_considerations: "2x2 grid or vertical stack on small screens"
+    semantic_structure: "<section><dl><dt></dt><dd></dd></dl></section>"
+
+  # ---------------------------------------------------------------------------
+  # LOGO CLOUD
+  # ---------------------------------------------------------------------------
+  - id: "logo-cloud"
+    name: "Logo Cloud / Client Logos"
+    category: "hero-landing"
+    description: "Collection of client, partner, or press logos for social proof"
+
+    content_slots:
+      - name: "section_heading"
+        required: false
+        type: "text"
+        char_max: 50
+        purpose: "Optional heading (e.g., 'Trusted by')"
+        examples: ["Trusted by", "As seen in", "Our clients", "Partners"]
+
+      - name: "logos"
+        required: true
+        type: "array"
+        min_items: 4
+        max_items: 12
+        item_type: "image"
+        purpose: "Client/partner logo images"
+        notes: "Use grayscale or single color for consistency"
+
+    best_for:
+      - "Building trust"
+      - "Social proof"
+      - "B2B credibility"
+      - "Press mentions"
+
+    content_types:
+      - "social-proof"
+      - "trust"
+      - "clients"
+
+    avoid_when:
+      - "No recognizable clients yet"
+      - "Logos are low quality"
+      - "< 4 logos available"
+
+    variants:
+      - name: "static-grid"
+        description: "Fixed grid of logos"
+      - name: "carousel"
+        description: "Scrolling/rotating logos"
+      - name: "grayscale"
+        description: "All logos in same color for consistency"
+
+    pairs_well_with:
+      - "hero"
+      - "stats-bar"
+      - "testimonial"
+
+    accessibility_notes: "Alt text for each logo, consistent sizing"
+    mobile_considerations: "2 columns or horizontal scroll on mobile"
+    semantic_structure: "<section><ul><li><img alt='Company Name'></li></ul></section>"
+
+  # ---------------------------------------------------------------------------
+  # VALUE PROPOSITION / BENEFITS SECTION
+  # ---------------------------------------------------------------------------
+  - id: "value-prop"
+    name: "Value Proposition Section"
+    category: "hero-landing"
+    description: "Section highlighting key benefits or unique selling points"
+
+    content_slots:
+      - name: "section_heading"
+        required: true
+        type: "text"
+        char_max: 60
+        purpose: "Section title"
+
+      - name: "section_subheading"
+        required: false
+        type: "text"
+        char_max: 150
+        purpose: "Supporting text for section"
+
+      - name: "benefits"
+        required: true
+        type: "array"
+        min_items: 3
+        max_items: 6
+        item_structure:
+          - name: "icon"
+            type: "icon"
+            required: false
+          - name: "title"
+            type: "text"
+            char_max: 40
+          - name: "description"
+            type: "text"
+            char_max: 150
+        purpose: "Individual benefit items"
+
+    best_for:
+      - "Explaining product value"
+      - "Highlighting differentiators"
+      - "Marketing pages"
+
+    content_types:
+      - "benefits"
+      - "features"
+      - "marketing"
+
+    avoid_when:
+      - "Benefits aren't clearly defined"
+      - "Technical documentation"
+
+    variants:
+      - name: "icon-grid"
+        description: "Icons with titles and descriptions in grid"
+      - name: "alternating"
+        description: "Image and text alternate sides"
+      - name: "centered-stack"
+        description: "Vertically stacked, centered alignment"
+
+    pairs_well_with:
+      - "hero"
+      - "feature-grid"
+      - "cta-section"
+
+    accessibility_notes: "Decorative icons should have aria-hidden"
+    mobile_considerations: "Stack vertically, may hide icons"
+    semantic_structure: "<section><h2></h2><ul><li></li></ul></section>"
+
+# =============================================================================
+# CATEGORY 3: CONTENT DISPLAY
+# =============================================================================
+
+  # ---------------------------------------------------------------------------
+  # CARD (BASIC)
+  # ---------------------------------------------------------------------------
+  - id: "card"
+    name: "Card"
+    category: "content-display"
+    description: "Contained unit of content with image, title, description, and action"
+
+    content_slots:
+      - name: "image"
+        required: false
+        type: "image"
+        purpose: "Visual representation"
+
+      - name: "eyebrow"
+        required: false
+        type: "text"
+        char_max: 20
+        purpose: "Category or label above title"
+
+      - name: "title"
+        required: true
+        type: "text"
+        char_min: 10
+        char_max: 60
+        purpose: "Card heading"
+        notes: "10-12 characters ideal for dashboard cards"
+
+      - name: "description"
+        required: false
+        type: "text"
+        char_max: 150
+        line_max: 3
+        purpose: "Supporting text"
+        notes: "Limit to 100 chars for cleaner aesthetic"
+
+      - name: "metadata"
+        required: false
+        type: "text"
+        char_max: 30
+        purpose: "Date, author, read time, etc."
+
+      - name: "cta"
+        required: false
+        type: "text"
+        char_max: 20
+        purpose: "Action link or button"
+
+    best_for:
+      - "Blog post previews"
+      - "Product listings"
+      - "Team members"
+      - "Feature highlights"
+      - "Portfolio items"
+
+    content_types:
+      - "blog"
+      - "product"
+      - "team"
+      - "portfolio"
+      - "feature"
+
+    avoid_when:
+      - "Content requires detailed comparison"
+      - "Information density is high priority"
+      - "Tabular data is more appropriate"
+
+    variants:
+      - name: "vertical"
+        description: "Image on top, content below"
+      - name: "horizontal"
+        description: "Image on side, content beside"
+      - name: "overlay"
+        description: "Text overlays image"
+      - name: "minimal"
+        description: "No image, text-only"
+
+    pairs_well_with:
+      - "card-grid"
+      - "masonry"
+      - "pagination"
+      - "filter-controls"
+
+    accessibility_notes: "Entire card clickable via pseudo-element, not wrapping link"
+    mobile_considerations: "Full-width cards, may switch horizontal to vertical"
+    semantic_structure: "<article><img><h3></h3><p></p><a></a></article>"
+
+  # ---------------------------------------------------------------------------
+  # BENTO GRID
+  # ---------------------------------------------------------------------------
+  - id: "bento-grid"
+    name: "Bento Grid"
+    category: "content-display"
+    description: "Asymmetric grid layout with varied cell sizes for visual hierarchy"
+
+    content_slots:
+      - name: "grid_items"
+        required: true
+        type: "array"
+        min_items: 4
+        max_items: 8
+        item_structure:
+          - name: "size"
+            type: "enum"
+            options: ["small", "medium", "large", "wide", "tall"]
+          - name: "title"
+            type: "text"
+            char_max: 40
+          - name: "description"
+            type: "text"
+            char_max: 100
+          - name: "visual"
+            type: "image_or_icon"
+        purpose: "Content items with intentional size hierarchy"
+
+    best_for:
+      - "Feature showcases"
+      - "Dashboard overviews"
+      - "Landing page highlights"
+      - "Modern, editorial layouts"
+
+    content_types:
+      - "features"
+      - "dashboard"
+      - "showcase"
+
+    avoid_when:
+      - "All items have equal importance"
+      - "Content is homogeneous"
+      - "Users need to compare items directly"
+
+    variants:
+      - name: "2x3"
+        description: "2 columns, 3 rows with varied sizes"
+      - name: "3x3"
+        description: "3 columns, 3 rows"
+      - name: "asymmetric"
+        description: "Irregular but balanced layout"
+
+    pairs_well_with:
+      - "hero"
+      - "stats-bar"
+
+    accessibility_notes: "Ensure logical reading order matches visual layout"
+    mobile_considerations: "Collapse to single column, maintain visual hierarchy with stacking order"
+    semantic_structure: "<section class='grid'><article></article></section>"
+
+  # ---------------------------------------------------------------------------
+  # MASONRY GRID
+  # ---------------------------------------------------------------------------
+  - id: "masonry"
+    name: "Masonry Grid"
+    category: "content-display"
+    description: "Pinterest-style grid where items stack vertically with varying heights"
+
+    content_slots:
+      - name: "items"
+        required: true
+        type: "array"
+        min_items: 6
+        purpose: "Content items of varying heights"
+        notes: "Works best with image-heavy content"
+
+    best_for:
+      - "Image galleries"
+      - "Portfolio displays"
+      - "Social media feeds"
+      - "Content-heavy archives"
+
+    content_types:
+      - "gallery"
+      - "portfolio"
+      - "social"
+      - "images"
+
+    avoid_when:
+      - "Content should have uniform presentation"
+      - "Strict visual hierarchy needed"
+      - "Reading order is important"
+
+    variants:
+      - name: "2-column"
+        description: "Two columns, varying heights"
+      - name: "3-column"
+        description: "Three columns, varying heights"
+      - name: "responsive"
+        description: "Column count changes with viewport"
+
+    pairs_well_with:
+      - "lightbox"
+      - "filter-controls"
+      - "load-more"
+
+    accessibility_notes: "Ensure keyboard navigation follows logical order"
+    mobile_considerations: "2 columns max on mobile"
+    semantic_structure: "<div class='masonry'><article></article></div>"
+
+  # ---------------------------------------------------------------------------
+  # TIMELINE
+  # ---------------------------------------------------------------------------
+  - id: "timeline"
+    name: "Timeline"
+    category: "content-display"
+    description: "Chronological display of events or milestones"
+
+    content_slots:
+      - name: "events"
+        required: true
+        type: "array"
+        min_items: 3
+        max_items: 15
+        item_structure:
+          - name: "date"
+            type: "text"
+            char_max: 20
+          - name: "title"
+            type: "text"
+            char_max: 50
+          - name: "description"
+            type: "text"
+            char_max: 200
+          - name: "icon"
+            type: "icon"
+            required: false
+        purpose: "Chronological events or milestones"
+
+    best_for:
+      - "Company history"
+      - "Project roadmaps"
+      - "Process explanations"
+      - "Career/experience"
+
+    content_types:
+      - "history"
+      - "roadmap"
+      - "process"
+      - "milestones"
+
+    avoid_when:
+      - "Events are not chronological"
+      - "Only 1-2 events"
+      - "Complex parallel processes"
+
+    variants:
+      - name: "vertical"
+        description: "Events stacked top to bottom"
+      - name: "horizontal"
+        description: "Events arranged left to right"
+      - name: "alternating"
+        description: "Events alternate sides of center line"
+
+    pairs_well_with:
+      - "card"
+      - "collapsible"
+
+    accessibility_notes: "Use ordered list, ensure logical reading order"
+    mobile_considerations: "Vertical only on mobile, single-sided"
+    semantic_structure: "<ol class='timeline'><li><time></time><h3></h3><p></p></li></ol>"
+
+  # ---------------------------------------------------------------------------
+  # COMPARISON TABLE
+  # ---------------------------------------------------------------------------
+  - id: "comparison-table"
+    name: "Comparison Table"
+    category: "content-display"
+    description: "Side-by-side comparison of features, products, or plans"
+
+    content_slots:
+      - name: "column_headers"
+        required: true
+        type: "array"
+        min_items: 2
+        max_items: 5
+        item_char_max: 25
+        purpose: "Items being compared (product names, plan names)"
+
+      - name: "row_headers"
+        required: true
+        type: "array"
+        min_items: 3
+        max_items: 20
+        item_char_max: 40
+        purpose: "Features or criteria being compared"
+
+      - name: "cells"
+        required: true
+        type: "matrix"
+        cell_types: ["text", "checkmark", "x-mark", "value"]
+        cell_char_max: 50
+        purpose: "Comparison values"
+
+      - name: "highlighted_column"
+        required: false
+        type: "number"
+        purpose: "Index of recommended/featured option"
+
+    best_for:
+      - "Pricing plans"
+      - "Product comparisons"
+      - "Feature matrices"
+      - "Competitive analysis"
+
+    content_types:
+      - "pricing"
+      - "comparison"
+      - "features"
+
+    avoid_when:
+      - "Only 2-3 comparison points"
+      - "Items are too similar"
+      - "Mobile is primary use case"
+
+    variants:
+      - name: "sticky-header"
+        description: "Column headers stay visible while scrolling"
+      - name: "with-pricing"
+        description: "Includes price row and CTA buttons"
+      - name: "collapsible-rows"
+        description: "Feature groups can expand/collapse"
+
+    pairs_well_with:
+      - "pricing-card"
+      - "tabs"
+      - "tooltip"
+
+    accessibility_notes: "Use proper table markup, scope attributes, caption"
+    mobile_considerations: "Horizontal scroll, or transform to stacked cards"
+    semantic_structure: "<table><thead><tr><th></th></tr></thead><tbody></tbody></table>"
+
+  # ---------------------------------------------------------------------------
+  # FEATURE GRID / ICON GRID
+  # ---------------------------------------------------------------------------
+  - id: "feature-grid"
+    name: "Feature Grid / Icon Grid"
+    category: "content-display"
+    description: "Grid of features or benefits, each with icon, title, and description"
+
+    content_slots:
+      - name: "section_title"
+        required: false
+        type: "text"
+        char_max: 60
+        purpose: "Overall section heading"
+
+      - name: "features"
+        required: true
+        type: "array"
+        min_items: 3
+        max_items: 9
+        item_structure:
+          - name: "icon"
+            type: "icon"
+            required: true
+          - name: "title"
+            type: "text"
+            char_max: 40
+          - name: "description"
+            type: "text"
+            char_max: 120
+        purpose: "Individual features"
+        notes: "Use 3, 4, or 6 items for balanced grids"
+
+    best_for:
+      - "Product features"
+      - "Service offerings"
+      - "How it works"
+      - "Benefits sections"
+
+    content_types:
+      - "features"
+      - "services"
+      - "benefits"
+      - "how-it-works"
+
+    avoid_when:
+      - "Features need detailed explanation"
+      - "Items aren't parallel in structure"
+      - "Content is text-heavy"
+
+    variants:
+      - name: "3-column"
+        description: "3 features per row"
+      - name: "4-column"
+        description: "4 features per row"
+      - name: "centered"
+        description: "Icons above centered text"
+      - name: "left-aligned"
+        description: "Icons left of text block"
+
+    pairs_well_with:
+      - "hero"
+      - "cta-section"
+      - "testimonial"
+
+    accessibility_notes: "Decorative icons use aria-hidden"
+    mobile_considerations: "Single column or 2-column on mobile"
+    semantic_structure: "<section><ul><li><svg></svg><h3></h3><p></p></li></ul></section>"
+
+  # ---------------------------------------------------------------------------
+  # TESTIMONIAL
+  # ---------------------------------------------------------------------------
+  - id: "testimonial"
+    name: "Testimonial / Quote"
+    category: "content-display"
+    description: "Customer quote with attribution, photo, and credentials"
+
+    content_slots:
+      - name: "quote"
+        required: true
+        type: "text"
+        char_min: 50
+        char_max: 300
+        sentence_max: 3
+        purpose: "Customer testimonial text"
+        notes: "Ideally single sentence for maximum impact"
+
+      - name: "author_name"
+        required: true
+        type: "text"
+        char_max: 50
+        purpose: "Person giving testimonial"
+
+      - name: "author_title"
+        required: false
+        type: "text"
+        char_max: 50
+        purpose: "Job title and company"
+
+      - name: "author_photo"
+        required: false
+        type: "image"
+        purpose: "Headshot or avatar"
+
+      - name: "company_logo"
+        required: false
+        type: "image"
+        purpose: "Company logo for B2B credibility"
+
+      - name: "rating"
+        required: false
+        type: "number"
+        min: 1
+        max: 5
+        purpose: "Star rating if applicable"
+
+    best_for:
+      - "Social proof"
+      - "Trust building"
+      - "Case study excerpts"
+      - "Product validation"
+
+    content_types:
+      - "testimonial"
+      - "social-proof"
+      - "review"
+
+    avoid_when:
+      - "Testimonials aren't genuine"
+      - "No photo/attribution available"
+      - "Quote is too long/complex"
+
+    variants:
+      - name: "single"
+        description: "One prominent testimonial"
+      - name: "carousel"
+        description: "Multiple testimonials in slider"
+      - name: "grid"
+        description: "Multiple testimonials in grid layout"
+      - name: "with-video"
+        description: "Video testimonial with play button"
+
+    pairs_well_with:
+      - "logo-cloud"
+      - "cta-section"
+      - "stats-bar"
+
+    accessibility_notes: "Use blockquote, cite for attribution"
+    mobile_considerations: "Full-width, may truncate longer quotes"
+    semantic_structure: "<blockquote><p></p><cite></cite></blockquote>"
+
+  # ---------------------------------------------------------------------------
+  # QUOTE BLOCK
+  # ---------------------------------------------------------------------------
+  - id: "quote-block"
+    name: "Quote Block / Pullquote"
+    category: "content-display"
+    description: "Highlighted quote within long-form content"
+
+    content_slots:
+      - name: "quote"
+        required: true
+        type: "text"
+        char_min: 30
+        char_max: 200
+        purpose: "The quoted text"
+
+      - name: "attribution"
+        required: false
+        type: "text"
+        char_max: 50
+        purpose: "Source of quote"
+
+    best_for:
+      - "Breaking up long text"
+      - "Highlighting key insights"
+      - "Article decoration"
+      - "Interview excerpts"
+
+    content_types:
+      - "editorial"
+      - "blog"
+      - "article"
+
+    avoid_when:
+      - "Short content that doesn't need breakup"
+      - "Quote isn't impactful"
+
+    variants:
+      - name: "centered"
+        description: "Centered, larger text"
+      - name: "bordered"
+        description: "Left border accent"
+      - name: "background"
+        description: "Distinct background color"
+
+    pairs_well_with:
+      - "long-form-content"
+      - "blog-post"
+
+    accessibility_notes: "Use blockquote element"
+    mobile_considerations: "Full-width, maintain readability"
+    semantic_structure: "<blockquote><p></p></blockquote>"
+
+# =============================================================================
+# CATEGORY 4: DISCLOSURE & PROGRESSIVE
+# =============================================================================
+
+  # ---------------------------------------------------------------------------
+  # ACCORDION
+  # ---------------------------------------------------------------------------
+  - id: "accordion"
+    name: "Accordion"
+    category: "disclosure"
+    description: "Collapsible content sections, typically for FAQs"
+
+    content_slots:
+      - name: "items"
+        required: true
+        type: "array"
+        min_items: 3
+        max_items: 20
+        recommended_max: 10
+        item_structure:
+          - name: "trigger"
+            type: "text"
+            char_min: 15
+            char_max: 100
+            purpose: "Clickable header/question"
+          - name: "panel"
+            type: "text"
+            char_min: 50
+            char_max: 500
+            purpose: "Expandable content/answer"
+        purpose: "Collapsible content pairs"
+
+    best_for:
+      - "FAQ sections"
+      - "Product specifications"
+      - "Legal/policy content"
+      - "Feature details"
+
+    content_types:
+      - "faq"
+      - "help"
+      - "documentation"
+      - "legal"
+      - "specifications"
+
+    avoid_when:
+      - "Content should always be visible for SEO"
+      - "Only 1-2 items (not worth hiding)"
+      - "Critical information users must see immediately"
+      - "Users need to compare content across sections"
+
+    variants:
+      - name: "single-expand"
+        description: "Only one panel open at a time"
+      - name: "multi-expand"
+        description: "Multiple panels can be open simultaneously"
+      - name: "bordered"
+        description: "Each item has distinct border"
+      - name: "flush"
+        description: "No borders between items"
+
+    pairs_well_with:
+      - "search-bar"
+      - "anchor-nav"
+      - "tabs"
+
+    accessibility_notes: "aria-expanded, aria-controls, keyboard enter/space to toggle"
+    mobile_considerations: "Full-width, touch-friendly targets min 44px"
+    semantic_structure: "<dl><dt><button aria-expanded></dt><dd></dd></dl> or <details><summary></details>"
+
+  # ---------------------------------------------------------------------------
+  # COLLAPSIBLE / EXPANDABLE SECTION
+  # ---------------------------------------------------------------------------
+  - id: "collapsible"
+    name: "Collapsible Section"
+    category: "disclosure"
+    description: "Single expandable content area with show more/less toggle"
+
+    content_slots:
+      - name: "preview"
+        required: true
+        type: "text"
+        char_max: 200
+        purpose: "Always-visible preview content"
+
+      - name: "expanded_content"
+        required: true
+        type: "text"
+        purpose: "Additional content shown when expanded"
+
+      - name: "toggle_label"
+        required: true
+        type: "object"
+        structure:
+          collapsed: "Show more"
+          expanded: "Show less"
+        char_max: 15
+        purpose: "Toggle button text"
+
+    best_for:
+      - "Long product descriptions"
+      - "Bio/about sections"
+      - "Terms and conditions"
+
+    content_types:
+      - "long-form"
+      - "description"
+      - "bio"
+
+    avoid_when:
+      - "Content is critical and must be seen"
+      - "Content is very short"
+
+    variants:
+      - name: "read-more"
+        description: "Text-based toggle link"
+      - name: "button"
+        description: "Button-style toggle"
+      - name: "gradient-fade"
+        description: "Gradient overlay on preview"
+
+    pairs_well_with:
+      - "card"
+      - "product-description"
+
+    accessibility_notes: "aria-expanded, descriptive button label"
+    mobile_considerations: "Touch-friendly toggle"
+    semantic_structure: "<div><p></p><button aria-expanded></button><div hidden></div></div>"
+
+  # ---------------------------------------------------------------------------
+  # TOOLTIP
+  # ---------------------------------------------------------------------------
+  - id: "tooltip"
+    name: "Tooltip"
+    category: "disclosure"
+    description: "Small popup with additional information on hover/focus"
+
+    content_slots:
+      - name: "trigger"
+        required: true
+        type: "element"
+        purpose: "Element that triggers tooltip"
+
+      - name: "content"
+        required: true
+        type: "text"
+        char_max: 150
+        line_max: 3
+        purpose: "Tooltip content"
+        notes: "50-60 characters per line optimal"
+
+    best_for:
+      - "Icon explanations"
+      - "Abbreviation definitions"
+      - "Additional context"
+      - "Form field help"
+
+    content_types:
+      - "help"
+      - "context"
+      - "definition"
+
+    avoid_when:
+      - "Critical information (not accessible on touch)"
+      - "Long content that should be visible"
+      - "Mobile-first interfaces"
+
+    variants:
+      - name: "hover"
+        description: "Appears on mouse hover"
+      - name: "focus"
+        description: "Appears on keyboard focus"
+      - name: "click"
+        description: "Appears on click (better for mobile)"
+
+    pairs_well_with:
+      - "form"
+      - "icon"
+      - "table"
+
+    accessibility_notes: "role='tooltip', aria-describedby, keyboard accessible"
+    mobile_considerations: "Convert to tap-to-reveal or inline text"
+    semantic_structure: "<span aria-describedby='tooltip-id'></span><div role='tooltip' id='tooltip-id'></div>"
+
+  # ---------------------------------------------------------------------------
+  # MODAL / DIALOG
+  # ---------------------------------------------------------------------------
+  - id: "modal"
+    name: "Modal / Dialog"
+    category: "disclosure"
+    description: "Overlay dialog that requires user attention or action"
+
+    content_slots:
+      - name: "title"
+        required: true
+        type: "text"
+        char_max: 60
+        purpose: "Modal heading"
+        notes: "Be explicit and direct, avoid vague titles"
+
+      - name: "body"
+        required: true
+        type: "text"
+        char_max: 300
+        purpose: "Modal content"
+        notes: "Keep brief, use bullet points"
+
+      - name: "primary_action"
+        required: true
+        type: "text"
+        char_max: 20
+        purpose: "Primary button (e.g., Save, Delete, Confirm)"
+        notes: "Use descriptive verbs, avoid OK/Done"
+
+      - name: "secondary_action"
+        required: false
+        type: "text"
+        char_max: 15
+        default: "Cancel"
+        purpose: "Secondary/cancel button"
+
+    best_for:
+      - "Confirmations"
+      - "Form submissions"
+      - "Important messages"
+      - "Quick tasks"
+
+    content_types:
+      - "confirmation"
+      - "form"
+      - "message"
+      - "action"
+
+    avoid_when:
+      - "Content is informational only (use toast)"
+      - "Task is complex/multi-step"
+      - "Frequent/annoying interruptions"
+
+    variants:
+      - name: "alert"
+        description: "Simple confirmation with single action"
+      - name: "form"
+        description: "Contains form inputs"
+      - name: "full-screen"
+        description: "Takes entire viewport on mobile"
+
+    pairs_well_with:
+      - "form"
+      - "button"
+
+    accessibility_notes: "role='dialog', aria-modal, focus trap, escape to close"
+    mobile_considerations: "May be full-screen, ensure touch targets"
+    semantic_structure: "<dialog><h2></h2><p></p><button></button></dialog>"
+
+# =============================================================================
+# CATEGORY 5: FORMS & INPUT
+# =============================================================================
+
+  # ---------------------------------------------------------------------------
+  # CONTACT FORM
+  # ---------------------------------------------------------------------------
+  - id: "contact-form"
+    name: "Contact Form"
+    category: "forms"
+    description: "Standard form for collecting user inquiries"
+
+    content_slots:
+      - name: "form_title"
+        required: false
+        type: "text"
+        char_max: 50
+        purpose: "Form heading"
+
+      - name: "form_description"
+        required: false
+        type: "text"
+        char_max: 150
+        purpose: "Instructions or context"
+
+      - name: "fields"
+        required: true
+        type: "array"
+        common_fields:
+          - name: "name"
+            label_char_max: 20
+            placeholder: false
+            required: true
+          - name: "email"
+            label_char_max: 20
+            placeholder: false
+            required: true
+          - name: "subject"
+            label_char_max: 25
+            placeholder: false
+            required: false
+          - name: "message"
+            label_char_max: 20
+            placeholder: false
+            required: true
+            char_max: 1000
+        purpose: "Form input fields"
+
+      - name: "submit_button"
+        required: true
+        type: "text"
+        char_max: 20
+        default: "Send Message"
+        purpose: "Submit button text"
+
+      - name: "privacy_note"
+        required: false
+        type: "text"
+        char_max: 100
+        purpose: "Privacy policy reference"
+
+    best_for:
+      - "Contact pages"
+      - "Support requests"
+      - "General inquiries"
+
+    content_types:
+      - "contact"
+      - "support"
+      - "inquiry"
+
+    avoid_when:
+      - "Simple email link would suffice"
+      - "Chat widget is available"
+
+    variants:
+      - name: "minimal"
+        description: "Name, email, message only"
+      - name: "detailed"
+        description: "Includes subject, phone, company"
+      - name: "with-topics"
+        description: "Dropdown for inquiry type"
+
+    pairs_well_with:
+      - "card"
+      - "contact-info"
+
+    accessibility_notes: "Labels not placeholders, aria-describedby for hints, proper error messages"
+    mobile_considerations: "Full-width fields, large touch targets"
+    semantic_structure: "<form><label><input></label><button type='submit'></button></form>"
+
+  # ---------------------------------------------------------------------------
+  # NEWSLETTER SIGNUP
+  # ---------------------------------------------------------------------------
+  - id: "newsletter-signup"
+    name: "Newsletter Signup Form"
+    category: "forms"
+    description: "Email capture form for newsletter subscriptions"
+
+    content_slots:
+      - name: "headline"
+        required: false
+        type: "text"
+        char_max: 50
+        purpose: "Attention-grabbing title"
+        examples: ["Get weekly insights", "Join 50,000+ subscribers"]
+
+      - name: "description"
+        required: false
+        type: "text"
+        char_max: 100
+        purpose: "Value proposition"
+
+      - name: "email_placeholder"
+        required: false
+        type: "text"
+        char_max: 30
+        default: "Enter your email"
+        purpose: "Input placeholder (use sparingly)"
+
+      - name: "submit_button"
+        required: true
+        type: "text"
+        char_max: 20
+        purpose: "CTA button"
+        examples: ["Subscribe", "Get Updates", "Join Free"]
+
+      - name: "privacy_note"
+        required: false
+        type: "text"
+        char_max: 80
+        purpose: "Privacy assurance"
+        examples: ["No spam. Unsubscribe anytime."]
+
+    best_for:
+      - "Email list building"
+      - "Content marketing"
+      - "Lead generation"
+
+    content_types:
+      - "newsletter"
+      - "email-capture"
+      - "lead-gen"
+
+    avoid_when:
+      - "No email marketing strategy"
+      - "Site already has prominent signup"
+
+    variants:
+      - name: "inline"
+        description: "Single row with input and button"
+      - name: "stacked"
+        description: "Input above button"
+      - name: "with-name"
+        description: "Includes first name field"
+      - name: "popup"
+        description: "Modal/slide-in format"
+
+    pairs_well_with:
+      - "footer-nav"
+      - "blog-post"
+      - "exit-popup"
+
+    accessibility_notes: "Visible label (not just placeholder), clear success/error messages"
+    mobile_considerations: "Full-width, large button"
+    semantic_structure: "<form><label><input type='email'></label><button></button></form>"
+
+  # ---------------------------------------------------------------------------
+  # SEARCH BAR
+  # ---------------------------------------------------------------------------
+  - id: "search-bar"
+    name: "Search Bar"
+    category: "forms"
+    description: "Input field for site or content search"
+
+    content_slots:
+      - name: "placeholder"
+        required: true
+        type: "text"
+        char_max: 40
+        default: "Search..."
+        purpose: "Input placeholder"
+
+      - name: "button_label"
+        required: false
+        type: "text"
+        char_max: 10
+        default: "Search"
+        purpose: "Submit button text (if visible)"
+
+    best_for:
+      - "Content-heavy sites"
+      - "E-commerce"
+      - "Documentation"
+      - "Knowledge bases"
+
+    content_types:
+      - "search"
+      - "navigation"
+
+    avoid_when:
+      - "Site has < 20 pages"
+      - "Navigation is sufficient"
+
+    variants:
+      - name: "icon-only"
+        description: "Magnifying glass icon, expands on click"
+      - name: "full-width"
+        description: "Prominent search bar"
+      - name: "with-autocomplete"
+        description: "Shows suggestions while typing"
+
+    pairs_well_with:
+      - "navbar"
+      - "filter-controls"
+      - "results-list"
+
+    accessibility_notes: "role='search', proper labeling, keyboard accessible"
+    mobile_considerations: "May be hidden behind icon, full-width when active"
+    semantic_structure: "<form role='search'><label><input type='search'></label></form>"
+
+  # ---------------------------------------------------------------------------
+  # FILTER CONTROLS
+  # ---------------------------------------------------------------------------
+  - id: "filter-controls"
+    name: "Filter Controls"
+    category: "forms"
+    description: "Controls for filtering content listings"
+
+    content_slots:
+      - name: "filter_groups"
+        required: true
+        type: "array"
+        max_items: 6
+        item_structure:
+          - name: "label"
+            type: "text"
+            char_max: 20
+          - name: "type"
+            type: "enum"
+            options: ["dropdown", "checkbox-group", "range", "toggle"]
+          - name: "options"
+            type: "array"
+            item_char_max: 25
+        purpose: "Filter categories and options"
+
+      - name: "clear_all"
+        required: false
+        type: "text"
+        char_max: 15
+        default: "Clear all"
+        purpose: "Reset filters button"
+
+    best_for:
+      - "Product listings"
+      - "Search results"
+      - "Job boards"
+      - "Real estate listings"
+
+    content_types:
+      - "filter"
+      - "search"
+      - "listing"
+
+    avoid_when:
+      - "< 20 items to filter"
+      - "Items don't have filterable attributes"
+
+    variants:
+      - name: "sidebar"
+        description: "Vertical filters in sidebar"
+      - name: "horizontal"
+        description: "Filters in row above content"
+      - name: "drawer"
+        description: "Filters in slide-out panel (mobile)"
+
+    pairs_well_with:
+      - "card-grid"
+      - "search-bar"
+      - "pagination"
+
+    accessibility_notes: "Announce filter changes to screen readers, clear labeling"
+    mobile_considerations: "Collapse to drawer or modal"
+    semantic_structure: "<aside><form><fieldset><legend></legend></fieldset></form></aside>"
+
+  # ---------------------------------------------------------------------------
+  # MULTI-STEP FORM / WIZARD
+  # ---------------------------------------------------------------------------
+  - id: "multi-step-form"
+    name: "Multi-Step Form / Wizard"
+    category: "forms"
+    description: "Form broken into sequential steps with progress indicator"
+
+    content_slots:
+      - name: "steps"
+        required: true
+        type: "array"
+        min_items: 2
+        max_items: 7
+        item_structure:
+          - name: "step_title"
+            type: "text"
+            char_max: 30
+          - name: "step_description"
+            type: "text"
+            char_max: 100
+          - name: "fields"
+            type: "array"
+        purpose: "Individual form steps"
+
+      - name: "progress_labels"
+        required: false
+        type: "array"
+        item_char_max: 20
+        purpose: "Labels shown in progress indicator"
+
+      - name: "back_button"
+        required: true
+        type: "text"
+        char_max: 15
+        default: "Back"
+        purpose: "Previous step button"
+
+      - name: "next_button"
+        required: true
+        type: "text"
+        char_max: 15
+        default: "Continue"
+        purpose: "Next step button"
+
+      - name: "submit_button"
+        required: true
+        type: "text"
+        char_max: 20
+        purpose: "Final submit button"
+
+    best_for:
+      - "Complex forms (registration, checkout)"
+      - "Onboarding flows"
+      - "Surveys"
+      - "Application forms"
+
+    content_types:
+      - "registration"
+      - "checkout"
+      - "onboarding"
+      - "application"
+
+    avoid_when:
+      - "Form has < 5 fields"
+      - "All fields need to be visible together"
+      - "Steps don't have logical groupings"
+
+    variants:
+      - name: "numbered-steps"
+        description: "Progress shown as 1, 2, 3..."
+      - name: "labeled-steps"
+        description: "Progress shows step names"
+      - name: "progress-bar"
+        description: "Percentage-based progress"
+
+    pairs_well_with:
+      - "progress-indicator"
+      - "form-validation"
+
+    accessibility_notes: "Announce step changes, maintain focus, allow back navigation"
+    mobile_considerations: "One step per screen, sticky navigation"
+    semantic_structure: "<form><fieldset><legend></legend></fieldset></form>"
+
+  # ---------------------------------------------------------------------------
+  # RATING INPUT
+  # ---------------------------------------------------------------------------
+  - id: "rating-input"
+    name: "Rating Input"
+    category: "forms"
+    description: "Star rating or similar scale input"
+
+    content_slots:
+      - name: "label"
+        required: true
+        type: "text"
+        char_max: 50
+        purpose: "What is being rated"
+
+      - name: "scale_max"
+        required: true
+        type: "number"
+        default: 5
+        options: [3, 5, 10]
+        purpose: "Maximum rating value"
+
+      - name: "labels"
+        required: false
+        type: "object"
+        structure:
+          low: "Poor"
+          high: "Excellent"
+        purpose: "Labels for scale ends"
+
+    best_for:
+      - "Product reviews"
+      - "Feedback forms"
+      - "NPS surveys"
+      - "Service ratings"
+
+    content_types:
+      - "review"
+      - "feedback"
+      - "rating"
+
+    avoid_when:
+      - "Detailed feedback is needed"
+      - "Rating context is unclear"
+
+    variants:
+      - name: "stars"
+        description: "Traditional star icons"
+      - name: "numeric"
+        description: "Number scale (1-10)"
+      - name: "emoji"
+        description: "Facial expressions for sentiment"
+
+    pairs_well_with:
+      - "review-form"
+      - "feedback-form"
+
+    accessibility_notes: "radio group with proper labeling, keyboard accessible"
+    mobile_considerations: "Large touch targets for stars"
+    semantic_structure: "<fieldset><legend></legend><input type='radio'></fieldset>"

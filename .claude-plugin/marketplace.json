@@ -5,5 +5,12 @@
   "owner": {
     "name": "Oktodigital"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "oktodigital-brand-voice",
+      "version": "1.0.0",
+      "description": "Generate and modify content aligned with okto-digital's brand voice (Reliable, Genuine, Curious) across all channels and formats. Includes 15-dimension voice framework, 9 specialized skills, website content workflow, and anti-boring content principles.",
+      "path": "plugins/oktodigital-brand-voice"
+    }
+  ]
 }
