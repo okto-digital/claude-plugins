@@ -1,16 +1,21 @@
-# Oktodigital Claude Code Plugins
+# Oktodigital Plugins
 
-A marketplace of Claude Code plugins built and maintained by Oktodigital.
+Plugins built and maintained by Oktodigital. Built for Claude Cowork, also compatible with Claude Code.
 
 ## Installation
 
-### From GitHub (production)
+### Claude Code (CLI)
 
-```
-/plugin install <plugin-name>@oktodigital
+```bash
+claude plugin marketplace add okto-digital/claude-plugins
+claude plugin install oktodigital-brand-voice@oktodigital
 ```
 
-### From local directory (development)
+### Claude Cowork
+
+Install from the Cowork plugin interface or use the CLI commands above.
+
+### Local development
 
 Add to your Claude Code settings (`~/.claude/settings.json`):
 
@@ -20,7 +25,7 @@ Add to your Claude Code settings (`~/.claude/settings.json`):
     "oktodigital": {
       "source": {
         "source": "directory",
-        "path": "/path/to/oktodigital-marketplace"
+        "path": "/path/to/claude-plugins"
       }
     }
   }
@@ -29,31 +34,32 @@ Add to your Claude Code settings (`~/.claude/settings.json`):
 
 Then install any plugin:
 
-```
-/plugin install <plugin-name>@oktodigital
+```bash
+claude plugin install oktodigital-brand-voice@oktodigital
 ```
 
 ## Available Plugins
 
-See [marketplace.json](.claude-plugin/marketplace.json) for the full list of available plugins.
+| Plugin | Description |
+|--------|-------------|
+| [oktodigital-brand-voice](./oktodigital-brand-voice) | Brand voice content generation with 15-dimension voice framework, 9 specialized skills, and website content workflow |
 
 ## Structure
 
 ```
-oktodigital-marketplace/
-  .claude-plugin/
-    marketplace.json          # Marketplace index
-  plugins/
-    <plugin-name>/
-      .claude-plugin/
-        plugin.json           # Plugin manifest
-      skills/                 # Plugin skills
-      commands/               # Plugin commands
-      agents/                 # Plugin agents
-      hooks/                  # Plugin hooks
-      README.md
+claude-plugins/
+├── .claude-plugin/
+│   └── marketplace.json
+├── oktodigital-brand-voice/
+│   ├── .claude-plugin/plugin.json
+│   ├── skills/
+│   ├── commands/
+│   ├── agents/
+│   ├── hooks/
+│   └── docs/
+└── README.md
 ```
 
 ## Contributing
 
-Each plugin lives in `plugins/<plugin-name>/` and must include a valid `.claude-plugin/plugin.json` manifest. When adding a new plugin, also add its entry to the root `marketplace.json`.
+Each plugin lives at the repository root as `<plugin-name>/` and must include a valid `.claude-plugin/plugin.json` manifest. When adding a new plugin, also add its entry to the root `marketplace.json`.

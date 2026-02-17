@@ -4,9 +4,5 @@
   "description": "Generate and modify content aligned with okto-digital's brand voice (Reliable, Genuine, Curious) across all channels and formats. Includes 15-dimension voice framework, 9 specialized skills, website content workflow, and anti-boring content principles.",
   "author": {
     "name": "Oktodigital"
-  },
-  "skills": "skills/",
-  "agents": "agents/",
-  "hooks": "hooks/",
-  "docs": "docs/"
+  }
 }
