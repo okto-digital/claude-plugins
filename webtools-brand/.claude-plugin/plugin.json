@@ -1,0 +1,8 @@
+{
+  "name": "webtools-brand",
+  "version": "1.0.0",
+  "description": "Brand voice profiling for the webtools website pipeline. Extracts voice patterns from existing content or co-creates new brand voice through iterative exploration. Produces D2: Brand Voice Profile.",
+  "author": {
+    "name": "Oktodigital"
+  }
+}
