@@ -1,0 +1,8 @@
+{
+  "name": "webtools-architecture",
+  "version": "1.0.0",
+  "description": "Site architecture planning for the webtools website pipeline. Makes strategic decisions about site structure, navigation, and user flows through conversational collaboration. Produces D4: Site Architecture.",
+  "author": {
+    "name": "Oktodigital"
+  }
+}

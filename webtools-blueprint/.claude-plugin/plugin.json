@@ -1,0 +1,8 @@
+{
+  "name": "webtools-blueprint",
+  "version": "1.0.0",
+  "description": "Page blueprint generation for the webtools website pipeline. Co-creates page structures section by section through strategic conversation, consulting a Knowledge Base of proven patterns. Produces D7: Page Blueprint (one per page).",
+  "author": {
+    "name": "Oktodigital"
+  }
+}

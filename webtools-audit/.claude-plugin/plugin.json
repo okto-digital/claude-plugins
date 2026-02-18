@@ -1,0 +1,8 @@
+{
+  "name": "webtools-audit",
+  "version": "1.0.0",
+  "description": "Content quality auditing for the webtools website pipeline. Evaluates generated content against SEO targets, readability standards, brand voice consistency, and heading structure. Produces D10: Content Audit Report.",
+  "author": {
+    "name": "Oktodigital"
+  }
+}

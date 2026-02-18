@@ -1,0 +1,8 @@
+{
+  "name": "webtools-inventory",
+  "version": "1.0.0",
+  "description": "Content inventory and migration analysis for the webtools website pipeline. Crawls existing client sites, catalogs content with quality assessments, and produces migration recommendations. Generates D6: Content Inventory.",
+  "author": {
+    "name": "Oktodigital"
+  }
+}

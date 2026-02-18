@@ -1,0 +1,8 @@
+{
+  "name": "webtools-intake",
+  "version": "1.0.0",
+  "description": "Client intake and project brief creation for the webtools website pipeline. Generates tailored questionnaires (/questionnaire) and produces structured project briefs through conversational collaboration (brief-generator agent).",
+  "author": {
+    "name": "Oktodigital"
+  }
+}

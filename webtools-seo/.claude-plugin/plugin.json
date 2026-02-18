@@ -1,0 +1,8 @@
+{
+  "name": "webtools-seo",
+  "version": "1.0.0",
+  "description": "SEO keyword research for the webtools website pipeline. Produces keyword clusters with page mapping following a structured methodology. Generates D3: SEO Keyword Map.",
+  "author": {
+    "name": "Oktodigital"
+  }
+}

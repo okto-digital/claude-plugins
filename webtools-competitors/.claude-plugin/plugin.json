@@ -1,0 +1,8 @@
+{
+  "name": "webtools-competitors",
+  "version": "1.0.0",
+  "description": "Competitor and reference site analysis for the webtools website pipeline. Crawls competitor sites and produces structural and content intelligence. Generates D5: Competitor Analysis.",
+  "author": {
+    "name": "Oktodigital"
+  }
+}

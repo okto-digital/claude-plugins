@@ -8,6 +8,56 @@
       "name": "oktodigital-brand-voice",
       "source": "./oktodigital-brand-voice",
       "description": "Generate and modify content aligned with okto-digital's brand voice (Reliable, Genuine, Curious) across all channels and formats. Includes 15-dimension voice framework, 9 specialized skills, website content workflow, and anti-boring content principles."
+    },
+    {
+      "name": "webtools-init",
+      "source": "./webtools-init",
+      "description": "Project initialization, health checks, and registry management for the webtools website creation pipeline. Commands: /webtools-init, /webtools-health, /webtools-rebuild, /webtools-status."
+    },
+    {
+      "name": "webtools-intake",
+      "source": "./webtools-intake",
+      "description": "Client intake and project brief creation. Generate tailored questionnaires (/questionnaire) and produce structured project briefs through conversational collaboration (brief-generator agent). Produces D11 and D1."
+    },
+    {
+      "name": "webtools-brand",
+      "source": "./webtools-brand",
+      "description": "Brand voice profiling. Extract voice patterns from existing content or co-create new brand voice through iterative exploration. Produces D2: Brand Voice Profile."
+    },
+    {
+      "name": "webtools-seo",
+      "source": "./webtools-seo",
+      "description": "SEO keyword research. Produce keyword clusters with page mapping, intent classification, and priority ranking. Produces D3: SEO Keyword Map."
+    },
+    {
+      "name": "webtools-competitors",
+      "source": "./webtools-competitors",
+      "description": "Competitor and reference site analysis. Crawl competitor sites and produce structural and content intelligence with cross-site pattern analysis. Produces D5: Competitor Analysis."
+    },
+    {
+      "name": "webtools-inventory",
+      "source": "./webtools-inventory",
+      "description": "Content inventory and migration analysis. Crawl existing client sites, catalog content with quality assessments, and produce migration recommendations. Produces D6: Content Inventory."
+    },
+    {
+      "name": "webtools-architecture",
+      "source": "./webtools-architecture",
+      "description": "Site architecture planning. Make strategic decisions about site structure, navigation, URL slugs, and user flows through conversational collaboration. Produces D4: Site Architecture."
+    },
+    {
+      "name": "webtools-blueprint",
+      "source": "./webtools-blueprint",
+      "description": "Page blueprint generation. Co-create page structures section by section using a Knowledge Base of proven patterns. Works one page at a time. Produces D7: Page Blueprint."
+    },
+    {
+      "name": "webtools-writer",
+      "source": "./webtools-writer",
+      "description": "Content and microcopy generation. Generate page content from blueprints following brand voice (content-generator) and produce all UI text elements (microcopy-generator). Produces D8 and D9."
+    },
+    {
+      "name": "webtools-audit",
+      "source": "./webtools-audit",
+      "description": "Content quality auditing. Evaluate generated content against SEO targets, readability standards, brand voice consistency, and heading structure. Produces D10: Content Audit Report."
     }
   ]
 }
