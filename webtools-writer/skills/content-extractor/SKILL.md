@@ -55,7 +55,7 @@ Extraction methods available:
 Ready to extract.
 ```
 
-**Tool detection (shell-agnostic):** Do not assume a specific shell tool. Check for ANY available shell execution tool -- Bash, Desktop Commander, terminal MCP, or similar. If any shell tool is available, run `which curl` to verify curl is installed. If no shell tool exists (e.g., cloud-only Cowork session), method 1 is unavailable.
+**Tool detection (shell-agnostic):** Do not assume a specific shell tool. Check for ANY available shell execution tool -- Bash, Desktop Commander, terminal MCP, or similar. If any shell tool is available, run `which curl` to verify curl is installed. If no shell tool exists (e.g., cloud-only Cowork session without Desktop Commander), method 1 is unavailable. **In cloud environments (Cowork), prefer Desktop Commander over VM Bash** -- Desktop Commander runs on the user's machine (residential IP, bypasses WAFs), while VM Bash runs from datacenter IPs (blocked by most WAFs).
 
 **Browser tool detection:** Check if browser tools (e.g., `browser_navigate`, `browser_evaluate`) are accessible. If available, methods 3 and 4 are available.
 

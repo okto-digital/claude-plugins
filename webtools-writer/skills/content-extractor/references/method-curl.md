@@ -4,11 +4,18 @@ Preferred extraction method. curl follows redirects transparently, reports the f
 
 **Requires shell access.** This method works with any shell execution tool -- Bash, Desktop Commander, terminal MCP, or similar. If no shell tool is available, skip to Method 2.
 
+<critical>
+**Shell tool priority in cloud environments (Cowork):**
+If multiple shell tools are available, prefer tools that execute on the **user's local machine** (e.g., Desktop Commander) over tools that execute on the **cloud VM** (e.g., Bash in Cowork). Cloud VMs use datacenter IPs that get blocked by WAFs (curl exits with code 56 or returns 403). Desktop Commander runs on the user's machine with their residential/office IP, bypassing WAF restrictions.
+
+**If the first curl attempt fails with exit code 56 (connection reset) or HTTP 403, and Desktop Commander is available, retry immediately via Desktop Commander before moving to Method 2.** Do not waste attempts retrying with the same tool.
+</critical>
+
 ---
 
 ## Step 1: Fetch raw HTML
 
-Run via any available shell tool (Bash, Desktop Commander, etc.):
+Run via any available shell tool (preferring Desktop Commander over VM Bash in cloud environments):
 
 ```bash
 curl -sL -w '\n__FINAL_URL__:%{url_effective}\n__HTTP_CODE__:%{http_code}' \
@@ -28,7 +35,7 @@ Check the output:
 
 ## Step 2: Extract meta tags
 
-Run via Bash:
+Run via shell (or read the file directly and extract manually):
 
 ```bash
 # Extract meta title
