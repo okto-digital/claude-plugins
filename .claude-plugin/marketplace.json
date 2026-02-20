@@ -52,7 +52,7 @@
     {
       "name": "webtools-writer",
       "source": "./webtools-writer",
-      "description": "Content and microcopy generation. Generate page content from blueprints following brand voice (content-generator) and produce all UI text elements (microcopy-generator). Produces D8 and D9."
+      "description": "Content generation, microcopy, and live page extraction. Generate page content from blueprints following brand voice (content-generator), produce all UI text elements (microcopy-generator), and extract content from live web pages for revision (content-extractor). Produces D8 and D9."
     },
     {
       "name": "webtools-audit",
