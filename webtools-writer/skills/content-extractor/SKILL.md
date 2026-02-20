@@ -67,6 +67,11 @@ Extract ONLY the main content area of this page. Skip completely:
 - Cookie banners and popups
 - Breadcrumbs
 
+IMPORTANT: Include content from ALL expandable/collapsible elements -- FAQs, accordions,
+toggles, "read more" sections, tabbed content panels, and any <details>/<summary> elements.
+Treat collapsed content as if it were fully expanded. Extract the full text from every
+collapsible item, not just the visible summary/heading.
+
 Return the main content as clean markdown with:
 - Heading hierarchy preserved (h1 through h6 as # through ######)
 - Bold text as **bold**
@@ -109,6 +114,7 @@ Inspect the extracted content for quality:
 - Remove any remaining navigation artifacts or repeated elements
 - Remove any HTML tags that were not converted to markdown
 - Fix any broken formatting (unclosed bold, misformatted lists)
+- **Check for missing collapsed content:** Look for signs of FAQs, accordions, or expandable sections on the page (e.g., FAQ headings with no answers, numbered items with only titles). If collapsed content appears to be missing, flag it and attempt re-extraction with browser tools if available.
 
 ### Step 2b: Fallback -- Browser Extraction
 
@@ -118,8 +124,28 @@ If WebFetch fails (403 Forbidden, timeout, empty content, or JS-rendered page), 
 
 1. Navigate to the URL using `browser_navigate`.
 2. Wait for the page to fully load (use `browser_wait_for` if needed).
-3. Take a snapshot using `browser_snapshot` to get the page content.
-4. Extract the main content from the snapshot, applying the same rules as Step 1 (skip header, nav, sidebar, footer; preserve heading hierarchy, formatting, links, images).
+3. **Expand all collapsible content** before extracting. Use `browser_evaluate` to open every collapsed element:
+   ```javascript
+   () => {
+     // Expand <details> elements
+     document.querySelectorAll('details:not([open])').forEach(d => d.setAttribute('open', ''));
+     // Click accordion triggers (common patterns)
+     document.querySelectorAll(
+       '[aria-expanded="false"], .accordion-trigger, .faq-question, ' +
+       '.collapse-toggle, [data-toggle="collapse"], .expandable:not(.expanded)'
+     ).forEach(el => el.click());
+     // Expand "read more" buttons
+     document.querySelectorAll(
+       '.read-more, .show-more, [data-action="expand"], .truncated-toggle'
+     ).forEach(el => el.click());
+     // Open all tabs to capture tabbed content
+     document.querySelectorAll('.tab-trigger, [role="tab"]').forEach(el => el.click());
+     return 'expanded';
+   }
+   ```
+   Wait 1-2 seconds after expanding for content to render (`browser_wait_for` with time).
+4. Take a snapshot using `browser_snapshot` to get the full page content.
+5. Extract the main content from the snapshot, applying the same rules as Step 1 (skip header, nav, sidebar, footer; preserve heading hierarchy, formatting, links, images).
 5. Extract meta title and meta description using `browser_evaluate`:
    ```javascript
    () => {
