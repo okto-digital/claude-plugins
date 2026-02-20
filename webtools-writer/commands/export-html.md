@@ -78,7 +78,7 @@ Read the full contents of the source `.md` file.
 
 ### 2. Strip YAML frontmatter
 
-Remove everything between the opening `---` and closing `---` at the top of the file. Preserve the frontmatter values in memory -- the `title`, `source_url`, and `meta_title` fields are used in step 4.
+Remove everything between the opening `---` and closing `---` at the top of the file. Preserve the frontmatter values in memory -- the `title`, `source_url`, `meta_title`, and `meta_description` fields are used when writing the HTML file.
 
 ### 3. Convert markdown to semantic HTML
 
@@ -153,6 +153,8 @@ Add a metadata comment at the very top of the file:
   Source: [source .md filename]
   Exported: [today's date YYYY-MM-DD]
   Original URL: [source_url from frontmatter, or "n/a" if not present]
+  Meta Title: [meta_title from frontmatter, or "n/a" if not present]
+  Meta Description: [meta_description from frontmatter, or "n/a" if not present]
 -->
 ```
 
