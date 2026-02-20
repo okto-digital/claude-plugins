@@ -54,12 +54,56 @@ Accepts input in any format: meeting notes, questionnaire answers, URLs, bullet 
 
 **Output:** `brief/D1-project-brief.md`
 
+#### Domain Validation
+
+The brief-generator validates extracted information against comprehensive domain checklists stored in `references/domains/`. Each domain covers an area of website development expertise with checkpoints tagged by priority (CRITICAL / IMPORTANT / NICE-TO-HAVE).
+
+The agent reads all domain files dynamically, scores the input against every checkpoint, and produces a structured gap report. Questions to fill gaps follow priority order (CRITICAL first) and use an Option A / Option B format to reduce cognitive load.
+
+- **15 universal domains** -- always evaluated regardless of project type
+- **6 conditional domains** -- evaluated only when relevant (e.g., e-commerce, multilingual)
+
 ## Documents Produced
 
 | Doc ID | Document | File Path |
 |--------|----------|-----------|
 | D11 | Client Questionnaire | `brief/D11-client-questionnaire.md` |
 | D1 | Project Brief | `brief/D1-project-brief.md` |
+
+## Reference Files
+
+Domain checklists used by the brief-generator for gap analysis. Located in `references/domains/`.
+
+### Universal Domains (always evaluated)
+
+| # | File | Focus |
+|---|---|---|
+| 1 | `business-context.md` | Business identity, goals, value proposition, market position |
+| 2 | `target-audience.md` | Primary/secondary personas, needs, behavior, decision journey |
+| 3 | `competitive-landscape.md` | Named competitors, strengths/gaps, differentiation strategy |
+| 4 | `content-strategy.md` | Existing content, content creation plan, messaging hierarchy |
+| 5 | `site-structure.md` | Page inventory, navigation model, information architecture, user flows |
+| 6 | `design-and-brand.md` | Brand identity status, visual style, imagery, typography |
+| 7 | `seo-and-discoverability.md` | Keyword strategy, technical SEO, URL structure, local SEO |
+| 8 | `technical-platform.md` | CMS/platform, hosting, infrastructure, integrations |
+| 9 | `performance.md` | Page speed targets, Core Web Vitals, optimization |
+| 10 | `accessibility.md` | WCAG compliance, assistive technology, inclusive design |
+| 11 | `analytics-and-measurement.md` | Tracking setup, KPIs, conversion events, reporting |
+| 12 | `security-and-compliance.md` | SSL, GDPR/CCPA, cookie consent, regulations |
+| 13 | `forms-and-lead-capture.md` | Contact forms, CTAs, lead flow, CRM integration |
+| 14 | `project-scope.md` | Timeline, budget, milestones, phasing, approvals |
+| 15 | `post-launch.md` | Maintenance, content updates, hosting, support |
+
+### Conditional Domains (evaluated when applicable)
+
+| # | File | Applies When |
+|---|---|---|
+| 16 | `ecommerce.md` | Products or services sold online |
+| 17 | `blog-and-editorial.md` | Regular content publishing planned |
+| 18 | `multilingual.md` | Multiple languages needed |
+| 19 | `user-accounts.md` | Login, membership, or gated content |
+| 20 | `migration-and-redesign.md` | Existing site to migrate from |
+| 21 | `booking-and-scheduling.md` | Appointment or reservation functionality |
 
 ## Part of the Webtools Suite
 
