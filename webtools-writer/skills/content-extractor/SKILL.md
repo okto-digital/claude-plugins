@@ -72,14 +72,27 @@ toggles, "read more" sections, tabbed content panels, and any <details>/<summary
 Treat collapsed content as if it were fully expanded. Extract the full text from every
 collapsible item, not just the visible summary/heading.
 
+CRITICAL -- YOU MUST preserve these elements. Do NOT strip them out or simplify them:
+
+1. LINKS: Every hyperlink MUST be preserved as [link text](URL "title").
+   Keep the full href URL. Include the title attribute in quotes if present.
+   Do NOT convert links to plain text. Do NOT omit URLs.
+
+2. IMAGES: Every image MUST be preserved as ![alt text](image-src "title").
+   Keep the full src URL. Include alt text AND title attribute if present.
+   Do NOT skip images. Do NOT omit alt/title descriptions.
+
+3. TEXT FORMATTING: Bold (**text**), italic (*text*), and all inline
+   formatting MUST be preserved exactly.
+
 Return the main content as clean markdown with:
 - Heading hierarchy preserved (h1 through h6 as # through ######)
 - Bold text as **bold**
 - Italic text as *italic*
 - Bulleted lists as - items
 - Numbered lists as 1. items
-- Links as [link text](URL "title") -- include the title attribute if present in the HTML
-- Images as ![alt text](image-src "title") -- include both alt and title if present in the HTML
+- Links as [link text](URL "title") -- MUST include full URL and title if present
+- Images as ![alt text](image-src "title") -- MUST include src, alt, and title
 - Block quotes as > text
 - Tables preserved in markdown table format if present
 - Horizontal rules as ---
@@ -106,11 +119,12 @@ META_DESCRIPTION: [meta description content]
 
 ### Step 2: Review Raw Extraction
 
-Inspect the extracted content for quality:
+Inspect the extracted content for quality. **This step is mandatory -- do not skip any check.**
 
 - Verify headings follow a logical hierarchy (one H1, H2s for sections, etc.)
-- Check that links are properly formatted with URLs
-- Check that images have alt text
+- **LINKS CHECK (critical):** Verify every link has a full URL, not just anchor text. If any links were converted to plain text, re-extract them. Count the links found.
+- **IMAGES CHECK (critical):** Verify every image has the src URL and alt text. If images were omitted or reduced to text descriptions, re-extract them. Count the images found.
+- **FORMATTING CHECK:** Verify bold, italic, and other inline formatting is preserved. If text appears flattened (no bold/italic), re-extract.
 - Remove any remaining navigation artifacts or repeated elements
 - Remove any HTML tags that were not converted to markdown
 - Fix any broken formatting (unclosed bold, misformatted lists)
@@ -183,8 +197,9 @@ Meta title: [extracted meta title, or "not found"]
 Meta description: [extracted meta description, or "not found"]
 Word count: [count]
 Headings found: [count] (H1: [n], H2: [n], H3: [n], ...)
-Links found: [count]
-Images found: [count]
+Links preserved: [count] (all with full URLs)
+Images preserved: [count] (all with alt text)
+Formatting: bold [count], italic [count]
 
 ---
 
@@ -193,6 +208,9 @@ Images found: [count]
 ---
 
 Review this extraction:
+- Are ALL links present with full URLs? (not converted to plain text)
+- Are ALL images present with alt text and src URLs?
+- Is bold/italic formatting preserved throughout?
 - Is the main content complete? (nothing missing?)
 - Was any unwanted content included? (nav, footer, sidebar?)
 - Are there formatting issues to fix?
