@@ -1,4 +1,4 @@
-# Method 4: Paste-in Fallback
+# Method 5: Paste-in Fallback
 
 Manual content extraction when all automated methods fail. The operator provides the content directly.
 
@@ -9,7 +9,8 @@ Manual content extraction when all automated methods fail. The operator provides
 Use this method when:
 - Method 1 (curl): not available, HTTP error, or WAF blocked
 - Method 2 (WebFetch): 403 Forbidden, timeout, or empty response
-- Method 3 (Browser): not available, redirect loop, or stale content issues
+- Method 3 (Browser Fetch): not available, fetch blocked, or incomplete content
+- Method 4 (Browser Navigation): not available, redirect loop, or stale content issues
 
 ---
 
@@ -20,7 +21,8 @@ All automated extraction methods failed for this URL.
 
 Method 1 (curl): [reason -- not available / HTTP [code] / WAF challenge page]
 Method 2 (WebFetch): [reason -- 403 / timeout / empty / summarized content]
-Method 3 (Browser): [reason -- not available / redirect loop / stale content]
+Method 3 (Browser Fetch): [reason -- not available / fetch blocked / incomplete content]
+Method 4 (Browser Navigation): [reason -- not available / redirect loop / stale content]
 
 To proceed, open the page in your browser and either:
 (a) Select all main content on the page, copy, and paste it here

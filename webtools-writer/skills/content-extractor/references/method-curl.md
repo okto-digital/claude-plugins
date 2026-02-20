@@ -2,11 +2,13 @@
 
 Preferred extraction method. curl follows redirects transparently, reports the final URL, and fetches raw HTML. Most reliable for redirect detection.
 
+**Requires shell access.** This method works with any shell execution tool -- Bash, Desktop Commander, terminal MCP, or similar. If no shell tool is available, skip to Method 2.
+
 ---
 
 ## Step 1: Fetch raw HTML
 
-Run via Bash:
+Run via any available shell tool (Bash, Desktop Commander, etc.):
 
 ```bash
 curl -sL -w '\n__FINAL_URL__:%{url_effective}\n__HTTP_CODE__:%{http_code}' \
@@ -53,6 +55,7 @@ Read `/tmp/extracted-page.html` and convert the main content to markdown.
 ## When this method fails
 
 Move to Method 2 (WebFetch) if:
+- No shell tool is available (no Bash, Desktop Commander, or similar)
 - `which curl` returns nothing (curl not installed)
 - HTTP status code is not 200 (403 Forbidden, 5xx, etc.)
 - HTML file is empty or under 500 bytes

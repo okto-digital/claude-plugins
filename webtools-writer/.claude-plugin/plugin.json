@@ -1,6 +1,6 @@
 {
   "name": "webtools-writer",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Content generation, microcopy, and live page extraction for the webtools website pipeline. Generates page content from blueprints following brand voice (content-generator), produces all UI text elements (microcopy-generator), and extracts content from live web pages for revision (content-extractor). Produces D8 and D9.",
   "author": {
     "name": "Oktodigital"

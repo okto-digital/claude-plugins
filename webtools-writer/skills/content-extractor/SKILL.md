@@ -5,7 +5,7 @@ description: |
 
   Invoke when the operator asks to "extract page content", "pull content from a URL", "get content from a live page", "scrape page content", or needs to capture existing web page content for revision.
 allowed-tools: Bash, WebFetch, Read, Write, Edit, Glob
-version: 2.0.0
+version: 2.1.0
 ---
 
 Extract content from a live web page and save it as a clean, well-formatted markdown file in the `content/` directory. The extracted file preserves heading hierarchy, text formatting, links, and images -- but strips site chrome (header, navigation, sidebar, footer).
@@ -46,15 +46,18 @@ Extracting content from: [URL]
 Output: content/extracted-[slug].md ([new / overwrite])
 
 Extraction methods available:
-  1. curl + local processing  [available / not available]
-  2. WebFetch                 [always available]
-  3. Browser (MCP)            [available / not available]
-  4. Paste-in                 [always available]
+  1. curl + local processing   [available / not available]
+  2. WebFetch                  [always available]
+  3. Browser Fetch (fetch API) [available / not available]
+  4. Browser Navigation        [available / not available]
+  5. Paste-in                  [always available]
 
 Ready to extract.
 ```
 
-Check availability: run `which curl` via Bash for method 1. Check if browser tools (e.g., `browser_navigate`) are accessible for method 3.
+**Tool detection (shell-agnostic):** Do not assume a specific shell tool. Check for ANY available shell execution tool -- Bash, Desktop Commander, terminal MCP, or similar. If any shell tool is available, run `which curl` to verify curl is installed. If no shell tool exists (e.g., cloud-only Cowork session), method 1 is unavailable.
+
+**Browser tool detection:** Check if browser tools (e.g., `browser_navigate`, `browser_evaluate`) are accessible. If available, methods 3 and 4 are available.
 
 ---
 
@@ -91,10 +94,16 @@ Try methods in this order. Move to the next method only when the current one fai
 
 | Priority | Method | When to use | Reference |
 |---|---|---|---|
-| 1 | curl + local processing | Preferred. Most reliable for redirect detection. | `references/method-curl.md` |
-| 2 | WebFetch | curl unavailable or blocked. | `references/method-webfetch.md` |
-| 3 | Browser (MCP) | WebFetch blocked (403/WAF). Handles JS-rendered pages. | `references/method-browser.md` |
-| 4 | Paste-in | All automated methods failed. | `references/method-paste-in.md` |
+| 1 | curl + local processing | Preferred. Requires shell access (Bash, Desktop Commander, etc.). Most reliable for redirect detection. | `references/method-curl.md` |
+| 2 | WebFetch | No shell available, or curl blocked. Runs from cloud servers -- blocked by most WAFs. | `references/method-webfetch.md` |
+| 3 | Browser Fetch | WebFetch blocked (403/WAF). Uses `fetch()` API inside the user's browser -- gets raw HTML from user's IP without page navigation. | `references/method-browser-fetch.md` |
+| 4 | Browser Navigation | Browser Fetch failed (page requires JS rendering, or fetch blocked). Full page load with redirect blocker. | `references/method-browser.md` |
+| 5 | Paste-in | All automated methods failed. | `references/method-paste-in.md` |
+
+<critical>
+**Method selection shortcut for cloud environments (Cowork without shell access):**
+When curl is unavailable and the target site is behind WAF/bot protection (WebFetch returns 403), skip directly to Method 3 (Browser Fetch). Do NOT spend time retrying WebFetch -- if the site blocks datacenter IPs, WebFetch will always fail for that domain.
+</critical>
 
 Read the reference file for the method you are about to use. All methods share the same formatting rules defined in `references/formatting-rules.md` -- read it before converting any HTML to markdown.
 
@@ -122,7 +131,7 @@ Inspect the extracted content for quality. **This step is mandatory -- do not sk
 EXTRACTED CONTENT: [page title or URL]
 
 Source: [URL]
-Extraction method: [curl / webfetch / browser / paste-in]
+Extraction method: [curl / webfetch / browser-fetch / browser-nav / paste-in]
 Meta title: [extracted meta title, or "not found"]
 Meta description: [extracted meta description, or "not found"]
 Word count: [count]
@@ -181,7 +190,7 @@ meta_title: "[extracted meta title, or empty string if not found]"
 meta_description: "[extracted meta description, or empty string if not found]"
 source_url: "[original URL as requested by operator]"
 final_url: "[actual URL after redirects -- same as source_url if no redirect]"
-extraction_method: "[curl / webfetch / browser / paste-in]"
+extraction_method: "[curl / webfetch / browser-fetch / browser-nav / paste-in]"
 project: "[client name]"
 extracted: [today]
 created_by: webtools-writer
@@ -239,7 +248,8 @@ Next steps:
 ## Reference Files
 
 - `references/formatting-rules.md` -- Shared HTML-to-markdown conversion rules, element preservation requirements
-- `references/method-curl.md` -- curl + local HTML processing (preferred method)
-- `references/method-webfetch.md` -- WebFetch extraction with prompt template
-- `references/method-browser.md` -- Browser MCP extraction with known pitfalls and workarounds
+- `references/method-curl.md` -- curl + local HTML processing (preferred method, requires shell access)
+- `references/method-webfetch.md` -- WebFetch extraction with prompt template (cloud servers, blocked by WAFs)
+- `references/method-browser-fetch.md` -- Browser fetch() API extraction (user's IP, raw HTML, no page navigation)
+- `references/method-browser.md` -- Full browser page load with redirect blocker (last resort for JS-rendered pages)
 - `references/method-paste-in.md` -- Manual paste-in fallback workflow

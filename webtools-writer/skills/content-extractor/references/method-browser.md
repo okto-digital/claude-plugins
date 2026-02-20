@@ -1,6 +1,8 @@
-# Method 3: Browser Extraction
+# Method 4: Browser Navigation
 
-Use browser MCP tools (Playwright or Chrome extension) when WebFetch is blocked by bot protection. The browser loads pages like a real user, bypassing Cloudflare/WAF restrictions and rendering JavaScript content.
+Full browser page load using MCP tools (Playwright or Chrome extension). Use this when Browser Fetch (Method 3) fails because the page requires JavaScript rendering to produce content, or when `fetch()` is blocked but full page loads work.
+
+**Prefer Method 3 (Browser Fetch) over this method.** Browser Fetch is faster, more reliable, and avoids all the pitfalls below. Only use Browser Navigation when you need the page's JavaScript to execute and render content.
 
 ---
 
@@ -213,7 +215,7 @@ Some redirects use mechanisms the blocker can't catch (e.g., `window.location.hr
 
 ## When this method fails
 
-Move to Method 4 (Paste-in) if:
+Move to Method 5 (Paste-in) if:
 - Browser tools are not available in this session
 - Navigation fails or times out
 - Redirect cannot be resolved after 3 attempts
