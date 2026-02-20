@@ -156,7 +156,11 @@ Add a metadata comment at the very top of the file:
   Meta Title: [meta_title from frontmatter, or "n/a" if not present]
   Meta Description: [meta_description from frontmatter, or "n/a" if not present]
 -->
+<title>[meta_title from frontmatter]</title>
+<meta name="description" content="[meta_description from frontmatter]">
 ```
+
+Omit the `<title>` tag if meta_title is empty or not present. Omit the `<meta>` tag if meta_description is empty or not present.
 
 Then the converted HTML content.
 
