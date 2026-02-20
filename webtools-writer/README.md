@@ -4,7 +4,7 @@ Content and microcopy generation for the webtools website pipeline.
 
 ## Overview
 
-This plugin produces the written content for the website. It has two skills: a content generator that fills page blueprints with draft content following brand voice, and a microcopy generator that produces all UI text elements for the site.
+This plugin produces the written content for the website. It has three skills: a content generator that fills page blueprints with draft content following brand voice, a microcopy generator that produces all UI text elements for the site, and a content extractor that pulls content from live web pages for revision.
 
 ## Components
 
@@ -12,6 +12,7 @@ This plugin produces the written content for the website. It has two skills: a c
 |------|------|-------------|
 | Skill | `content-generator` | Generate page content from D7 blueprints, one page at a time |
 | Skill | `microcopy-generator` | Generate all UI text elements for the entire site |
+| Skill | `content-extractor` | Extract content from a live web page and save as formatted markdown |
 
 ## Usage
 
@@ -36,6 +37,16 @@ Invoke the microcopy-generator skill with the project folder as the working dire
 3. Generate navigation labels, form text, error messages, CTAs, and all other UI text
 4. Present draft for review and iteration
 5. Write D9 to `content/D9-microcopy.md`
+
+### Content Extraction
+
+Invoke the content-extractor skill with the project folder as the working directory. The skill will:
+
+1. Ask for the URL of the live page to extract
+2. Fetch the page and extract main content only (skips header, nav, sidebar, footer)
+3. Format as clean markdown preserving headings, links, images, and text formatting
+4. Present extracted content for review and iteration
+5. Save to `content/extracted-{url-slug}.md`
 
 ## Documents
 
