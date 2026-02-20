@@ -176,8 +176,9 @@ KEYWORD SCORECARD: [page name]
 TITLE ([x]/[total] in target range)
   keyword              before  after  target   status
   -------              ------  -----  ------   ------
-  example keyword         0      1    1        HIT
-  another keyword         0      0    0-1      HIT
+  example keyword         0      1    1        MAXED
+  another keyword         0      1    0-1      MAXED
+  third keyword           0      0    0-1      MISS
   ...
 
 PAGE TITLE ([x]/[total] in target range)

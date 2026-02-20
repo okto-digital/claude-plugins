@@ -53,7 +53,7 @@ mobile app development agency ( 0 / 0 - 1 )
 
 - Keywords with numbers: `24/7 support ( 0 / 1 )` -- the keyword is `24/7 support`. The `/` inside the keyword is distinguishable because it is not inside parentheses.
 - Keywords with hyphens: `mobile-friendly ( 0 / 1 )` -- preserve the hyphen as part of the keyword.
-- Target of zero: `some keyword ( 0 / 0 - 1 )` means the keyword is optional (0 is within range). Still track it but do not force inclusion.
+- Target includes zero: `some keyword ( 0 / 0 - 1 )` means the keyword should be used 1 time. The 0 in the range means PageOptimizer won't penalize for skipping it, but including it improves the score. Always aim for targetMax (1 in this case). Do NOT treat this as optional.
 - Current exceeds target max: `overused term ( 5 / 1 - 2 )` means the keyword is OVER-represented. Flag it but do not remove content -- just avoid adding more.
 
 ---

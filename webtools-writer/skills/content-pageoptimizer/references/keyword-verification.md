@@ -53,31 +53,46 @@ Count keywords ONLY within their designated section:
 
 ## Scorecard Format
 
+### Optimization Target
+
+<critical>
+ALWAYS aim for targetMax for every keyword. The target range is NOT a "minimum acceptable" -- it is the scoring zone. Higher within the range is better.
+
+A keyword with target `0-1` means "use this keyword 1 time." It does NOT mean "optional." The 0 in the range means PageOptimizer won't penalize you for skipping it, but including it improves your score. The agent must attempt to place every keyword at its targetMax.
+
+A keyword with target `1-2` means "aim for 2 uses." Hitting 1 is acceptable but 2 is the goal.
+
+There are NO optional keywords. Every keyword in the brief is an opportunity to improve the page score. Treat them all as targets.
+</critical>
+
 ### Per-Keyword Status
 
 | Status | Condition |
 |---|---|
-| HIT | `current >= targetMin AND current <= targetMax` |
+| MAXED | `current == targetMax` (ideal -- keyword at maximum target) |
+| HIT | `current >= targetMin AND current <= targetMax AND current > 0` |
 | PARTIAL | `current > 0 AND current < targetMin` |
-| MISS | `current == 0 AND targetMin > 0` |
+| MISS | `current == 0 AND targetMax > 0` (keyword not used at all despite having a target) |
 | OVER | `current > targetMax` |
-| OPTIONAL | `targetMin == 0 AND current == 0` (target allows zero) |
+
+Note: There is no OPTIONAL status. Even `0-1` targets should be pursued. A keyword at 0 with target `0-1` has status MISS -- it is an opportunity the agent should try to fill.
 
 ### Section Summary
 
 For each section, report:
 - Total keywords
-- Keywords with status HIT or OPTIONAL (in acceptable range)
-- Keywords with status PARTIAL (needs more)
-- Keywords with status MISS (completely absent)
-- Keywords with status OVER (too many -- do not add more)
+- Keywords with status MAXED (at maximum target -- ideal)
+- Keywords with status HIT (in range but below max)
+- Keywords with status PARTIAL (some usage but below minimum)
+- Keywords with status MISS (not used at all)
+- Keywords with status OVER (exceeds target -- do not add more)
 
 ### Overall Summary
 
 - Total keywords across all sections
-- Percentage hitting target (HIT + OPTIONAL)
+- Percentage at MAXED or HIT
 - Word count: before, after, target
-- Verdict: PASS (>80% hitting target), NEEDS WORK (60-80%), SIGNIFICANT GAPS (<60%)
+- Verdict: PASS (>90% at MAXED/HIT), NEEDS WORK (70-90%), SIGNIFICANT GAPS (<70%)
 
 ---
 
