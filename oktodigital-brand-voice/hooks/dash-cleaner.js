@@ -1,6 +1,6 @@
 /**
  * Brand Voice Dash Cleaner
- * Version: 1.1.0
+ * Version: 1.2.0
  * Purpose: Auto-correct improper dash and em-dash usage
  *
  * Modes:
@@ -22,13 +22,19 @@ const COMPOUND_ADJECTIVES = new Set([
   'user-friendly', 'mobile-friendly', 'seo-friendly', 'eco-friendly',
   'high-quality', 'low-cost', 'high-performance', 'low-level', 'high-level',
   'data-driven', 'results-driven', 'user-driven', 'goal-driven',
-  'real-time', 'full-time', 'part-time', 'run-time',
+  'real-time', 'full-time', 'part-time', 'run-time', 'one-time',
   'client-focused', 'customer-centric', 'business-critical',
+  'conversion-focused', 'performance-focused', 'detail-oriented',
   'in-house', 'out-of-the-box', 'hands-on', 'best-in-class',
   'mobile-first', 'cloud-based', 'web-based', 'api-driven',
+  'mobile-responsive', 'pixel-perfect', 'seo-optimized',
   'cross-platform', 'cross-functional', 'cross-team',
   'self-service', 'self-hosted', 'self-taught', 'self-paced',
-  'open-source', 'closed-source', 'full-stack', 'front-end', 'back-end'
+  'open-source', 'closed-source', 'full-stack', 'front-end', 'back-end',
+  'locked-in', 'built-in', 'opt-in', 'opt-out',
+  'custom-built', 'hand-crafted', 'tailor-made',
+  'cost-effective', 'time-sensitive', 'budget-friendly',
+  'industry-leading', 'award-winning', 'future-proof'
 ]);
 
 // Compound nouns that should keep hyphens
@@ -48,6 +54,48 @@ const VALID_PREFIXES = [
   'anti-', 'pro-', 'semi-', 'quasi-',
   'ex-', 'vice-', 'de-', 'un-'
 ];
+
+// =============================================================================
+// MARKDOWN STRUCTURE DETECTION
+// =============================================================================
+
+/**
+ * Detect YAML frontmatter boundaries (--- at start/end of frontmatter block).
+ * Returns an array of [start, end] index ranges that should be left untouched.
+ */
+function getFrontmatterRange(content) {
+  if (!content.startsWith('---')) return null;
+  const closingIndex = content.indexOf('\n---', 3);
+  if (closingIndex === -1) return null;
+  // Include the closing --- line
+  const endOfClosing = content.indexOf('\n', closingIndex + 1);
+  return [0, endOfClosing === -1 ? closingIndex + 4 : endOfClosing];
+}
+
+/**
+ * Check if a dash at the given index is part of markdown structure:
+ * - YAML frontmatter delimiter (--- at file start and end of frontmatter)
+ * - Markdown horizontal rule (--- on its own line)
+ * - Markdown list marker (- at line start, optionally indented)
+ */
+function isMarkdownStructure(content, index) {
+  const lineStart = content.lastIndexOf('\n', index - 1) + 1;
+  const lineEnd = content.indexOf('\n', index);
+  const line = content.substring(lineStart, lineEnd === -1 ? content.length : lineEnd);
+  const trimmedLine = line.trim();
+
+  // YAML frontmatter delimiter or horizontal rule: line is only dashes (3+)
+  if (/^-{3,}\s*$/.test(trimmedLine)) return true;
+
+  // Markdown list marker: line starts with optional whitespace then "- "
+  const listMatch = line.match(/^(\s*)-(\s)/);
+  if (listMatch) {
+    const dashPosInLine = index - lineStart;
+    if (dashPosInLine === listMatch[1].length) return true;
+  }
+
+  return false;
+}
 
 // =============================================================================
 // PATTERN DETECTION FUNCTIONS
@@ -121,8 +169,9 @@ function hasValidPrefix(word) {
 }
 
 function extractHyphenatedWord(before, after) {
-  const beforeMatch = before.match(/([a-z0-9]+)$/i);
-  const afterMatch = after.match(/^([a-z0-9]+)/i);
+  // Capture the full multi-hyphen compound (e.g., "best-in-class", "state-of-the-art")
+  const beforeMatch = before.match(/([a-z0-9]+(?:-[a-z0-9]+)*)$/i);
+  const afterMatch = after.match(/^([a-z0-9]+(?:-[a-z0-9]+)*)/i);
   const beforePart = beforeMatch ? beforeMatch[1] : '';
   const afterPart = afterMatch ? afterMatch[1] : '';
   return `${beforePart}-${afterPart}`;
@@ -143,6 +192,7 @@ function getContext(content, index, radius = 20) {
 // =============================================================================
 
 function isValidHyphen(content, index) {
+  if (isMarkdownStructure(content, index)) return true;
   if (isInCodeBlock(content, index)) return true;
   const ctx = getContext(content, index);
   if (isInURL(ctx.fullContext) || isFilePath(ctx.fullContext)) return true;
@@ -184,6 +234,9 @@ function correctHyphen(before, after) {
 function cleanContent(content) {
   if (!content || typeof content !== 'string') return content;
 
+  // Detect YAML frontmatter range to skip entirely
+  const frontmatterRange = getFrontmatterRange(content);
+
   let result = content;
   let offset = 0;
   const dashPattern = /[\-\u2014]/g;
@@ -191,6 +244,10 @@ function cleanContent(content) {
 
   let match;
   while ((match = dashPattern.exec(content)) !== null) {
+    // Skip dashes inside YAML frontmatter
+    if (frontmatterRange && match.index >= frontmatterRange[0] && match.index < frontmatterRange[1]) {
+      continue;
+    }
     matches.push({ index: match.index, char: match[0] });
   }
 
