@@ -44,9 +44,12 @@ Project: [client name]
 
 Extracting content from: [URL]
 Output: content/extracted-[slug].md ([new / overwrite])
+Extraction method: WebFetch (browser fallback: [available / not available])
 
 Ready to extract.
 ```
+
+To determine browser fallback availability, check if browser tools (e.g., `browser_navigate`) are accessible in the current session. Report "available" or "not available" accordingly.
 
 ---
 
@@ -107,16 +110,39 @@ Inspect the extracted content for quality:
 - Remove any HTML tags that were not converted to markdown
 - Fix any broken formatting (unclosed bold, misformatted lists)
 
-If WebFetch fails (timeout, JS-rendered page, access denied), inform the operator:
+### Step 2b: Fallback -- Browser Extraction
+
+If WebFetch fails (403 Forbidden, timeout, empty content, or JS-rendered page), try browser-based extraction before giving up. Many sites block non-browser requests via Cloudflare, WAFs, or bot detection -- a real browser bypasses this.
+
+**Check if browser tools are available** (e.g., `browser_navigate`, `browser_snapshot`). If they are:
+
+1. Navigate to the URL using `browser_navigate`.
+2. Wait for the page to fully load (use `browser_wait_for` if needed).
+3. Take a snapshot using `browser_snapshot` to get the page content.
+4. Extract the main content from the snapshot, applying the same rules as Step 1 (skip header, nav, sidebar, footer; preserve heading hierarchy, formatting, links, images).
+5. Extract meta title and meta description using `browser_evaluate`:
+   ```javascript
+   () => {
+     const title = document.querySelector('title')?.textContent || '';
+     const desc = document.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+     return { meta_title: title, meta_description: desc };
+   }
+   ```
+6. Proceed to Step 3 with the browser-extracted content.
+
+**If browser tools are NOT available**, inform the operator:
 
 ```
-WebFetch could not retrieve usable content from this URL.
-Possible reasons: JavaScript-rendered page, access restrictions, or timeout.
+WebFetch was blocked (likely bot protection: Cloudflare, WAF, or similar).
+Browser tools are not available in this session to bypass the restriction.
 
 Options:
 (a) Paste the page content directly -- I will format it as markdown
 (b) Try a different URL
 (c) Cancel
+
+Tip: In a Cowork session with browser MCP enabled, the extraction
+can load pages like a real browser and bypass bot protection.
 ```
 
 ### Step 3: Present Extracted Content
