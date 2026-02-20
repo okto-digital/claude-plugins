@@ -5,10 +5,10 @@ description: |
 
   Invoke when the operator asks to "extract page content", "pull content from a URL", "get content from a live page", "scrape page content", or needs to capture existing web page content for revision.
 allowed-tools: Bash, WebFetch, Read, Write, Edit, Glob
-version: 1.1.0
+version: 2.0.0
 ---
 
-Extract content from a web page or a URL and save it as a clean, well-formatted markdown file in the `content/` directory. The extracted file preserves heading hierarchy, text formatting, links, and images -- but strips site chrome (header, navigation, sidebar, footer).
+Extract content from a live web page and save it as a clean, well-formatted markdown file in the `content/` directory. The extracted file preserves heading hierarchy, text formatting, links, and images -- but strips site chrome (header, navigation, sidebar, footer).
 
 ---
 
@@ -58,10 +58,12 @@ Check availability: run `which curl` via Bash for method 1. Check if browser too
 
 ---
 
-## Redirect Detection (applies to ALL methods)
+## Redirect Detection
 
 <critical>
-ALWAYS verify the final URL after fetching. URLs frequently redirect silently (e.g., /services/website-development/ redirects to /services/). If the final URL differs from the requested URL, STOP and warn the operator BEFORE processing content:
+ALWAYS verify the final URL after fetching. URLs frequently redirect silently (e.g., /services/website-development/ redirects to /services/). Some redirects are server-side (HTTP 301/302), others are CLIENT-SIDE JavaScript redirects that fire AFTER page load.
+
+If the final URL differs from the requested URL, STOP and warn the operator BEFORE processing content:
 
 ```
 REDIRECT DETECTED
@@ -85,193 +87,18 @@ NEVER save content under a filename derived from the requested URL when a redire
 
 ## Extraction Process
 
-Try methods in this order. Move to the next method only when the current one fails.
+Try methods in this order. Move to the next method only when the current one fails. Each method has detailed instructions in its reference file.
 
-### Method 1: curl + Local Processing (preferred)
+| Priority | Method | When to use | Reference |
+|---|---|---|---|
+| 1 | curl + local processing | Preferred. Most reliable for redirect detection. | `references/method-curl.md` |
+| 2 | WebFetch | curl unavailable or blocked. | `references/method-webfetch.md` |
+| 3 | Browser (MCP) | WebFetch blocked (403/WAF). Handles JS-rendered pages. | `references/method-browser.md` |
+| 4 | Paste-in | All automated methods failed. | `references/method-paste-in.md` |
 
-curl is the most reliable method -- it follows redirects transparently, reports the final URL, and fetches raw HTML without bot detection issues from simple WAFs.
+Read the reference file for the method you are about to use. All methods share the same formatting rules defined in `references/formatting-rules.md` -- read it before converting any HTML to markdown.
 
-**Step 1a: Fetch raw HTML with curl**
-
-Run via Bash:
-
-```bash
-curl -sL -w '\n__FINAL_URL__:%{url_effective}\n__HTTP_CODE__:%{http_code}' \
-  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' \
-  -H 'Accept: text/html,application/xhtml+xml' \
-  -H 'Accept-Language: en-US,en;q=0.9' \
-  -o /tmp/extracted-page.html \
-  '[URL]'
-```
-
-Check the output:
-- `__FINAL_URL__`: Compare with the requested URL. If different, trigger redirect detection (see above).
-- `__HTTP_CODE__`: If not 200, this method failed -- move to Method 2.
-- If the HTML file is empty or under 500 bytes, this method failed -- move to Method 2.
-
-**Step 1b: Extract meta tags from raw HTML**
-
-Run via Bash:
-
-```bash
-# Extract meta title
-grep -oPm1 '(?<=<title>).*?(?=</title>)' /tmp/extracted-page.html
-
-# Extract meta description
-grep -oPm1 '<meta[^>]*name=["\x27]description["\x27][^>]*content=["\x27]\K[^"\x27]*' /tmp/extracted-page.html
-```
-
-If grep patterns fail, extract them manually from the HTML by reading the file.
-
-**Step 1c: Convert HTML to markdown**
-
-Read `/tmp/extracted-page.html` and convert the main content to markdown. Apply these rules:
-
-- Identify the main content area: look for `<main>`, `<article>`, `<div role="main">`, `<div class="content">`, or the largest content block. Skip `<header>`, `<footer>`, `<nav>`, `<aside>`, and sidebar elements.
-- Convert heading tags (h1-h6) to markdown headings (#-######)
-- Convert `<strong>`/`<b>` to **bold**
-- Convert `<em>`/`<i>` to *italic*
-- Convert `<ul>/<li>` to `- items` and `<ol>/<li>` to `1. items`
-- Convert `<a href="url" title="t">text</a>` to `[text](url "t")`
-- Convert `<img src="url" alt="a" title="t">` to `![a](url "t")`
-- Convert `<blockquote>` to `> text`
-- Convert `<table>` to markdown tables
-- Expand `<details>/<summary>` -- include both summary and hidden content
-- Strip all remaining HTML tags after conversion
-
-CRITICAL -- YOU MUST preserve these elements. Do NOT strip them out or simplify them:
-
-1. LINKS: Every `<a>` MUST become `[text](URL "title")`. Keep the full href. Include title if present. Do NOT convert links to plain text. Do NOT omit URLs.
-2. IMAGES: Every `<img>` MUST become `![alt](src "title")`. Keep the full src. Include alt AND title if present. Do NOT skip images.
-3. TEXT FORMATTING: Bold and italic MUST be preserved. Do NOT flatten to plain text.
-
-Include content from ALL expandable/collapsible elements -- FAQs, accordions, `<details>/<summary>`, tabbed panels. Treat collapsed content as fully expanded.
-
-Proceed to the Review step.
-
-**If curl is not available or returns non-200:** Move to Method 2.
-
-### Method 2: WebFetch
-
-Use WebFetch to retrieve the page content. Use the prompt:
-
-```
-Extract ONLY the main content area of this page. Skip completely:
-- Site header and top navigation bar
-- Sidebars (left or right)
-- Footer and bottom navigation
-- Cookie banners and popups
-- Breadcrumbs
-
-IMPORTANT: Include content from ALL expandable/collapsible elements.
-
-CRITICAL -- Preserve ALL of these exactly:
-1. LINKS as [link text](URL "title") -- keep full URLs, include title attribute
-2. IMAGES as ![alt text](image-src "title") -- keep full src, include alt and title
-3. BOLD as **text**, ITALIC as *text** -- do NOT flatten formatting
-
-Also return heading hierarchy (h1-h6), bullets, numbered lists, blockquotes, tables.
-
-Also extract from the HTML <head>:
-- The <title> tag content
-- The <meta name="description"> value
-
-Format:
-META_TITLE: [value]
-META_DESCRIPTION: [value]
-FINAL_URL: [the actual URL after any redirects]
----
-[markdown content]
-```
-
-Check the FINAL_URL in the response. If it differs from the requested URL, trigger redirect detection.
-
-**If WebFetch fails (403, timeout, empty):** Move to Method 3.
-
-### Method 3: Browser Extraction
-
-Use browser MCP tools if available. **This method requires extra care -- known pitfalls below.**
-
-<critical>
-Known issues with browser extraction:
-- `get_page_content` and `browser_snapshot` can return STALE/CACHED content from a previous tab or navigation. Do NOT rely on them alone.
-- Some sites use CLIENT-SIDE JavaScript redirects that fire AFTER page load. The URL briefly shows the correct page, then JavaScript redirects to a different page (e.g., /services/website-development/ loads, then JS redirects to /services/). Server-side redirect detection (curl, HTTP headers) will NOT catch these.
-- ALWAYS extract content via `browser_evaluate` with direct DOM access. This reads the LIVE DOM at the moment of execution, not cached content.
-</critical>
-
-1. **Open a NEW tab** using `browser_tabs` with action "new". Do NOT navigate in an existing tab.
-2. Navigate to the URL in the new tab using `browser_navigate`.
-3. Wait for the page to fully load (2-3 seconds).
-4. **IMMEDIATELY verify URL and extract metadata in a single call** -- do this fast, before any client-side redirect fires:
-   ```javascript
-   () => {
-     const url = window.location.href;
-     const title = document.querySelector('title')?.textContent || '';
-     const h1 = document.querySelector('h1')?.textContent || '';
-     const desc = document.querySelector('meta[name="description"]')?.getAttribute('content') || '';
-     const canonical = document.querySelector('link[rel="canonical"]')?.href || '';
-     const ogUrl = document.querySelector('meta[property="og:url"]')?.getAttribute('content') || '';
-     return { current_url: url, meta_title: title, h1: h1, meta_description: desc, canonical: canonical, og_url: ogUrl };
-   }
-   ```
-   Compare `current_url`, `canonical`, and `og_url` with the requested URL. If ANY differ, a redirect has occurred -- trigger redirect detection.
-5. **Expand all collapsible content:**
-   ```javascript
-   () => {
-     document.querySelectorAll('details:not([open])').forEach(d => d.setAttribute('open', ''));
-     document.querySelectorAll(
-       '[aria-expanded="false"], .accordion-trigger, .faq-question, ' +
-       '.collapse-toggle, [data-toggle="collapse"], .expandable:not(.expanded)'
-     ).forEach(el => el.click());
-     document.querySelectorAll(
-       '.read-more, .show-more, [data-action="expand"], .truncated-toggle'
-     ).forEach(el => el.click());
-     document.querySelectorAll('.tab-trigger, [role="tab"]').forEach(el => el.click());
-     return 'expanded';
-   }
-   ```
-   Wait 1-2 seconds after expanding for content to render.
-6. **Extract content via JavaScript DOM access** -- do NOT use `get_page_content` or `browser_snapshot` as primary source, they can return stale data. Use `browser_evaluate` to read the live DOM directly:
-   ```javascript
-   () => {
-     // Find main content container
-     const main = document.querySelector('main, article, [role="main"], .content, .page-content, #content')
-       || document.querySelector('body');
-     // Clone to avoid modifying the page
-     const clone = main.cloneNode(true);
-     // Remove chrome elements from clone
-     clone.querySelectorAll('header, footer, nav, aside, .sidebar, .nav, .header, .footer, .cookie-banner, .breadcrumb').forEach(el => el.remove());
-     return clone.innerHTML;
-   }
-   ```
-   Then convert the returned HTML to markdown following the same rules as Method 1 Step 1c.
-7. **Re-verify URL after extraction** -- check `window.location.href` again. If the URL changed during extraction (client-side redirect fired), the content may be from the wrong page. Compare the H1 from step 4 with the H1 in the extracted content. If they don't match, the page redirected mid-extraction -- warn the operator.
-8. **Close the tab** after extraction to avoid tab pollution in future extractions.
-9. Proceed to the Review step.
-
-**If browser tools are NOT available:** Move to Method 4.
-
-### Method 4: Paste-in Fallback
-
-If all automated methods fail, ask the operator to provide the content manually:
-
-```
-All automated extraction methods failed for this URL.
-
-Method 1 (curl): [reason -- not available / HTTP error / blocked]
-Method 2 (WebFetch): [reason -- 403 / timeout / empty]
-Method 3 (Browser): [reason -- not available / redirect / error]
-
-To proceed, open the page in your browser and either:
-(a) Select all main content on the page, copy, and paste it here
-(b) Use browser View Source, copy the HTML, and paste it here
-(c) Try a different URL
-(d) Cancel
-
-I will format whatever you paste into clean markdown.
-```
-
-When the operator pastes content, apply the same formatting rules (headings, links, images, bold/italic) and proceed to the Review step. Ask the operator for the meta title and meta description separately if not included in the paste.
+After successful extraction with any method, proceed to the Review step below.
 
 ---
 
@@ -289,14 +116,13 @@ Inspect the extracted content for quality. **This step is mandatory -- do not sk
 - Fix any broken formatting (unclosed bold, misformatted lists)
 - **Check for missing collapsed content:** Look for signs of FAQs, accordions, or expandable sections (e.g., FAQ headings with no answers). If collapsed content appears missing, flag it and attempt re-extraction with a different method if possible.
 
-### Step 3: Present Extracted Content
-
-Present the cleaned content to the operator:
+### Present Extracted Content
 
 ```
 EXTRACTED CONTENT: [page title or URL]
 
 Source: [URL]
+Extraction method: [curl / webfetch / browser / paste-in]
 Meta title: [extracted meta title, or "not found"]
 Meta description: [extracted meta description, or "not found"]
 Word count: [count]
@@ -338,9 +164,8 @@ Examples:
 - `https://oktodigital.com/services/web-design` --> `extracted-oktodigital-com_services_web-design.md`
 - `https://oktodigital.com/about` --> `extracted-oktodigital-com_about.md`
 - `https://oktodigital.com/` --> `extracted-oktodigital-com_home.md`
-- `https://example.co.uk/work/case-study-1` --> `extracted-example-co-uk_work_case-study-1.md`
 
-Remove query parameters and fragments from the URL before slugifying.
+Remove query parameters and fragments from the URL before slugifying. File slugs MUST be derived from the FINAL URL (after redirects), never the requested URL if they differ.
 
 ---
 
@@ -407,6 +232,14 @@ Next steps:
 - Do not use emojis in any output.
 - If content cannot be extracted cleanly, offer the paste-in fallback. Do not guess or fabricate content.
 - File slugs must be deterministic -- the same URL always produces the same filename.
-- File slugs MUST be derived from the FINAL URL (after redirects), never the requested URL if they differ.
-- Remove query parameters (`?`) and fragments (`#`) from URLs before creating the slug.
 - NEVER save content without verifying the final URL matches the requested URL. Redirect detection is not optional.
+
+---
+
+## Reference Files
+
+- `references/formatting-rules.md` -- Shared HTML-to-markdown conversion rules, element preservation requirements
+- `references/method-curl.md` -- curl + local HTML processing (preferred method)
+- `references/method-webfetch.md` -- WebFetch extraction with prompt template
+- `references/method-browser.md` -- Browser MCP extraction with known pitfalls and workarounds
+- `references/method-paste-in.md` -- Manual paste-in fallback workflow
