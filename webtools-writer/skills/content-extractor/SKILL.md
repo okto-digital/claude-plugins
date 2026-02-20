@@ -190,28 +190,32 @@ Check the FINAL_URL in the response. If it differs from the requested URL, trigg
 
 ### Method 3: Browser Extraction
 
-Use browser MCP tools if available. **This method requires extra care due to tab/navigation issues.**
+Use browser MCP tools if available. **This method requires extra care -- known pitfalls below.**
+
+<critical>
+Known issues with browser extraction:
+- `get_page_content` and `browser_snapshot` can return STALE/CACHED content from a previous tab or navigation. Do NOT rely on them alone.
+- Some sites use CLIENT-SIDE JavaScript redirects that fire AFTER page load. The URL briefly shows the correct page, then JavaScript redirects to a different page (e.g., /services/website-development/ loads, then JS redirects to /services/). Server-side redirect detection (curl, HTTP headers) will NOT catch these.
+- ALWAYS extract content via `browser_evaluate` with direct DOM access. This reads the LIVE DOM at the moment of execution, not cached content.
+</critical>
 
 1. **Open a NEW tab** using `browser_tabs` with action "new". Do NOT navigate in an existing tab.
 2. Navigate to the URL in the new tab using `browser_navigate`.
-3. Wait for the page to fully load.
-4. **VERIFY THE URL.** Use `browser_evaluate` to check the actual URL:
-   ```javascript
-   () => window.location.href
-   ```
-   Compare the result with the requested URL. If different, trigger redirect detection. Do NOT proceed with extraction until the URL is verified.
-5. Extract meta title and meta description:
+3. Wait for the page to fully load (2-3 seconds).
+4. **IMMEDIATELY verify URL and extract metadata in a single call** -- do this fast, before any client-side redirect fires:
    ```javascript
    () => {
+     const url = window.location.href;
      const title = document.querySelector('title')?.textContent || '';
+     const h1 = document.querySelector('h1')?.textContent || '';
      const desc = document.querySelector('meta[name="description"]')?.getAttribute('content') || '';
      const canonical = document.querySelector('link[rel="canonical"]')?.href || '';
      const ogUrl = document.querySelector('meta[property="og:url"]')?.getAttribute('content') || '';
-     return { meta_title: title, meta_description: desc, canonical: canonical, og_url: ogUrl };
+     return { current_url: url, meta_title: title, h1: h1, meta_description: desc, canonical: canonical, og_url: ogUrl };
    }
    ```
-   Also compare canonical/og:url with the requested URL -- these reveal the "true" page identity even when the URL bar looks correct.
-6. **Expand all collapsible content:**
+   Compare `current_url`, `canonical`, and `og_url` with the requested URL. If ANY differ, a redirect has occurred -- trigger redirect detection.
+5. **Expand all collapsible content:**
    ```javascript
    () => {
      document.querySelectorAll('details:not([open])').forEach(d => d.setAttribute('open', ''));
@@ -227,10 +231,23 @@ Use browser MCP tools if available. **This method requires extra care due to tab
    }
    ```
    Wait 1-2 seconds after expanding for content to render.
-7. Take a snapshot using `browser_snapshot` to get the full page content.
-8. Extract the main content from the snapshot (skip header, nav, sidebar, footer; preserve heading hierarchy, formatting, links, images).
-9. **Close the tab** after extraction to avoid tab pollution in future extractions.
-10. Proceed to the Review step.
+6. **Extract content via JavaScript DOM access** -- do NOT use `get_page_content` or `browser_snapshot` as primary source, they can return stale data. Use `browser_evaluate` to read the live DOM directly:
+   ```javascript
+   () => {
+     // Find main content container
+     const main = document.querySelector('main, article, [role="main"], .content, .page-content, #content')
+       || document.querySelector('body');
+     // Clone to avoid modifying the page
+     const clone = main.cloneNode(true);
+     // Remove chrome elements from clone
+     clone.querySelectorAll('header, footer, nav, aside, .sidebar, .nav, .header, .footer, .cookie-banner, .breadcrumb').forEach(el => el.remove());
+     return clone.innerHTML;
+   }
+   ```
+   Then convert the returned HTML to markdown following the same rules as Method 1 Step 1c.
+7. **Re-verify URL after extraction** -- check `window.location.href` again. If the URL changed during extraction (client-side redirect fired), the content may be from the wrong page. Compare the H1 from step 4 with the H1 in the extracted content. If they don't match, the page redirected mid-extraction -- warn the operator.
+8. **Close the tab** after extraction to avoid tab pollution in future extractions.
+9. Proceed to the Review step.
 
 **If browser tools are NOT available:** Move to Method 4.
 
