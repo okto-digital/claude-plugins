@@ -51,7 +51,68 @@ If grep patterns fail (multiline title tags, different quote styles), read the H
 
 ## Step 3: Convert HTML to markdown
 
-Read `/tmp/extracted-page.html` and convert the main content to markdown.
+<critical>
+**Check file size before reading.** HTML files from real websites are typically 100-300KB due to inline CSS, JavaScript, cookie consent banners, JSON-LD schema, and other non-content markup. Reading a large HTML file directly will overflow the context window.
+
+**ALWAYS strip non-content elements via shell BEFORE reading the HTML into context.** Run the following Python script (stdlib only, no pip packages needed) via the same shell tool used for curl:
+
+```bash
+python3 << 'PYEOF'
+import re
+
+with open('/tmp/extracted-page.html', 'r', encoding='utf-8', errors='ignore') as f:
+    html = f.read()
+
+# Remove head section entirely
+html = re.sub(r'<head[^>]*>.*?</head>', '', html, flags=re.DOTALL)
+
+# Remove script, style, noscript, svg tags and their contents
+for tag in ['script', 'style', 'noscript', 'svg']:
+    html = re.sub(rf'<{tag}[^>]*>.*?</{tag}>', '', html, flags=re.DOTALL)
+
+# Remove HTML comments (cookie consent configs, GTM, etc.)
+html = re.sub(r'<!--.*?-->', '', html, flags=re.DOTALL)
+
+# Remove inline style attributes
+html = re.sub(r'\s+style="[^"]*"', '', html)
+
+# Collapse whitespace runs
+html = re.sub(r'\n\s*\n', '\n\n', html)
+
+with open('/tmp/extracted-content.html', 'w', encoding='utf-8') as f:
+    f.write(html.strip())
+
+import os
+original = os.path.getsize('/tmp/extracted-page.html')
+stripped = os.path.getsize('/tmp/extracted-content.html')
+print(f'Stripped: {original/1024:.0f}KB -> {stripped/1024:.0f}KB ({100-stripped/original*100:.0f}% removed)')
+PYEOF
+```
+
+Then read `/tmp/extracted-content.html` (not the original) for conversion.
+
+If `python3` is not available, use `python` instead. If neither is available, try `node`:
+
+```bash
+node -e "
+const fs = require('fs');
+let html = fs.readFileSync('/tmp/extracted-page.html', 'utf8');
+html = html.replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '');
+['script','style','noscript','svg'].forEach(t => {
+  html = html.replace(new RegExp('<'+t+'[^>]*>[\\\\s\\\\S]*?</'+t+'>','gi'), '');
+});
+html = html.replace(/<!--[\s\S]*?-->/g, '');
+html = html.replace(/\s+style=\"[^\"]*\"/g, '');
+html = html.replace(/\n\s*\n/g, '\n\n');
+fs.writeFileSync('/tmp/extracted-content.html', html.trim());
+const o = fs.statSync('/tmp/extracted-page.html').size;
+const s = fs.statSync('/tmp/extracted-content.html').size;
+console.log('Stripped: '+(o/1024|0)+'KB -> '+(s/1024|0)+'KB ('+(100-s/o*100|0)+'% removed)');
+"
+```
+</critical>
+
+After stripping, read `/tmp/extracted-content.html` and convert the main content to markdown.
 
 1. Identify the main content area (see `references/formatting-rules.md` for selectors).
 2. Apply all conversion rules from `references/formatting-rules.md`.
