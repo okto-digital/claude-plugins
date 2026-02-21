@@ -5,7 +5,7 @@ description: |
 
   Invoke when the operator asks to "extract page content", "pull content from a URL", "get content from a live page", "scrape page content", or needs to capture existing web page content for revision.
 allowed-tools: Bash, WebFetch, Read, Write, Edit, Glob
-version: 2.1.0
+version: 2.2.0
 ---
 
 Extract content from a live web page and save it as a clean, well-formatted markdown file in the `content/` directory. The extracted file preserves heading hierarchy, text formatting, links, and images -- but strips site chrome (header, navigation, sidebar, footer).
@@ -111,51 +111,39 @@ After successful extraction with any method, proceed to the Review step below.
 
 ---
 
-## Review (applies to ALL methods)
+## Review and Save (applies to ALL methods)
 
-Inspect the extracted content for quality. **This step is mandatory -- do not skip any check.**
+Inspect the extracted content for quality before saving. **This step is mandatory -- do not skip any check.** Perform all checks internally without presenting the full content to the operator.
 
 - **REDIRECT CHECK (critical):** Confirm the content matches the intended page. Check the H1 and first paragraph -- do they match what the operator expects for this URL? If the content looks like a different page, STOP and warn.
 - Verify headings follow a logical hierarchy (one H1, H2s for sections, etc.)
-- **LINKS CHECK (critical):** Verify every link has a full URL, not just anchor text. If any links were converted to plain text, re-extract them. Count the links found.
-- **IMAGES CHECK (critical):** Verify every image has the src URL and alt text. If images were omitted or reduced to text descriptions, re-extract them. Count the images found.
+- **LINKS CHECK (critical):** Verify every link has a full URL, not just anchor text. If any links were converted to plain text, re-extract them.
+- **IMAGES CHECK (critical):** Verify every image has the src URL and alt text. If images were omitted or reduced to text descriptions, re-extract them.
 - **FORMATTING CHECK:** Verify bold, italic, and other inline formatting is preserved. If text appears flattened (no bold/italic), re-extract.
 - Remove any remaining navigation artifacts or repeated elements
 - Remove any HTML tags that were not converted to markdown
 - Fix any broken formatting (unclosed bold, misformatted lists)
 - **Check for missing collapsed content:** Look for signs of FAQs, accordions, or expandable sections (e.g., FAQ headings with no answers). If collapsed content appears missing, flag it and attempt re-extraction with a different method if possible.
 
-### Present Extracted Content
+<critical>
+Save the file immediately after passing quality checks. Do NOT present the full extracted content in the chat. Do NOT ask for operator approval before saving. The operator will review the file directly via the file link.
+</critical>
+
+After saving (see File Naming, Output Format, and Lifecycle Completion below), present a brief summary with the file path:
 
 ```
-EXTRACTED CONTENT: [page title or URL]
+Extracted: content/extracted-[slug].md
 
 Source: [URL]
-Extraction method: [curl / webfetch / browser-fetch / browser-nav / paste-in]
-Meta title: [extracted meta title, or "not found"]
-Meta description: [extracted meta description, or "not found"]
+Method: [curl / webfetch / browser-fetch / browser-nav / paste-in]
+Title: [page title or H1]
 Word count: [count]
-Headings found: [count] (H1: [n], H2: [n], H3: [n], ...)
-Links preserved: [count] (all with full URLs)
-Images preserved: [count] (all with alt text)
-Formatting: bold [count], italic [count]
+Headings: [count] (H1: [n], H2: [n], H3: [n], ...)
+Links: [count]
+Images: [count]
 
----
-
-[extracted markdown content]
-
----
-
-Review this extraction:
-- Are ALL links present with full URLs? (not converted to plain text)
-- Are ALL images present with alt text and src URLs?
-- Is bold/italic formatting preserved throughout?
-- Is the main content complete? (nothing missing?)
-- Was any unwanted content included? (nav, footer, sidebar?)
-- Are there formatting issues to fix?
+Review the file and let me know if anything needs to be re-extracted.
 ```
-
-Iterate until the operator approves.
 
 ---
 
@@ -198,17 +186,17 @@ status: extracted
 ---
 ```
 
-Then the extracted markdown content exactly as approved by the operator.
+Then the extracted markdown content.
 
 ---
 
 ## Lifecycle Completion
 
-After the operator approves the extraction, complete these 3 steps.
+Complete these 3 steps immediately after passing quality checks.
 
 ### 1. Save File
 
-Write the file to `content/extracted-{slug}.md` with frontmatter and approved content.
+Write the file to `content/extracted-{slug}.md` with frontmatter and extracted content.
 
 ### 2. Registry Update
 
