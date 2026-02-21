@@ -1,7 +1,5 @@
 # Brief File Parsing Rules
 
-> **Automated:** Parsing is handled by `scripts/brief-scorer.py --parse-only`. This document serves as the specification reference. The script implements all rules below.
-
 PageOptimizer.pro exports 4 content brief files. Each file targets a different section of the page.
 
 ---

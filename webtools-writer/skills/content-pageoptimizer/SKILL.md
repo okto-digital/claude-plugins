@@ -4,7 +4,7 @@ description: |
   Optimize existing page content using keyword targets from PageOptimizer.pro content brief exports. Parses 4 brief files (title, H1, subheadings, body), analyzes keyword gaps, rewrites content to hit targets while maintaining brand voice, and auto-exports to HTML.
 
   Invoke when the operator asks to "optimize content for SEO", "apply content brief", "run pageoptimizer", "rewrite content for keywords", "apply keyword targets", or needs to optimize page content against PageOptimizer.pro scoring.
-allowed-tools: Read, Write, Edit, Glob, Bash(mkdir:*), Bash(python3:scripts/*)
+allowed-tools: Read, Write, Edit, Glob, Bash(mkdir:*)
 version: 1.0.0
 ---
 
@@ -54,13 +54,7 @@ The 4 required files:
 
 If the files are not yet visible in the conversation, ask the operator to attach them.
 
-Save the 4 brief files to `brief/` directory. Parse them using the script:
-
-```
-python3 scripts/brief-scorer.py --parse-only brief/ContentBrief_title.txt brief/ContentBrief_pageTitle.txt brief/ContentBrief_subHeadings.txt brief/ContentBrief_BodyContent.txt > brief/parsed-briefs.json
-```
-
-The script outputs structured JSON with all keywords, current counts, and target ranges. Use this JSON for the status report counts. The parsing rules are documented in `references/brief-parsing.md`.
+Parse each file following the format rules in `references/brief-parsing.md`.
 
 ### 5. Brand Voice
 
@@ -92,26 +86,25 @@ Ready to optimize.
 
 ## Phase 1: Analyze
 
-Run the scoring script against the source content and parsed briefs:
+Split the source content into 4 zones:
+- **Title**: `meta_title` from YAML frontmatter
+- **H1**: the first `#` heading in the markdown body
+- **Subheadings**: all `##` through `######` headings (text only)
+- **Body**: everything else -- paragraphs, lists, blockquotes, table cells
 
-```
-python3 scripts/brief-scorer.py --score content/[source-file].md --briefs-json brief/parsed-briefs.json
-```
+For each zone, count current occurrences of every keyword from the corresponding brief file. Use the counting rules in `references/keyword-verification.md`.
 
-The script splits the content into 4 zones (title from frontmatter meta_title, H1, subheadings H2-H6, body text), counts every keyword per zone following the rules in `references/keyword-verification.md`, and outputs a JSON scorecard with per-keyword counts and statuses (MAXED/HIT/PARTIAL/MISS/OVER).
-
-Use the JSON output to present the gap summary. Do NOT manually read the content for counting -- the script handles all counting.
+Present a gap summary:
 
 ```
 ANALYSIS: [page name]
 
-Title:       [total] keywords -- [maxed+hit] in range, [partial] below target, [miss] at zero
-Page Title:  [total] keywords -- [maxed+hit] in range, [partial] below target, [miss] at zero
-Subheadings: [total] keywords -- [maxed+hit] in range, [partial] below target, [miss] at zero
-Body Content: [total] keywords -- [maxed+hit] in range, [partial] below target, [miss] at zero
+Title:       [n] keywords -- [x] in range, [y] below target, [z] at zero
+Page Title:  [n] keywords -- [x] in range, [y] below target, [z] at zero
+Subheadings: [n] keywords -- [x] in range, [y] below target, [z] at zero
+Body Content: [n] keywords -- [x] in range, [y] below target, [z] at zero
 
-Word count: [word_count from JSON] words (target: [target])
-Overall: [maxed_or_hit_pct]% at target
+Word count: [current] words (target: [target])
 ```
 
 ---
@@ -173,13 +166,7 @@ Every keyword from ALL 4 briefs must be addressed. Do not silently skip any keyw
 
 ## Phase 4: Verify
 
-Run the scoring script against the rewritten content:
-
-```
-python3 scripts/brief-scorer.py --score content/pageoptimized-{slug}.md --briefs-json brief/parsed-briefs.json
-```
-
-Use the JSON output to generate the scorecard. Do NOT manually count keywords -- the script handles all counting following the methodology in `references/keyword-verification.md`.
+Count every keyword in the rewritten content and generate a full scorecard. Follow the verification methodology in `references/keyword-verification.md`.
 
 Present the scorecard:
 
@@ -244,20 +231,13 @@ status: optimized
 
 ### 3. Auto-export to HTML
 
-Run the export script:
-
-```
-python3 scripts/markdown-to-html.py content/pageoptimized-{slug}.md content/pageoptimized-{slug}.html
-```
-
-The script strips YAML frontmatter, converts all markdown elements to clean semantic HTML following the rules previously in `references/html-export-rules.md`, writes the output file with metadata comment + title/meta tags, and outputs a JSON summary with element counts and validation results.
+Convert the optimized markdown to clean semantic HTML following the rules in `references/html-export-rules.md`. Write to `content/pageoptimized-{slug}.html`.
 
 ### 4. Verify files
 
-The script's JSON output reports validation status. Check:
-- `status` is "ok" (no issues) or "warning" (review listed issues)
-- Element counts match expectations (headings, links, images present)
-- `.md` file exists with correct frontmatter (verify manually or via Glob)
+Read both output files back and confirm:
+- `.md` file exists, has correct frontmatter, contains optimized content
+- `.html` file exists, contains valid HTML tags, no markdown syntax remnants
 
 ---
 
@@ -302,15 +282,8 @@ To iterate: re-score in PageOptimizer, export new briefs, and run this skill aga
 
 ---
 
-## Scripts
-
-- `scripts/brief-scorer.py` -- Parses brief files AND counts keywords in content. Replaces manual parsing and counting.
-  - `--parse-only` mode: parse 4 brief files into structured JSON
-  - `--score` mode: count all keywords in content against brief targets, output full scorecard
-- `scripts/markdown-to-html.py` -- Converts markdown to clean semantic HTML. Replaces manual HTML conversion.
-
 ## Reference Files
 
-- `references/brief-parsing.md` -- PageOptimizer brief file format and parsing rules (implemented by `scripts/brief-scorer.py`)
-- `references/keyword-verification.md` -- Keyword counting methodology and scorecard format (implemented by `scripts/brief-scorer.py`)
-- `references/html-export-rules.md` -- Markdown-to-HTML conversion rules (implemented by `scripts/markdown-to-html.py`)
+- `references/brief-parsing.md` -- PageOptimizer brief file format, parsing rules, examples
+- `references/keyword-verification.md` -- Keyword counting methodology, case sensitivity, scorecard format
+- `references/html-export-rules.md` -- Markdown-to-HTML conversion rules for the auto-export step
