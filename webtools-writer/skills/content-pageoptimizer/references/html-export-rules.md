@@ -1,5 +1,7 @@
 # HTML Export Rules
 
+> **Automated:** HTML export is handled by `scripts/markdown-to-html.py`. This document serves as the specification reference. The script implements all conversion and output rules below.
+
 After saving the optimized markdown, auto-export to clean semantic HTML. This follows the same rules as the `/export-html` command.
 
 ---

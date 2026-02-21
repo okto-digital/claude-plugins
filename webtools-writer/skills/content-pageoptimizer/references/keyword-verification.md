@@ -1,5 +1,7 @@
 # Keyword Verification Methodology
 
+> **Automated:** Keyword counting and scoring are handled by `scripts/brief-scorer.py --score`. This document serves as the specification reference. The script implements all counting rules and status logic below.
+
 Rules for counting keyword occurrences and generating the verification scorecard.
 
 ---

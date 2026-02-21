@@ -1,6 +1,6 @@
 ---
 description: Convert content markdown to clean semantic HTML
-allowed-tools: Read, Write, Glob, Bash(mkdir:*)
+allowed-tools: Read, Write, Glob, Bash(mkdir:*), Bash(python3:scripts/*)
 argument-hint: [filename.md]
 ---
 
@@ -70,99 +70,34 @@ Which file to export? (number or filename)
 
 ---
 
-## Read and Convert
+## Convert and Write
 
-### 1. Read the source file
+Run the conversion script:
 
-Read the full contents of the source `.md` file.
-
-### 2. Strip YAML frontmatter
-
-Remove everything between the opening `---` and closing `---` at the top of the file. Preserve the frontmatter values in memory -- the `title`, `source_url`, `meta_title`, and `meta_description` fields are used when writing the HTML file.
-
-### 3. Convert markdown to semantic HTML
-
-Convert the markdown body to clean HTML using these rules:
-
-**Headings:**
-- `# text` becomes `<h1>text</h1>`
-- `## text` becomes `<h2>text</h2>`
-- Through `######` becoming `<h6>`
-
-**Inline formatting:**
-- `**bold**` becomes `<strong>bold</strong>`
-- `*italic*` becomes `<em>italic</em>`
-
-**Links:**
-- `[text](url)` becomes `<a href="url">text</a>`
-- `[text](url "title")` becomes `<a href="url" title="title">text</a>`
-
-**Images:**
-- `![alt](src)` becomes `<img src="src" alt="alt">`
-- `![alt](src "title")` becomes `<img src="src" alt="alt" title="title">`
-
-**Lists:**
-- Unordered lists (`- item`) become `<ul><li>item</li></ul>`
-- Ordered lists (`1. item`) become `<ol><li>item</li></ol>`
-- Nested lists become nested `<ul>` or `<ol>` elements
-
-**Block elements:**
-- `> text` becomes `<blockquote><p>text</p></blockquote>`
-- Paragraphs (text separated by blank lines) become `<p>text</p>`
-- Horizontal rules (`---`) become `<hr>`
-
-**Tables:**
-
-```
-| Header | Header |
-|--------|--------|
-| Cell   | Cell   |
+```bash
+python3 scripts/markdown-to-html.py content/[source].md content/[output].html
 ```
 
-Becomes:
+The script handles all conversion:
+- Strips YAML frontmatter, preserves meta_title and meta_description
+- Converts all markdown elements to clean semantic HTML (headings, bold, italic, links, images, lists, tables, blockquotes, horizontal rules)
+- Writes the output file with metadata comment, `<title>` and `<meta>` tags at top
+- Outputs ONLY content markup (no `<html>/<head>/<body>` wrapper, no CSS/classes/IDs)
+- Validates output and reports any issues
 
-```html
-<table>
-  <thead>
-    <tr><th>Header</th><th>Header</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Cell</td><td>Cell</td></tr>
-  </tbody>
-</table>
+The script outputs a JSON summary to stdout:
+```json
+{
+  "status": "ok",
+  "output": "content/[name].html",
+  "output_size": 12451,
+  "elements": {"headings": 30, "paragraphs": 68, "links": 15, "images": 1},
+  "meta_title": "...",
+  "meta_description": "..."
+}
 ```
 
-### 4. Output rules
-
-<critical>
-Do NOT wrap the output in `<html>`, `<head>`, or `<body>` tags. Output ONLY the content markup. PageOptimizer.pro and similar tools need just the content HTML, not a full document.
-
-Do NOT add any CSS, classes, IDs, or styling attributes. Clean semantic HTML only.
-</critical>
-
----
-
-## Write HTML File
-
-Write the converted HTML to `content/[same-name].html`.
-
-Add a metadata comment at the very top of the file:
-
-```html
-<!--
-  Source: [source .md filename]
-  Exported: [today's date YYYY-MM-DD]
-  Original URL: [source_url from frontmatter, or "n/a" if not present]
-  Meta Title: [meta_title from frontmatter, or "n/a" if not present]
-  Meta Description: [meta_description from frontmatter, or "n/a" if not present]
--->
-<title>[meta_title from frontmatter]</title>
-<meta name="description" content="[meta_description from frontmatter]">
-```
-
-Omit the `<title>` tag if meta_title is empty or not present. Omit the `<meta>` tag if meta_description is empty or not present.
-
-Then the converted HTML content.
+Use the JSON summary for the file verification and downstream notification. If `status` is "warning", review and resolve the listed issues before proceeding.
 
 ---
 
@@ -170,11 +105,10 @@ Then the converted HTML content.
 
 ### 1. File Verification
 
-Read the output file back and verify:
-- File exists and is non-empty
-- Contains valid HTML tags (at least one `<h1>` or `<h2>`)
-- Does NOT contain YAML frontmatter remnants
-- Does NOT contain markdown syntax (`##`, `**`, `[text](url)`)
+The script's JSON output includes validation. Check:
+- `status` is "ok" (no issues found) or "warning" (review listed issues)
+- `elements.headings` > 0 (HTML has heading tags)
+- `output_size` > 0 (file is non-empty)
 
 ### 2. Registry Update
 

@@ -141,12 +141,93 @@ Run this single comprehensive extraction script:
     if (q && a && q !== a) faqs.push({ question: q, answer: a });
   });
 
-  // --- EXTRACT HTML CONTENT ---
-  const html = clone.innerHTML;
+  // --- CONVERT DOM TO MARKDOWN (inline, no intermediate HTML in context) ---
+  function domToMd(el) {
+    let md = '';
+    for (const node of el.childNodes) {
+      if (node.nodeType === 3) { md += node.textContent; continue; }
+      if (node.nodeType !== 1) continue;
+      const tag = node.tagName.toLowerCase();
+      if (['script','style','noscript','svg','template'].includes(tag)) continue;
+      const hMatch = tag.match(/^h([1-6])$/);
+      if (hMatch) {
+        md += '\n\n' + '#'.repeat(+hMatch[1]) + ' ' + inlineMd(node) + '\n';
+      } else if (tag === 'p') {
+        md += '\n\n' + inlineMd(node) + '\n';
+      } else if (tag === 'ul' || tag === 'ol') {
+        md += '\n\n' + listMd(node, tag === 'ol') + '\n';
+      } else if (tag === 'blockquote') {
+        md += '\n\n' + inlineMd(node).split('\n').map(l => '> ' + l).join('\n') + '\n';
+      } else if (tag === 'table') {
+        md += '\n\n' + tableMd(node) + '\n';
+      } else if (tag === 'hr') {
+        md += '\n\n---\n';
+      } else if (tag === 'br') {
+        md += '\n';
+      } else if (tag === 'img') {
+        const src = node.src || node.getAttribute('src') || '';
+        const alt = node.getAttribute('alt') || '';
+        md += '\n\n![' + alt + '](' + src + ')\n';
+      } else if (tag === 'details') {
+        const sum = node.querySelector('summary');
+        if (sum) md += '\n\n### ' + sum.textContent.trim() + '\n';
+        for (const ch of node.childNodes) {
+          if (ch !== sum && ch.nodeType === 1) md += '\n\n' + inlineMd(ch) + '\n';
+        }
+      } else {
+        md += domToMd(node);
+      }
+    }
+    return md;
+  }
+  function inlineMd(el) {
+    let out = '';
+    for (const n of el.childNodes) {
+      if (n.nodeType === 3) { out += n.textContent; continue; }
+      if (n.nodeType !== 1) continue;
+      const t = n.tagName.toLowerCase();
+      if (t === 'strong' || t === 'b') out += '**' + inlineMd(n) + '**';
+      else if (t === 'em' || t === 'i') out += '*' + inlineMd(n) + '*';
+      else if (t === 'code') out += '`' + n.textContent + '`';
+      else if (t === 'a') {
+        const href = n.href || n.getAttribute('href') || '';
+        const text = inlineMd(n);
+        const title = n.getAttribute('title');
+        if (text.trim() && href) {
+          out += title ? '[' + text.trim() + '](' + href + ' "' + title + '")' : '[' + text.trim() + '](' + href + ')';
+        }
+      } else if (t === 'img') {
+        out += '![' + (n.getAttribute('alt')||'') + '](' + (n.src||n.getAttribute('src')||'') + ')';
+      } else if (t === 'br') { out += '\n'; }
+      else { out += inlineMd(n); }
+    }
+    return out;
+  }
+  function listMd(el, ordered) {
+    const items = [];
+    let idx = 1;
+    for (const li of el.children) {
+      if (li.tagName.toLowerCase() === 'li') {
+        items.push((ordered ? (idx++) + '. ' : '- ') + inlineMd(li).trim());
+      }
+    }
+    return items.join('\n');
+  }
+  function tableMd(el) {
+    const rows = [];
+    el.querySelectorAll('tr').forEach(tr => {
+      const cells = [];
+      tr.querySelectorAll('th, td').forEach(c => cells.push(inlineMd(c).trim()));
+      rows.push('| ' + cells.join(' | ') + ' |');
+    });
+    if (rows.length > 1) rows.splice(1, 0, '|' + rows[0].split('|').slice(1,-1).map(()=>'---|').join(''));
+    return rows.join('\n');
+  }
 
-  // --- EXTRACT BOLD TEXT (for verification) ---
+  const markdown = domToMd(clone).replace(/\n{3,}/g, '\n\n').trim();
   const boldCount = (clone.querySelectorAll('strong, b') || []).length;
   const italicCount = (clone.querySelectorAll('em, i') || []).length;
+  const wordCount = markdown.split(/\s+/).filter(Boolean).length;
 
   return {
     url: currentUrl,
@@ -156,11 +237,12 @@ Run this single comprehensive extraction script:
     h1: h1,
     canonical: canonical,
     og_url: ogUrl,
-    html: html,
+    markdown: markdown,
     links: links,
     images: images,
     faqs: faqs,
     stats: {
+      word_count: wordCount,
       link_count: links.length,
       image_count: images.length,
       faq_count: faqs.length,
@@ -184,14 +266,17 @@ Check the returned data:
 
 If the `h1` or content clearly belongs to a different page (e.g., a services hub instead of a specific service page), the extraction captured the wrong content. Re-navigate and retry, or trigger redirect detection (see SKILL.md).
 
-### 6. Convert to markdown
+### 6. Use the markdown output
 
-Using the `html` from the extraction result, convert to markdown following `references/formatting-rules.md`. Supplement with the structured data:
+The extraction script now returns `markdown` directly (DOM-to-markdown conversion runs in the browser). There is no `html` field -- the DOM is converted to markdown inline, saving the agent from reading raw HTML into context.
+
+Review the `markdown` field and verify quality using the structured data:
 
 - Use `links` array to verify all links made it into the markdown with full URLs.
 - Use `images` array to verify all images made it in with alt text and src.
 - Use `faqs` array to verify FAQ content is complete (questions AND answers).
-- Use `stats` to report counts in the presentation step.
+- Use `stats` to report counts (including `word_count`) in the presentation step.
+- If the markdown quality is poor (missing sections, broken formatting), write it to the output file and review/fix manually rather than re-extracting.
 
 ### 7. Close the tab
 
