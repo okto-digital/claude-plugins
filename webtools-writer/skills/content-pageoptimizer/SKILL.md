@@ -29,18 +29,18 @@ Verify these 7 subdirectories exist: `brief/`, `brand/`, `seo/`, `architecture/`
 
 ### 3. Source Content
 
-Ask the operator which content file to optimize. List all `.md` files in `content/` that start with `extracted-` or `pageoptimized-`.
+Ask the operator which content file to optimize. List all `.md` files in `content/` that start with `extracted-`, `generated-`, or `pageoptimized-`.
 
-If a `pageoptimized-` version exists alongside an `extracted-` version for the same slug, ask:
+If a `pageoptimized-` version exists alongside an `extracted-` or `generated-` version for the same slug, ask:
 
 ```
 Found existing optimized version: content/pageoptimized-{slug}.md
 
 (a) Re-optimize -- use the pageoptimized version as source (iterating on previous work)
-(b) Fresh start -- use the extracted version as source (discard previous optimization)
+(b) Fresh start -- use the extracted/generated version as source (discard previous optimization)
 ```
 
-If only `extracted-` exists, use it as source.
+If only `extracted-` or `generated-` exists (no `pageoptimized-` version), use it as source.
 
 ### 4. Brief Files
 
@@ -207,6 +207,7 @@ If the operator requests changes, iterate: adjust content, re-verify, show updat
 
 Derive the slug from the source file:
 - `extracted-{slug}.md` becomes `pageoptimized-{slug}.md`
+- `generated-{slug}.md` becomes `pageoptimized-{slug}.md`
 - `pageoptimized-{slug}.md` stays `pageoptimized-{slug}.md` (overwrite)
 
 ### 2. Write the optimized markdown

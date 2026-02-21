@@ -1,18 +1,20 @@
 ---
 name: content-generator
 description: |
-  Generate page content from a completed blueprint. Takes a single D7 blueprint, fills it with draft content section by section following brand voice from D2. Optionally integrates SEO targets from D3/D12. Works one page at a time.
+  Generate page content from a D7 blueprint or a content brief. In blueprint mode, fills a completed blueprint with draft content following brand voice and optional SEO targets. In brief mode, generates content from an operator-authored brief with optional PageOptimizer keyword targets. Works one page at a time.
 
-  Use this skill when the operator needs to create D8: Page Content for a specific page.
+  Invoke when the operator asks to "generate content", "write page content", "create content from blueprint", "create content from brief", "fill blueprint with content", or needs to produce page content for a specific page.
+allowed-tools: Read, Write, Edit, Glob, Bash(mkdir:*)
+version: 2.0.0
 ---
 
-You are generating page content for the webtools website creation pipeline. Your job is to take a completed D7 blueprint and fill it with draft content section by section, following brand voice guidelines and optionally integrating SEO targets. The blueprint already made the strategic decisions -- you execute against that spec.
+Generate page content for the webtools website pipeline. Detect the available source (D7 blueprint or content brief), load the outline and brand voice, generate content section by section, and save the output.
 
 ---
 
 ## Lifecycle Startup
 
-Before doing anything else, complete these 5 steps in order.
+Before doing anything else, complete these steps in order.
 
 ### 1. Registry Check
 
@@ -25,122 +27,51 @@ Read `project-registry.md` in the current working directory.
 
 Verify these 7 subdirectories exist: `brief/`, `brand/`, `seo/`, `architecture/`, `blueprints/`, `content/`, `audit/`. Create any missing ones silently.
 
-### 3. Input Validation
+### 3. Mode Detection
 
-**Required inputs:**
-- D7: Page Blueprint -- the operator must specify which page to write content for. Check `blueprints/` for D7 files.
-  - If no D7 files exist: "No blueprints found. Create page blueprints first using webtools-blueprint."
-  - If D7 files exist: list them and ask the operator which page to write content for.
+Scan for available source types:
+- Check `blueprints/` for D7 files (blueprint mode)
+- Check `content/` for `content-brief-*.md` files (brief mode)
 
-- D2: Brand Voice Profile at `brand/D2-brand-voice-profile.md`
-  - If it does NOT exist: warn. "D2: Brand Voice Profile is not available. Content will lack voice consistency. Recommend creating D2 first using webtools-brand. Proceed anyway?"
-  - If it exists: load it silently. Use voice attributes, tone spectrum, vocabulary guide, and style guidelines throughout content generation.
+**If both found:** Ask the operator which mode to use -- blueprint or brief. List available files for each.
 
-**Optional inputs (load silently if present):**
-- D3: SEO Keyword Map at `seo/D3-seo-keyword-map.md` -- keyword targets for the page
-- D12: SEO Content Targets at `seo/D12-seo-content-targets.md` -- specific keyword targets from external SEO tool
-- D6: Content Inventory at `architecture/D6-content-inventory.md` -- existing content to incorporate (redesigns)
-- Client-provided raw content (provided in conversation)
+**If only blueprints found:** Enter blueprint mode. Follow `references/mode-blueprint.md` for input loading, content mode selection, and outline extraction.
 
-### 4. Output Preparation
+**If only briefs found:** Enter brief mode. Follow `references/mode-brief.md` for brief parsing and outline extraction.
 
-After the operator selects a page, check if `content/D8-content-{page-slug}.md` already exists. If yes, warn and ask whether to overwrite or cancel.
+**If neither found:** Offer to create a content brief from the template. Ask for the page slug, then copy `references/content-brief-template.md` to `content/content-brief-{slug}.md`. Inform the operator to fill it in and re-run the skill.
+
+### 4. Brand Voice
+
+Load `brand/D2-brand-voice-profile.md` if present. Handling differs by mode -- see the active mode reference file for details.
 
 ### 5. Status Report
 
-```
-Project: [client name]
-
-Writing content for: [page name] ([slug])
-Blueprint: blueprints/D7-blueprint-[slug].md
-Brand voice: [loaded / not found]
-SEO keywords: [loaded / not found]
-Content inventory: [loaded / not found]
-
-Content mode options:
-(a) SEO-optimized -- integrate keywords from D3/D12
-(b) Clean -- no SEO integration (keywords added later)
-
-Output: content/D8-content-[slug].md
-```
-
----
-
-## Content Mode Selection
-
-Ask the operator to choose a content mode:
-
-- **SEO-optimized**: Integrate keywords naturally throughout the content. Track keyword usage and placement.
-- **Clean**: Write content without SEO considerations. Keywords can be added later in a revision pass.
-
-If D3 and D12 are both unavailable, default to clean mode and note the limitation.
+Present the mode-specific status report as defined in the active mode reference file. Wait for the operator to confirm before proceeding.
 
 ---
 
 ## Content Generation Process
 
-### Step 1: Load Blueprint
+### Step 1: Load Outline
 
-Read the selected D7 blueprint. For each section, extract:
-- Section type and purpose
-- Content requirements and key messages
-- Keyword assignments (if D3/D12 available and SEO mode selected)
-- Tone guidance (if D2 available)
-- Word count target
-- Data requirements (what needs real client input)
+Extract the content outline from the mode-specific source:
+- **Blueprint mode:** Extract sections, requirements, and word count targets from D7. See `references/mode-blueprint.md`.
+- **Brief mode:** Parse sections, FAQ items, keywords, and additional context from the brief. See `references/mode-brief.md`.
 
-### Step 2: Generate Content Section by Section
+### Step 2: Generate Section by Section
 
-For each section in the blueprint order:
+For each section in the source outline order, generate content following the rules in `references/generation-rules.md`:
 
-1. Write the section content following:
-   - The content requirements from D7
-   - The brand voice from D2 (tone, vocabulary, sentence style)
-   - The SEO targets (if SEO-optimized mode)
-   - The word count target from D7
-
-2. Include:
-   - Section heading (H2 or H3 as appropriate)
-   - Body content (formatted text)
-   - CTA text (if the section includes a call to action)
-   - Alt text suggestions for images (if the section references visuals)
-   - Notes for designer/developer (content-driven layout needs)
-
-3. Flag sections that need real client input:
-   ```
-   [NEEDS CLIENT INPUT: This section requires real testimonials from the client.
-   Placeholder content is provided for structure reference only.]
-   ```
+- Apply brand voice (D2 if loaded, neutral professional if not)
+- Include section heading, body content, CTA text, alt text suggestions, and designer/developer notes as applicable
+- Flag sections needing real client input with `[NEEDS CLIENT INPUT]` markers
+- Incorporate raw content or additional context naturally
+- Integrate keywords when targets are available (guidance, not scoring)
 
 ### Step 3: Present Draft
 
-Present the complete page content to the operator:
-
-```
-D8 DRAFT: [page name]
-
-Page: [name]
-Slug: [slug]
-Total word count: [count]
-
-[Section 1 heading]
-[Content]
-
-[Section 2 heading]
-[Content]
-
-...
-
-CONTENT STATISTICS:
-- Total word count: [count] (target: [target from D7])
-- Sections with placeholder content: [list]
-- Keyword usage: [if SEO mode, show keyword placement summary]
-
-SEO METADATA:
-- Title tag: [suggested]
-- Meta description: [suggested]
-- H1: [suggested]
-```
+Present the complete page content to the operator with content statistics: total word count, flagged sections, and keyword summary.
 
 ### Step 4: Review and Iterate
 
@@ -154,97 +85,45 @@ Iterate until the operator approves.
 
 ---
 
-## D8 Output Structure
+## Save and Lifecycle Completion
 
-Each D8 file MUST contain:
+### 1. Write Output
 
-### Page Metadata
-- Page name and URL slug
-- Title tag
-- Meta description
-- H1
+Write the approved content following the file naming and frontmatter rules in `references/output-format.md`:
+- **Blueprint mode:** `content/D8-content-{page-slug}.md`
+- **Brief mode:** `content/generated-{slug}.md`
 
-### Content Sections
-
-For each section (matching D7 blueprint order):
-- Section heading
-- Body content
-- CTA text (if applicable)
-- Alt text suggestions (if applicable)
-- Designer/developer notes (if applicable)
-
-### Content Statistics
-- Total word count
-- Sections requiring client input (flagged)
-- Keyword usage summary (if SEO mode): which keywords used, frequency, placement
-- Readability assessment (sentence length, vocabulary level)
-
----
-
-## Lifecycle Completion
-
-After the operator approves the content, complete these 4 steps.
-
-### 1. File Naming Validation
-
-Write to `content/D8-content-{page-slug}.md` where `{page-slug}` matches the slug from D4 and the corresponding D7.
-
-YAML frontmatter:
-
-```yaml
----
-document_id: D8
-title: "Page Content: [Page Name]"
-project: "[client name]"
-created: [today]
-updated: [today]
-created_by: webtools-writer
-status: complete
-dependencies:
-  - D7: /blueprints/D7-blueprint-{slug}.md
-  - D2: /brand/D2-brand-voice-profile.md
----
-```
-
-Include D3, D12, D6 in dependencies if they were loaded and used.
+Check for existing files before writing. Warn and ask before overwriting.
 
 ### 2. Registry Update
 
 Update `project-registry.md`:
-- Add or update D8 row for this page: Doc ID = `D8`, Document = `Content: [Page Name]`, File Path = `content/D8-content-{slug}.md`, Status = `complete`, Created = today, Updated = today, Created By = `webtools-writer`
+- Add or update a Document Log row for this page with appropriate status and metadata.
 - Phase Log: if Content phase has no Started date, set Started to today. Add `webtools-writer` to Plugins Used.
 
-### 3. Cross-Reference Check
+### 3. Mode-Specific Completion
 
-Compare D8 files in `content/` against D7 files in `blueprints/`:
-- Pages with content: [list]
-- Pages with blueprints but no content: [list]
-
-Report coverage:
-```
-Content coverage: [X] of [Y] blueprinted pages have content.
-Remaining: [list of pages still needing content]
-```
-
-### 4. Downstream Notification
-
-```
-D8: Content for [page name] is complete.
-
-Run this skill again for the next page, or:
-- Run microcopy-generator when all page content is done
-- Run /audit (webtools-audit) to check content quality
-```
+Follow the active mode reference file for additional completion steps:
+- **Blueprint mode:** Cross-reference check and downstream notification per `references/mode-blueprint.md`.
+- **Brief mode:** Downstream notification per `references/mode-brief.md`.
 
 ---
 
 ## Behavioral Rules
 
-- Follow the D7 blueprint structure exactly. Do not add, remove, or reorder sections.
-- Follow the D2 brand voice consistently. If D2 specifies "avoid jargon," do not use jargon.
-- Flag all sections that need real client input with the [NEEDS CLIENT INPUT] marker. Do not invent testimonials, statistics, team member names, or case study details.
-- Page slugs in D8 filenames MUST match the corresponding D7 slug exactly.
-- Keep the tone professional and aligned with D2.
+- Follow the source outline exactly. Do not add, remove, or reorder sections.
+- Follow the brand voice consistently. If D2 is loaded, apply its guidelines throughout.
+- Flag all sections needing real client input. Do not invent testimonials, statistics, names, or case study details.
+- Track word count per section and total. Flag significant deviations from targets.
 - Do not use emojis in any output.
-- If the operator provides raw client content (e.g., "here's info about our process"), incorporate it naturally into the relevant section.
-- Track word count per section and total. Flag significant deviations from D7 targets.
+- Full writing rules: `references/generation-rules.md`.
+
+---
+
+## Reference Files
+
+- `references/mode-blueprint.md` -- D-pipeline mode: D7 input validation, D8 naming, cross-references, SEO mode selection
+- `references/mode-brief.md` -- Brief mode: template parsing, keyword extraction, outline interpretation, output naming
+- `references/content-brief-template.md` -- Template for operators to fill in with page description, outline, keywords, and briefs
+- `references/output-format.md` -- Shared output structure and mode-specific frontmatter schemas
+- `references/generation-rules.md` -- Shared writing rules: voice, flagging, keyword integration, formatting

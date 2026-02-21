@@ -1,32 +1,54 @@
 # webtools-writer
 
-Content and microcopy generation for the webtools website pipeline.
+Content generation, optimization, and microcopy for the webtools website pipeline.
 
 ## Overview
 
-This plugin produces the written content for the website. It has three skills: a content generator that fills page blueprints with draft content following brand voice, a microcopy generator that produces all UI text elements for the site, and a content extractor that pulls content from live web pages for revision.
+This plugin produces the written content for the website. It has four skills: a content generator that creates page content from D7 blueprints or standalone content briefs, a content optimizer that rewrites content against PageOptimizer.pro keyword targets, a microcopy generator that produces all UI text elements for the site, and a content extractor that pulls content from live web pages for revision.
 
 ## Components
 
 | Type | Name | Description |
 |------|------|-------------|
-| Skill | `content-generator` | Generate page content from D7 blueprints, one page at a time |
+| Skill | `content-generator` | Generate page content from D7 blueprints or content briefs, one page at a time |
+| Skill | `content-pageoptimizer` | Optimize page content against PageOptimizer.pro keyword targets |
 | Skill | `microcopy-generator` | Generate all UI text elements for the entire site |
 | Skill | `content-extractor` | Extract content from a live web page and save as formatted markdown |
+| Command | `/export-html` | Convert content markdown to clean semantic HTML |
 
 ## Usage
 
 ### Content Generation
 
-Invoke the content-generator skill with the project folder as the working directory. The skill will:
+Invoke the content-generator skill with the project folder as the working directory. The skill auto-detects available sources and operates in one of two modes:
 
+**Blueprint mode** (D-pipeline):
 1. Load D7 blueprint for the selected page (required) and D2 brand voice (required)
 2. Ask for content mode: SEO-optimized or clean
 3. Generate content section by section following the blueprint
 4. Present draft for review and iteration
-5. Write D8 to `content/D8-content-{page-slug}.md`
+5. Write to `content/D8-content-{page-slug}.md`
+
+**Brief mode** (standalone):
+1. Load a content brief from `content/content-brief-{slug}.md` and D2 brand voice (optional)
+2. Parse outline, keywords, and PageOptimizer briefs from the brief
+3. Generate content section by section following the outline
+4. Present draft for review and iteration
+5. Write to `content/generated-{slug}.md`
+
+If neither blueprints nor briefs exist, the skill offers to create a content brief from its built-in template.
 
 Run the skill multiple times to generate content for each page.
+
+### Content Optimization
+
+Invoke the content-pageoptimizer skill with the project folder as the working directory. The skill will:
+
+1. Select source content (`extracted-`, `generated-`, or `pageoptimized-` files)
+2. Parse 4 PageOptimizer.pro content brief files (title, H1, subheadings, body)
+3. Analyze keyword gaps and present an optimization plan
+4. Rewrite content section by section to hit keyword targets
+5. Verify all keywords with a scorecard and auto-export to HTML
 
 ### Microcopy Generation
 
@@ -52,12 +74,15 @@ Invoke the content-extractor skill with the project folder as the working direct
 
 | Doc ID | Document | File Path | Role |
 |--------|----------|-----------|------|
-| D7 | Page Blueprint | `blueprints/D7-blueprint-{slug}.md` | Required input (content-generator) |
-| D2 | Brand Voice Profile | `brand/D2-brand-voice-profile.md` | Required input (both skills) |
+| D7 | Page Blueprint | `blueprints/D7-blueprint-{slug}.md` | Required input (content-generator, blueprint mode) |
+| D2 | Brand Voice Profile | `brand/D2-brand-voice-profile.md` | Required input (blueprint mode), optional (brief mode, optimizer, microcopy) |
 | D4 | Site Architecture | `architecture/D4-site-architecture.md` | Required input (microcopy-generator) |
 | D1 | Project Brief | `brief/D1-project-brief.md` | Required input (microcopy-generator) |
 | D3 | SEO Keyword Map | `seo/D3-seo-keyword-map.md` | Optional input (content-generator) |
-| D8 | Page Content | `content/D8-content-{slug}.md` | Output (one per page) |
+| D8 | Page Content | `content/D8-content-{slug}.md` | Output (content-generator, blueprint mode) |
+| -- | Generated Content | `content/generated-{slug}.md` | Output (content-generator, brief mode) |
+| -- | Content Brief | `content/content-brief-{slug}.md` | Input (content-generator, brief mode) |
+| -- | Optimized Content | `content/pageoptimized-{slug}.md` | Output (content-pageoptimizer) |
 | D9 | Microcopy | `content/D9-microcopy.md` | Output |
 
 ## Part of the Webtools Suite
@@ -70,5 +95,5 @@ Invoke the content-extractor skill with the project folder as the working direct
 6. **webtools-inventory** -- Content inventory and migration
 7. **webtools-architecture** -- Site structure planning
 8. **webtools-blueprint** -- Page blueprint generation
-9. **webtools-writer** (this plugin) -- Content and microcopy generation
+9. **webtools-writer** (this plugin) -- Content generation, optimization, and microcopy
 10. **webtools-audit** -- Content quality auditing
