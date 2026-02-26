@@ -1,7 +1,7 @@
 {
   "name": "webtools-intake",
   "version": "2.0.0",
-  "description": "Client intake and project brief creation for the webtools website pipeline. Live meeting companion that processes client input in real-time across four modes (PREP, MEETING, REVIEW, BRIEF), suggests questions progressively, proposes solutions with confidence levels, and generates structured project briefs. Includes /questionnaire for standalone questionnaire generation.",
+  "description": "Client intake and project brief creation for the webtools website pipeline. Live meeting companion that processes client input in real-time across four modes (PREP, MEETING, REVIEW, BRIEF), suggests questions progressively, proposes solutions with confidence levels, and generates structured project briefs. Includes /webtools-intake-questionnaire for standalone questionnaire generation.",
   "author": {
     "name": "Oktodigital"
   }
