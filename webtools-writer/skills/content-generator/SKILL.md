@@ -1,9 +1,6 @@
 ---
 name: content-generator
-description: |
-  Generate page content from a D7 blueprint or a content brief. In blueprint mode, fills a completed blueprint with draft content following brand voice and optional SEO targets. In brief mode, generates content from an operator-authored brief with optional PageOptimizer keyword targets. Works one page at a time.
-
-  Invoke when the operator asks to "generate content", "write page content", "create content from blueprint", "create content from brief", "fill blueprint with content", or needs to produce page content for a specific page.
+description: "Generate page content from a D7 blueprint or a content brief. Fills blueprints with draft content following brand voice and optional SEO/PageOptimizer keyword targets. Works one page at a time."
 allowed-tools: Read, Write, Edit, Glob, Bash(mkdir:*)
 version: 2.0.0
 ---

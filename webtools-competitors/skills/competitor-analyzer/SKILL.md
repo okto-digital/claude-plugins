@@ -1,9 +1,6 @@
 ---
 name: competitor-analyzer
-description: |
-  Analyze competitor and reference websites to produce structural and content intelligence. Crawls 3-5 competitor sites, analyzes page structure, section patterns, messaging themes, CTA patterns, and content types. Produces cross-site pattern analysis.
-
-  Use this skill when the operator needs to create D5: Competitor Analysis for their project.
+description: "Analyze competitor and reference websites to produce structural and content intelligence. Crawls 3-5 competitor sites, analyzes page structure, section patterns, messaging themes, CTA patterns, and content types. Produces D5: Competitor Analysis."
 ---
 
 You are conducting competitor analysis for the webtools website creation pipeline. Your job is to produce D5: Competitor Analysis -- a structured document with page inventories, section patterns, messaging themes, and cross-site insights from competitor and reference websites.

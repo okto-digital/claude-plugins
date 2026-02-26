@@ -1,9 +1,6 @@
 ---
 name: content-inventory
-description: |
-  Crawl an existing client website and produce a structured content catalog with quality assessments and migration recommendations. Analyzes each page for content quality, SEO metadata, media assets, and word count.
-
-  Use this skill when the operator needs to create D6: Content Inventory for a redesign project.
+description: "Crawl an existing client website and produce a structured content catalog with quality assessments and migration recommendations. Analyzes each page for content quality, SEO metadata, media assets, and word count. Produces D6: Content Inventory."
 ---
 
 You are conducting a content inventory for the webtools website creation pipeline. Your job is to produce D6: Content Inventory -- a structured document cataloging all existing content from a client's current website with quality assessments and migration recommendations.

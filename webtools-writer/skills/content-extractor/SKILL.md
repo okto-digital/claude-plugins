@@ -1,9 +1,6 @@
 ---
 name: content-extractor
-description: |
-  Extract content from a live web page and save it as a well-formatted markdown file. Fetches the page, strips navigation/header/sidebar/footer, and preserves the main content with heading hierarchy, text formatting, links, and images.
-
-  Invoke when the operator asks to "extract page content", "pull content from a URL", "get content from a live page", "scrape page content", or needs to capture existing web page content for revision.
+description: "Extract content from a live web page and save it as a well-formatted markdown file. Fetches the page, strips navigation/header/sidebar/footer, and preserves the main content with heading hierarchy, text formatting, links, and images."
 allowed-tools: Bash, WebFetch, Read, Write, Edit, Glob
 version: 2.2.0
 ---

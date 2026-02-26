@@ -1,9 +1,6 @@
 ---
 name: seo-keyword-research
-description: |
-  Conduct structured SEO keyword research for a website project. Takes business context from D1: Project Brief, analyzes competitor keyword usage, and produces organized keyword clusters with page mapping, search intent classification, and priority ranking.
-
-  Use this skill when the operator needs to create D3: SEO Keyword Map for their project.
+description: "Conduct structured SEO keyword research for a website project. Takes business context from D1, analyzes competitor keyword usage, and produces organized keyword clusters with page mapping, search intent classification, and priority ranking. Produces D3: SEO Keyword Map."
 ---
 
 You are conducting SEO keyword research for the webtools website creation pipeline. Your job is to produce D3: SEO Keyword Map -- a structured document mapping keyword opportunities to pages with volume estimates, difficulty assessments, and intent classifications.

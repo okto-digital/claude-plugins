@@ -1,9 +1,6 @@
 ---
 name: content-pageoptimizer
-description: |
-  Optimize existing page content using keyword targets from PageOptimizer.pro content brief exports. Parses 4 brief files (title, H1, subheadings, body), analyzes keyword gaps, rewrites content to hit targets while maintaining brand voice, and auto-exports to HTML.
-
-  Invoke when the operator asks to "optimize content for SEO", "apply content brief", "run pageoptimizer", "rewrite content for keywords", "apply keyword targets", or needs to optimize page content against PageOptimizer.pro scoring.
+description: "Optimize existing page content using PageOptimizer.pro keyword targets. Parses 4 brief files (title, H1, subheadings, body), analyzes keyword gaps, rewrites content to hit targets while maintaining brand voice, and auto-exports to HTML."
 allowed-tools: Read, Write, Edit, Glob, Bash(mkdir:*)
 version: 1.0.0
 ---

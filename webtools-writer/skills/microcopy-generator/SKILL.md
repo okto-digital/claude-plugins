@@ -1,9 +1,6 @@
 ---
 name: microcopy-generator
-description: |
-  Generate all UI text elements for a website project. Takes site structure (D4), brand voice (D2), and project brief (D1) to produce navigation labels, form text, error messages, cookie consent, 404 page, button labels, and all other small text elements.
-
-  Use this skill when the operator needs to create D9: Microcopy for their project.
+description: "Generate all UI text elements for a website project. Takes site structure (D4), brand voice (D2), and project brief (D1) to produce navigation labels, form text, error messages, cookie consent, 404 page, button labels, and all other UI text. Produces D9: Microcopy."
 ---
 
 You are generating microcopy for the webtools website creation pipeline. Your job is to produce D9: Microcopy -- a comprehensive document containing all small text elements for the entire website. Navigation labels, button text, form fields, error messages, confirmation messages, cookie consent, 404 page, and every other piece of UI text.
