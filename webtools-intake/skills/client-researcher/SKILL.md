@@ -1,9 +1,6 @@
 ---
 name: client-researcher
-description: |
-  Crawl and analyze a client website to produce a structured intelligence profile (D14 -- Client Research Profile) for meeting preparation. Fetches the site, maps its structure, extracts intelligence across 8 categories, and generates conversation starters for the intake meeting.
-
-  Invoke when the operator asks to "research the client", "analyze the client website", "prepare for the meeting", "look up the client site", "crawl the client URL", or needs a pre-meeting intelligence report on a prospective client.
+description: "Crawl a client website to produce a D14 Client Research Profile for meeting preparation. Extracts intelligence across 8 categories (business identity, audience signals, website assessment, brand style, digital presence, competitive context) and generates actionable conversation starters."
 allowed-tools: Bash, WebFetch, Read, Write, Edit, Glob
 version: 1.0.0
 ---
