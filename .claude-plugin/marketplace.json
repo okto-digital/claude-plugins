@@ -12,12 +12,12 @@
     {
       "name": "webtools-init",
       "source": "./webtools-init",
-      "description": "Project initialization, health checks, and registry management for the webtools website creation pipeline. Commands: /webtools-init, /webtools-health, /webtools-rebuild, /webtools-status."
+      "description": "Project initialization, health checks, and registry management for the webtools website creation pipeline. Commands: /webtools-init, /webtools-init-health, /webtools-init-rebuild, /webtools-init-status."
     },
     {
       "name": "webtools-intake",
       "source": "./webtools-intake",
-      "description": "Client intake and project brief creation. Generate tailored questionnaires (/questionnaire) and produce structured project briefs through conversational collaboration (brief-generator agent). Produces D11 and D1."
+      "description": "Client intake and project brief creation. Generate tailored questionnaires (/webtools-intake-questionnaire) and produce structured project briefs through phase commands (/webtools-intake-prep, /webtools-intake-meeting, /webtools-intake-review, /webtools-intake-brief). Produces D11, D13, and D1."
     },
     {
       "name": "webtools-brand",
