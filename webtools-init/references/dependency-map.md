@@ -20,12 +20,13 @@ Full dependency graph for the webtools document pipeline. Used by the downstream
 | D10: Content Audit Report | (none) |
 | D11: Client Questionnaire | D1 |
 | D12: SEO Content Targets | D8, D10 |
+| D13: Client Follow-Up Questionnaire | D1 |
 
 ## Reverse Dependencies (what each document needs)
 
 | Document | Required Inputs | Optional Inputs | Created By |
 |----------|----------------|-----------------|------------|
-| D1: Project Brief | (none -- raw client input) | D11 | webtools-intake |
+| D1: Project Brief | (none -- raw client input) | D11, D13 | webtools-intake |
 | D2: Brand Voice Profile | D1 | existing website URL, tone examples | webtools-brand |
 | D3: SEO Keyword Map | D1 | competitor URLs, analytics data | webtools-seo |
 | D4: Site Architecture | D1 | D3, D5, D6 | webtools-architecture |
@@ -37,15 +38,18 @@ Full dependency graph for the webtools document pipeline. Used by the downstream
 | D10: Content Audit Report | D8 (at least one), D3 | D2, D5, D12 | webtools-audit |
 | D11: Client Questionnaire | project type (via args) | industry | webtools-intake |
 | D12: SEO Content Targets | (external) | -- | external tool |
+| D13: Client Follow-Up Questionnaire | D1 (meeting data, session state) | -- | webtools-intake |
 
 ## Pipeline Flow
 
 ```
 Client Input
     |
-[/questionnaire] --> D11: Client Questionnaire
+[/webtools-intake-questionnaire] --> D11: Client Questionnaire
     |
-[brief-generator] --> D1: Project Brief
+[/webtools-intake-review] --> D13: Client Follow-Up Questionnaire
+    |
+[/webtools-intake-brief] --> D1: Project Brief
     |                       |
 [brand-voice-creator]  [seo-keyword-research]
     |                       |
@@ -73,7 +77,7 @@ Client Input
 
 | Phase | Documents Produced | Plugins |
 |-------|-------------------|---------|
-| Discovery | D11, D1 | webtools-intake |
+| Discovery | D11, D1, D13 | webtools-intake |
 | Research | D2, D3, D5, D6 | webtools-brand, webtools-seo, webtools-competitors, webtools-inventory |
 | Architecture | D4 | webtools-architecture |
 | Blueprinting | D7 (per page) | webtools-blueprint |

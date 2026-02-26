@@ -1,7 +1,7 @@
 {
   "name": "webtools-init",
   "version": "1.0.0",
-  "description": "Project initialization, health checks, and registry management for the webtools website creation pipeline. Provides /webtools-init, /webtools-health, /webtools-rebuild, and /webtools-status commands plus canonical lifecycle and data model references used by all webtools plugins.",
+  "description": "Project initialization, health checks, and registry management for the webtools website creation pipeline. Provides /webtools-init, /webtools-init-health, /webtools-init-rebuild, and /webtools-init-status commands plus canonical lifecycle and data model references used by all webtools plugins.",
   "author": {
     "name": "Oktodigital"
   }

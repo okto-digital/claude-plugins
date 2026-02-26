@@ -64,7 +64,7 @@ If the header is missing or incomplete:
 
 Construct a new Document Log table:
 
-1. For each single-instance document (D1, D2, D3, D4, D5, D6, D9, D10, D11, D12):
+1. For each single-instance document (D1, D2, D3, D4, D5, D6, D9, D10, D11, D12, D13):
    - If a matching file was found on disk: create a row with the extracted metadata
    - If no file was found: create a row with status `--` and all other fields set to `--`
 

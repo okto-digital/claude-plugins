@@ -29,6 +29,7 @@ All documents follow: `D{number}-{type}-{page-slug}.md`
 | D10 | `D10-content-audit-report.md` | `audit/` |
 | D11 | `D11-client-questionnaire.md` | `brief/` |
 | D12 | `D12-seo-content-targets.md` | `seo/` |
+| D13 | `D13-client-followup.md` | `brief/` |
 
 ## Multi-Instance Documents (with page slug)
 
@@ -54,7 +55,7 @@ Page slugs must:
 ```
 project-root/
 ├── project-registry.md
-├── brief/              <- D1, D11
+├── brief/              <- D1, D11, D13
 ├── brand/              <- D2
 ├── seo/                <- D3, D12
 ├── architecture/       <- D4, D5, D6

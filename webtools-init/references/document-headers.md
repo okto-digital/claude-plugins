@@ -24,7 +24,7 @@ dependencies:
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `document_id` | Yes | D-number identifier (D1-D12) |
+| `document_id` | Yes | D-number identifier (D1-D13) |
 | `title` | Yes | Human-readable document title. For multi-instance: include page name (e.g., "Page Blueprint: Homepage") |
 | `project` | Yes | Client project name (must match registry) |
 | `created` | Yes | Date first created (YYYY-MM-DD). Never changes after creation. |
@@ -149,3 +149,13 @@ created_by: external
 dependencies: []
 ```
 Note: Imported from external SEO tools. Not produced by any webtools plugin.
+
+### D13: Client Follow-Up Questionnaire
+```yaml
+document_id: D13
+title: "Client Follow-Up Questionnaire"
+created_by: webtools-intake
+dependencies:
+  - D1: /brief/D1-project-brief.md
+```
+Note: Generated after meeting in REVIEW mode. Contains follow-up questions for unresolved gaps.
