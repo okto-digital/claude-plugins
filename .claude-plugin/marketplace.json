@@ -17,7 +17,7 @@
     {
       "name": "webtools-intake",
       "source": "./webtools-intake",
-      "description": "Client intake and project brief creation. Generate tailored questionnaires (/webtools-intake-questionnaire) and produce structured project briefs through phase commands (/webtools-intake-prep, /webtools-intake-meeting, /webtools-intake-review, /webtools-intake-brief). Produces D11, D13, and D1."
+      "description": "Client intake, pre-meeting research, and project brief creation. Crawl client websites for intelligence (client-researcher skill, D14), generate tailored questionnaires (/webtools-intake-questionnaire), and produce structured project briefs through phase commands (/webtools-intake-prep, /webtools-intake-meeting, /webtools-intake-review, /webtools-intake-brief). Produces D14, D11, D13, and D1."
     },
     {
       "name": "webtools-brand",

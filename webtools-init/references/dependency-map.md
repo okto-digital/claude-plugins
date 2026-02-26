@@ -21,6 +21,7 @@ Full dependency graph for the webtools document pipeline. Used by the downstream
 | D11: Client Questionnaire | D1 |
 | D12: SEO Content Targets | D8, D10 |
 | D13: Client Follow-Up Questionnaire | D1 |
+| D14: Client Research Profile | D1 |
 
 ## Reverse Dependencies (what each document needs)
 
@@ -39,11 +40,14 @@ Full dependency graph for the webtools document pipeline. Used by the downstream
 | D11: Client Questionnaire | project type (via args) | industry | webtools-intake |
 | D12: SEO Content Targets | (external) | -- | external tool |
 | D13: Client Follow-Up Questionnaire | D1 (meeting data, session state) | -- | webtools-intake |
+| D14: Client Research Profile | (none -- raw client URL) | -- | webtools-intake |
 
 ## Pipeline Flow
 
 ```
 Client Input
+    |
+[webtools-intake:client-researcher] --> D14: Client Research Profile
     |
 [/webtools-intake-questionnaire] --> D11: Client Questionnaire
     |
@@ -77,7 +81,7 @@ Client Input
 
 | Phase | Documents Produced | Plugins |
 |-------|-------------------|---------|
-| Discovery | D11, D1, D13 | webtools-intake |
+| Discovery | D11, D1, D13, D14 | webtools-intake |
 | Research | D2, D3, D5, D6 | webtools-brand, webtools-seo, webtools-competitors, webtools-inventory |
 | Architecture | D4 | webtools-architecture |
 | Blueprinting | D7 (per page) | webtools-blueprint |

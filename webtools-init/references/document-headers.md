@@ -24,7 +24,7 @@ dependencies:
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `document_id` | Yes | D-number identifier (D1-D13) |
+| `document_id` | Yes | D-number identifier (D1-D14) |
 | `title` | Yes | Human-readable document title. For multi-instance: include page name (e.g., "Page Blueprint: Homepage") |
 | `project` | Yes | Client project name (must match registry) |
 | `created` | Yes | Date first created (YYYY-MM-DD). Never changes after creation. |
@@ -159,3 +159,12 @@ dependencies:
   - D1: /brief/D1-project-brief.md
 ```
 Note: Generated after meeting in REVIEW mode. Contains follow-up questions for unresolved gaps.
+
+### D14: Client Research Profile
+```yaml
+document_id: D14
+title: "Client Research Profile"
+created_by: webtools-intake
+dependencies: []
+```
+Note: Generated from public website crawl before the intake meeting. No dependencies -- works from a URL alone. Optional input to D1 via PREP mode.

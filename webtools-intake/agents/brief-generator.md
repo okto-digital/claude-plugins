@@ -114,6 +114,7 @@ Session state loaded from brief/intake-session.md
 - D11: Client Questionnaire at `brief/D11-client-questionnaire.md` -- load silently if present.
 - External inquiry form answers -- the operator may paste these in any format.
 - D13: Client Follow-Up at `brief/D13-client-followup.md` -- if it exists with status `complete`, load the answered questions as input.
+- D14: Client Research Profile at `brief/D14-client-research-profile.md` -- if present, load the website intelligence to pre-populate conversation topics during PREP and provide context for the meeting.
 
 ### 5. Output Preparation
 

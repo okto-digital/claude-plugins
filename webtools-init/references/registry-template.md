@@ -23,6 +23,7 @@
 | D11 | Client Questionnaire | /brief/D11-client-questionnaire.md | -- | -- | -- | -- |
 | D12 | SEO Content Targets | /seo/D12-seo-content-targets.md | -- | -- | -- | -- |
 | D13 | Client Follow-Up Questionnaire | /brief/D13-client-followup.md | -- | -- | -- | -- |
+| D14 | Client Research Profile | /brief/D14-client-research-profile.md | -- | -- | -- | -- |
 
 **Note:** D7 (Page Blueprint) and D8 (Page Content) are multi-instance documents -- one per page. Rows are added dynamically as blueprints and content are created. Page slugs must match those defined in D4: Site Architecture.
 

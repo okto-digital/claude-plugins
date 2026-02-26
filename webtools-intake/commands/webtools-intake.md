@@ -3,7 +3,7 @@ description: "webtools-intake: Show available intake workflows and current proje
 allowed-tools: Read, Glob
 ---
 
-Show available webtools-intake commands, current project state, and suggested next step.
+Show available webtools-intake commands and skills, current project state, and suggested next step.
 
 ---
 
@@ -27,6 +27,7 @@ Check if `brief/intake-session.md` exists.
 
 Determine the status of key documents:
 - **D11 Questionnaire:** check if `brief/D11-client-questionnaire.md` exists. If yes, report its status from the registry. If no, report "not started".
+- **D14 Client Research Profile:** check if `brief/D14-client-research-profile.md` exists. If yes, report its status from the registry. If no, report "not started".
 - **D1 Brief:** check if `brief/D1-project-brief.md` exists. If yes, report its status from the registry. If no, report "not started".
 
 ---
@@ -38,6 +39,9 @@ Determine the status of key documents:
 ```
 [INTAKE] Webtools Intake -- [client name]
 
+Available skills:
+  webtools-intake:client-researcher  Crawl client website, produce D14 intelligence profile
+
 Available commands:
   /webtools-intake                  Show this overview
   /webtools-intake-questionnaire    Generate client intake questionnaire (D11)
@@ -48,6 +52,7 @@ Available commands:
 
 Current state:
   Project: [client name] ([project type])
+  D14 Client Research: [complete / not started]
   D11 Questionnaire: [complete / not started]
   Intake session: [phase info from intake-session.md, e.g. "PREP completed, MEETING not started"]
   D1 Brief: [complete / not started]
@@ -58,6 +63,8 @@ Suggested next step: /webtools-intake-[phase]
 ```
 
 **Next step logic:**
+- No D14 and no D11 and no intake-session.md -> suggest `webtools-intake:client-researcher` or `/webtools-intake-questionnaire`
+- D14 complete but no intake-session.md and no D11 -> suggest `/webtools-intake-questionnaire` or `/webtools-intake-prep`
 - No intake-session.md and no D11 -> suggest `/webtools-intake-questionnaire` or `/webtools-intake-prep`
 - D11 complete but no session -> suggest `/webtools-intake-prep`
 - PREP completed -> suggest `/webtools-intake-meeting`
@@ -75,6 +82,9 @@ If `project-registry.md` does not exist:
 No project found in this directory.
 
 Run /webtools-init to set up a new project first, then return here.
+
+Available skills:
+  webtools-intake:client-researcher  Crawl client website, produce D14 intelligence profile
 
 Available commands (after project setup):
   /webtools-intake                  Show this overview
