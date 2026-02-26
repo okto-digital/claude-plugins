@@ -11,9 +11,9 @@ This plugin provides the foundation layer for the webtools suite. It creates pro
 | Command | Description |
 |---------|-------------|
 | `/webtools-init` | Initialize a new project: create folder structure, registry, and prompt for project info |
-| `/webtools-health` | Run comprehensive project health check (directories, registry, naming, headers, dependencies) |
-| `/webtools-rebuild` | Rebuild project registry from disk scan (recovery tool) |
-| `/webtools-status` | Show current project status, document progress, and suggested next actions |
+| `/webtools-init-health` | Run comprehensive project health check (directories, registry, naming, headers, dependencies) |
+| `/webtools-init-rebuild` | Rebuild project registry from disk scan (recovery tool) |
+| `/webtools-init-status` | Show current project status, document progress, and suggested next actions |
 
 ## Reference Files
 
@@ -41,7 +41,7 @@ Creates the project folder structure and registry in the current working directo
 ### Checking Project Health
 
 ```
-/webtools-health
+/webtools-init-health
 ```
 
 Runs 8 diagnostic checks: directory integrity, orphan files, ghost entries, file naming, document headers, page slug consistency, dependency freshness, and status consistency.
@@ -49,7 +49,7 @@ Runs 8 diagnostic checks: directory integrity, orphan files, ghost entries, file
 ### Quick Status Check
 
 ```
-/webtools-status
+/webtools-init-status
 ```
 
 Shows document completion by phase, progress stats, and suggests which documents are ready to create next.
@@ -57,7 +57,7 @@ Shows document completion by phase, progress stats, and suggests which documents
 ### Recovery
 
 ```
-/webtools-rebuild
+/webtools-init-rebuild
 ```
 
 Scans all project files on disk and rebuilds the registry. Use when the registry gets out of sync after manual file operations.

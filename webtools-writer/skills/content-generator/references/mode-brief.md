@@ -128,5 +128,5 @@ Word count: [count]
 
 Next steps:
 - Run content-pageoptimizer to optimize against PageOptimizer.pro scoring
-- Run /export-html to convert to HTML for external tools
+- Run /webtools-writer-export to convert to HTML for external tools
 ```

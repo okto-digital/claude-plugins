@@ -1,5 +1,5 @@
 ---
-description: Audit content quality against SEO, readability, and brand voice standards
+description: "webtools-audit: Audit content quality against SEO, readability, and brand voice standards"
 allowed-tools: Read, Write, Glob, Grep
 argument-hint: [all | page-slug]
 ---
@@ -255,7 +255,7 @@ Skip. D10 is a single-instance document.
 D10: Content Audit Report is complete.
 
 Review the findings and iterate on D8 content as needed.
-Re-run /audit after making changes to verify improvements.
+Re-run /webtools-audit after making changes to verify improvements.
 
 If all scores are Good, the content phase is complete.
 Run /webtools-health for a final project integrity check.

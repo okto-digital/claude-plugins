@@ -14,7 +14,7 @@ This plugin produces the written content for the website. It has four skills: a 
 | Skill | `content-pageoptimizer` | Optimize page content against PageOptimizer.pro keyword targets |
 | Skill | `microcopy-generator` | Generate all UI text elements for the entire site |
 | Skill | `content-extractor` | Extract content from a live web page and save as formatted markdown |
-| Command | `/export-html` | Convert content markdown to clean semantic HTML |
+| Command | `/webtools-writer-export` | Convert content markdown to clean semantic HTML |
 
 ## Usage
 

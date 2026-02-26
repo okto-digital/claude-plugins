@@ -1,6 +1,6 @@
 # Dependency Map
 
-Full dependency graph for the webtools document pipeline. Used by the downstream-impact notification in the completion sequence and by `/webtools-health` for freshness checks.
+Full dependency graph for the webtools document pipeline. Used by the downstream-impact notification in the completion sequence and by `/webtools-init-health` for freshness checks.
 
 ---
 
@@ -64,7 +64,7 @@ Client Input
                    |
            [microcopy-generator] --> D9
                    |
-           [/audit] --> D10
+           [/webtools-audit] --> D10
                    |
            Handoff to Design/Dev
 ```

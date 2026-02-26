@@ -1,5 +1,5 @@
 ---
-description: Convert content markdown to clean semantic HTML
+description: "webtools-writer: Convert content markdown to clean semantic HTML"
 allowed-tools: Read, Write, Glob, Bash(mkdir:*)
 argument-hint: [filename.md]
 ---

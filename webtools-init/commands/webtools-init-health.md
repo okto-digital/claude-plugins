@@ -1,5 +1,5 @@
 ---
-description: Run full project health check
+description: "webtools-init: Run full project health check"
 allowed-tools: Read, Glob, Grep
 ---
 

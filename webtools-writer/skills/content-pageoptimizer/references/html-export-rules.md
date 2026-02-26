@@ -1,6 +1,6 @@
 # HTML Export Rules
 
-After saving the optimized markdown, auto-export to clean semantic HTML. This follows the same rules as the `/export-html` command.
+After saving the optimized markdown, auto-export to clean semantic HTML. This follows the same rules as the `/webtools-writer-export` command.
 
 ---
 

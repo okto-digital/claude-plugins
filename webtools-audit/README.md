@@ -10,14 +10,14 @@ This plugin evaluates generated content against SEO targets, readability standar
 
 | Type | Name | Description |
 |------|------|-------------|
-| Command | `/audit` | Audit content quality for all pages or a specific page |
+| Command | `/webtools-audit` | Audit content quality for all pages or a specific page |
 
 ## Usage
 
 ```
-/audit all           # Audit all D8 content documents
-/audit homepage      # Audit only the homepage content
-/audit about         # Audit only the about page content
+/webtools-audit all           # Audit all D8 content documents
+/webtools-audit homepage      # Audit only the homepage content
+/webtools-audit about         # Audit only the about page content
 ```
 
 **Arguments:**

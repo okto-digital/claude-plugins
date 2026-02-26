@@ -1,5 +1,5 @@
 ---
-description: Rebuild project registry from disk scan
+description: "webtools-init: Rebuild project registry from disk scan"
 allowed-tools: Read, Write, Glob, Grep
 ---
 

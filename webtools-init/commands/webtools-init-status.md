@@ -1,5 +1,5 @@
 ---
-description: Show current project status and next steps
+description: "webtools-init: Show current project status and next steps"
 allowed-tools: Read
 ---
 
@@ -104,5 +104,5 @@ If all documents are complete, show:
 
 ```
 ALL DOCUMENTS COMPLETE
-  Run /audit to generate the Content Audit Report, or /webtools-health for a final integrity check.
+  Run /webtools-audit to generate the Content Audit Report, or /webtools-init-health for a final integrity check.
 ```
