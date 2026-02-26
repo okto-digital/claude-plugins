@@ -87,6 +87,25 @@ Verify these 7 subdirectories exist: `brief/`, `brand/`, `seo/`, `architecture/`
 - Read `${CLAUDE_PLUGIN_ROOT}/references/d13-template.md` for follow-up document generation.
 - Read `${CLAUDE_PLUGIN_ROOT}/references/questioning-strategy.md` for question formulation and QBQ awareness.
 
+### 3b. Session State
+
+Check if `brief/intake-session.md` exists.
+
+- If yes: read it and restore accumulated state (phase history, coverage, conditional domains, key facts, inferences, flags). Report what was loaded:
+
+```
+Session state loaded from brief/intake-session.md
+  Project: [project name]
+  Last phase: [phase name]
+  Phases completed: [list]
+  CRITICAL coverage: [X/Y]
+  Data points: [count]
+  Pending inferences: [count]
+  Flags: [count]
+```
+
+- If no: proceed with empty state. The file will be created when the first phase completes.
+
 ### 4. Input Validation
 
 **Required inputs:** NONE. This agent can run on an empty project.
@@ -187,6 +206,10 @@ INTERVIEW GUIDE
 
 Ready to enter MEETING mode when the client arrives.
 ```
+
+### Session State Write
+
+When the operator signals PREP is complete (transitions to MEETING or ends the session), write or update `brief/intake-session.md` with the current state: project name, `current_phase: PREP`, `phases_completed: [PREP]`, conditional domain statuses, CRITICAL coverage count, total data points, key facts extracted, inferences generated, and any flags. Suggest `/webtools-intake-meeting` as the next step.
 
 ---
 
@@ -395,6 +418,10 @@ When operator types `resume`:
 - Return to normal behavior
 - Show catch-up: "While paused: [X] data points captured. Coverage: [Y]% CRITICAL."
 
+### Session State Write
+
+When the operator signals MEETING is complete (`done`, `wrap up`, `review`, `meeting over`), write or update `brief/intake-session.md` with the current state: update `current_phase: MEETING`, add `MEETING` to `phases_completed`, update conditional domain statuses, CRITICAL coverage count, total data points, key facts, all inferences (with confidence levels), and any flags captured during the meeting. Suggest `/webtools-intake-review` as the next step.
+
 ---
 
 ## Inference Engine
@@ -584,6 +611,10 @@ When the operator pastes completed D13 answers:
 6. If all CRITICAL resolved: suggest transitioning to BRIEF mode
 7. If gaps remain: inform operator with options
 
+### Session State Write
+
+When REVIEW is complete (operator proceeds to BRIEF or ends the session), write or update `brief/intake-session.md` with the current state: update `current_phase: REVIEW`, add `REVIEW` to `phases_completed`, update CRITICAL coverage with confirmed inferences factored in, record confirmed vs rejected inferences, remaining gaps, and any D13 generation status. Suggest `/webtools-intake-brief` as the next step.
+
 ---
 
 ## BRIEF Mode
@@ -681,6 +712,10 @@ Add a "Notes" section for information that does not fit neatly into these sectio
 ```
 
 4. Iterate until explicitly approved. Do NOT write the file until approved.
+
+### Session State Write
+
+After D1 is approved and written, update `brief/intake-session.md`: set `current_phase: BRIEF`, add `BRIEF` to `phases_completed`, record final CRITICAL coverage, and mark D1 status as complete.
 
 ---
 

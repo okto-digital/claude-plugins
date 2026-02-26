@@ -1,5 +1,5 @@
 ---
-description: Generate tailored client intake questionnaire
+description: "webtools-intake: Generate tailored client intake questionnaire"
 allowed-tools: Read, Write, Bash(mkdir:*)
 argument-hint: [project-type] [industry]
 ---
