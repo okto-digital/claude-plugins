@@ -4,6 +4,13 @@
 
 **Applicability:** Skip this entire domain if the website has no login functionality, membership areas, or gated content. Admin-only CMS access does not count.
 
+**What to look for:**
+- What users actually need to log in FOR -- and whether accounts are genuinely necessary
+- How user registration works and what friction is acceptable
+- What data is stored per user and what privacy implications that carries
+- Whether different user roles need different permissions or views
+- How forgotten passwords, account deletion, and data export are handled
+
 ---
 
 ## Priority Definitions

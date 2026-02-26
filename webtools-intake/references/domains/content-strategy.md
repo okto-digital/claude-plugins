@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief addresses what content the website needs, who creates it, how it is structured, and what the messaging hierarchy looks like. Content is the primary reason people visit a website -- without a content strategy, design and development have nothing meaningful to frame.
 
+**What to look for:**
+- Whether usable content actually exists or needs to be created from scratch
+- Who writes and maintains content after launch -- and whether they have the capacity
+- What the core messaging hierarchy is: what must every visitor understand first
+- How content is structured across page types -- service pages, case studies, blog, etc.
+- Whether the client underestimates the effort content creation requires
+
 ---
 
 ## Priority Definitions

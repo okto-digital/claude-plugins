@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief clearly defines who the website is for -- primary and secondary audiences, their needs, behaviors, and decision journeys. Without audience clarity, content tone, site structure, and feature priorities are all shots in the dark.
 
+**What to look for:**
+- Who actually visits the website vs who the client thinks visits
+- What the audience needs to see or feel before they trust this business
+- What hesitations or objections stop people from converting
+- How different audience segments find the business today
+- Whether there are secondary audiences with conflicting needs
+
 ---
 
 ## Priority Definitions

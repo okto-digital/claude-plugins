@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief captures the practical project parameters -- timeline, budget, milestones, phasing strategy, and stakeholder approval process. Without clear scope, projects drift, budgets overrun, and expectations misalign.
 
+**What to look for:**
+- Whether the timeline is driven by a real deadline or an aspirational target
+- Whether the budget matches the scope the client has described
+- How decisions get made -- single decision-maker or committee approval
+- Whether phased delivery is appropriate given budget and timeline constraints
+- What the client's risk tolerance is: launch lean and iterate, or launch complete
+
 ---
 
 ## Priority Definitions

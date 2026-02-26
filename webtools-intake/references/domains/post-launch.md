@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief addresses what happens after the website goes live -- maintenance, content updates, hosting management, support arrangements, and monitoring. A website is not a project that ends at launch; it is a product that needs ongoing care.
 
+**What to look for:**
+- Whether the client has budgeted for ongoing maintenance or expects the site to run itself
+- Who handles updates, security patches, and content changes after launch
+- What the plan is when something breaks at 10 PM on a Friday
+- Whether a monitoring and alerting strategy exists for uptime and performance
+- How the site evolves after launch -- is there a roadmap or just ad hoc requests
+
 ---
 
 ## Priority Definitions

@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief addresses inclusive design -- WCAG compliance targets, assistive technology support, and design considerations for users with disabilities. Accessibility is a legal requirement in many jurisdictions and a quality marker that benefits all users.
 
+**What to look for:**
+- Whether accessibility is a legal requirement in the client's jurisdiction or market
+- What level of compliance is appropriate -- minimum legal or genuine inclusive design
+- Whether the client understands that accessibility decisions affect design, content, and development
+- What the current site's accessibility state is (if redesign)
+- Whether the target audience includes users with known accessibility needs
+
 ---
 
 ## Priority Definitions

@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief identifies real competitors, understands their web presence strengths and weaknesses, and defines a clear differentiation strategy. Without competitive context, the website risks blending in or missing obvious opportunities.
 
+**What to look for:**
+- Which competitors the client respects or fears, and why
+- What competitors do well on their websites that this client should match or beat
+- Where competitor websites have obvious gaps this client can exploit
+- How the client's positioning differs from the pack -- and whether their website reflects that
+- Whether the client has unrealistic expectations based on competitors with much larger budgets
+
 ---
 
 ## Priority Definitions

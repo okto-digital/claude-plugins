@@ -4,6 +4,13 @@
 
 **Applicability:** Skip this entire domain if the website has no appointment, reservation, or scheduling functionality. A simple "call to book" approach does not qualify -- this domain is for automated online booking.
 
+**What to look for:**
+- What the booking flow should feel like: self-service vs operator-assisted
+- How availability is managed -- calendar sync, manual slots, or automated rules
+- What happens after a booking: confirmation, reminders, cancellation policy
+- Whether the booking system needs to integrate with existing scheduling tools
+- How no-shows and cancellations are handled
+
 ---
 
 ## Priority Definitions

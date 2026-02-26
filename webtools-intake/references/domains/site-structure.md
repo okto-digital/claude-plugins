@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief addresses what pages the website needs, how they are organized, how users navigate between them, and what user flows must be supported. Site structure is the skeleton that everything else hangs on -- get it wrong and users cannot find what they need.
 
+**What to look for:**
+- What pages the site actually needs vs what the client assumes it needs
+- How deep the navigation should go before users get lost
+- What the primary user flows are: how someone arrives, explores, and converts
+- Whether the client has thought about mobile navigation or just desktop
+- What happens when the site grows -- can the structure scale without a redesign
+
 ---
 
 ## Priority Definitions

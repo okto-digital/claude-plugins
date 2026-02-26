@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief addresses how success will be tracked -- analytics setup, KPIs, conversion events, and reporting cadence. Without measurement, there is no way to know if the website is achieving its business goals or where to improve.
 
+**What to look for:**
+- Whether the client currently measures anything or is starting from zero
+- What "success" means in numbers the client actually cares about
+- Whether existing analytics data should be preserved through migration
+- How often someone will actually look at the data and make decisions from it
+- Whether conversion tracking is set up to measure what the business goals require
+
 ---
 
 ## Priority Definitions

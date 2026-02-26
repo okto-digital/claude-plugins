@@ -4,6 +4,13 @@
 
 **Applicability:** Skip this entire domain if this is a brand-new website with no existing site to migrate from or replace.
 
+**What to look for:**
+- What must be preserved from the current site: content, URLs, search rankings, user accounts
+- Whether a full content audit has been done or the client assumes "just move everything"
+- How 301 redirects will be handled to preserve search authority
+- What the rollback plan is if something goes wrong during migration
+- Whether the client has emotional attachment to elements of the current site that conflict with project goals
+
 ---
 
 ## Priority Definitions

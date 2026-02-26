@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief addresses website security requirements and regulatory compliance -- SSL, data protection (GDPR/CCPA), cookie consent, and industry-specific regulations. Security failures erode trust and create legal liability; compliance gaps can result in fines.
 
+**What to look for:**
+- What personal data the website collects and what legal obligations that creates
+- Whether the client operates in a regulated industry with specific compliance requirements
+- What the real risk profile is: a brochure site vs an e-commerce site handling payment data
+- Whether cookie consent, privacy policy, and terms of service are accounted for
+- What happens if security is breached -- reputational, legal, and financial exposure
+
 ---
 
 ## Priority Definitions

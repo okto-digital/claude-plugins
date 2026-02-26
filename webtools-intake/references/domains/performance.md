@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief addresses website speed and performance expectations -- page load targets, Core Web Vitals, image optimization, and caching strategy. Slow websites lose visitors, hurt SEO rankings, and undermine trust. Performance requirements must be set early, not bolted on later.
 
+**What to look for:**
+- Whether the client has concrete performance expectations or just "it should be fast"
+- What the real-world conditions are: audience devices, connection speeds, geographic distribution
+- Whether performance requirements conflict with design ambitions (heavy imagery, animations)
+- What the baseline is if a current site exists -- and whether specific pain points exist
+- Whether Core Web Vitals and search ranking impact have been explained
+
 ---
 
 ## Priority Definitions

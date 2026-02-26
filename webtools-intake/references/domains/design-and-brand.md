@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief captures the visual identity requirements -- brand status, design preferences, imagery needs, typography, and responsive behavior. Design is the first impression; without clear brand direction, the design phase becomes guesswork and revision cycles multiply.
 
+**What to look for:**
+- Whether a real brand identity exists or the client is starting from a logo and good intentions
+- What visual direction the client responds to -- and whether they can articulate it
+- How much design freedom exists vs how much is constrained by existing brand guidelines
+- What imagery and photography assets are available vs what needs to be sourced
+- Whether the client's design expectations match their budget
+
 ---
 
 ## Priority Definitions

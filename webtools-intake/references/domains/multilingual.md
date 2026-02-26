@@ -4,6 +4,13 @@
 
 **Applicability:** Skip this entire domain if the website is single-language only. A few translated phrases or a Google Translate widget does not qualify -- this domain is for sites with full content in multiple languages.
 
+**What to look for:**
+- Which languages are needed and whether content exists in all of them
+- Whether translation is professional, automated, or handled by internal staff
+- How the URL structure handles multiple languages -- subdomains, directories, or parameters
+- Whether content differs by language beyond translation -- region-specific offers, legal text, imagery
+- What the maintenance burden is: every content update multiplied by number of languages
+
 ---
 
 ## Priority Definitions

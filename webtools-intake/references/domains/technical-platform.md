@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief addresses the technology foundation -- CMS/platform choice, hosting, infrastructure, and third-party integrations. Platform decisions constrain everything downstream: what can be built, how fast, at what cost, and who can maintain it.
 
+**What to look for:**
+- Whether the platform choice is driven by genuine requirements or habit and familiarity
+- What integrations are truly needed vs what the client assumes they need
+- Who maintains the site technically after launch -- and what their skill level is
+- Whether performance, security, and scalability requirements match the chosen platform
+- What the client's hosting situation is and whether it constrains platform options
+
 ---
 
 ## Priority Definitions

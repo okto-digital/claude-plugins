@@ -4,6 +4,13 @@
 
 **Applicability:** Skip this entire domain if no regular content publishing is planned. A static "News" page with occasional updates does not qualify -- this domain is for sites with intentional, ongoing content publishing.
 
+**What to look for:**
+- Whether the client will actually publish regularly or just wants a blog "in case"
+- Who writes the content and what their realistic publishing cadence is
+- How blog content connects to the business strategy -- SEO, thought leadership, or engagement
+- What content types are needed beyond text: video, infographics, case studies, podcasts
+- Whether a content calendar or editorial workflow exists
+
 ---
 
 ## Priority Definitions

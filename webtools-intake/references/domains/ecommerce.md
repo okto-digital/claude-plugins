@@ -4,6 +4,13 @@
 
 **Applicability:** Skip this entire domain if no products or services are sold directly online. Service quotes and lead generation do not qualify as e-commerce.
 
+**What to look for:**
+- How many products and how complex the catalog structure is
+- Whether the client understands the difference between simple product sales and full e-commerce operations
+- What the checkout experience should feel like -- fast and minimal or guided and informative
+- How shipping, tax, and returns are handled -- and whether automation is expected
+- Whether B2B and B2C customers have different purchasing flows
+
 ---
 
 ## Priority Definitions

@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief addresses how people will find the website -- keyword strategy, technical SEO foundations, URL structure, local search, and search intent alignment. A beautiful website that nobody can find delivers zero business value.
 
+**What to look for:**
+- Whether the client understands that SEO is a long-term strategy, not a launch feature
+- What searches the target audience actually performs when looking for this kind of business
+- Whether the current site (if any) has search authority worth preserving
+- How local search matters -- Google Business Profile, map results, location pages
+- Whether content strategy and SEO strategy are aligned or pulling in different directions
+
 ---
 
 ## Priority Definitions

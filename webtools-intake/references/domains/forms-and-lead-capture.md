@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief addresses how the website captures leads and facilitates contact -- form design, CTAs, lead flow, CRM integration, and follow-up automation. For most business websites, form submissions are the primary conversion event. Getting this wrong means lost leads.
 
+**What to look for:**
+- What the primary conversion action is and whether the form design supports it
+- How captured leads flow into the business -- CRM, email, manual, or nothing
+- Whether the client has thought about what happens AFTER someone submits a form
+- How many form types are needed and whether they serve different audiences
+- Whether spam prevention and form abandonment have been considered
+
 ---
 
 ## Priority Definitions

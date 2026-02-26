@@ -4,21 +4,75 @@ Client intake and project brief creation for the webtools website pipeline.
 
 ## Overview
 
-This plugin handles the discovery phase of the webtools pipeline. It provides two tools: a questionnaire generator for structured client intake, and a conversational agent for synthesizing raw client input into a structured project brief.
+This plugin handles the discovery phase of the webtools pipeline. The brief-generator agent acts as a **live meeting companion** -- running during client meetings, processing input in real-time, suggesting questions progressively, and proposing solutions with confidence levels. It operates across four explicit modes: PREP, MEETING, REVIEW, and BRIEF.
+
+A standalone `/questionnaire` command is also available for generating structured client intake forms independently.
 
 ## Components
 
 | Type | Name | Description |
 |------|------|-------------|
 | Command | `/questionnaire` | Generate tailored client intake questionnaire based on project type and industry |
-| Agent | `brief-generator` | Conversational brief creation from raw client input |
+| Agent | `brief-generator` | Live meeting companion with 4-mode brief creation workflow |
 
 ## Workflow
 
-1. Run `/questionnaire [project-type] [industry]` to generate D11: Client Questionnaire
-2. Conduct the client interview using the generated questions
-3. Start the Brief Generator agent with the client's answers (and any other raw input)
-4. Iterate with the agent until D1: Project Brief is approved
+```
+PREP  -->  MEETING  -->  REVIEW  -->  BRIEF
+```
+
+### 1. PREP Mode (before meeting)
+
+Load any available client data (external inquiry form answers, prior correspondence) and score it against all domain checklists. The agent produces a PREP Report: what is already covered, remaining CRITICAL gaps, and a recommended conversation flow with time estimates.
+
+```
+Operator: [pastes inquiry form answers]
+Agent: PREP Report with interview guide
+Operator: /start-meeting
+```
+
+### 2. MEETING Mode (during meeting)
+
+The agent runs as a "submarine" -- processing every message silently, surfacing only when valuable. The operator types meeting notes in real time. The agent acknowledges briefly (1-4 lines), maps input to domain checkpoints, and updates coverage tracking.
+
+Questions are disclosed progressively: **3 at a time**, only when the operator asks. The agent never dumps all gaps at once.
+
+```
+Operator: Client wants an online store, ~200 products, B2B model
+Agent: [1-line ack] + [proactive: E-commerce, B2B inferences activated]
+Operator: ?
+Agent: [3 prioritized questions for the active topic]
+```
+
+**Operator commands in MEETING mode:**
+
+| Command | Action |
+|---------|--------|
+| `?` or `suggest` | Show next 3 suggested questions for the active topic |
+| `more` | Show 3 more questions (continues the queue) |
+| `next topic` | Suggest the next conversation topic with CRITICAL count and time estimate |
+| `status` | Show coverage dashboard with topic progress bars |
+| `solution [topic]` | Show proposed solutions and inferences for a topic |
+| `flag [note]` | Save a note for REVIEW mode (contradiction, concern, special request) |
+| `skip [domain]` | Mark a conditional domain as not applicable |
+| `back to [topic]` | Switch suggestion context to a different topic |
+| `pause` | Stop all proactive communication (silent processing continues) |
+| `resume` | Resume proactive alerts and show catch-up summary |
+| `/end-meeting` | Transition to REVIEW mode |
+
+### 3. REVIEW Mode (after meeting)
+
+Three-part review with the operator:
+
+1. **Meeting Summary** -- Topics covered, key decisions, data points captured
+2. **Inference Confirmation** -- HIGH/MEDIUM/LOW inferences grouped for batch review
+3. **Gap Report** -- Remaining CRITICAL and IMPORTANT items with resolution options
+
+The agent then generates **D13: Client Follow-Up Questionnaire** for any unresolved gaps.
+
+### 4. BRIEF Mode (document generation)
+
+Compile all sources (inquiry form + meeting data + confirmed inferences + D13 answers) into a complete D1: Project Brief. Each section carries a confidence tag (Solid / Thin / Assumed / Missing). Iterate with the operator until approved.
 
 ## Commands
 
@@ -48,33 +102,86 @@ The questionnaire includes three sections:
 
 ### brief-generator
 
-Takes raw, unstructured client information and synthesizes it into a comprehensive D1: Project Brief through iterative dialogue.
+Live meeting companion that processes client input in real-time and synthesizes it into a comprehensive D1: Project Brief through four structured modes.
 
-Accepts input in any format: meeting notes, questionnaire answers, URLs, bullet points, emails, or stream-of-consciousness text. The agent identifies gaps, asks targeted clarifying questions, and presents a draft for review.
+Accepts input in any format: meeting notes, questionnaire answers, URLs, bullet points, emails, voice transcriptions, or stream-of-consciousness text. The agent maps all input to domain checkpoints, derives inferences with confidence levels, and tracks coverage across 9 conversation topics.
 
-**Output:** `brief/D1-project-brief.md`
+**Output:** `brief/D1-project-brief.md` and `brief/D13-client-followup.md`
+
+#### Conversation Topics
+
+Instead of exposing 21 technical domains directly, the agent groups them into 9 conversation topics matching natural meeting flow:
+
+| # | Topic | What It Covers |
+|---|---|---|
+| 1 | The Business | Identity, offering, competitors, differentiators |
+| 2 | The Audience | Who visits, what they need, how they find the business |
+| 3 | Goals and Success | Website purpose, KPIs, budget, timeline |
+| 4 | The Website Vision | Pages, navigation, content, messaging |
+| 5 | Look and Feel | Brand identity, visual style, imagery |
+| 6 | Technical Foundation | Platform, hosting, integrations, compliance |
+| 7 | Lead Capture and Conversion | Forms, CTAs, lead flows, conversion tracking |
+| 8 | Findability | SEO, local search, accessibility |
+| 9 | After Launch | Maintenance, content updates, support |
+
+**Conditional extensions** activate when relevant: Online Store, Content Publishing, Multiple Languages, Member Access, Moving From Current Site, Bookings and Appointments.
+
+#### Inference Engine
+
+As information arrives, the agent continuously derives conclusions using codified rules:
+
+| Confidence | Meaning | Action |
+|---|---|---|
+| HIGH | Near-certainty (universal standard, legal requirement, direct implication) | Auto-include, surface immediately |
+| MEDIUM | Reasonable and likely correct (strong convention, multiple indirect signals) | Queue for REVIEW confirmation |
+| LOW | Could go either way (single data point, subjective preference) | Generate question for D13 |
+
+Inference types include: universal safe defaults, geographic rules, business model patterns, project type defaults, industry conventions, cross-domain implications, and negative inferences (meaningful absence of information).
 
 #### Domain Validation
 
-The brief-generator validates extracted information against comprehensive domain checklists stored in `references/domains/`. Each domain covers an area of website development expertise with checkpoints tagged by priority (CRITICAL / IMPORTANT / NICE-TO-HAVE).
+The brief-generator validates information against comprehensive domain checklists stored in `references/domains/`. Each domain covers an area of website development expertise with checkpoints tagged by priority (CRITICAL / IMPORTANT / NICE-TO-HAVE).
 
-The agent reads all domain files dynamically, scores the input against every checkpoint, and produces a structured gap report. Questions to fill gaps follow priority order (CRITICAL first) and use an Option A / Option B format to reduce cognitive load.
+Each domain file includes a **"What to look for"** reasoning summary -- 5 conceptual themes that give the agent analytical context beyond the individual checkpoints. These describe what the agent should be thinking about (e.g., "Whether the client's design expectations match their budget") rather than repeating specific questions.
 
 - **15 universal domains** -- always evaluated regardless of project type
 - **6 conditional domains** -- evaluated only when relevant (e.g., e-commerce, multilingual)
 
+#### Open Reasoning
+
+The domain checklists are a floor, not a ceiling. When the conversation reveals topics no checkpoint covers -- a complex approval workflow, an unusual integration, industry-specific nuances -- the agent generates new questions beyond the checklists.
+
+Open-reasoning questions follow the same formulation rules as checkpoint questions and are tagged `[OPEN]` in suggestion batches so the operator can distinguish them from checklist-driven questions. At most 1 open-reasoning question appears per suggestion batch of 3. In REVIEW mode, all open-reasoning data points are listed in a separate "Additional Findings" section.
+
+#### Voice Transcription (future extension)
+
+The agent accommodates Whisper or similar voice-to-text integration. Transcribed messages are prefixed with `[T]` to distinguish client speech from operator instructions. No structural changes are needed -- the existing input pipeline handles high-frequency transcription chunks.
+
 ## Documents Produced
 
-| Doc ID | Document | File Path |
-|--------|----------|-----------|
-| D11 | Client Questionnaire | `brief/D11-client-questionnaire.md` |
-| D1 | Project Brief | `brief/D1-project-brief.md` |
+| Doc ID | Document | File Path | Generated By |
+|--------|----------|-----------|--------------|
+| D11 | Client Questionnaire | `brief/D11-client-questionnaire.md` | `/questionnaire` command |
+| D13 | Client Follow-Up Questionnaire | `brief/D13-client-followup.md` | `brief-generator` (REVIEW mode) |
+| D1 | Project Brief | `brief/D1-project-brief.md` | `brief-generator` (BRIEF mode) |
+
+D13 is always generated after the meeting (even for minimal gaps) to maintain a consistent project paper trail. It contains only CRITICAL and IMPORTANT gaps, written in client-friendly language, grouped by conversation topic. Each question includes meeting context and suggested answers where possible.
 
 ## Reference Files
 
-Domain checklists used by the brief-generator for gap analysis. Located in `references/domains/`.
+### Conversation and Inference References
 
-### Universal Domains (always evaluated)
+| File | Purpose |
+|---|---|
+| `references/topic-mapping.md` | Maps 21 domains to 9 conversation topics, default flow order, conditional extensions |
+| `references/inference-rules.md` | Codified inference patterns with trigger conditions, confidence levels, covered checkpoints |
+| `references/d13-template.md` | D13 format spec, question formatting rules, client-friendly language principles |
+
+### Domain Checklists
+
+Located in `references/domains/`. Used by the brief-generator for gap analysis and checkpoint scoring.
+
+#### Universal Domains (always evaluated)
 
 | # | File | Focus |
 |---|---|---|
@@ -94,7 +201,7 @@ Domain checklists used by the brief-generator for gap analysis. Located in `refe
 | 14 | `project-scope.md` | Timeline, budget, milestones, phasing, approvals |
 | 15 | `post-launch.md` | Maintenance, content updates, hosting, support |
 
-### Conditional Domains (evaluated when applicable)
+#### Conditional Domains (evaluated when applicable)
 
 | # | File | Applies When |
 |---|---|---|

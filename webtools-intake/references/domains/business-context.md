@@ -2,6 +2,13 @@
 
 **Purpose:** Validate that the brief captures a clear understanding of the business -- who they are, what they do, why they need a website, and what success looks like. Without solid business context, every downstream decision (design, content, architecture) is guesswork.
 
+**What to look for:**
+- Why this business exists and what makes it different from competitors
+- How the business makes money and which revenue streams the website supports
+- What triggered this project now -- growth, rebrand, competitive pressure, or tech debt
+- Who owns decisions and what internal politics might affect the project
+- Where the business sits in its market -- premium, value, niche, or generalist
+
 ---
 
 ## Priority Definitions
