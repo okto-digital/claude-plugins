@@ -1,8 +1,26 @@
 {
   "name": "webtools-init",
-  "version": "1.0.0",
-  "description": "Project initialization, health checks, and registry management for the webtools website creation pipeline. Provides /webtools-init, /webtools-init-health, /webtools-init-rebuild, and /webtools-init-status commands plus canonical lifecycle and data model references used by all webtools plugins.",
+  "version": "1.1.0",
+  "description": "Project initialization, health checks, registry management, and shared utility agents for the webtools website creation pipeline. Provides 8 commands (/webtools-init, /webtools-init-health, /webtools-init-rebuild, /webtools-init-status, /webtools-init-crawl, /webtools-init-compress, /webtools-init-load, /webtools-init-registry), 4 utility agents (web-crawler, document-compressor, prerequisite-loader, registry-updater), and canonical lifecycle and data model references used by all webtools plugins.",
   "author": {
     "name": "Oktodigital"
+  },
+  "agents": {
+    "web-crawler": {
+      "description": "Unified web crawling with 7-method cascade. Crawl any URL and return clean markdown content with metadata.",
+      "path": "agents/web-crawler.md"
+    },
+    "document-compressor": {
+      "description": "Compress verbose webtools documents to reduce token consumption. Preserves all data points while rephrasing verbose passages.",
+      "path": "agents/document-compressor.md"
+    },
+    "prerequisite-loader": {
+      "description": "Load prerequisite documents for downstream plugins. Serves compressed versions when available.",
+      "path": "agents/prerequisite-loader.md"
+    },
+    "registry-updater": {
+      "description": "Update project-registry.md after document production. Handles Document Log, Phase Log, and phase completion triggers.",
+      "path": "agents/registry-updater.md"
+    }
   }
 }

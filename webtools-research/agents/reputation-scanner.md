@@ -211,11 +211,14 @@ status: complete
 
 When fetching social media profiles, directory listings, or review pages (Steps 3-4), use the crawl method cascade:
 
-1. **curl** (preferred) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-curl.md`
-2. **WebFetch** (fallback) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-webfetch.md`
-3. **Browser Fetch** (WAF bypass) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-browser-fetch.md`
-4. **Browser Navigation** (JS-rendered) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-browser.md`
-5. **Paste-in** (last resort) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-paste-in.md`
+The canonical crawl implementation is the **web-crawler** utility agent in the `webtools-init` plugin. When spawned programmatically via the Task tool, it provides a 7-method cascade (Apify, curl, Desktop Commander, WebFetch, Browser Fetch, Browser Navigation, Paste-in) with automatic fallback.
+
+**For manual invocation:** `/webtools-init-crawl [URL]`
+
+**For programmatic use (from orchestrator or other agents):**
+Spawn the web-crawler agent from webtools-init with the target URL.
+
+Local crawl method references have been consolidated into webtools-init to avoid duplication across plugins.
 
 **Key distinction:** Most R6 research uses WebSearch (brand searches, review queries). The crawl cascade is needed for fetching specific social media profiles and directory listings. Many social platforms require browser methods (JS-rendered content).
 

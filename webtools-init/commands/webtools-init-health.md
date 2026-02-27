@@ -20,7 +20,7 @@ Report the count of directories present out of 7. List any missing directories. 
 
 ## Check 2: Orphan Files
 
-Scan all 7 subdirectories for `.md` files. For each file found, check if a corresponding row exists in the Document Log (match by file path). Report any files that exist on disk but are NOT tracked in the registry. Mark [PASS] if none found, [FAIL] if any orphans exist.
+Scan all 7 subdirectories for `.md` files. For each file found, check if a corresponding row exists in the Document Log (match by file path). **Skip `.raw.md` files** -- these are compression companions to the standard file, not independent documents. Report any non-`.raw.md` files that exist on disk but are NOT tracked in the registry. Mark [PASS] if none found, [FAIL] if any orphans exist.
 
 ## Check 3: Ghost Entries
 
@@ -29,11 +29,12 @@ For each row in the Document Log with a status other than `--`, check if the ref
 ## Check 4: File Naming Validation
 
 For every `.md` file found in the subdirectories, verify the filename follows the naming convention from `${CLAUDE_PLUGIN_ROOT}/references/naming-conventions.md`:
-- Starts with `D{number}-`
+- Starts with `D{number}-` or `R{number}-`
 - Uses lowercase and hyphens only
 - Single-instance documents have no page slug
 - Multi-instance documents (D7, D8) include a page slug
 - File is in the correct subdirectory for its D-number
+- **`.raw.md` suffix is valid** -- indicates a compression companion (the original verbose version preserved alongside the compressed standard file)
 
 Report any violations with the filename and the specific rule broken. Mark [PASS] if all files comply, [FAIL] if any violate naming rules.
 

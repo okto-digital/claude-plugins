@@ -70,11 +70,41 @@ Recommended next steps: [list the logical next plugins to run based on pipeline 
 
 This is informational only. Never automatically trigger downstream tools.
 
+### Step 5: Phase Compression Check
+
+After updating the registry (Step 2), check if all documents in the current phase are now complete. A phase is complete when every required document in the phase has status `complete` in the Document Log.
+
+**Phase-to-document mapping:**
+- Discovery: D1, D11, D13, D14
+- Research: R1-R8, D15
+- Architecture: D4, D5, D6
+- Blueprinting: D7 (all pages defined in D4)
+- Content: D2, D3, D8 (all pages), D9, D12
+- Audit: D10
+
+**If the phase is now complete:**
+
+Notify the operator:
+
+```
+Phase [{{PHASE_NAME}}] complete. All [N] documents ready.
+
+Compressing phase documents for downstream efficiency...
+Run /webtools-init-compress for each:
+  - [Doc ID]: [file path]
+  - [Doc ID]: [file path]
+```
+
+Do NOT automatically trigger compression. Only inform the operator that compression is available via `/webtools-init-compress` or programmatically via the document-compressor agent.
+
+**If the phase is NOT complete:** Skip this step silently.
+
 ---
 
 ## Notes
 
-- All 4 steps are mandatory after every output, even partial outputs.
+- All 5 steps are mandatory after every output, even partial outputs.
 - Step 2 keeps the registry as the single source of truth. Never skip it.
 - Step 3 only applies to D7 and D8 (multi-instance). All other documents skip it.
 - Step 4 helps the operator understand cascade impact. It does not enforce anything.
+- Step 5 checks for phase completion and suggests compression. It does not auto-compress.

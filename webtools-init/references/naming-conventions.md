@@ -65,10 +65,43 @@ project-root/
 └── audit/              <- D10
 ```
 
+## Compressed Document Convention (`.raw.md` suffix)
+
+When a document has been compressed for token efficiency, two files exist:
+
+| File | Content |
+|------|---------|
+| `D1-project-brief.md` | Compressed version (loaded by downstream plugins) |
+| `D1-project-brief.raw.md` | Original verbose version (preserved for reference) |
+
+The `.raw.md` suffix indicates the uncompressed original. Downstream plugins always load the standard path (without `.raw.md`) and automatically get the compressed version when available.
+
+- `.raw.md` files are NOT tracked as separate rows in the registry
+- `.raw.md` files are NOT flagged as orphans in health checks
+- `.raw.md` files follow the same naming pattern as their companion, with `.raw.md` replacing `.md`
+- The compressed file's YAML frontmatter includes `compressed: true` and `raw_file: [path to .raw.md]`
+
+## Research Document Naming
+
+Research documents follow a similar pattern but use `R` prefix:
+
+| Doc ID | Filename | Directory |
+|--------|----------|-----------|
+| R1 | `R1-serp-landscape.md` | `research/` |
+| R2 | `R2-competitor-landscape.md` | `research/` |
+| R3 | `R3-audience-personas.md` | `research/` |
+| R4 | `R4-ux-benchmarks.md` | `research/` |
+| R5 | `R5-content-landscape.md` | `research/` |
+| R6 | `R6-reputation-social.md` | `research/` |
+| R7 | `R7-tech-performance.md` | `research/` |
+| R8 | `R8-market-context.md` | `research/` |
+| D15 | `D15-research-report.md` | `research/` |
+
 ## Validation Rules
 
-1. Every file in the project (except `project-registry.md`) must start with `D{number}-`
+1. Every file in the project (except `project-registry.md`) must start with `D{number}-` or `R{number}-`
 2. Every file must be in its correct subdirectory per the mapping above
 3. D7 and D8 page slugs must match pages defined in D4
 4. No duplicate filenames within a directory
 5. No files outside the defined subdirectories (except `project-registry.md` at root)
+6. `.raw.md` files are valid companions and exempt from orphan checks

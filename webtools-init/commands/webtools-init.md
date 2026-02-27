@@ -35,6 +35,16 @@ Commands:
   /webtools-init-status       Show project status dashboard
   /webtools-init-health       Run project health check
   /webtools-init-rebuild      Rebuild project registry from disk scan
+  /webtools-init-crawl        Crawl a URL and return clean markdown
+  /webtools-init-compress     Compress a document for token efficiency
+  /webtools-init-load         Load prerequisite documents
+  /webtools-init-registry     Update project registry
+
+Utility agents bundled with this plugin:
+  web-crawler.md              7-method cascade web crawling
+  document-compressor.md      Reduce document verbosity, preserve substance
+  prerequisite-loader.md      Load documents with auto-compression detection
+  registry-updater.md         Update registry after document production
 
 Reference files bundled with this plugin:
   lifecycle-startup.md        Startup sequence template for plugin builders
@@ -43,6 +53,8 @@ Reference files bundled with this plugin:
   document-headers.md         YAML frontmatter spec for all D-documents
   dependency-map.md           Full document dependency graph
   naming-conventions.md       File naming and directory mapping rules
+  compression-rules.md        Compression strategy and rules
+  crawl-methods/              Web crawling method references (7 methods)
 
 Current state:
   Project: [client name] ([project type])

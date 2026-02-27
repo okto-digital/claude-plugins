@@ -216,11 +216,14 @@ status: complete
 
 When fetching benchmark site pages (Steps 2-5), use the crawl method cascade:
 
-1. **curl** (preferred) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-curl.md`
-2. **WebFetch** (fallback) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-webfetch.md`
-3. **Browser Fetch** (WAF bypass) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-browser-fetch.md`
-4. **Browser Navigation** (JS-rendered) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-browser.md`
-5. **Paste-in** (last resort) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-paste-in.md`
+The canonical crawl implementation is the **web-crawler** utility agent in the `webtools-init` plugin. When spawned programmatically via the Task tool, it provides a 7-method cascade (Apify, curl, Desktop Commander, WebFetch, Browser Fetch, Browser Navigation, Paste-in) with automatic fallback.
+
+**For manual invocation:** `/webtools-init-crawl [URL]`
+
+**For programmatic use (from orchestrator or other agents):**
+Spawn the web-crawler agent from webtools-init with the target URL.
+
+Local crawl method references have been consolidated into webtools-init to avoid duplication across plugins.
 
 **MCP enhancement:** If browser tools are available, take screenshots of benchmark homepages and key pages. Visual evidence strengthens UX pattern findings significantly. This is optional but highly recommended for R4 specifically.
 

@@ -225,11 +225,14 @@ Every market claim **MUST** note its source tier.
 
 R8 is the least affected by datacenter IP blocking -- most research uses WebSearch (safe from any IP). The crawl cascade is only needed when fetching specific URLs:
 
-1. **curl** (preferred) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-curl.md`
-2. **WebFetch** (fallback) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-webfetch.md`
-3. **Browser Fetch** (WAF bypass) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-browser-fetch.md`
-4. **Browser Navigation** (JS-rendered) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-browser.md`
-5. **Paste-in** (last resort) -- `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-paste-in.md`
+The canonical crawl implementation is the **web-crawler** utility agent in the `webtools-init` plugin. When spawned programmatically via the Task tool, it provides a 7-method cascade (Apify, curl, Desktop Commander, WebFetch, Browser Fetch, Browser Navigation, Paste-in) with automatic fallback.
+
+**For manual invocation:** `/webtools-init-crawl [URL]`
+
+**For programmatic use (from orchestrator or other agents):**
+Spawn the web-crawler agent from webtools-init with the target URL.
+
+Local crawl method references have been consolidated into webtools-init to avoid duplication across plugins.
 
 Typically only 1-2 URLs need fetching (industry report executive summaries, association pages). WebSearch handles the majority of R8 research.
 
