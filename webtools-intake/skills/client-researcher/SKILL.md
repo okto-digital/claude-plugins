@@ -260,8 +260,7 @@ If project exists:
 D14 saved to brief/D14-client-research-profile.md (compressed)
 Raw version: brief/D14-client-research-profile.raw.md
 
-Next step: /webtools-intake-research to auto-continue into PREP mode,
-  or /webtools-intake-prep to prepare the interview guide manually.
+Next step: /webtools-intake-prep to prepare the interview guide using D14 findings.
 ```
 
 If no project:
@@ -271,7 +270,7 @@ Raw version: brief/D14-client-research-profile.raw.md
 
 No project registry found. To integrate this into the webtools pipeline:
   1. Run /webtools-init to create a project
-  2. Run /webtools-intake-research to auto-continue into PREP mode
+  2. Run /webtools-intake-prep to prepare the interview guide
 ```
 
 ---
