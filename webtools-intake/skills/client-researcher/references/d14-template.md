@@ -33,6 +33,7 @@ One paragraph. Cover:
 - What they do (core offering in plain language)
 - Who they serve (primary audience)
 - Company size estimate (team page headcount, office locations, service area scope)
+- Financial scale indicators (revenue range, employee count -- from registry if available)
 - Geographic scope (local, regional, national, international)
 
 Do not pad with filler. If specific details are unknown, omit them rather than hedging.
@@ -52,8 +53,18 @@ Extract and organize:
 - **Business model indicators:** B2B, B2C, or hybrid. Direct sales, referral-based, subscription, project-based, etc.
 - **Certifications, awards, partnerships:** Any trust signals displayed on the site
 - **Company history indicators:** Founded date, milestones, growth markers if mentioned
+- **Financial profile (from business registry):**
+  - Source: finstat.sk or dnb.com (state which was used)
+  - Legal entity name and ID (ICO for Slovak entities)
+  - Founded / year established
+  - Legal form (s.r.o., a.s., LLC, etc.)
+  - Revenue (latest available year)
+  - Profit/loss indicator
+  - Employee count or range
+  - Registered address
+  - If registry lookup failed or was not performed, state: "Registry data not found"
 
-If a sub-item has no findings, omit it entirely (do not write "Not found").
+If a sub-item has no findings, omit it entirely (do not write "Not found"). Exception: the financial profile sub-section should state "Registry data not found" when the lookup failed, so PREP mode knows the data was attempted but unavailable.
 
 ---
 

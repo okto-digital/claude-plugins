@@ -74,7 +74,57 @@ Resolve the URL: fetch the homepage with the first available method (curl prefer
 
 ---
 
-## Step 2: Site Map Discovery
+## Step 2: Business Registry Lookup
+
+After resolving the homepage URL, look up the client's business registry entry for financial intelligence.
+
+### 1. Extract company name
+
+From the fetched homepage, extract the company name using the first available source:
+- `<meta property="og:site_name">` content
+- `<title>` tag (strip suffixes like "| Home", "-- Official Site")
+- First visible `<h1>` heading
+
+### 2. Determine entity origin
+
+- If domain TLD is `.sk`, OR the page `<html lang>` attribute starts with `sk`, OR the page content is clearly in Slovak → **Slovak entity** → use finstat.sk
+- Otherwise → **international entity** → use dnb.com business directory
+
+### 3. Look up the company
+
+**Slovak entity (finstat.sk):**
+Use WebFetch on `https://finstat.sk/databaza?query=[company_name]` to search. From the results page, identify the matching entity and fetch its detail page. Extract: revenue, profit/loss, employee count, legal form, ICO (company ID), founding date, registered address.
+
+**International entity (dnb.com):**
+Use WebFetch on `https://www.dnb.com/business-directory.html` search (or the search URL pattern with company name). Extract: company overview, employee count estimate, industry classification, headquarters location, year established.
+
+### 4. Handle ambiguity and failure
+
+- **Multiple results:** Present the top matches to the operator for confirmation before extracting details.
+- **No results / blocked / error:** Report to operator and continue without financial data. This step is best-effort, not blocking.
+
+### 5. Present findings
+
+Show results before proceeding to site map discovery:
+
+```
+[BUSINESS REGISTRY] finstat.sk
+
+Company: Example s.r.o.
+ICO: 12345678
+Founded: 2015
+Revenue (latest): EUR 1.2M
+Employees: 15-25
+Legal form: s.r.o.
+
+Proceed with website crawl?
+```
+
+For international entities, adapt the format to the available dnb.com fields (company overview, employee estimate, industry, headquarters, year established).
+
+---
+
+## Step 3: Site Map Discovery
 
 Fetch the homepage and extract the navigation structure.
 
@@ -113,7 +163,7 @@ Confirm this selection, or adjust (add/remove page numbers).
 
 ---
 
-## Step 3: Page-by-Page Intelligence Extraction
+## Step 4: Page-by-Page Intelligence Extraction
 
 Crawl each confirmed page and extract intelligence. Do NOT extract raw content -- extract structured intelligence per category.
 
@@ -153,7 +203,7 @@ If a page fails to load after exhausting the method cascade, log it and continue
 
 ---
 
-## Step 4: Synthesis and Report
+## Step 5: Synthesis and Report
 
 After crawling all pages, synthesize the collected intelligence into the D14 report structure.
 
@@ -171,7 +221,7 @@ After generating D14, present a completion summary showing pages analyzed, obser
 
 ---
 
-## Step 5: Lifecycle Completion
+## Step 6: Lifecycle Completion
 
 ### 1. Save file
 
@@ -204,7 +254,7 @@ No project registry found. To integrate this into the webtools pipeline:
 ## Behavioral Rules
 
 - Extract intelligence, not raw content. Every observation must be an analytical finding, not a copy-paste.
-- Crawling scope is the client website only (v1). Do not search LinkedIn, social media, or external sources.
+- Crawling scope is the client website plus business registry lookups (finstat.sk for Slovak entities, dnb.com for international). Do not search LinkedIn, social media, or other external sources.
 - Do not fabricate intelligence. If a section has no findings, state "No indicators found on the crawled pages."
 - Do not rewrite or improve the client's content. Report what exists as-is.
 - Do not use emojis in any output.
