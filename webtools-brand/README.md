@@ -13,6 +13,9 @@ It operates in two modes depending on whether the client has existing content to
 | Type | Name | Description |
 |------|------|-------------|
 | Agent | `brand-voice-creator` | Interactive brand voice extraction or generation across 15 dimensions |
+| Command | `/webtools-brand` | Orientation: show commands, project state, and suggested next step |
+| Command | `/webtools-brand-create` | Interactive voice creation from scratch (Generate mode) |
+| Command | `/webtools-brand-extract` | Auto-extract voice from existing content with research intelligence (Extract mode) |
 
 ## What the D2 Includes
 
@@ -39,6 +42,13 @@ For clients with existing content (websites, marketing materials, social media).
 For new brands or clients without existing content. The agent co-creates a voice through archetype identification, dimension-by-dimension exploration using POINTED questions, and iterative sample content generation.
 
 The agent detects the appropriate mode from available inputs but always confirms with the operator.
+
+### Research Integration (v1.1.0)
+Extract mode leverages research phase outputs when available:
+- **D14 Client Research Profile** -- voice observations from intake crawl used as extraction baseline
+- **R2 Competitor Landscape** -- competitor brand profiles for competitive voice positioning
+- **D15 Research Report** -- strategic context for market positioning dimensions
+- **Content folder** (`content/`) -- existing content files included as analysis sources automatically
 
 ## Methodology
 
@@ -67,9 +77,19 @@ Built-in boring detector that checks for generic openings, corporate buzzwords, 
 | `references/extraction-questions.md` | POINTED questions organized by dimension (~80 questions) |
 | `references/channel-adaptation-template.md` | Channel tone mapping template with shift notation |
 
+## Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/webtools-brand` | Show available commands, current project state, and suggested next step |
+| `/webtools-brand-create` | Start interactive voice creation from scratch (Generate mode) |
+| `/webtools-brand-extract` | Auto-extract voice from existing content with research intelligence (Extract mode) |
+
+Use `/webtools-brand` to see current project state and get a recommendation for which command to run next.
+
 ## Usage
 
-Start the brand voice creator agent in a Cowork session with the project folder as the working directory. The agent will:
+Start via commands (`/webtools-brand-create` or `/webtools-brand-extract`) or select the brand-voice-creator agent in a Cowork session. The agent will:
 
 1. Load D1: Project Brief (required)
 2. Detect whether Extract or Generate mode is appropriate

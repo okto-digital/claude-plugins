@@ -83,6 +83,19 @@ Verify these 7 subdirectories exist: `brief/`, `brand/`, `seo/`, `architecture/`
 - Competitor URLs (from D1 or provided in conversation)
 - Reference brands the client admires (from D1 or provided in conversation)
 
+**Research enrichment (load silently if present, skip silently if absent):**
+- D14: Client Research Profile at `brief/D14-client-research-profile.md`
+  - Extract: Brand Style & Voice observations, website assessment, digital presence findings
+- R2: Competitor Landscape at `research/R2-competitor-landscape.md`
+  - Extract: competitor brand profiles (color palettes, tone of voice, positioning, archetype indicators)
+- D15: Research Report at `research/D15-research-report.md`
+  - Extract: strategic opportunities, audience insights, competitive gaps, market positioning context
+
+**Content folder scan:**
+- Check `content/` directory for existing content files (`content/*.md`, `content/**/*.md`)
+- If found: list available files as additional extraction sources
+- If empty or missing: skip silently
+
 ### 4. Output Preparation
 
 Check if `brand/D2-brand-voice-profile.md` already exists.
@@ -109,6 +122,10 @@ Present a startup summary:
 Project: [client name]
 D1 Project Brief: [loaded / not found / in-progress]
 Existing website URL: [URL from D1 or "none found"]
+D14 Client Research: [loaded / not found]
+R2 Competitor Landscape: [loaded / not found]
+D15 Research Report: [loaded / not found]
+Content folder: [X files found / empty / not found]
 Output: brand/D2-brand-voice-profile.md ([new / overwrite / revise])
 ```
 
@@ -152,6 +169,12 @@ Ask the operator for content to analyze:
 - Specific pages to focus on (homepage, about page, key service pages)
 - Any marketing materials, brochures, social media samples, email examples
 - Content they consider representative of their best communication
+
+**When D14 is loaded:** Present its voice observations as baseline before asking for additional sources. Say: "D14 already captured these voice observations from the client website: [summary]. I'll use these as a starting point." Only ask for sources beyond what D14 covered.
+
+**When content/ files are found:** Include them as analysis sources automatically. List the files found and confirm with the operator which to analyze.
+
+**When neither D14 nor content/ files are available:** Fall back to the standard behavior above (ask the operator for all content sources).
 
 ### Step 2: Analyze Content Across 15 Dimensions
 
@@ -249,6 +272,24 @@ ANTI-BORING ASSESSMENT:
 - Current boring patterns: [list any generic openings, buzzwords, predictable structures]
 - Current strengths: [list any genuine, specific, engaging patterns]
 ```
+
+**When R2 is loaded, add Competitive Voice Positioning:**
+
+```
+COMPETITIVE VOICE POSITIONING
+
+Based on R2 competitor analysis:
+- [Competitor 1]: [archetype], formality [X/10], [key voice traits]
+- [Competitor 2]: [archetype], formality [X/10], [key voice traits]
+- [Competitor 3]: [archetype], formality [X/10], [key voice traits]
+
+Client differentiation:
+- [Where client voice stands out vs competitors]
+- [Where client blends in (opportunity to differentiate)]
+- [Tone gaps in the market the client could own]
+```
+
+**When D15 is loaded:** Reference strategic context for dimensions 13-15 scoring. Cite specific strategic opportunities or audience insights that inform Content Principles, Market Positioning, and Voice Evolution scores.
 
 **Use POINTED questions** from `${CLAUDE_PLUGIN_ROOT}/references/extraction-questions.md` to probe areas where the analysis is ambiguous. Ask the operator:
 - Is this accurate to how the brand wants to sound?
@@ -549,6 +590,9 @@ created_by: webtools-brand
 status: complete
 dependencies:
   - D1: /brief/D1-project-brief.md
+  - D14: /brief/D14-client-research-profile.md    # if loaded
+  - R2: /research/R2-competitor-landscape.md       # if loaded
+  - D15: /research/D15-research-report.md          # if loaded
 ---
 ```
 
