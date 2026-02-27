@@ -1,7 +1,7 @@
 ---
 name: client-researcher
 description: "Research a client company and produce a D14 Client Research Profile for meeting preparation. Combines web search intelligence, website crawling (via webtools-init web-crawler), and business registry lookups to build a comprehensive profile across 9 categories. Saves as .raw.md and compresses via document-compressor."
-allowed-tools: WebSearch, WebFetch, Read, Write, Edit, Glob, Task
+allowed-tools: WebSearch, Read, Write, Edit, Glob, Task
 version: 2.0.0
 ---
 
@@ -173,10 +173,10 @@ Use the company name already extracted from the homepage in Step 3a.
 ### 3. Look up the company
 
 **Slovak entity (finstat.sk):**
-Use WebFetch on `https://finstat.sk/databaza?query=[company_name]` to search. From the results page, identify the matching entity and fetch its detail page. Extract: revenue, profit/loss, employee count, legal form, ICO (company ID), founding date, registered address.
+Dispatch a Task to the web-crawler agent for `https://finstat.sk/databaza?query=[company_name]`. From the returned content, identify the matching entity. If a detail page URL is found, dispatch another web-crawler Task for the detail page. Extract: revenue, profit/loss, employee count, legal form, ICO (company ID), founding date, registered address.
 
 **International entity (dnb.com):**
-Use WebFetch on `https://www.dnb.com/business-directory.html` search (or the search URL pattern with company name). Extract: company overview, employee count estimate, industry classification, headquarters location, year established.
+Dispatch a Task to the web-crawler agent for `https://www.dnb.com/business-directory.html` search (or the search URL pattern with company name). Extract from the returned content: company overview, employee count estimate, industry classification, headquarters location, year established.
 
 ### 4. Handle ambiguity and failure
 
@@ -281,7 +281,7 @@ No project registry found. To integrate this into the webtools pipeline:
 - Extract intelligence, not raw content. Every observation must be an analytical finding, not a copy-paste.
 - Web search extracts intelligence from search result snippets. Do not crawl every search result URL -- use what WebSearch returns.
 - Website crawling is delegated to the webtools-init web-crawler agent via Task tool. Do NOT implement your own crawl cascade.
-- Business registry lookups (finstat.sk for Slovak entities, dnb.com for international) use WebFetch directly. This is the only direct web fetching this skill performs.
+- Business registry lookups (finstat.sk for Slovak entities, dnb.com for international) are delegated to the web-crawler agent via Task tool, same as website crawling.
 - Do not fabricate intelligence. If a section has no findings, state "No indicators found from the sources analyzed."
 - Do not rewrite or improve the client's content. Report what exists as-is.
 - Do not use emojis in any output.

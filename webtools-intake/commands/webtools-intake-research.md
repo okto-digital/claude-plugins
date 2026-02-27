@@ -1,6 +1,6 @@
 ---
 description: "webtools-intake: Research client and prepare interview guide (RESEARCH+PREP)"
-allowed-tools: Read, Write, Glob, Bash(mkdir:*), WebSearch, WebFetch, Task
+allowed-tools: Read, Write, Glob, Bash(mkdir:*), WebSearch, Task
 argument-hint: [client-url]
 ---
 
