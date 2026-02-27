@@ -5,22 +5,7 @@
   "author": {
     "name": "Oktodigital"
   },
-  "agents": {
-    "web-crawler": {
-      "description": "Unified web crawling with 7-method cascade. Crawl any URL and return clean markdown content with metadata.",
-      "path": "agents/web-crawler.md"
-    },
-    "document-compressor": {
-      "description": "Compress verbose webtools documents to reduce token consumption. Preserves all data points while rephrasing verbose passages.",
-      "path": "agents/document-compressor.md"
-    },
-    "prerequisite-loader": {
-      "description": "Load prerequisite documents for downstream plugins. Serves compressed versions when available.",
-      "path": "agents/prerequisite-loader.md"
-    },
-    "registry-updater": {
-      "description": "Update project-registry.md after document production. Handles Document Log, Phase Log, and phase completion triggers.",
-      "path": "agents/registry-updater.md"
-    }
+  "components": {
+    "agents": ["web-crawler", "document-compressor", "prerequisite-loader", "registry-updater"]
   }
 }
