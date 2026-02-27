@@ -81,7 +81,7 @@ Do not proceed until both values are provided.
 
 ### 2. Create Directory Structure
 
-Create these 7 subdirectories in the current working directory (skip any that already exist):
+Create these 8 subdirectories in the current working directory (skip any that already exist):
 
 - `brief/`
 - `brand/`
@@ -90,6 +90,7 @@ Create these 7 subdirectories in the current working directory (skip any that al
 - `blueprints/`
 - `content/`
 - `audit/`
+- `research/`
 
 ### 3. Create Project Registry
 
@@ -112,7 +113,7 @@ Project initialized successfully.
   Project: [client name]
   Type: [project type]
   Registry: project-registry.md
-  Directories: brief/, brand/, seo/, architecture/, blueprints/, content/, audit/
+  Directories: brief/, brand/, seo/, architecture/, blueprints/, content/, audit/, research/
 
 Next step: Run /webtools-intake-questionnaire to generate client intake questions,
 or /webtools-intake-brief to create D1: Project Brief.

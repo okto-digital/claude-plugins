@@ -24,7 +24,7 @@ dependencies:
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `document_id` | Yes | D-number identifier (D1-D14) |
+| `document_id` | Yes | Document identifier (D1-D15, R1-R8) |
 | `title` | Yes | Human-readable document title. For multi-instance: include page name (e.g., "Page Blueprint: Homepage") |
 | `project` | Yes | Client project name (must match registry) |
 | `created` | Yes | Date first created (YYYY-MM-DD). Never changes after creation. |
@@ -168,3 +168,33 @@ created_by: webtools-intake
 dependencies: []
 ```
 Note: Generated from public website crawl before the intake meeting. No dependencies -- works from a URL alone. Optional input to D1 via PREP mode.
+
+### R1-R8: Research Documents (shared format)
+```yaml
+document_id: R{1-8}
+title: "{Research Topic Title}"
+created_by: webtools-research
+dependencies:
+  - D1: brief/D1-project-brief.md
+```
+Note: All R-documents require D1 as input. R4 (UX Benchmarks) optionally depends on R2 (Competitor Landscape). R5 (Content Landscape) optionally depends on R1 (SERP Landscape). D14 is an optional input to all R-documents.
+
+Individual titles:
+- R1: "SERP Landscape"
+- R2: "Competitor Landscape"
+- R3: "Audience Personas"
+- R4: "UX Benchmarks"
+- R5: "Content Landscape"
+- R6: "Reputation & Social"
+- R7: "Tech & Performance"
+- R8: "Market Context"
+
+### D15: Research Report
+```yaml
+document_id: D15
+title: "Research Report"
+created_by: webtools-research
+dependencies:
+  - R1-R8 (whichever were produced)
+```
+Note: Consolidated synthesis of all R-documents. Dependencies are dynamic -- only the R-documents that were actually produced are listed.

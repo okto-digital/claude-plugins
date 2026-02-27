@@ -32,13 +32,20 @@ DISCOVERY
   [OK] D1   Project Brief
 
 RESEARCH
-  [OK] D2   Brand Voice Profile
-  [--] D3   SEO Keyword Map
-  [OK] D5   Competitor Analysis
-  [--] D6   Content Inventory
+  [OK] R1   SERP Landscape
+  [OK] R2   Competitor Landscape
+  [--] R3   Audience Personas
+  [--] R4   UX Benchmarks
+  [--] R5   Content Landscape
+  [--] R6   Reputation & Social
+  [--] R7   Tech & Performance
+  [--] R8   Market Context
+  [--] D15  Research Report
 
 ARCHITECTURE
   [IP] D4   Site Architecture
+  [OK] D5   Competitor Analysis
+  [--] D6   Content Inventory
 
 BLUEPRINTING
   [OK] D7   Blueprint: Homepage
@@ -46,6 +53,8 @@ BLUEPRINTING
   [--] D7   Blueprint: Services
 
 CONTENT
+  [OK] D2   Brand Voice Profile
+  [--] D3   SEO Keyword Map
   [--] D8   Content: Homepage
   [--] D9   Microcopy
 

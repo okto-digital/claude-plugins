@@ -30,7 +30,7 @@ Read `project-registry.md` in the working directory root.
 
 ### Step 2: Directory Validation
 
-Check that all 7 required subdirectories exist:
+Check that all 8 required subdirectories exist:
 - `brief/`
 - `brand/`
 - `seo/`
@@ -38,6 +38,7 @@ Check that all 7 required subdirectories exist:
 - `blueprints/`
 - `content/`
 - `audit/`
+- `research/`
 
 If any directory is missing, create it silently. Never fail because a directory does not exist.
 

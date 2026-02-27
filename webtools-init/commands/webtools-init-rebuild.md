@@ -35,7 +35,7 @@ If the operator declines, stop.
 
 ## Step 4: Scan Project Files
 
-Scan all 7 subdirectories (plus `research/` if it exists) for `.md` files:
+Scan all 8 subdirectories for `.md` files:
 - `brief/`
 - `brand/`
 - `seo/`
@@ -43,7 +43,7 @@ Scan all 7 subdirectories (plus `research/` if it exists) for `.md` files:
 - `blueprints/`
 - `content/`
 - `audit/`
-- `research/` (if present)
+- `research/`
 
 **Skip `.raw.md` files** -- these are compression companions to the standard file, not independent documents. They are preserved automatically when a document is compressed and should not appear as separate rows in the registry.
 

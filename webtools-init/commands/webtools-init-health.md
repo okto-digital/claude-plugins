@@ -13,14 +13,14 @@ Parse the Document Log and Phase Log from the registry for use in subsequent che
 
 ## Check 1: Directory Integrity
 
-Verify these 7 subdirectories exist in the current working directory:
-`brief/`, `brand/`, `seo/`, `architecture/`, `blueprints/`, `content/`, `audit/`
+Verify these 8 subdirectories exist in the current working directory:
+`brief/`, `brand/`, `seo/`, `architecture/`, `blueprints/`, `content/`, `audit/`, `research/`
 
-Report the count of directories present out of 7. List any missing directories. Mark [PASS] if all 7 exist, [FAIL] if any are missing.
+Report the count of directories present out of 8. List any missing directories. Mark [PASS] if all 8 exist, [FAIL] if any are missing.
 
 ## Check 2: Orphan Files
 
-Scan all 7 subdirectories for `.md` files. For each file found, check if a corresponding row exists in the Document Log (match by file path). **Skip `.raw.md` files** -- these are compression companions to the standard file, not independent documents. Report any non-`.raw.md` files that exist on disk but are NOT tracked in the registry. Mark [PASS] if none found, [FAIL] if any orphans exist.
+Scan all 8 subdirectories for `.md` files. For each file found, check if a corresponding row exists in the Document Log (match by file path). **Skip `.raw.md` files** -- these are compression companions to the standard file, not independent documents. Report any non-`.raw.md` files that exist on disk but are NOT tracked in the registry. Mark [PASS] if none found, [FAIL] if any orphans exist.
 
 ## Check 3: Ghost Entries
 
@@ -88,7 +88,7 @@ Present the results as a single structured report:
 PROJECT HEALTH CHECK: [Client Name from registry]
 Date: [today's date]
 
-[PASS/FAIL] Directory integrity: [n]/7 directories present
+[PASS/FAIL] Directory integrity: [n]/8 directories present
 [PASS/FAIL] Orphan files: [details]
 [PASS/FAIL] Ghost entries: [details]
 [PASS/FAIL] File naming: [details]
