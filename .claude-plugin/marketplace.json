@@ -27,7 +27,7 @@
     {
       "name": "webtools-seo",
       "source": "./webtools-seo",
-      "description": "SEO keyword research. Produce keyword clusters with page mapping, intent classification, and priority ranking. Produces D3: SEO Keyword Map."
+      "description": "SEO keyword research with 3-tier data fallback: DataForSEO MCP, SE Ranking MCP, WebSearch signals, or industry estimates. Leverages R1/R5/D15 research intelligence when available. Commands: /webtools-seo (orientation), /webtools-seo-keywords (run research). Produces D3: SEO Keyword Map."
     },
     {
       "name": "webtools-competitors",
