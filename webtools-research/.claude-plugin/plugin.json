@@ -1,0 +1,8 @@
+{
+  "name": "webtools-research",
+  "version": "1.0.0",
+  "description": "Research phase intelligence gathering between intake and creation. Run parallel topic agents across 8 research areas (SERP landscape, competitor mapping, audience personas, UX benchmarks, content strategy, reputation scanning, tech performance, market context) to produce R1-R8 topic documents and D15: Research Report. Informs proposals and downstream production tools (D3, D5, D6).",
+  "author": {
+    "name": "Oktodigital"
+  }
+}

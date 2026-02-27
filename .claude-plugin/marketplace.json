@@ -58,6 +58,11 @@
       "name": "webtools-audit",
       "source": "./webtools-audit",
       "description": "Content quality auditing. Evaluate generated content against SEO targets, readability standards, brand voice consistency, and heading structure. Produces D10: Content Audit Report."
+    },
+    {
+      "name": "webtools-research",
+      "source": "./webtools-research",
+      "description": "Research phase intelligence gathering between intake and creation. Run parallel topic agents across 8 research areas (SERP landscape, competitor mapping, audience personas, UX benchmarks, content strategy, reputation scanning, tech performance, market context) to produce R1-R8 topic documents and D15: Research Report."
     }
   ]
 }
