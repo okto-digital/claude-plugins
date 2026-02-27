@@ -1,11 +1,11 @@
 ---
 name: client-researcher
-description: "Crawl a client website to produce a D14 Client Research Profile for meeting preparation. Extracts intelligence across 8 categories (business identity, audience signals, website assessment, brand style, digital presence, competitive context) and generates actionable conversation starters."
-allowed-tools: Bash, WebFetch, Read, Write, Edit, Glob
-version: 1.0.0
+description: "Research a client company and produce a D14 Client Research Profile for meeting preparation. Combines web search intelligence, website crawling (via webtools-init web-crawler), and business registry lookups to build a comprehensive profile across 9 categories. Saves as .raw.md and compresses via document-compressor."
+allowed-tools: WebSearch, WebFetch, Read, Write, Edit, Glob, Task
+version: 2.0.0
 ---
 
-Crawl a client website and produce a D14 Client Research Profile -- a structured intelligence report that prepares the operator for the intake meeting. Given a URL, discover the site structure, extract intelligence from key pages, and synthesize findings into actionable conversation starters.
+Research a client company and produce a D14 Client Research Profile -- a structured intelligence report that prepares the operator for the intake meeting. Given a URL (required) and optional context, gather intelligence from web search, website crawling, and business registry lookups, then synthesize findings into actionable conversation starters.
 
 ---
 
@@ -26,116 +26,90 @@ Read `project-registry.md` in the current working directory.
 
 Check if `brief/` directory exists. Create it if missing. D14 is saved here regardless of whether a project exists.
 
-### 3. Tool Detection
-
-Detect available crawling tools using the same cascade as content-extractor:
-
-- **Shell access:** Check for any shell execution tool (Bash, Desktop Commander, terminal MCP). If available, run `which curl` to verify curl is installed.
-- **Browser tools:** Check if browser tools (`browser_navigate`, `browser_evaluate`) are accessible.
-
-Build the available methods list:
-
-| Method | Available when |
-|---|---|
-| 1. curl | Shell tool available AND curl installed |
-| 2. WebFetch | Always available |
-| 3. Browser Fetch (fetch API) | Browser tools available |
-| 4. Browser Navigation | Browser tools available |
-| 5. Manual paste-in | Always available |
-
-### 4. Status Report
+### 3. Status Report
 
 ```
 [CLIENT RESEARCH]
 
 Project: [client name from registry, or "No project -- standalone mode"]
 
-Crawling methods available:
-  1. curl + local processing   [available / not available]
-  2. WebFetch                  [always available]
-  3. Browser Fetch (fetch API) [available / not available]
-  4. Browser Navigation        [available / not available]
-  5. Manual paste-in           [always available]
-
-Awaiting client URL.
+Awaiting client URL (required). You may also provide context about what to look for.
 ```
 
 ---
 
-## Step 1: URL Intake
+## Step 1: URL and Context Intake
 
-Ask for the client website URL if not provided as an argument.
+Ask for the client website URL if not provided as an argument. Accept optional context from the operator about what to focus on (e.g., "look for their pricing model", "they are a B2B SaaS company", "focus on their service offering").
 
 Validate the URL:
 - Must start with `http://` or `https://`
 - Must be a root domain or homepage (not a deep page -- operator provides the main site URL)
 
-Resolve the URL: fetch the homepage with the first available method (curl preferred). Check for redirects. If the URL redirects (e.g., `http://` to `https://`, or `example.com` to `www.example.com`), use the final URL silently. If it redirects to an entirely different domain, warn the operator and ask to confirm.
-
 ---
 
-## Step 2: Business Registry Lookup
+## Step 2: Web Search -- External Intelligence
 
-After resolving the homepage URL, look up the client's business registry entry for financial intelligence.
+Use WebSearch to find the client by company name. Extract the company name from the URL domain (e.g., `acme.com` -> "Acme"). If ambiguous, crawl the homepage first (Step 3) to get the company name from `<title>` or `<meta og:site_name>`, then return to complete this step.
 
-### 1. Extract company name
+Run these searches:
 
-From the fetched homepage, extract the company name using the first available source:
-- `<meta property="og:site_name">` content
-- `<title>` tag (strip suffixes like "| Home", "-- Official Site")
-- First visible `<h1>` heading
+1. **General presence:** `"[company name]"` -- overall web footprint
+2. **Reputation signals:** `"[company name]" reviews` -- Google Business, Trustpilot, Clutch, G2, etc.
+3. **News and professional presence:** `"[company name]" news` OR `site:linkedin.com "[company name]"` -- press mentions, LinkedIn profile
+4. **Hiring signals:** `"[company name]" jobs` OR `site:linkedin.com/jobs "[company name]"` -- open positions revealing growth areas, tech stack, strategic priorities
 
-### 2. Determine entity origin
+### What to extract
 
-- If domain TLD is `.sk`, OR the page `<html lang>` attribute starts with `sk`, OR the page content is clearly in Slovak → **Slovak entity** → use finstat.sk
-- Otherwise → **international entity** → use dnb.com business directory
+From the search results directly (do NOT crawl every result URL -- extract what WebSearch returns):
 
-### 3. Look up the company
+- **Recent news and press:** Notable mentions, awards, partnerships, funding (with dates and sources)
+- **Online reputation:** Review site ratings and recurring themes
+- **Social presence:** Active platforms, follower ranges if visible
+- **Job postings:** Open positions that reveal growth areas, tech stack, or strategic priorities
+- **Industry context:** Market position signals from third-party sources (rankings, directories, awards)
 
-**Slovak entity (finstat.sk):**
-Use WebFetch on `https://finstat.sk/databaza?query=[company_name]` to search. From the results page, identify the matching entity and fetch its detail page. Extract: revenue, profit/loss, employee count, legal form, ICO (company ID), founding date, registered address.
+### Present findings
 
-**International entity (dnb.com):**
-Use WebFetch on `https://www.dnb.com/business-directory.html` search (or the search URL pattern with company name). Extract: company overview, employee count estimate, industry classification, headquarters location, year established.
-
-### 4. Handle ambiguity and failure
-
-- **Multiple results:** Present the top matches to the operator for confirmation before extracting details.
-- **No results / blocked / error:** Report to operator and continue without financial data. This step is best-effort, not blocking.
-
-### 5. Present findings
-
-Show results before proceeding to site map discovery:
+Show a summary of external intelligence gathered before proceeding:
 
 ```
-[BUSINESS REGISTRY] finstat.sk
+[WEB SEARCH] [company name]
 
-Company: Example s.r.o.
-ICO: 12345678
-Founded: 2015
-Revenue (latest): EUR 1.2M
-Employees: 15-25
-Legal form: s.r.o.
+Searches completed: 4
+Notable findings:
+  - [key finding 1]
+  - [key finding 2]
+  - ...
 
 Proceed with website crawl?
 ```
 
-For international entities, adapt the format to the available dnb.com fields (company overview, employee estimate, industry, headquarters, year established).
-
 ---
 
-## Step 3: Site Map Discovery
+## Step 3: Website Crawl -- Via Web-Crawler Agent
 
-Fetch the homepage and extract the navigation structure.
+Delegate all website crawling to the webtools-init web-crawler agent via the Task tool. The web-crawler handles the full method cascade (Apify, curl, WebFetch, browser, etc.) internally.
 
-### What to extract
+### 3a. Crawl homepage
 
-- Primary navigation links (main menu)
-- Footer navigation links
-- Any secondary/utility navigation
-- Sitemap.xml if accessible (try `/sitemap.xml`)
+Dispatch a Task to the web-crawler agent for the homepage URL:
 
-### Present discovered pages
+```
+Task(subagent_type="general-purpose", prompt="You are the web-crawler agent. Crawl this URL and return clean markdown content with metadata: [URL]
+
+Read and follow the agent definition at: ${CLAUDE_PLUGIN_ROOT}/../webtools-init/agents/web-crawler.md
+
+Return the full cleaned content with metadata headers.")
+```
+
+From the homepage content:
+- Extract the company name (for web search if not yet done)
+- Discover primary navigation links (main menu)
+- Discover footer navigation links
+- Check for sitemap.xml (try `[domain]/sitemap.xml` via a separate Task)
+
+### 3b. Present discovered pages
 
 Show the operator a numbered list of discovered pages. Recommend 5-15 pages based on intelligence value:
 
@@ -161,92 +135,143 @@ Skipped (low intelligence value):
 Confirm this selection, or adjust (add/remove page numbers).
 ```
 
----
+### 3c. Crawl confirmed pages
 
-## Step 4: Page-by-Page Intelligence Extraction
+Dispatch one Task per confirmed page to the web-crawler agent. Run multiple Tasks in parallel where possible for efficiency.
 
-Crawl each confirmed page and extract intelligence. Do NOT extract raw content -- extract structured intelligence per category.
-
-### Crawling method cascade
-
-Try methods in priority order. Move to the next only when the current one fails. Follow the same patterns as content-extractor:
-
-1. **curl** (preferred) -- fetch raw HTML, strip non-content elements via python3/node, then read the cleaned HTML. See `references/crawl-methods.md` for the full curl workflow including HTML stripping.
-2. **WebFetch** -- use when curl is unavailable or blocked (403/WAF).
-3. **Browser Fetch** -- use when WebFetch is blocked. Runs `fetch()` in the user's browser.
-4. **Browser Navigation** -- use when Browser Fetch fails (JS-rendered pages).
-5. **Manual paste-in** -- last resort. Ask the operator to paste page content.
-
-<critical>
-When curl fails with HTTP 403 or exit code 56, and Desktop Commander is available, retry via Desktop Commander before moving to Method 2. Desktop Commander runs on the user's machine (residential IP), bypassing WAF restrictions that block datacenter IPs.
-
-When WebFetch returns 403 for a site behind WAF/bot protection, skip directly to Method 3 (Browser Fetch). Do not retry WebFetch -- if the site blocks datacenter IPs, WebFetch will always fail for that domain.
-</critical>
-
-### What to extract per page
-
-For each page, extract intelligence observations (not raw content). Organize observations by the 6 intelligence sections in `references/d14-template.md` (sections 2-7). Not every page yields intelligence for every section. Extract what is present and move on.
+For each returned page content, extract intelligence observations organized by the intelligence sections in `references/d14-template.md` (sections 3-8). Not every page yields intelligence for every section. Extract what is present and move on.
 
 ### Progress tracking
 
-After each page, show a brief progress line:
+After each page completes, show a brief progress line:
 
 ```
 [3/12] /services -- 8 observations (Business Identity: 3, Market Signals: 2, Brand: 3)
 ```
 
-If a page fails to load after exhausting the method cascade, log it and continue:
+If a page crawl fails (web-crawler returns error), log it and continue:
 
 ```
-[5/12] /case-studies -- FAILED (all methods exhausted). Skipping.
+[5/12] /case-studies -- FAILED (web-crawler could not retrieve). Skipping.
 ```
+
+---
+
+## Step 4: Business Registry Lookup
+
+After web search and website crawl, look up the client's business registry entry for financial intelligence.
+
+### 1. Extract company name
+
+Use the company name already extracted from the homepage in Step 3a.
+
+### 2. Determine entity origin
+
+- If domain TLD is `.sk`, OR the page `<html lang>` attribute starts with `sk`, OR the page content is clearly in Slovak -> **Slovak entity** -> use finstat.sk
+- Otherwise -> **international entity** -> use dnb.com business directory
+
+### 3. Look up the company
+
+**Slovak entity (finstat.sk):**
+Use WebFetch on `https://finstat.sk/databaza?query=[company_name]` to search. From the results page, identify the matching entity and fetch its detail page. Extract: revenue, profit/loss, employee count, legal form, ICO (company ID), founding date, registered address.
+
+**International entity (dnb.com):**
+Use WebFetch on `https://www.dnb.com/business-directory.html` search (or the search URL pattern with company name). Extract: company overview, employee count estimate, industry classification, headquarters location, year established.
+
+### 4. Handle ambiguity and failure
+
+- **Multiple results:** Present the top matches to the operator for confirmation before extracting details.
+- **No results / blocked / error:** Report to operator and continue without financial data. This step is best-effort, not blocking.
+
+### 5. Present findings
+
+Show results before proceeding to synthesis:
+
+```
+[BUSINESS REGISTRY] finstat.sk
+
+Company: Example s.r.o.
+ICO: 12345678
+Founded: 2015
+Revenue (latest): EUR 1.2M
+Employees: 15-25
+Legal form: s.r.o.
+
+Proceeding to synthesis.
+```
+
+For international entities, adapt the format to the available dnb.com fields (company overview, employee estimate, industry, headquarters, year established).
 
 ---
 
 ## Step 5: Synthesis and Report
 
-After crawling all pages, synthesize the collected intelligence into the D14 report structure.
+After all three intelligence sources are gathered (web search, website crawl, business registry), synthesize into the D14 report structure.
 
 ### D14 structure
 
-Follow the template in `references/d14-template.md` for the full 8-section structure and frontmatter schema. Sections 2-7 compile intelligence by category. Section 8 is analytical synthesis.
+Follow the template in `references/d14-template.md` for the full 9-section structure and frontmatter schema. Section 1 is the executive summary, section 1b covers external intelligence from web search, sections 3-8 compile website intelligence by category, and section 9 is analytical synthesis.
 
 <critical>
-Section 8 (Conversation Starters) is the highest-value output of this skill. It is NOT a summary of the other sections. It is analytical synthesis: key observations, inferred pain points, unanswered questions, and contradictions noticed. Write each starter as an actionable meeting prompt the operator can say or ask. Example: "Your case studies page mentions 50+ projects but only shows 3 -- worth asking if there are more we can showcase."
+Section 9 (Conversation Starters) is the highest-value output of this skill. It is NOT a summary of the other sections. It is analytical synthesis: key observations, inferred pain points, unanswered questions, and contradictions noticed. Write each starter as an actionable meeting prompt the operator can say or ask. Example: "Your case studies page shows 3 projects, but the homepage says '50+ completed.' Are there more projects we can showcase on the new site?"
 </critical>
 
 ### Present summary
 
-After generating D14, present a completion summary showing pages analyzed, observation count per section, the output file path, and an offer to expand sections or re-crawl pages.
+After generating D14, present a completion summary showing:
+- Sources used (web search findings count, pages analyzed, registry status)
+- Observation count per section
+- The output file path
+- An offer to expand sections or re-crawl pages
 
 ---
 
-## Step 6: Lifecycle Completion
+## Step 6: Save and Compress
 
-### 1. Save file
+### 1. Write raw file
 
-Write the D14 report to `brief/D14-client-research-profile.md` with frontmatter per `references/d14-template.md`.
+Write the D14 report to `brief/D14-client-research-profile.raw.md` with frontmatter per `references/d14-template.md`.
 
-### 2. Registry update (if project exists)
+### 2. Compress
+
+Invoke the document-compressor agent via Task tool to produce the compressed version:
+
+```
+Task(subagent_type="general-purpose", prompt="You are the document-compressor agent. Compress this document to reduce token consumption while preserving all substantive information.
+
+Read and follow the agent definition at: ${CLAUDE_PLUGIN_ROOT}/../webtools-init/agents/document-compressor.md
+
+Document to compress: brief/D14-client-research-profile.raw.md
+Output path: brief/D14-client-research-profile.md
+
+The .raw.md file already exists. Compress it to the standard path.")
+```
+
+### 3. Registry update (if project exists)
 
 Update `project-registry.md`:
 - Add or update a Document Log row: Doc ID = `D14`, Document = `Client Research Profile`, File Path = `brief/D14-client-research-profile.md`, Status = `complete`, Created = today, Updated = today, Created By = `webtools-intake`
 - Phase Log: if Intake phase has no Started date, set Started to today. Add `webtools-intake` to Plugins Used.
 
-### 3. Next step suggestion
+### 4. Next step suggestion
 
 If project exists:
 ```
-Next step: /webtools-intake-prep to prepare the interview guide using D14 findings.
+D14 saved to brief/D14-client-research-profile.md (compressed)
+Raw version: brief/D14-client-research-profile.raw.md
+
+Next step: /webtools-intake-research to auto-continue into PREP mode,
+  or /webtools-intake-prep to prepare the interview guide manually.
 ```
 
 If no project:
 ```
-D14 saved to brief/D14-client-research-profile.md
+D14 saved to brief/D14-client-research-profile.md (compressed)
+Raw version: brief/D14-client-research-profile.raw.md
 
 No project registry found. To integrate this into the webtools pipeline:
   1. Run /webtools-init to create a project
-  2. Run /webtools-intake-prep to prepare the interview guide using D14 findings
+  2. Run /webtools-intake-research to auto-continue into PREP mode
 ```
 
 ---
@@ -254,17 +279,19 @@ No project registry found. To integrate this into the webtools pipeline:
 ## Behavioral Rules
 
 - Extract intelligence, not raw content. Every observation must be an analytical finding, not a copy-paste.
-- Crawling scope is the client website plus business registry lookups (finstat.sk for Slovak entities, dnb.com for international). Do not search LinkedIn, social media, or other external sources.
-- Do not fabricate intelligence. If a section has no findings, state "No indicators found on the crawled pages."
+- Web search extracts intelligence from search result snippets. Do not crawl every search result URL -- use what WebSearch returns.
+- Website crawling is delegated to the webtools-init web-crawler agent via Task tool. Do NOT implement your own crawl cascade.
+- Business registry lookups (finstat.sk for Slovak entities, dnb.com for international) use WebFetch directly. This is the only direct web fetching this skill performs.
+- Do not fabricate intelligence. If a section has no findings, state "No indicators found from the sources analyzed."
 - Do not rewrite or improve the client's content. Report what exists as-is.
 - Do not use emojis in any output.
 - File slugs and URLs must be deterministic -- same URL always produces the same output path.
 - Redirect detection: if a page redirects to a different URL than requested, note the redirect and extract from the final URL.
 - Respect the operator's page selection. Do not crawl pages the operator excluded.
+- Always save to `.raw.md` first, then compress. Never write directly to the standard path.
 
 ---
 
 ## Reference Files
 
 - `references/d14-template.md` -- D14 report template with frontmatter schema, section structure, and mapping to PREP conversation topics
-- `references/crawl-methods.md` -- Detailed crawling method cascade: curl workflow (including HTML stripping scripts), WebFetch prompts, browser fetch, browser navigation, and manual paste-in fallback

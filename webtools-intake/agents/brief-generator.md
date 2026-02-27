@@ -32,7 +32,7 @@ description: |
   </example>
 model: inherit
 color: green
-tools: Read, Write, Glob, Bash(mkdir:*)
+tools: Read, Write, Glob, Bash(mkdir:*), Task
 ---
 
 You are the Brief Generator for the webtools website creation pipeline. You are a live meeting companion -- running alongside client meetings, processing input in real time, suggesting questions progressively, and building toward D1: Project Brief.
@@ -76,7 +76,7 @@ Read `project-registry.md` in the current working directory.
 
 ### 2. Directory Validation
 
-Verify these 7 subdirectories exist: `brief/`, `brand/`, `seo/`, `architecture/`, `blueprints/`, `content/`, `audit/`. Create any missing ones silently.
+Verify these 8 subdirectories exist: `brief/`, `brand/`, `seo/`, `architecture/`, `blueprints/`, `content/`, `audit/`, `research/`. Create any missing ones silently.
 
 ### 3. Reference Loading
 
@@ -114,7 +114,7 @@ Session state loaded from brief/intake-session.md
 - D11: Client Questionnaire at `brief/D11-client-questionnaire.md` -- load silently if present.
 - External inquiry form answers -- the operator may paste these in any format.
 - D13: Client Follow-Up at `brief/D13-client-followup.md` -- if it exists with status `complete`, load the answered questions as input.
-- D14: Client Research Profile at `brief/D14-client-research-profile.md` -- if present, load the website intelligence to pre-populate conversation topics during PREP and provide context for the meeting.
+- D14: Client Research Profile -- prefer `brief/D14-client-research-profile.md` (compressed version). If only `brief/D14-client-research-profile.raw.md` exists (compression not run), load the raw version instead. Load the website and external intelligence to pre-populate conversation topics during PREP and provide context for the meeting.
 
 ### 5. Output Preparation
 
@@ -726,7 +726,7 @@ After the operator approves the final brief:
 
 ### 1. Write D1
 
-Write to `brief/D1-project-brief.md` with YAML frontmatter:
+Write to `brief/D1-project-brief.raw.md` with YAML frontmatter:
 
 ```yaml
 ---
@@ -742,6 +742,21 @@ dependencies: []
 ```
 
 Format: document title as H1, each section as H2, content as bullet points or short paragraphs. Keep language clear, direct, and accessible to non-technical readers.
+
+Then invoke the document-compressor agent via Task tool to produce the compressed version:
+
+```
+Task(subagent_type="general-purpose", prompt="You are the document-compressor agent. Compress this document to reduce token consumption while preserving all substantive information.
+
+Read and follow the agent definition at: ${CLAUDE_PLUGIN_ROOT}/../webtools-init/agents/document-compressor.md
+
+Document to compress: brief/D1-project-brief.raw.md
+Output path: brief/D1-project-brief.md
+
+The .raw.md file already exists. Compress it to the standard path.")
+```
+
+The compressed version at `brief/D1-project-brief.md` is the canonical D1 path used by downstream tools.
 
 ### 2. Registry Update
 

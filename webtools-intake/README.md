@@ -1,84 +1,49 @@
 # webtools-intake
 
-Client intake and project brief creation for the webtools website pipeline.
+Client intake, research, and project brief creation for the webtools website pipeline.
 
 ## Overview
 
-This plugin handles the discovery phase of the webtools pipeline. The brief-generator agent acts as a **live meeting companion** -- running during client meetings, processing input in real-time, suggesting questions progressively, and proposing solutions with confidence levels. It operates across four explicit modes: PREP, MEETING, REVIEW, and BRIEF.
+This plugin handles the discovery phase of the webtools pipeline. It researches client companies (web search, website crawling, business registry), generates tailored questionnaires, and processes client input in real-time across four modes (PREP, MEETING, REVIEW, BRIEF) with progressive questioning, confidence-scored solutions, and structured project brief output.
 
-Operators navigate the intake workflow through **phase commands** -- each command enters a specific mode of the brief-generator agent, carries forward state from prior phases, and suggests the next step on completion.
+**v3.0.0 changes:** Unified RESEARCH+PREP flow via `/webtools-intake-research`. Website crawling delegated to webtools-init's web-crawler agent. Web search added for external intelligence (news, reviews, social, jobs). D14 and D1 use the `.raw.md` compression pattern via webtools-init's document-compressor agent.
+
+## Recommended Workflow
+
+```
+1. RESEARCH+PREP  ->  /webtools-intake-research [url]
+   - Web search for client intelligence (news, reviews, social, jobs)
+   - Website crawl via webtools-init web-crawler agent
+   - Business registry lookup (finstat.sk / dnb.com)
+   - Save D14.raw.md -> compress to D14.md
+   - Auto-enter PREP: score against domains, produce interview guide
+
+2. QUESTIONNAIRE or MEETING  (branching or sequential)
+   - /webtools-intake-questionnaire   Generate D11
+   - /webtools-intake-meeting         Submarine model, live capture
+
+3. REVIEW + FOLLOW-UP
+   - /webtools-intake-review          Summary, inference confirmation, gap report
+   - Generates D13 if gaps remain
+
+4. BRIEF
+   - /webtools-intake-brief           Compile D1
+   - Save D1.raw.md -> compress to D1.md
+```
 
 ## Components
 
 | Type | Name | Description |
 |------|------|-------------|
 | Command | `/webtools-intake` | Orientation: show available workflows and current project state |
+| Command | `/webtools-intake-research` | Research client + prepare interview guide (D14 + PREP) |
 | Command | `/webtools-intake-questionnaire` | Generate tailored client intake questionnaire (D11) |
 | Command | `/webtools-intake-prep` | Analyze pre-existing data, produce interview guide (PREP mode) |
 | Command | `/webtools-intake-meeting` | Live meeting companion with submarine mode (MEETING mode) |
 | Command | `/webtools-intake-review` | Post-meeting gap analysis and inference review (REVIEW mode) |
 | Command | `/webtools-intake-brief` | Generate D1: Project Brief (BRIEF mode) |
+| Skill | `client-researcher` | Research client via web search, website crawl, and registry lookup (D14) |
 | Agent | `brief-generator` | Live meeting companion with 4-mode brief creation workflow |
-
-## Workflow
-
-```
-PREP  -->  MEETING  -->  REVIEW  -->  BRIEF
-```
-
-### 1. PREP Mode (before meeting)
-
-Load any available client data (external inquiry form answers, prior correspondence) and score it against all domain checklists. The agent produces a PREP Report: what is already covered, remaining CRITICAL gaps, and a recommended conversation flow with time estimates.
-
-```
-Operator: /webtools-intake-prep
-Operator: [pastes inquiry form answers]
-Agent: PREP Report with interview guide
-Agent: Suggests /webtools-intake-meeting
-```
-
-### 2. MEETING Mode (during meeting)
-
-The agent runs as a "submarine" -- processing every message silently, surfacing only when valuable. The operator types meeting notes in real time. The agent acknowledges briefly (1-4 lines), maps input to domain checkpoints, and updates coverage tracking.
-
-Questions are disclosed progressively: **3 at a time**, only when the operator asks. The agent never dumps all gaps at once.
-
-```
-Operator: Client wants an online store, ~200 products, B2B model
-Agent: [1-line ack] + [proactive: E-commerce, B2B inferences activated]
-Operator: ?
-Agent: [3 prioritized questions for the active topic]
-```
-
-**Operator commands in MEETING mode:**
-
-| Command | Action |
-|---------|--------|
-| `?` or `suggest` | Show next 3 suggested questions for the active topic |
-| `more` | Show 3 more questions (continues the queue) |
-| `next topic` | Suggest the next conversation topic with CRITICAL count and time estimate |
-| `status` | Show coverage dashboard with topic progress bars |
-| `solution [topic]` | Show proposed solutions and inferences for a topic |
-| `flag [note]` | Save a note for REVIEW mode (contradiction, concern, special request) |
-| `skip [domain]` | Mark a conditional domain as not applicable |
-| `back to [topic]` | Switch suggestion context to a different topic |
-| `pause` | Stop all proactive communication (silent processing continues) |
-| `resume` | Resume proactive alerts and show catch-up summary |
-| `done` / `wrap up` | End meeting, save state, suggest `/webtools-intake-review` |
-
-### 3. REVIEW Mode (after meeting)
-
-Three-part review with the operator:
-
-1. **Meeting Summary** -- Topics covered, key decisions, data points captured
-2. **Inference Confirmation** -- HIGH/MEDIUM/LOW inferences grouped for batch review
-3. **Gap Report** -- Remaining CRITICAL and IMPORTANT items with resolution options
-
-The agent then generates **D13: Client Follow-Up Questionnaire** for any unresolved gaps.
-
-### 4. BRIEF Mode (document generation)
-
-Compile all sources (inquiry form + meeting data + confirmed inferences + D13 answers) into a complete D1: Project Brief. Each section carries a confidence tag (Solid / Thin / Assumed / Missing). Iterate with the operator until approved.
 
 ## Commands
 
@@ -87,6 +52,21 @@ All commands follow the `webtools-{plugin}-{action}` naming convention. See `ref
 ### /webtools-intake
 
 Show available intake workflows, current project state, and suggested next step. Read-only orientation command.
+
+### /webtools-intake-research
+
+Unified Research+Prep command. Chains client research into PREP mode automatically.
+
+```
+/webtools-intake-research https://example.com
+```
+
+**Arguments:**
+- `$1` -- Client website URL (required). Optional context can be provided in conversation.
+
+**Flow:** Web search -> website crawl (via web-crawler agent) -> business registry -> D14 (.raw.md + compressed) -> auto-enter PREP -> interview guide
+
+**Output:** `brief/D14-client-research-profile.md` (compressed), `brief/D14-client-research-profile.raw.md` (original), PREP report, session state
 
 ### /webtools-intake-questionnaire
 
@@ -114,6 +94,8 @@ The questionnaire includes three sections:
 
 Enter PREP mode. Analyze pre-existing client data (inquiry forms, D11 answers, notes, URLs), score against domain checkpoints, run inference engine, and produce a PREP Report with an interview guide.
 
+**Note:** Consider using `/webtools-intake-research` instead, which combines client research and PREP into one flow. Use this standalone command when D14 already exists or when working from non-website sources.
+
 **Input:** Any format -- inquiry form answers, D11 responses, meeting notes, emails, URLs.
 **Output:** PREP Report with interview guide. Session state saved to `brief/intake-session.md`.
 **Next:** `/webtools-intake-meeting`
@@ -136,16 +118,16 @@ Enter REVIEW mode. Post-meeting 3-part review: Meeting Summary, Inference Confir
 
 ### /webtools-intake-brief
 
-Enter BRIEF mode. Generate D1: Project Brief from all accumulated data. Checks prerequisites, drafts section-by-section with confidence tags (Solid / Thin / Assumed / Missing), iterates until approved.
+Enter BRIEF mode. Generate D1: Project Brief from all accumulated data. Checks prerequisites, drafts section-by-section with confidence tags (Solid / Thin / Assumed / Missing), iterates until approved. D1 is saved as `.raw.md` first, then compressed.
 
-**Output:** `brief/D1-project-brief.md`, registry update, downstream notification. Session state saved to `brief/intake-session.md`.
+**Output:** `brief/D1-project-brief.md` (compressed), `brief/D1-project-brief.raw.md` (original), registry update, downstream notification. Session state saved to `brief/intake-session.md`.
 
 ### Session State
 
 Phase commands persist state across conversations via `brief/intake-session.md`. Each phase reads accumulated state from prior phases and writes updated state on completion. This enables workflows that span multiple sessions:
 
 ```
-Session 1: /webtools-intake-prep -> state saved
+Session 1: /webtools-intake-research -> state saved (RESEARCH+PREP)
 Session 2: /webtools-intake-meeting -> loads PREP state, saves MEETING state
 Session 3: /webtools-intake-review -> loads all state, saves REVIEW state
 Session 4: /webtools-intake-brief -> loads all state, generates D1
@@ -159,7 +141,7 @@ Live meeting companion that processes client input in real-time and synthesizes 
 
 Accepts input in any format: meeting notes, questionnaire answers, URLs, bullet points, emails, voice transcriptions, or stream-of-consciousness text. The agent maps all input to domain checkpoints, derives inferences with confidence levels, and tracks coverage across 9 conversation topics.
 
-**Output:** `brief/D1-project-brief.md` and `brief/D13-client-followup.md`
+**Output:** `brief/D1-project-brief.md` (compressed), `brief/D1-project-brief.raw.md` (original), and `brief/D13-client-followup.md`
 
 #### Conversation Topics
 
@@ -214,11 +196,18 @@ The agent accommodates Whisper or similar voice-to-text integration. Transcribed
 
 | Doc ID | Document | File Path | Generated By |
 |--------|----------|-----------|--------------|
+| D14 | Client Research Profile | `brief/D14-client-research-profile.md` (.raw.md + compressed) | `client-researcher` skill / `/webtools-intake-research` |
 | D11 | Client Questionnaire | `brief/D11-client-questionnaire.md` | `/webtools-intake-questionnaire` command |
 | D13 | Client Follow-Up Questionnaire | `brief/D13-client-followup.md` | `brief-generator` (REVIEW mode) |
-| D1 | Project Brief | `brief/D1-project-brief.md` | `brief-generator` (BRIEF mode) |
+| D1 | Project Brief | `brief/D1-project-brief.md` (.raw.md + compressed) | `brief-generator` (BRIEF mode) |
+
+D14 and D1 use the `.raw.md` compression pattern: the original is saved as `.raw.md`, then compressed via webtools-init's document-compressor agent to the standard `.md` path. Downstream tools consume the compressed version.
 
 D13 is always generated after the meeting (even for minimal gaps) to maintain a consistent project paper trail. It contains only CRITICAL and IMPORTANT gaps, written in client-friendly language, grouped by conversation topic. Each question includes meeting context and suggested answers where possible.
+
+## Dependencies
+
+- **webtools-init** -- Required for web-crawler agent (website crawling) and document-compressor agent (D14/D1 compression). The agents are invoked via the Task tool.
 
 ## Reference Files
 
@@ -229,6 +218,7 @@ D13 is always generated after the meeting (even for minimal gaps) to maintain a 
 | `references/topic-mapping.md` | Maps 21 domains to 9 conversation topics, default flow order, conditional extensions |
 | `references/inference-rules.md` | Codified inference patterns with trigger conditions, confidence levels, covered checkpoints |
 | `references/d13-template.md` | D13 format spec, question formatting rules, client-friendly language principles |
+| `references/d14-template.md` | D14 format spec with 9 sections including External Intelligence |
 | `references/questioning-strategy.md` | Question formulation rules and QBQ awareness |
 | `references/naming-convention.md` | `webtools-{plugin}-{action}` command naming convention for the suite |
 
@@ -271,13 +261,14 @@ Located in `references/domains/`. Used by the brief-generator for gap analysis a
 
 This plugin is part of the webtools website creation pipeline:
 
-1. **webtools-init** -- Project setup and management
-2. **webtools-intake** (this plugin) -- Client questionnaire and brief generation
-3. **webtools-brand** -- Brand voice profiling
-4. **webtools-seo** -- SEO keyword research
-5. **webtools-competitors** -- Competitor site analysis
-6. **webtools-inventory** -- Content inventory and migration
-7. **webtools-architecture** -- Site structure planning
-8. **webtools-blueprint** -- Page blueprint generation
-9. **webtools-writer** -- Content and microcopy generation
-10. **webtools-audit** -- Content quality auditing
+1. **webtools-init** -- Project setup, management, and utility agents (web-crawler, document-compressor)
+2. **webtools-intake** (this plugin) -- Client research, questionnaire, and brief generation
+3. **webtools-research** -- Multi-topic research with parallel agent dispatch
+4. **webtools-brand** -- Brand voice profiling
+5. **webtools-seo** -- SEO keyword research
+6. **webtools-competitors** -- Competitor site analysis
+7. **webtools-inventory** -- Content inventory and migration
+8. **webtools-architecture** -- Site structure planning
+9. **webtools-blueprint** -- Page blueprint generation
+10. **webtools-writer** -- Content and microcopy generation
+11. **webtools-audit** -- Content quality auditing

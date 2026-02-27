@@ -26,9 +26,15 @@ Check if `brief/intake-session.md` exists.
 ### 3. Document Status Check
 
 Determine the status of key documents:
+- **D14 Client Research Profile:**
+  - Check if `brief/D14-client-research-profile.md` exists (compressed version).
+  - Check if `brief/D14-client-research-profile.raw.md` exists (raw version).
+  - Report: "complete (compressed)" if .md exists, "complete (raw only)" if only .raw.md exists, "not started" if neither exists.
 - **D11 Questionnaire:** check if `brief/D11-client-questionnaire.md` exists. If yes, report its status from the registry. If no, report "not started".
-- **D14 Client Research Profile:** check if `brief/D14-client-research-profile.md` exists. If yes, report its status from the registry. If no, report "not started".
-- **D1 Brief:** check if `brief/D1-project-brief.md` exists. If yes, report its status from the registry. If no, report "not started".
+- **D1 Brief:**
+  - Check if `brief/D1-project-brief.md` exists (compressed version).
+  - Check if `brief/D1-project-brief.raw.md` exists (raw version).
+  - Report: "complete (compressed)" if .md exists, "complete (raw only)" if only .raw.md exists, "not started" if neither exists.
 
 ---
 
@@ -40,10 +46,11 @@ Determine the status of key documents:
 [INTAKE] Webtools Intake -- [client name]
 
 Available skills:
-  webtools-intake:client-researcher  Crawl client website, produce D14 intelligence profile
+  webtools-intake:client-researcher  Research client company, produce D14 intelligence profile
 
 Available commands:
   /webtools-intake                  Show this overview
+  /webtools-intake-research         Research client + prepare interview guide (D14 + PREP)
   /webtools-intake-questionnaire    Generate client intake questionnaire (D11)
   /webtools-intake-prep             Analyze pre-existing data, produce interview guide
   /webtools-intake-meeting          Live meeting companion (submarine mode)
@@ -52,20 +59,20 @@ Available commands:
 
 Current state:
   Project: [client name] ([project type])
-  D14 Client Research: [complete / not started]
+  D14 Client Research: [complete (compressed) / complete (raw only) / not started]
   D11 Questionnaire: [complete / not started]
   Intake session: [phase info from intake-session.md, e.g. "PREP completed, MEETING not started"]
-  D1 Brief: [complete / not started]
+  D1 Brief: [complete (compressed) / complete (raw only) / not started]
   CRITICAL coverage: [X/Y] ([Z]%)
   Data points: [count]
 
-Suggested next step: /webtools-intake-[phase]
+Suggested next step: /webtools-intake-[command]
 ```
 
 **Next step logic:**
-- No D14 and no D11 and no intake-session.md -> suggest `webtools-intake:client-researcher` or `/webtools-intake-questionnaire`
-- D14 complete but no intake-session.md and no D11 -> suggest `/webtools-intake-questionnaire` or `/webtools-intake-prep`
-- No intake-session.md and no D11 -> suggest `/webtools-intake-questionnaire` or `/webtools-intake-prep`
+- No D14 and no D11 and no intake-session.md -> suggest `/webtools-intake-research` as primary starting point ("Research the client and prepare for the meeting")
+- D14 complete but no intake-session.md and no D11 -> suggest `/webtools-intake-prep` or `/webtools-intake-questionnaire`
+- No intake-session.md and no D11 (but no URL available) -> suggest `/webtools-intake-questionnaire` or `/webtools-intake-research`
 - D11 complete but no session -> suggest `/webtools-intake-prep`
 - PREP completed -> suggest `/webtools-intake-meeting`
 - MEETING completed -> suggest `/webtools-intake-review`
@@ -84,10 +91,11 @@ No project found in this directory.
 Run /webtools-init to set up a new project first, then return here.
 
 Available skills:
-  webtools-intake:client-researcher  Crawl client website, produce D14 intelligence profile
+  webtools-intake:client-researcher  Research client company, produce D14 intelligence profile
 
 Available commands (after project setup):
   /webtools-intake                  Show this overview
+  /webtools-intake-research         Research client + prepare interview guide (D14 + PREP)
   /webtools-intake-questionnaire    Generate client intake questionnaire (D11)
   /webtools-intake-prep             Analyze pre-existing data, produce interview guide
   /webtools-intake-meeting          Live meeting companion (submarine mode)

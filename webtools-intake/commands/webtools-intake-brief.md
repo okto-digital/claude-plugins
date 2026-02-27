@@ -1,6 +1,6 @@
 ---
 description: "webtools-intake: Generate D1: Project Brief from all accumulated intake data (BRIEF mode)"
-allowed-tools: Read, Write, Glob, Bash(mkdir:*)
+allowed-tools: Read, Write, Glob, Bash(mkdir:*), Task
 ---
 
 Enter the brief-generator agent in **BRIEF mode**. Compile all accumulated data from PREP, MEETING, and REVIEW into D1: Project Brief. Check prerequisites, draft section-by-section with confidence tags, and iterate until approved.

@@ -19,7 +19,7 @@ Read `project-registry.md` in the current working directory.
 
 ### 2. Directory Validation
 
-Verify these 7 subdirectories exist: `brief/`, `brand/`, `seo/`, `architecture/`, `blueprints/`, `content/`, `audit/`. Create any missing ones silently.
+Verify these 8 subdirectories exist: `brief/`, `brand/`, `seo/`, `architecture/`, `blueprints/`, `content/`, `audit/`, `research/`. Create any missing ones silently.
 
 ### 3. Input Validation
 

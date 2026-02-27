@@ -15,6 +15,8 @@ source_url: "[homepage URL as provided by operator]"
 final_url: "[actual URL after redirects]"
 pages_analyzed: [number]
 pages_failed: [number]
+web_searches_completed: [number]
+registry_source: "[finstat.sk / dnb.com / none]"
 project: "[client name from registry, or 'standalone']"
 created: [today]
 created_by: webtools-intake
@@ -35,12 +37,31 @@ One paragraph. Cover:
 - Company size estimate (team page headcount, office locations, service area scope)
 - Financial scale indicators (revenue range, employee count -- from registry if available)
 - Geographic scope (local, regional, national, international)
+- External reputation signals (review ratings, notable press mentions -- from web search if available)
 
 Do not pad with filler. If specific details are unknown, omit them rather than hedging.
 
 ---
 
-### 2. Business Identity
+### 1b. External Intelligence
+
+**Sources:** Web search, review sites, social profiles, news articles, job postings
+
+**Maps to PREP conversation topics:** The Business + The Audience
+
+Extract and organize findings from the web search step:
+
+- **Recent news and press:** Notable mentions, awards, partnerships, funding (with dates and sources)
+- **Online reputation:** Review site ratings and recurring themes (Google Business, Trustpilot, Clutch, G2, etc.)
+- **Social presence:** Active platforms, follower ranges, posting frequency, engagement quality
+- **Job postings:** Open positions that reveal growth areas, tech stack, or strategic priorities
+- **Industry context:** Market position signals from third-party sources (rankings, directories, awards)
+
+Each finding must include the source (site name or search result context). Do not fabricate findings -- if a category has no results, state "No indicators found in web search."
+
+---
+
+### 3. Business Identity
 
 **Maps to PREP conversation topic:** The Business
 
@@ -68,7 +89,7 @@ If a sub-item has no findings, omit it entirely (do not write "Not found"). Exce
 
 ---
 
-### 3. Market and Audience Signals
+### 4. Market and Audience Signals
 
 **Maps to PREP conversation topic:** The Audience
 
@@ -83,7 +104,7 @@ Extract and organize:
 
 ---
 
-### 4. Current Website Assessment
+### 5. Current Website Assessment
 
 **Maps to PREP conversation topics:** The Website Vision + Technical Foundation
 
@@ -100,7 +121,7 @@ Extract and organize:
 
 ---
 
-### 5. Brand and Communication Style
+### 6. Brand and Communication Style
 
 **Maps to PREP conversation topic:** Look and Feel
 
@@ -115,7 +136,7 @@ Extract and organize:
 
 ---
 
-### 6. Digital Presence
+### 7. Digital Presence
 
 **Maps to PREP conversation topics:** Findability + Lead Capture
 
@@ -138,7 +159,7 @@ Extract and organize:
 
 ---
 
-### 7. Competitive Context
+### 8. Competitive Context
 
 **Maps to PREP conversation topic:** Competitive Landscape
 
@@ -153,7 +174,7 @@ This section is often the thinnest because websites rarely reference competitors
 
 ---
 
-### 8. Conversation Starters
+### 9. Conversation Starters
 
 **This is the highest-value section.** Do not summarize the above sections. Synthesize analytical observations that are actionable in the meeting.
 
@@ -182,10 +203,11 @@ Organize into four categories:
 - Claims vs. evidence mismatch (e.g., "modern solutions" on a dated site)
 - Inconsistent branding across pages
 - Navigation structure vs. business priorities mismatch
+- External reputation vs. website claims mismatch (from web search findings)
 
 Write each conversation starter as something the operator can say or ask in the meeting. Use concrete observations, not vague suggestions.
 
-Good example: "Your case studies page shows 3 projects, but the homepage says '50+ completed.' Are there more projects we should showcase on the new site?"
+Good example: "Your case studies page shows 3 projects, but the homepage says '50+ completed.' Are there more projects we can showcase on the new site?"
 
 Bad example: "Ask about their case studies." (too vague, not grounded in observation)
 
@@ -197,10 +219,11 @@ This table shows how D14 sections feed into the PREP mode conversation topics, e
 
 | D14 Section | PREP Conversation Topic |
 |---|---|
-| 2. Business Identity | The Business |
-| 3. Market and Audience Signals | The Audience |
-| 4. Current Website Assessment | The Website Vision, Technical Foundation |
-| 5. Brand and Communication Style | Look and Feel |
-| 6. Digital Presence | Findability, Lead Capture and Conversion |
-| 7. Competitive Context | The Business (competitive sub-topic) |
-| 8. Conversation Starters | Cross-cutting (used throughout PREP) |
+| 1b. External Intelligence | The Business, The Audience |
+| 3. Business Identity | The Business |
+| 4. Market and Audience Signals | The Audience |
+| 5. Current Website Assessment | The Website Vision, Technical Foundation |
+| 6. Brand and Communication Style | Look and Feel |
+| 7. Digital Presence | Findability, Lead Capture and Conversion |
+| 8. Competitive Context | The Business (competitive sub-topic) |
+| 9. Conversation Starters | Cross-cutting (used throughout PREP) |

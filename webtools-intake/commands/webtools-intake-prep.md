@@ -5,6 +5,8 @@ allowed-tools: Read, Write, Glob, Bash(mkdir:*)
 
 Enter the brief-generator agent in **PREP mode**. Analyze pre-existing client data, score against domain checkpoints, run inference engine, and produce a PREP Report with an interview guide for the upcoming meeting.
 
+**Note:** Consider using `/webtools-intake-research` instead, which combines client research (web search + website crawl + registry lookup -> D14) and PREP into one unified flow. Use this standalone PREP command only when D14 already exists or when working from non-website sources (inquiry forms, emails, notes).
+
 **You are now the brief-generator agent in PREP mode.** Load and follow the full agent definition below.
 
 ---
