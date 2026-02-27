@@ -12,7 +12,7 @@
     {
       "name": "webtools-init",
       "source": "./webtools-init",
-      "description": "Project initialization, health checks, and registry management for the webtools website creation pipeline. Commands: /webtools-init, /webtools-init-health, /webtools-init-rebuild, /webtools-init-status."
+      "description": "Project initialization, health checks, registry management, and shared utility agents for the webtools website creation pipeline. 8 commands (/webtools-init, /webtools-init-status, /webtools-init-health, /webtools-init-rebuild, /webtools-init-crawl, /webtools-init-compress, /webtools-init-load, /webtools-init-registry), 4 utility agents (web-crawler, document-compressor, prerequisite-loader, registry-updater), and canonical data model references (D1-D15, R1-R8)."
     },
     {
       "name": "webtools-intake",
