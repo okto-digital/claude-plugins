@@ -3,7 +3,8 @@ name: competitor-mapper
 description: |
   Map the competitive landscape broadly for a client's industry and location.
   Discover 8-15 competitors beyond what the client names, assess market positioning,
-  pricing signals, digital maturity, and reputation at surface level.
+  pricing signals, digital maturity, brand visual profile (colors, tone of voice),
+  and reputation at surface level.
   Produces R2: Competitor Landscape document.
   Breadth-level research -- landscape mapping, not deep content analysis.
 tools: WebSearch, WebFetch, Read, Write, Bash
@@ -53,6 +54,8 @@ For each discovered competitor, fetch the homepage via crawl method cascade and 
 - **Tagline / value proposition** -- one-line summary of how they position themselves
 - **Services listed** -- what they offer (breadth vs specialization)
 - **Visual maturity** -- modern design or dated? Professional photography or stock?
+- **Color palette** -- primary brand color, secondary/accent colors, overall palette mood (warm, cool, neutral, bold, muted). Note hex values when extractable from CSS or visible branding.
+- **Tone of voice** -- observe headline style, CTA language, about page copy. Classify as: formal/professional, friendly/approachable, technical/authoritative, casual/playful, luxury/aspirational. Note 2-3 characteristic phrases.
 - **Mobile signal** -- responsive layout visible?
 - **Trust signals visible** -- certifications, awards, client logos, review widgets
 
@@ -100,6 +103,7 @@ Organize findings into the R-document template structure.
 
 **Detailed Findings sub-sections:**
 - Competitor Discovery (full list with URLs and discovery source)
+- Brand & Visual Profile (per competitor: primary/secondary colors with hex values where available, palette mood, tone of voice classification, characteristic phrases)
 - Market Positioning Map (dimensions, clusters, gaps)
 - Pricing Signals (what is visible about market pricing)
 - Digital Maturity Comparison (table format)
