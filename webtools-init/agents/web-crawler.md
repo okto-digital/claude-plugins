@@ -23,7 +23,7 @@ MCP tools (Apify, Desktop Commander, Playwright) may or may not be available dep
 
 The dispatcher may include MCP tool hints in your prompt (e.g., "You have Desktop Commander available"). If hints are provided, those tools are confirmed available -- use them when the cascade calls for them. If no hints are provided, still try MCP methods -- they may work.
 
-Cascade order: Apify -> curl -> Desktop Commander -> WebFetch -> Browser Fetch -> Browser Nav -> Paste-in
+Cascade order: curl -> Desktop Commander -> Apify -> WebFetch -> Browser Fetch -> Browser Nav -> Paste-in
 
 If a method override was provided, skip to that method directly.
 
@@ -33,21 +33,7 @@ If a method override was provided, skip to that method directly.
 
 Try methods in strict order. Move to the next method only when the current one fails.
 
-### Method 1: Apify MCP
-
-Try this method first. If the tool call fails (tool not found), move to Method 2.
-
-Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-apify.md`.
-
-Key points:
-- Use `mcp__apify__call-actor` with `apify/website-content-crawler`
-- Retrieve results via `mcp__apify__get-actor-output`
-- Inform operator: "Calling Apify website-content-crawler... (typically 10-30 seconds)"
-- **CRITICAL:** Apify returns empty string for XML/non-HTML content. Detect empty/near-empty response and fallback immediately.
-
-**Fail triggers -> Method 2:** Tool not found, empty response, actor error, timeout.
-
-### Method 2: curl + Local Processing
+### Method 1: curl + Local Processing
 
 **Skip if:** No shell tool available.
 
@@ -59,15 +45,15 @@ Key points:
 - Extract meta title and description via grep
 - Convert stripped HTML to markdown
 
-**Fail triggers -> Method 3:** No shell tool, curl missing, HTTP != 200, empty/tiny HTML, WAF challenge (403, exit code 56).
+**Fail triggers -> Method 2:** No shell tool, curl missing, HTTP != 200, empty/tiny HTML, WAF challenge (403, exit code 56).
 
-### Method 3: curl via Desktop Commander
+### Method 2: curl via Desktop Commander
 
-**Triggered when:** Method 2 (curl via Bash) fails with HTTP 403 or curl exit code 56 (WAF block).
+**Triggered when:** Method 1 (curl via Bash) fails with HTTP 403 or curl exit code 56 (WAF block).
 
 Desktop Commander runs on the user's local machine with residential/office IP, bypassing WAF restrictions that block datacenter IPs.
 
-Execute the same curl command from Method 2, but via Desktop Commander:
+Execute the same curl command from Method 1, but via Desktop Commander:
 
 ```
 mcp__desktop-commander__start_process(
@@ -89,8 +75,22 @@ mcp__desktop-commander__start_process(
 
 Then read `/tmp/extracted-content.html` via Desktop Commander and convert to markdown.
 
-**If Desktop Commander tool call fails** (tool not found): move to Method 4.
-**If still WAF blocked** via Desktop Commander: move to Method 4.
+**If Desktop Commander tool call fails** (tool not found): move to Method 3.
+**If still WAF blocked** via Desktop Commander: move to Method 3.
+
+### Method 3: Apify MCP
+
+Try Apify. If the tool call fails (tool not found), move to Method 4.
+
+Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-apify.md`.
+
+Key points:
+- Use `mcp__apify__call-actor` with `apify/website-content-crawler`
+- Retrieve results via `mcp__apify__get-actor-output`
+- Inform operator: "Calling Apify website-content-crawler... (typically 10-30 seconds)"
+- **CRITICAL:** Apify returns empty string for XML/non-HTML content. Detect empty/near-empty response and fallback immediately.
+
+**Fail triggers -> Method 4:** Tool not found, empty response, actor error, timeout.
 
 ### Method 4: WebFetch
 

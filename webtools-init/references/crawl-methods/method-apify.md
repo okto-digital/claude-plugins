@@ -129,8 +129,8 @@ Apify MCP requires `APIFY_TOKEN` environment variable. To enable:
 
 ## When This Method Fails
 
-Move to Method 1 (curl) if:
-- No Apify MCP tools detected at startup
+Move to the next method in the cascade if:
+- Apify MCP tools not available (tool call fails)
 - Actor returns empty/near-empty response (XML, non-HTML content)
 - Actor returns error status
 - Actor times out
