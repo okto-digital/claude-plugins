@@ -1,6 +1,6 @@
 ---
 description: "Unified web crawling with 7-method cascade. Crawl any URL and return clean markdown content with metadata."
-tools: Read, Bash, WebFetch
+tools: Read, Bash, WebFetch, mcp__desktop-commander__*, mcp__apify__*, mcp__playwright__*
 ---
 
 # Web Crawler
@@ -17,27 +17,13 @@ Unified web crawling interface for the webtools suite. Crawl any URL and return 
 
 ---
 
-## Step 1: Tool Detection
+## Step 1: Tool Availability
 
-Before crawling, detect available tools and report to the operator:
+MCP tools (Apify, Desktop Commander, Playwright) may or may not be available depending on session configuration. **Do not attempt to detect tools upfront.** Instead, try each method in the cascade. If a tool call fails because the tool does not exist, catch the error and move to the next method.
 
-```
-Available crawling methods:
-  [x/--] Apify MCP (mcp__apify__*)
-  [x/--] curl (via Bash)
-  [x/--] Desktop Commander (mcp__desktop-commander__*)
-  [x/--] WebFetch (built-in)
-  [x/--] Browser tools (browser_evaluate)
+The dispatcher may include MCP tool hints in your prompt (e.g., "You have Desktop Commander available"). If hints are provided, those tools are confirmed available -- use them when the cascade calls for them. If no hints are provided, still try MCP methods -- they may work.
 
 Cascade order: Apify -> curl -> Desktop Commander -> WebFetch -> Browser Fetch -> Browser Nav -> Paste-in
-```
-
-**Detection logic:**
-- Apify: probe for any tool matching `mcp__apify__*`
-- curl: check if Bash tool is available (curl is assumed present on macOS/Linux)
-- Desktop Commander: probe for `mcp__desktop-commander__*` tools
-- WebFetch: always available (built-in Claude Code tool)
-- Browser tools: probe for `browser_evaluate` or similar browser MCP tools
 
 If a method override was provided, skip to that method directly.
 
@@ -49,16 +35,17 @@ Try methods in strict order. Move to the next method only when the current one f
 
 ### Method 1: Apify MCP
 
-**Skip if:** No `mcp__apify__*` tools detected.
+Try this method first. If the tool call fails (tool not found), move to Method 2.
 
 Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-apify.md`.
 
 Key points:
-- Use `call_actor` with `apify/website-content-crawler`
+- Use `mcp__apify__call-actor` with `apify/website-content-crawler`
+- Retrieve results via `mcp__apify__get-actor-output`
 - Inform operator: "Calling Apify website-content-crawler... (typically 10-30 seconds)"
 - **CRITICAL:** Apify returns empty string for XML/non-HTML content. Detect empty/near-empty response and fallback immediately.
 
-**Fail triggers -> Method 2:** No Apify tools detected, empty response, actor error, timeout.
+**Fail triggers -> Method 2:** Tool not found, empty response, actor error, timeout.
 
 ### Method 2: curl + Local Processing
 
@@ -76,13 +63,34 @@ Key points:
 
 ### Method 3: curl via Desktop Commander
 
-**Skip if:** Desktop Commander not available, or Method 2 did not fail with 403/56.
+**Triggered when:** Method 2 (curl via Bash) fails with HTTP 403 or curl exit code 56 (WAF block).
 
-**Triggered when:** Method 2 fails with HTTP 403 or curl exit code 56 (WAF block).
+Desktop Commander runs on the user's local machine with residential/office IP, bypassing WAF restrictions that block datacenter IPs.
 
-Same curl command and processing as Method 2, but executed through Desktop Commander MCP tool. Desktop Commander runs on user's local machine with residential/office IP, bypassing WAF restrictions.
+Execute the same curl command from Method 2, but via Desktop Commander:
 
-**Fail triggers -> Method 4:** Desktop Commander not available, still blocked, same errors.
+```
+mcp__desktop-commander__start_process(
+  command: "curl -sL -w '\\n__FINAL_URL__:%{url_effective}\\n__HTTP_CODE__:%{http_code}' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' -H 'Accept: text/html,application/xhtml+xml' -H 'Accept-Language: en-US,en;q=0.9' -o /tmp/extracted-page.html '[URL]'",
+  timeout_ms: 30000
+)
+```
+
+Then read the output to check HTTP code and final URL. Read the fetched HTML file via `mcp__desktop-commander__read_file(path: "/tmp/extracted-page.html")`.
+
+Run the Python3 stripping script from method-curl.md via Desktop Commander:
+
+```
+mcp__desktop-commander__start_process(
+  command: "python3 << 'PYEOF'\n[stripping script from method-curl.md]\nPYEOF",
+  timeout_ms: 15000
+)
+```
+
+Then read `/tmp/extracted-content.html` via Desktop Commander and convert to markdown.
+
+**If Desktop Commander tool call fails** (tool not found): move to Method 4.
+**If still WAF blocked** via Desktop Commander: move to Method 4.
 
 ### Method 4: WebFetch
 
@@ -100,32 +108,36 @@ Key points:
 
 ### Method 5: Browser Fetch
 
-**Skip if:** No browser tools available.
-
 Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-browser-fetch.md`.
+
+Browser MCP tools may use different naming conventions depending on configuration:
+- **Playwright MCP:** `mcp__playwright__playwright_navigate`, `mcp__playwright__playwright_evaluate`, `mcp__playwright__playwright_get_visible_html`
+- **Other browser MCP:** `browser_navigate`, `browser_evaluate`, `browser_tabs`
+
+Try Playwright naming first. If not found, try alternative naming. If neither works, move to Method 7.
 
 Key points:
 - Navigate to domain root for same-origin context
-- Execute single `fetch()` call via `browser_evaluate`
+- Execute single `fetch()` call via `playwright_evaluate` or `browser_evaluate`
 - Parse HTML via DOMParser (no JS execution on fetched page)
 - Extract metadata, content, links, images, FAQs in one call
 
-**Fail triggers -> Method 6:** Browser tools unavailable, non-200 status, CAPTCHA, SPA skeleton.
+**Fail triggers -> Method 6:** Browser tools unavailable (both naming conventions), non-200 status, CAPTCHA, SPA skeleton.
 
 ### Method 6: Browser Navigation
 
-**Skip if:** No browser tools available.
-
 Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-browser.md`.
 
+Uses the same browser MCP tools as Method 5 (try Playwright naming first, then alternative naming).
+
 Key points:
-- Open new tab, navigate, inject redirect blocker IMMEDIATELY
+- Open new tab, navigate (`playwright_navigate` or `browser_navigate`), inject redirect blocker IMMEDIATELY
 - Wait 2-3 seconds for full render
-- **CRITICAL:** Single atomic extraction script (never split across multiple `browser_evaluate` calls)
+- **CRITICAL:** Single atomic extraction script (never split across multiple evaluate calls)
 - Expand all collapsibles before extraction
 - Close tab after extraction
 
-**Fail triggers -> Method 7:** Browser unavailable, navigation fails, persistent redirect.
+**Fail triggers -> Method 7:** Browser unavailable (both naming conventions), navigation fails, persistent redirect.
 
 ### Method 7: Paste-in (Manual Fallback)
 

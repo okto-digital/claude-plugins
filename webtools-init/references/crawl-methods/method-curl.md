@@ -6,7 +6,7 @@ Preferred extraction method. curl follows redirects transparently, reports the f
 
 <critical>
 **Shell tool priority in cloud environments (Cowork):**
-If multiple shell tools are available, prefer tools that execute on the **user's local machine** (e.g., Desktop Commander) over tools that execute on the **cloud VM** (e.g., Bash in Cowork). Cloud VMs use datacenter IPs that get blocked by WAFs (curl exits with code 56 or returns 403). Desktop Commander runs on the user's machine with their residential/office IP, bypassing WAF restrictions.
+If multiple shell tools are available, prefer tools that execute on the **user's local machine** (e.g., Desktop Commander: `mcp__desktop-commander__start_process`) over tools that execute on the **cloud VM** (e.g., Bash in Cowork). Cloud VMs use datacenter IPs that get blocked by WAFs (curl exits with code 56 or returns 403). Desktop Commander runs on the user's machine with their residential/office IP, bypassing WAF restrictions.
 
 **If the first curl attempt fails with exit code 56 (connection reset) or HTTP 403, and Desktop Commander is available, retry immediately via Desktop Commander before moving to Method 2.** Do not waste attempts retrying with the same tool.
 </critical>

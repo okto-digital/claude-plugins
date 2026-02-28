@@ -2,36 +2,34 @@
 
 Highest-priority crawling method. Apify runs headless browsers on their infrastructure, handling JavaScript rendering, WAF bypass, and anti-bot measures. Uses the user's Apify account via MCP integration.
 
-**Requires Apify MCP server configured.** If no `mcp__apify__*` tools are detected at startup, skip entirely to Method 1 (curl).
+**Requires Apify MCP server configured.** If the tool call fails (tool not found), move to Method 1 (curl).
 
 ---
 
-## Detection
+## Tool Names
 
-At startup, probe for Apify MCP tools. Two possible configurations:
+Two possible configurations exist. Try the invocation below -- if it fails, Apify is not configured.
 
 **Hosted mode** (remote MCP server):
 - Server URL: `https://mcp.apify.com`
-- Exposes general-purpose tools: `call_actor`, `search_actors`, `get_actor_output`, etc.
-- Tool names in Claude Code: `mcp__apify__call_actor`, `mcp__apify__get_actor_output`
+- Exposes general-purpose tools: `call-actor`, `search-actors`, `get-actor-output`, etc.
+- Tool names in Claude Code: `mcp__apify__call-actor`, `mcp__apify__get-actor-output`
 
 **Stdio mode** (local npx):
 - Command: `npx @apify/actors-mcp-server --tools apify/website-content-crawler`
 - Exposes actor as direct tool (name varies by configuration)
 - Tool name example: `mcp__apify__apify-slash-website-content-crawler`
 
-If neither pattern is detected, report "Apify MCP not configured -- skipping to curl" and proceed to Method 1.
-
 ---
 
 ## Invocation
 
-### Via `call_actor` (hosted mode)
+### Via `call-actor` (hosted mode)
 
 **Preferred actor:** `apify/website-content-crawler`
 
 ```
-mcp__apify__call_actor(
+mcp__apify__call-actor(
   actorId: "apify/website-content-crawler",
   input: {
     "startUrls": [{ "url": "[TARGET_URL]" }],
@@ -44,7 +42,7 @@ mcp__apify__call_actor(
 **Fallback actor:** `apify/rag-web-browser`
 
 ```
-mcp__apify__call_actor(
+mcp__apify__call-actor(
   actorId: "apify/rag-web-browser",
   input: {
     "startUrls": [{ "url": "[TARGET_URL]" }],
@@ -67,11 +65,11 @@ mcp__apify__apify-slash-website-content-crawler(
 
 ## Execution Model
 
-- **Synchronous from MCP client perspective** -- `call_actor` blocks until the actor finishes
+- **Synchronous from MCP client perspective** -- `call-actor` blocks until the actor finishes
 - **Real processing time:** 10-60 seconds for a single page (actor spins up browser, renders page, extracts content)
 - **Inform operator:** "Calling Apify website-content-crawler... (typically 10-30 seconds)"
 - Results returned directly in the response
-- If response is truncated, use `get_actor_output` to retrieve full data
+- If response is truncated, use `get-actor-output` to retrieve full data
 
 ---
 

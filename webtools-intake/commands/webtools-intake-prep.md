@@ -68,27 +68,23 @@ Or share any client data you have:
 
 ## Research Phase
 
-When D14 does not exist and a URL is available (either from argument or operator input), research the client directly.
+D14 does not exist. IMMEDIATELY begin the research sequence below. Do not wait for operator confirmation to start.
 
 **Context:** You are preparing for a first client meeting at a web development agency. This is a potential customer. Gather intelligence about their business, online presence, and market position to be well-informed for the meeting.
 
 ```
-[PREP] No D14 found. Researching [URL]...
+[PREP] No D14 found. Starting research on [URL]...
 ```
 
 **How to gather information:**
 
 Use **WebSearch** for external intelligence -- reputation, news, competitors, industry context. Determine what to search based on what you learn. Run searches for: general presence (`"[company name]"`), reputation (`"[company name]" reviews`), news (`"[company name]" news`), hiring signals (`"[company name]" jobs`), and competitor landscape (`best [industry] in [region]`). Extract intelligence from search result snippets directly -- do not crawl every result URL.
 
-Use the **web-crawler agent** for all URL crawling (client website pages, business registries). Dispatch each URL via Task tool:
+Use the **web-crawler agent** for all URL crawling (client website pages, business registries). Dispatch each URL using the same pattern as the crawl command:
 
-```
-Task(subagent_type="general-purpose", prompt="You are the web-crawler agent. Crawl this URL and return clean markdown content with metadata: [URL]
+@${CLAUDE_PLUGIN_ROOT}/../webtools-init/commands/webtools-init-crawl.md
 
-Read and follow the agent definition at: ${CLAUDE_PLUGIN_ROOT}/../webtools-init/agents/web-crawler.md
-
-Return the full cleaned content with metadata headers.")
-```
+Follow the Dispatch section from the crawl command above. For each URL, spawn a separate sub-agent via Task tool. Multiple URLs can be dispatched in parallel.
 
 **Research sequence:**
 
