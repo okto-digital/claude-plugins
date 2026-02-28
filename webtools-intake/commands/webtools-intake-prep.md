@@ -3,49 +3,186 @@ description: "webtools-intake: Analyze pre-existing client data and produce inte
 allowed-tools: Read, Write, Glob, Bash(mkdir:*)
 ---
 
-Enter the brief-generator agent in **PREP mode**. Analyze pre-existing client data, score against domain checkpoints, run inference engine, and produce a PREP Report with an interview guide for the upcoming meeting.
+Analyze pre-existing client data and produce a PREP Report with an interview guide for the upcoming meeting. This is a lightweight standalone command -- no agent definition or domain checklists are loaded.
 
 **Note:** Consider using `/webtools-intake-research` instead, which combines client research (web search + website crawl + registry lookup -> D14) and PREP into one unified flow. Use this standalone PREP command only when D14 already exists or when working from non-website sources (inquiry forms, emails, notes).
 
-**You are now the brief-generator agent in PREP mode.** Load and follow the full agent definition below.
-
 ---
 
-## Agent Definition
+## Lifecycle Startup
 
-@agents/brief-generator.md
+### 1. Registry Check
 
----
+Read `project-registry.md` in the current working directory.
 
-## Phase Entry Instructions
+- If it does NOT exist: create a minimal registry. Prompt the operator for the client name and project type. Create `project-registry.md` with Project Info filled in, an empty Document Log with all single-instance documents set to status `--`, and an empty Phase Log.
+- If it DOES exist: parse the Project Info and Document Log. Extract the client name and project type for use throughout this session.
 
-After completing the Lifecycle Startup from the agent definition above (including step 3b Session State), enter **PREP mode** explicitly.
+### 2. Directory Validation
 
-1. If session state was loaded from `brief/intake-session.md` and PREP was already completed, inform the operator and offer options:
-   - (a) Re-run PREP with new/additional data
-   - (b) Skip to the next uncompleted phase (suggest the appropriate `/webtools-intake-*` command)
+Verify these 8 subdirectories exist: `brief/`, `brand/`, `seo/`, `architecture/`, `blueprints/`, `content/`, `audit/`, `research/`. Create any missing ones silently.
 
-2. If no prior state exists or PREP was not yet completed, announce PREP mode entry:
+### 3. Session State Check
+
+Check if `brief/intake-session.md` exists.
+
+- If yes: read it and extract current phase, phases completed, key facts, conditional domain statuses. Report what was loaded:
 
 ```
-[PREP] Ready for pre-meeting analysis.
+Session state loaded from brief/intake-session.md
+  Project: [project name]
+  Last phase: [phase name]
+  Phases completed: [list]
+```
+
+- If no: proceed with empty state. The file will be created when PREP completes.
+
+### 4. Load Available Data
+
+Load all available client data silently:
+
+- **D14 Client Research Profile:** prefer `brief/D14-client-research-profile.md` (compressed). If only `brief/D14-client-research-profile.raw.md` exists, load the raw version.
+- **D11 Questionnaire:** `brief/D11-client-questionnaire.md` -- load if present.
+- **D13 Answers:** `brief/D13-client-followup.md` -- if it exists with status `complete`, load answered questions.
+
+If no D14, D11, or D13 is found, prompt the operator:
+
+```
+[PREP] No pre-existing data found (D14, D11, or D13).
 
 Share any client data you have:
 - Inquiry form answers
-- D11 questionnaire responses
-- Meeting prep notes, emails, URLs
+- Meeting prep notes, emails
 - Any format works
 
-I will score it against all domain checkpoints and produce an interview guide.
+I will analyze it and produce an interview guide.
 ```
 
-3. Process all input following the PREP Mode rules in the agent definition.
+Accept input in ANY format: inquiry form answers, emails, bullet points, stream-of-consciousness text.
 
-4. When PREP is complete (PREP Report delivered), write session state to `brief/intake-session.md` as described in the agent definition's Session State Write section.
+---
 
-5. Suggest next step:
+## Topic Reference
+
+The 9 conversation topics and 6 conditional extensions define how findings are organized. Read the full mapping at session start:
+
+@references/topic-mapping.md
+
+---
+
+## Analysis Process
+
+Using the topic structure above, analyze all loaded data.
+
+### 1. Organize Findings by Topic
+
+For each of the 9 conversation topics, extract what the available data tells us:
+- **Strong findings** -- clearly stated, specific information
+- **Partial findings** -- mentioned but unclear or shallow
+- **Gaps** -- no information found
+
+### 2. Determine Conditional Domain Applicability
+
+Evaluate the 6 conditional extensions:
+
+| Extension | Question |
+|---|---|
+| Online Store | Products or services sold directly online? |
+| Content Publishing | Regular content publishing planned (blog, news)? |
+| Multiple Languages | Site needs more than one language? |
+| Member Access | Login, membership, or gated content? |
+| Moving From Current Site | Existing site to migrate or replace? |
+| Bookings and Appointments | Online appointments or reservations? |
+
+- **Include without asking** when data clearly indicates applicability.
+- **Exclude without asking** when data clearly indicates non-applicability.
+- **Ask the operator** only when ambiguous:
+
+```
+[PREP] Based on the available data, I want to confirm:
+- [Extension]: [evidence that makes it ambiguous] [yes / no]
+```
+
+### 3. Build Interview Guide
+
+Prioritize topics by gap density:
+- Topics with the most missing information come first (they need the most meeting time)
+- Topics with strong findings can be covered briefly to confirm
+- Conditional extensions attach to their parent topics per the mapping
+
+For each topic in the recommended order, identify:
+- Why this topic needs discussion (what is missing or unclear)
+- Specific questions to ask (business language, not technical jargon)
+- What we already know (so the operator can confirm quickly and move on)
+
+---
+
+## Output: PREP Report
+
+```
+[PREP] PREP REPORT: [Client Name]
+
+DATA LOADED
+  Sources: [D14 / D11 / inquiry form / notes -- list what was found]
+  Key findings: [count of distinct data points extracted]
+
+WHAT WE KNOW WELL
+  [Topic]: [brief summary of strong findings]
+  [Topic]: [brief summary of strong findings]
+  ...
+
+GAPS AND OPEN QUESTIONS
+  [Topic]: [what's missing or unclear, specific questions to ask]
+  [Topic]: [what's missing or unclear, specific questions to ask]
+  ...
+
+CONDITIONAL DOMAINS
+  Active: [list with evidence]
+  Inactive: [list with evidence]
+  Unknown -- ask early in meeting: [list]
+
+INTERVIEW GUIDE
+  Recommended conversation flow:
+  1. [Topic] -- [reason to discuss, key questions to ask] (~[X] min)
+  2. [Topic] -- [reason to discuss, key questions to ask] (~[X] min)
+  ...
+
+Ready for the meeting. Run: /webtools-intake-meeting
+```
+
+---
+
+## Session State Write
+
+After producing the PREP Report, write or update `brief/intake-session.md`.
+
+If the file already exists (e.g., from a prior RESEARCH phase), preserve existing data and merge:
+
+- Set `current_phase: PREP`
+- Add `PREP` to `phases_completed` (preserve any earlier phases like RESEARCH)
+- Record conditional domain statuses (active, inactive, unknown)
+- Record key facts extracted from available data
+- Record topic gap summary (which topics have gaps, which are well covered)
+- Record data sources loaded
+- Set `last_updated` to today
+
+---
+
+## Suggest Next Step
 
 ```
 PREP complete. When the client arrives, run:
   /webtools-intake-meeting
 ```
+
+---
+
+## Behavioral Rules
+
+- Accept input in ANY format.
+- Do NOT load domain checklist files from `references/domains/`. Analyze at the topic level using topic-mapping.md.
+- Do NOT generate fictional content. If information is missing, identify it as a gap.
+- Use conversation topic names (from topic-mapping.md), not technical domain names.
+- Write questions in business language, not technical language.
+- Do not use emojis in any output.
+- Every response starts with `[PREP]`.

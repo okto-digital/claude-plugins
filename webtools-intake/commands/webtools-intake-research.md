@@ -4,9 +4,9 @@ allowed-tools: Read, Write, Glob, Bash(mkdir:*), WebSearch, Task
 argument-hint: [client-url]
 ---
 
-Research a client company and auto-enter PREP mode. This command combines client research (D14) and meeting preparation into one unified flow: web search for external intelligence, website crawl via web-crawler agent, business registry lookup, D14 generation with compression, then automatic transition to PREP mode for interview guide production.
+Research a client company and auto-enter PREP mode. This command combines client research (D14) and meeting preparation into one unified flow: web search for external intelligence, website crawl via web-crawler agent, business registry lookup, D14 generation with compression, then automatic transition to lightweight PREP for interview guide production.
 
-**You are now running a unified RESEARCH+PREP workflow.** Load and follow the skill definition and agent definition below.
+**You are now running a unified RESEARCH+PREP workflow.** Load and follow the skill definition below for the Research phase, then run PREP analysis using the topic mapping.
 
 ---
 
@@ -16,9 +16,9 @@ Research a client company and auto-enter PREP mode. This command combines client
 
 ---
 
-## Agent Definition (PREP Phase)
+## Topic Reference (PREP Phase)
 
-@agents/brief-generator.md
+@references/topic-mapping.md
 
 ---
 
@@ -44,7 +44,7 @@ Research a client company and auto-enter PREP mode. This command combines client
 
 ### Automatic PREP Transition
 
-After D14 is produced and saved, automatically transition to PREP mode:
+After D14 is produced and saved, automatically transition to PREP:
 
 ```
 [RESEARCH] D14: Client Research Profile complete.
@@ -52,25 +52,61 @@ After D14 is produced and saved, automatically transition to PREP mode:
 Sources: [web search findings count] external findings, [pages count] pages analyzed, registry: [status]
 Output: brief/D14-client-research-profile.md (compressed)
 
-Transitioning to PREP mode to produce interview guide...
+Transitioning to PREP to produce interview guide...
 ```
 
-5. **PREP Lifecycle Startup** -- Complete the brief-generator Lifecycle Startup:
-   - Registry check (already done, reuse)
-   - Directory validation: verify 8 subdirectories exist: `brief/`, `brand/`, `seo/`, `architecture/`, `blueprints/`, `content/`, `audit/`, `research/`. Create any missing ones silently.
-   - Reference loading: load all domain files, topic-mapping.md, inference-rules.md, d13-template.md, questioning-strategy.md
-   - Session state: check for existing `brief/intake-session.md`
-   - Input validation: load the just-produced D14 (compressed version at `brief/D14-client-research-profile.md`). Also load D11 if present.
+5. **Directory validation** -- Verify 8 subdirectories exist: `brief/`, `brand/`, `seo/`, `architecture/`, `blueprints/`, `content/`, `audit/`, `research/`. Create any missing ones silently.
 
-6. **Enter PREP mode** -- Score D14 intelligence against every checkpoint in every applicable domain:
-   - Mark checkpoints as EXPLICIT, PARTIAL, MISSING, or N/A
-   - Run inference engine against MISSING and PARTIAL checkpoints
-   - Determine conditional domain applicability (ask operator if ambiguous)
-   - Produce the PREP Report with interview guide
+6. **Load available data** -- Load the just-produced D14 (compressed version at `brief/D14-client-research-profile.md`). Also load D11 if present at `brief/D11-client-questionnaire.md`.
 
-7. **Write session state** to `brief/intake-session.md` with: project name, `current_phase: PREP`, `phases_completed: [RESEARCH, PREP]`, conditional domain statuses, CRITICAL coverage count, total data points, key facts, inferences, and flags.
+7. **Analyze findings by topic** -- Using the topic reference above, organize all D14 and D11 findings into the 9 conversation topics:
+   - For each topic, identify strong findings, partial findings, and gaps
+   - Determine conditional domain applicability from the 6 extensions in the topic mapping
+   - Include without asking when data clearly indicates applicability
+   - Exclude without asking when data clearly indicates non-applicability
+   - Ask the operator only when ambiguous
 
-8. **Suggest next step:**
+8. **Produce PREP Report:**
+
+```
+[PREP] PREP REPORT: [Client Name]
+
+DATA LOADED
+  Sources: [D14 / D11 -- list what was found]
+  Key findings: [count of distinct data points extracted]
+
+WHAT WE KNOW WELL
+  [Topic]: [brief summary of strong findings]
+  ...
+
+GAPS AND OPEN QUESTIONS
+  [Topic]: [what's missing or unclear, specific questions to ask]
+  ...
+
+CONDITIONAL DOMAINS
+  Active: [list with evidence]
+  Inactive: [list with evidence]
+  Unknown -- ask early in meeting: [list]
+
+INTERVIEW GUIDE
+  Recommended conversation flow:
+  1. [Topic] -- [reason to discuss, key questions to ask] (~[X] min)
+  2. [Topic] -- [reason to discuss, key questions to ask] (~[X] min)
+  ...
+
+Ready for the meeting. Run: /webtools-intake-meeting
+```
+
+9. **Write session state** to `brief/intake-session.md`:
+   - Set `current_phase: PREP`
+   - Set `phases_completed: [RESEARCH, PREP]`
+   - Record conditional domain statuses (active, inactive, unknown)
+   - Record key facts extracted from data
+   - Record topic gap summary (which topics have gaps, which are well covered)
+   - Record data sources loaded
+   - Set `last_updated` to today
+
+10. **Suggest next step:**
 
 ```
 RESEARCH+PREP complete. When the client arrives, run:

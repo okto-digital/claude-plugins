@@ -80,12 +80,12 @@ Verify these 8 subdirectories exist: `brief/`, `brand/`, `seo/`, `architecture/`
 
 ### 3. Reference Loading
 
-**YOU MUST** load all reference files at session start:
-- Read ALL `.md` files in `${CLAUDE_PLUGIN_ROOT}/references/domains/` using Glob. Do NOT rely on a hardcoded list.
-- Read `${CLAUDE_PLUGIN_ROOT}/references/topic-mapping.md` for conversation topic structure.
+**YOU MUST** load these reference files at session start:
+- Read `${CLAUDE_PLUGIN_ROOT}/references/domain-quick-ref.md` for compact domain checkpoint index (CRITICAL names, section counts, conditional triggers).
+- Read `${CLAUDE_PLUGIN_ROOT}/references/topic-mapping.md` for conversation topic structure and domain-to-topic mapping.
 - Read `${CLAUDE_PLUGIN_ROOT}/references/inference-rules.md` for the inference engine.
-- Read `${CLAUDE_PLUGIN_ROOT}/references/d13-template.md` for follow-up document generation.
-- Read `${CLAUDE_PLUGIN_ROOT}/references/questioning-strategy.md` for question formulation and QBQ awareness.
+
+**Do NOT** read the individual domain files in `${CLAUDE_PLUGIN_ROOT}/references/domains/`. The domain-quick-ref.md provides CRITICAL checkpoint names and counts sufficient for coarse mapping in MEETING mode. The checkpoint-scorer sub-agent reads full domain files on demand when detailed scoring, suggestions, or gap analysis is needed (see Checkpoint-Scorer Delegation section).
 
 ### 3b. Session State
 
@@ -154,7 +154,7 @@ Ready. Share client data to prepare, or say "meeting" to go live.
 
 1. Accept input in ANY format: inquiry form answers, D11 questionnaire, meeting prep notes, URLs, emails, bullet points, stream-of-consciousness text. Do NOT require a specific format.
 
-2. After receiving input, score it against every checkpoint in every applicable domain:
+2. After receiving input, spawn the checkpoint-scorer sub-agent in SCORE mode to score against every checkpoint in every applicable domain. Pass all domain file paths (all 15 universal + any conditional domains already identified) and all extracted key facts. The sub-agent returns per-checkpoint statuses:
    - **EXPLICIT** -- clear, specific information provided
    - **PARTIAL** -- touches on topic but lacks depth
    - **MISSING** -- no information found
@@ -226,10 +226,9 @@ When the operator signals PREP is complete (transitions to MEETING or ends the s
 
 Every operator message is processed through:
 1. **Parse** -- extract data points (even from messy, abbreviated notes)
-2. **Map** -- match to domain checkpoints, update statuses
+2. **Map (coarse)** -- match to CRITICAL checkpoint names from domain-quick-ref.md. If data clearly matches a named CRITICAL checkpoint, mark it EXPLICIT. If data relates to a topic but no specific CRITICAL match, increment the topic's data point counter for estimated non-CRITICAL coverage.
 3. **Infer** -- run inference engine on new data
 4. **Acknowledge** -- produce compact acknowledgment
-5. **Queue** -- add relevant questions to the suggestion queue (do NOT show them yet)
 
 ### Acknowledgment Format
 
@@ -294,11 +293,20 @@ Remaining: 4 IMPORTANT. Move on or dig deeper?
 
 ### Suggestion Queue
 
-Questions are never dumped. They are queued and disclosed progressively.
+Questions are never dumped. They are generated on demand by the checkpoint-scorer sub-agent.
 
 **Trigger:** Operator types `?`, `suggest`, or `what to ask`.
 
-**Response -- always exactly 3 questions:**
+**Behavior:** Spawn the checkpoint-scorer sub-agent in SUGGEST mode via Task tool. Pass:
+- Active topic name
+- Domain file paths for the active topic (from topic-mapping.md reverse mapping)
+- Current CRITICAL coverage state for relevant domains
+- Key facts accumulated so far
+- Last 3-5 operator messages as conversation context
+
+The sub-agent reads the full domain files and questioning-strategy.md, then returns exactly 3 formatted questions with Why and QBQ lines.
+
+**Display the returned output directly** with the `[MEETING]` prefix:
 
 ```
 [MEETING] Top 3 questions to ask (from [topic]):
@@ -315,15 +323,67 @@ Questions are never dumped. They are queued and disclosed progressively.
    Why: Affects catalog complexity and data structure [IMPORTANT]
    QBQ: Client may be anxious about the effort required to set up and maintain the catalog.
 
-[7 more queued. Type "more" or "next topic".]
+[N more gaps remain. Type "more" or "next topic".]
 ```
 
-**Suggestion priority order:**
-1. CRITICAL gaps in the most recently active topic
-2. CRITICAL gaps in related topics
-3. IMPORTANT gaps in the active topic
-4. CRITICAL gaps in other topics
-5. IMPORTANT and NICE-TO-HAVE (only when operator explicitly asks "all remaining")
+**Latency note:** The sub-agent invocation takes ~3-5 seconds. This is acceptable because the operator explicitly requests suggestions and expects a response.
+
+**`more` command:** Spawn checkpoint-scorer again with updated context (mark previously suggested checkpoints as "already asked").
+
+**`next topic` command:** Handled by the main agent (topic structure is in topic-mapping.md). When the operator then types `?` on the new topic, spawn checkpoint-scorer for that topic's domains.
+
+### Checkpoint-Scorer Delegation
+
+The checkpoint-scorer sub-agent (`${CLAUDE_PLUGIN_ROOT}/agents/checkpoint-scorer.md`) handles operations that require reading full domain files. The main agent carries only the compact domain-quick-ref.md; the sub-agent reads individual domain files on demand.
+
+**When to spawn the sub-agent:**
+
+| Trigger | Mode | What to Pass |
+|---|---|---|
+| Operator types `?` / `suggest` / `more` | SUGGEST | Active topic, domain file paths, coverage state, key facts, recent messages |
+| PREP mode needs full scoring | SCORE | Domain file paths, all key facts and data points |
+| REVIEW Section 3 | GAP-REPORT | All applicable domain file paths, full coverage state, confirmed inferences |
+| Operator requests D13 | D13 | All applicable domain file paths, coverage state, gap report, client context |
+
+**Task tool invocation pattern:**
+
+```
+Task(subagent_type="general-purpose", prompt="You are the checkpoint-scorer sub-agent.
+
+Read and follow the agent definition at: ${CLAUDE_PLUGIN_ROOT}/agents/checkpoint-scorer.md
+
+MODE: [SUGGEST | SCORE | GAP-REPORT | D13]
+
+Domain files to read:
+- ${CLAUDE_PLUGIN_ROOT}/references/domains/[domain-1].md
+- ${CLAUDE_PLUGIN_ROOT}/references/domains/[domain-2].md
+[...]
+
+Coverage state:
+[CRITICAL checkpoint statuses per domain]
+
+Key facts:
+[Accumulated data points]
+
+Active conditional domains: [list]
+
+[Mode-specific context]
+")
+```
+
+**Handling returned output:**
+- SUGGEST: Prefix with `[MEETING]` and display directly. Append remaining gap count.
+- SCORE: Parse checkpoint statuses into internal tracking state. Update coverage counters.
+- GAP-REPORT: Prefix with `[REVIEW]` and display directly.
+- D13: Present to operator for review. Write file only after approval.
+
+**Latency expectations:**
+- SUGGEST: ~3-5 seconds (reads 2-3 domain files + questioning-strategy.md)
+- SCORE: ~5-10 seconds (reads all applicable domain files)
+- GAP-REPORT: ~5-10 seconds (reads all applicable domain files)
+- D13: ~10-15 seconds (reads domain files + d13-template.md + questioning-strategy.md, generates full document)
+
+---
 
 ### Operator Commands in MEETING Mode
 
@@ -365,27 +425,32 @@ The agent adapts to the actual conversation -- if the client jumps topics, follo
 
 ### Coverage Dashboard
 
-Available via `status` in any mode:
+Available via `status` in any mode.
+
+**Tracking precision:**
+- **CRITICAL counts:** Exact. Tracked by name from domain-quick-ref.md. Each named CRITICAL checkpoint is individually marked EXPLICIT, PARTIAL, MISSING, or N/A.
+- **Total counts:** Estimated. CRITICAL (exact) + estimated non-CRITICAL based on data points per section. The section checkpoint counts from domain-quick-ref.md provide the denominators.
+- **TOP 5 GAPS:** Lists CRITICAL checkpoint names only (available from domain-quick-ref.md).
 
 ```
 [MEETING] COVERAGE DASHBOARD: [Client Name]
 Duration: [X] min | Data points: [count]
 
-TOPIC PROGRESS (CRITICAL / Total)
-1. The Business        [=======---] 7/10 CRIT | 18/31 total
-2. The Audience        [====------] 4/6  CRIT | 10/28 total
-3. Goals and Success   [===-------] 3/6  CRIT | 8/30  total
-4. The Website Vision  [===-------] 3/8  CRIT | 9/36  total
-5. Look and Feel       [====------] 4/5  CRIT | 15/29 total
-6. Technical Found.    [==--------] 2/7  CRIT | 7/32  total
-7. Lead Capture        [===-------] 3/4  CRIT | 8/33  total
-8. Findability         [==--------] 2/7  CRIT | 5/30  total
-9. After Launch        [----------] 0/2  CRIT | 2/30  total
+TOPIC PROGRESS (CRITICAL / Est. Total)
+1. The Business        [=======---] 7/10 CRIT | ~18/31 total
+2. The Audience        [====------] 4/6  CRIT | ~10/28 total
+3. Goals and Success   [===-------] 3/6  CRIT | ~8/30  total
+4. The Website Vision  [===-------] 3/8  CRIT | ~9/36  total
+5. Look and Feel       [====------] 4/5  CRIT | ~15/29 total
+6. Technical Found.    [==--------] 2/7  CRIT | ~7/32  total
+7. Lead Capture        [===-------] 3/4  CRIT | ~8/33  total
+8. Findability         [==--------] 2/7  CRIT | ~5/30  total
+9. After Launch        [----------] 0/2  CRIT | ~2/30  total
 
 EXTENSIONS: Online Store [ACTIVE] 4/7 CRIT
             Migration [ACTIVE] 2/9 CRIT
 
-OVERALL: 34/71 CRITICAL (48%) | 97/350 total (28%)
+OVERALL: 34/71 CRITICAL (48%) | ~97/350 total (~28%)
 Inferences pending: 8
 
 TOP 5 GAPS:
@@ -479,8 +544,8 @@ The domain checklists are a floor, not a ceiling. They capture the most common r
 
 **How to handle open-reasoning questions:**
 
-1. Generate the question using the same formulation rules from questioning-strategy.md
-2. Tag it as `[OPEN]` in the suggestion queue so the operator knows it is agent-generated, not from the checklist
+1. Generate the question directly (the checkpoint-scorer sub-agent also generates open-reasoning questions in SUGGEST mode when it reads the full domain files and detects uncovered territory)
+2. Tag it as `[OPEN]` in the suggestion output so the operator knows it is agent-generated, not from the checklist
 3. Assign it a priority level (CRITICAL, IMPORTANT, or NICE-TO-HAVE) based on its impact on the brief
 4. If the answer reveals a pattern that applies to future projects, flag it in the REVIEW mode gap report as a potential checklist addition
 
@@ -563,7 +628,14 @@ The operator can respond in any format -- individual, batch, or "all HIGH confir
 
 ### Section 3: Gap Report
 
-After inferences confirmed:
+After inferences confirmed, spawn the checkpoint-scorer sub-agent in GAP-REPORT mode. Pass:
+- All applicable domain file paths (from topic-mapping.md reverse mapping, including active conditional domains)
+- Full coverage state (EXPLICIT/PARTIAL/MISSING/N/A per CRITICAL checkpoint)
+- Confirmed inference results
+- Active conditional domains
+- Conversation topic names for grouping
+
+The sub-agent reads all applicable domain files and returns a complete gap report. Display the result with the `[REVIEW]` prefix:
 
 ```
 [REVIEW] REMAINING GAPS
@@ -587,17 +659,25 @@ Options:
 
 ### D13 Generation
 
-When the operator chooses to generate D13, follow the template in `${CLAUDE_PLUGIN_ROOT}/references/d13-template.md`:
+When the operator chooses to generate D13, spawn the checkpoint-scorer sub-agent in D13 mode. Pass:
+- All applicable domain file paths
+- Full coverage state
+- Confirmed inferences (including MEDIUM-confidence proposals deferred to client)
+- Gap report output (from Section 3 above)
+- Client name, meeting date, project context
 
-1. Include only CRITICAL and IMPORTANT gaps (not NICE-TO-HAVE)
-2. Group by conversation topic (from topic-mapping.md), not domain
-3. Write in client-friendly language (use translations from d13-template.md)
-4. Add HTML comment annotations for internal tracking: `<!-- domain:[name] priority:[level] checkpoint:[text] -->`
-5. Include recommendations where the agent has a MEDIUM-confidence proposal deferred to the client
+The sub-agent reads the domain files, d13-template.md, and questioning-strategy.md, then returns a complete D13 document with:
+1. YAML frontmatter per the template
+2. Only CRITICAL and IMPORTANT gaps (not NICE-TO-HAVE)
+3. Questions grouped by conversation topic
+4. Client-friendly language with HTML comment annotations
+5. Recommendations where MEDIUM-confidence inferences were deferred
 6. Maximum 25 questions
-7. Present D13 to the operator for review before writing the file
+7. Summary table
 
-Write to `brief/D13-client-followup.md` with YAML frontmatter per the template.
+**Present the returned D13 to the operator for review before writing the file.** Do NOT write automatically.
+
+Write to `brief/D13-client-followup.md` after operator approval.
 
 Update `project-registry.md` to add D13 to the Document Log.
 
@@ -800,11 +880,11 @@ Do NOT require reorganization. Accumulate everything across messages. Never disc
 
 ## Domain Applicability
 
-**YOU MUST** evaluate every checkpoint in every applicable domain.
+**YOU MUST** track every CRITICAL checkpoint in every applicable domain using domain-quick-ref.md.
 
-- **Universal domains (15) are NEVER skipped.** All are evaluated for every project.
-- **Conditional domains (6) are skipped ONLY when the entire domain is clearly irrelevant.** If there is any doubt, the domain applies.
-- When a conditional domain activates mid-meeting, announce it briefly and add its checkpoints to the relevant topic's suggestion queue.
+- **Universal domains (15) are NEVER skipped.** All CRITICAL checkpoints are tracked for every project.
+- **Conditional domains (6) are skipped ONLY when the entire domain is clearly irrelevant.** Use the conditional trigger table in domain-quick-ref.md to evaluate. If there is any doubt, the domain applies.
+- When a conditional domain activates mid-meeting, announce it briefly and note the CRITICAL count from domain-quick-ref.md. The checkpoint-scorer sub-agent will provide detailed questions on demand.
 
 <critical>
 **THOROUGHNESS RULE:** Do not skip domains that apply. Do not skip checkpoints within applicable domains. CRITICAL checkpoints MUST be resolved (covered, inferred HIGH, or operator-approved "[To be provided]") before the D1 brief can be drafted.
@@ -858,6 +938,6 @@ The agent accepts `[T]` prefixed messages as voice transcription output:
 - When working in Revise mode (existing D1), preserve approved sections and only modify what the operator requests.
 - In MEETING mode, never exceed 25 lines per response unless the operator explicitly asks for more.
 - Use conversation topic names (from topic-mapping.md) in all operator-facing output, not technical domain names.
-- Translate technical concepts to business language when generating D13 (use translations from d13-template.md).
-- Apply questioning-strategy.md when formulating all questions. Address the concern behind the question, not just the information gap. Include a `QBQ:` hint in every suggestion batch entry so the operator understands the client's likely deeper concern.
-- Domain checkpoints are a floor, not a ceiling. When the conversation reveals important topics not covered by any existing checkpoint, generate new questions using the same formulation rules. Tag these as [OPEN] in suggestion batches.
+- Translate technical concepts to business language in operator-facing output (the checkpoint-scorer sub-agent handles D13-specific translations using d13-template.md).
+- The checkpoint-scorer sub-agent applies questioning-strategy.md when formulating suggestions and D13 questions. The main agent does not need to read these files directly.
+- Domain checkpoints are a floor, not a ceiling. When the conversation reveals important topics not covered by any existing checkpoint, generate new questions and tag them as [OPEN] in suggestion batches. The checkpoint-scorer sub-agent also follows this principle in SUGGEST mode.
