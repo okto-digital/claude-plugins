@@ -58,6 +58,7 @@ Run these searches:
 2. **Reputation signals:** `"[company name]" reviews` -- Google Business, Trustpilot, Clutch, G2, etc.
 3. **News and professional presence:** `"[company name]" news` OR `site:linkedin.com "[company name]"` -- press mentions, LinkedIn profile
 4. **Hiring signals:** `"[company name]" jobs` OR `site:linkedin.com/jobs "[company name]"` -- open positions revealing growth areas, tech stack, strategic priorities
+5. **Competitor landscape:** `best [industry/service type] in [city/region]` OR `[industry] [location] top companies` -- identify 3-5 direct competitors in the same market and geography. Adapt the query to match the client's industry and service area discovered from the homepage.
 
 ### What to extract
 
@@ -68,6 +69,7 @@ From the search results directly (do NOT crawl every result URL -- extract what 
 - **Social presence:** Active platforms, follower ranges if visible
 - **Job postings:** Open positions that reveal growth areas, tech stack, or strategic priorities
 - **Industry context:** Market position signals from third-party sources (rankings, directories, awards)
+- **Direct competitors:** 3-5 companies offering similar services in the same geographic area, with their website URLs if visible in search results
 
 ### Present findings
 
@@ -76,7 +78,7 @@ Show a summary of external intelligence gathered before proceeding:
 ```
 [WEB SEARCH] [company name]
 
-Searches completed: 4
+Searches completed: 5
 Notable findings:
   - [key finding 1]
   - [key finding 2]
@@ -212,6 +214,13 @@ After all three intelligence sources are gathered (web search, website crawl, bu
 
 Follow the template in `references/d14-template.md` for the full 9-section structure and frontmatter schema. Section 1 is the executive summary, section 1b covers external intelligence from web search, sections 3-8 compile website intelligence by category, and section 9 is analytical synthesis.
 
+### Size and style constraints
+
+- **Size target:** Raw D14 must not exceed 12,000 characters (~3-4 pages). The compressed version targets 5,400-6,000 characters.
+- **Writing style:** Telegraphic fact notation. Use `Key: value` format and pipe-separated inline lists. No filler sentences, no transitions between sections, no hedging language ("appears to", "seems like", "it is worth noting"). State findings directly.
+- **Omission rule:** If a section sub-item has no findings, omit it entirely. Do not write placeholder text ("Not found", "No indicators found"). Sections with zero findings across all sub-items get a single line: "No notable findings from analyzed sources."
+- **Density check:** If any section exceeds 6-8 lines, it is too verbose. Compress further using comma-separated lists, pipe-delimited values, or single-line summaries.
+
 <critical>
 Section 9 (Conversation Starters) is the highest-value output of this skill. It is NOT a summary of the other sections. It is analytical synthesis: key observations, inferred pain points, unanswered questions, and contradictions noticed. Write each starter as an actionable meeting prompt the operator can say or ask. Example: "Your case studies page shows 3 projects, but the homepage says '50+ completed.' Are there more projects we can showcase on the new site?"
 </critical>
@@ -288,6 +297,7 @@ No project registry found. To integrate this into the webtools pipeline:
 - Redirect detection: if a page redirects to a different URL than requested, note the redirect and extract from the final URL.
 - Respect the operator's page selection. Do not crawl pages the operator excluded.
 - Always save to `.raw.md` first, then compress. Never write directly to the standard path.
+- Do not make definitive negative claims about interactive features (booking systems, live chat, configurators, portals) based on crawled content alone. Crawlers extract static HTML and may miss modals, overlays, iframes, and JavaScript-rendered widgets. Instead, note what conversion elements WERE found and flag interactive features as "not confirmed from static analysis" rather than "not present."
 
 ---
 
