@@ -1,6 +1,6 @@
 # D14 Client Research Profile -- Template
 
-Output template for the client-researcher skill. Follow this structure exactly.
+Output template for D14 client research. Used by PREP's inline research phase. Follow this structure exactly.
 
 ---
 
@@ -27,18 +27,6 @@ status: complete
 ---
 
 ## Report Body
-
-### Format Rules
-
-**Target size:** Raw D14 must not exceed 12,000 characters (~3-4 pages). Write telegraphically.
-
-**Style:** Fact notation. `Key: value` format where possible. Pipe-separated inline lists. No filler sentences, no transitions between sections, no hedging language ("appears to", "seems like"). State findings directly.
-
-**Omission rule:** If a sub-item has no findings, omit it entirely. Do not write placeholder text ("Not found", "No indicators found"). Sections with zero findings across all sub-items get a single line: "No notable findings from analyzed sources."
-
-**Exception:** Financial profile states "Registry data not found" when the lookup was attempted but unavailable, so PREP mode knows the data was sought.
-
----
 
 ### 1. Executive Summary
 

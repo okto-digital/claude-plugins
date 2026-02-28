@@ -4,7 +4,7 @@ allowed-tools: Read, Write, Glob, Bash(mkdir:*), WebSearch, Task
 argument-hint: [client-url]
 ---
 
-Prepare for a client meeting. If D14 exists, analyze it and produce an interview guide. If D14 does not exist, run client research first (via sub-agent), then produce the interview guide. Accepts a URL argument for direct research, or manual data input when no URL is available.
+Prepare for a client meeting. If D14 exists, analyze it and produce an interview guide. If D14 does not exist, research the client directly (WebSearch + web-crawler agents), synthesize D14, then produce the interview guide. Accepts a URL argument for direct research, or manual data input when no URL is available.
 
 ---
 
@@ -46,7 +46,7 @@ Check for existing client data:
 
 **If D14 exists:** load it and proceed to Topic Reference below.
 
-**If D14 does NOT exist:** branch to the Research Dispatch section below.
+**If D14 does NOT exist:** branch to the Research Phase section below.
 
 **If no D14, D11, or D13 is found AND no URL was provided as argument:** prompt the operator:
 
@@ -61,35 +61,59 @@ Or share any client data you have:
   -> Any format works
 ```
 
-- If operator provides a URL: branch to Research Dispatch.
+- If operator provides a URL: branch to Research Phase.
 - If operator provides manual data: accept it and proceed to Topic Reference.
 
 ---
 
-## Research Dispatch
+## Research Phase
 
-When D14 does not exist and a URL is available (either from argument or operator input), dispatch client research as a sub-agent:
+When D14 does not exist and a URL is available (either from argument or operator input), research the client directly.
 
-```
-[PREP] No D14 found. Running client research on [URL]...
-```
-
-Dispatch the client-researcher skill via Task tool:
+**Context:** You are preparing for a first client meeting at a web development agency. This is a potential customer. Gather intelligence about their business, online presence, and market position to be well-informed for the meeting.
 
 ```
-Task(subagent_type="general-purpose", prompt="You are running the client-researcher skill. Follow the skill definition exactly.
-
-Read and follow: ${CLAUDE_PLUGIN_ROOT}/skills/client-researcher/SKILL.md
-
-Client URL: [URL]
-[Optional context from operator if provided]
-
-Complete all steps: web search, website crawl (via web-crawler agent), business registry lookup, D14 synthesis, save and compress. Write output to brief/D14-client-research-profile.raw.md and compress to brief/D14-client-research-profile.md.
-
-IMPORTANT: Present the page selection to the operator for confirmation before crawling. For all other progress updates, proceed without waiting for confirmation.")
+[PREP] No D14 found. Researching [URL]...
 ```
 
-Wait for the Task to complete. Then load the compressed D14 from `brief/D14-client-research-profile.md` and continue:
+**How to gather information:**
+
+Use **WebSearch** for external intelligence -- reputation, news, competitors, industry context. Determine what to search based on what you learn. Run searches for: general presence (`"[company name]"`), reputation (`"[company name]" reviews`), news (`"[company name]" news`), hiring signals (`"[company name]" jobs`), and competitor landscape (`best [industry] in [region]`). Extract intelligence from search result snippets directly -- do not crawl every result URL.
+
+Use the **web-crawler agent** for all URL crawling (client website pages, business registries). Dispatch each URL via Task tool:
+
+```
+Task(subagent_type="general-purpose", prompt="You are the web-crawler agent. Crawl this URL and return clean markdown content with metadata: [URL]
+
+Read and follow the agent definition at: ${CLAUDE_PLUGIN_ROOT}/../webtools-init/agents/web-crawler.md
+
+Return the full cleaned content with metadata headers.")
+```
+
+**Research sequence:**
+
+1. **Crawl homepage first.** Extract company name, discover navigation links. If company name was unclear from the URL, use it for web searches.
+2. **Run web searches** using the company name. Present a summary of external findings.
+3. **Present discovered pages** to the operator. Recommend 5-15 pages based on intelligence value (high: About, Services, Case Studies, Contact; medium: Team, Industries, Pricing; low: Privacy, Terms). Let the operator confirm or adjust the selection.
+4. **Crawl confirmed pages in parallel** via web-crawler agents. For each page, extract intelligence observations organized by D14 sections (Business Identity, Market Signals, Website Assessment, Brand, Digital Presence, Competitive Context). Show progress per page.
+5. **Business registry lookup** (best-effort, skip if it fails): Slovak entities (.sk domain or Slovak content) -- crawl `finstat.sk/databaza?query=[company_name]` via web-crawler. International entities -- crawl `dnb.com` business directory via web-crawler. Extract financial and corporate data.
+
+**Analyze and synthesize:** As results come back, extract intelligence relevant to the D14 sections. Do not copy raw content -- extract analytical findings. Section 9 (Conversation Starters) is the highest-value output: analytical synthesis of contradictions, gaps, pain points, and actionable meeting prompts.
+
+**Produce D14:** Follow `@references/d14-template.md` for structure, format rules, and size targets. Raw D14 must not exceed 12,000 characters. Telegraphic style -- fact notation, no filler.
+
+Write to `brief/D14-client-research-profile.raw.md`. Then compress:
+
+```
+Task(subagent_type="general-purpose", prompt="You are the document-compressor agent. Compress this document.
+
+Read and follow: ${CLAUDE_PLUGIN_ROOT}/../webtools-init/agents/document-compressor.md
+
+Document: brief/D14-client-research-profile.raw.md
+Output: brief/D14-client-research-profile.md")
+```
+
+Update project-registry.md if it exists (D14 status = complete). Load compressed D14 and proceed to Topic Reference.
 
 ```
 [PREP] D14: Client Research Profile complete.
@@ -198,10 +222,10 @@ Ready for the meeting. Run: /webtools-intake-meeting
 
 After producing the PREP Report, write or update `brief/intake-session.md`.
 
-If the file already exists (e.g., from a prior RESEARCH phase), preserve existing data and merge:
+If the file already exists (e.g., from a prior session), preserve existing data and merge:
 
 - Set `current_phase: PREP`
-- Add `PREP` to `phases_completed`. If research was dispatched in this session, also add `RESEARCH`.
+- Add `PREP` to `phases_completed`.
 - Record conditional domain statuses (active, inactive, unknown)
 - Record key facts extracted from available data
 - Record topic gap summary (which topics have gaps, which are well covered)

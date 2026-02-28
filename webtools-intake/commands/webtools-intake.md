@@ -3,7 +3,7 @@ description: "webtools-intake: Show available intake workflows and current proje
 allowed-tools: Read, Glob
 ---
 
-Show available webtools-intake commands and skills, current project state, and suggested next step.
+Show available webtools-intake commands, current project state, and suggested next step.
 
 ---
 
@@ -45,9 +45,6 @@ Determine the status of key documents:
 ```
 [INTAKE] Webtools Intake -- [client name]
 
-Available skills:
-  webtools-intake:client-researcher  Research client company, produce D14 intelligence profile
-
 Available commands:
   /webtools-intake                  Show this overview
   /webtools-intake-prep             Research client + produce interview guide (auto-researches if no D14)
@@ -87,9 +84,6 @@ If `project-registry.md` does not exist:
 No project found in this directory.
 
 Run /webtools-init to set up a new project first, then return here.
-
-Available skills:
-  webtools-intake:client-researcher  Research client company, produce D14 intelligence profile
 
 Available commands (after project setup):
   /webtools-intake                  Show this overview
