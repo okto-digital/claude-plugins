@@ -17,7 +17,7 @@
     {
       "name": "webtools-intake",
       "source": "./webtools-intake",
-      "description": "Client intake, research, and project brief creation. Unified /webtools-intake-research command combines web search, website crawling (via webtools-init web-crawler), and business registry lookups into D14 with auto-PREP transition. Generate questionnaires (/webtools-intake-questionnaire) and produce structured project briefs through phase commands (/webtools-intake-meeting, /webtools-intake-review, /webtools-intake-brief). Two-tier domain reference: compact domain-quick-ref index loaded at startup, checkpoint-scorer sub-agent reads full domain files on demand for suggestions, scoring, gap reports, and D13 generation. D14 and D1 use .raw.md compression. Produces D14, D11, D13, and D1."
+      "description": "Client intake, research, and project brief creation. /webtools-intake-prep auto-dispatches client research (web search, website crawling via webtools-init web-crawler, business registry) when D14 is missing, or loads existing D14 directly. Generate questionnaires (/webtools-intake-questionnaire) and produce structured project briefs through phase commands (/webtools-intake-meeting, /webtools-intake-review, /webtools-intake-brief). D14 and D1 use .raw.md compression. Produces D14, D11, D13, and D1."
     },
     {
       "name": "webtools-brand",

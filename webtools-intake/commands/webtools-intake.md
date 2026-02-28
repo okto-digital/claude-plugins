@@ -50,9 +50,8 @@ Available skills:
 
 Available commands:
   /webtools-intake                  Show this overview
-  /webtools-intake-research         Research client + prepare interview guide (D14 + PREP)
+  /webtools-intake-prep             Research client + produce interview guide (auto-researches if no D14)
   /webtools-intake-questionnaire    Generate client intake questionnaire (D11)
-  /webtools-intake-prep             Analyze pre-existing data, produce interview guide
   /webtools-intake-meeting          Live meeting companion (submarine mode)
   /webtools-intake-review           Post-meeting gap analysis and inference review
   /webtools-intake-brief            Generate D1: Project Brief
@@ -70,9 +69,8 @@ Suggested next step: /webtools-intake-[command]
 ```
 
 **Next step logic:**
-- No D14 and no D11 and no intake-session.md -> suggest `/webtools-intake-research` as primary starting point ("Research the client and prepare for the meeting")
+- No D14 and no D11 and no intake-session.md -> suggest `/webtools-intake-prep [url]` as primary starting point ("Research the client and prepare for the meeting")
 - D14 complete but no intake-session.md and no D11 -> suggest `/webtools-intake-prep` or `/webtools-intake-questionnaire`
-- No intake-session.md and no D11 (but no URL available) -> suggest `/webtools-intake-questionnaire` or `/webtools-intake-research`
 - D11 complete but no session -> suggest `/webtools-intake-prep`
 - PREP completed -> suggest `/webtools-intake-meeting`
 - MEETING completed -> suggest `/webtools-intake-review`
@@ -95,9 +93,8 @@ Available skills:
 
 Available commands (after project setup):
   /webtools-intake                  Show this overview
-  /webtools-intake-research         Research client + prepare interview guide (D14 + PREP)
+  /webtools-intake-prep             Research client + produce interview guide (auto-researches if no D14)
   /webtools-intake-questionnaire    Generate client intake questionnaire (D11)
-  /webtools-intake-prep             Analyze pre-existing data, produce interview guide
   /webtools-intake-meeting          Live meeting companion (submarine mode)
   /webtools-intake-review           Post-meeting gap analysis and inference review
   /webtools-intake-brief            Generate D1: Project Brief

@@ -1,11 +1,10 @@
 ---
-description: "webtools-intake: Analyze pre-existing client data and produce interview guide (PREP mode)"
-allowed-tools: Read, Write, Glob, Bash(mkdir:*)
+description: "webtools-intake: Research client and prepare interview guide (PREP mode)"
+allowed-tools: Read, Write, Glob, Bash(mkdir:*), WebSearch, Task
+argument-hint: [client-url]
 ---
 
-Analyze pre-existing client data and produce a PREP Report with an interview guide for the upcoming meeting. This is a lightweight standalone command -- no agent definition or domain checklists are loaded.
-
-**Note:** Consider using `/webtools-intake-research` instead, which combines client research (web search + website crawl + registry lookup -> D14) and PREP into one unified flow. Use this standalone PREP command only when D14 already exists or when working from non-website sources (inquiry forms, emails, notes).
+Prepare for a client meeting. If D14 exists, analyze it and produce an interview guide. If D14 does not exist, run client research first (via sub-agent), then produce the interview guide. Accepts a URL argument for direct research, or manual data input when no URL is available.
 
 ---
 
@@ -39,26 +38,69 @@ Session state loaded from brief/intake-session.md
 
 ### 4. Load Available Data
 
-Load all available client data silently:
+Check for existing client data:
 
 - **D14 Client Research Profile:** prefer `brief/D14-client-research-profile.md` (compressed). If only `brief/D14-client-research-profile.raw.md` exists, load the raw version.
 - **D11 Questionnaire:** `brief/D11-client-questionnaire.md` -- load if present.
 - **D13 Answers:** `brief/D13-client-followup.md` -- if it exists with status `complete`, load answered questions.
 
-If no D14, D11, or D13 is found, prompt the operator:
+**If D14 exists:** load it and proceed to Topic Reference below.
+
+**If D14 does NOT exist:** branch to the Research Dispatch section below.
+
+**If no D14, D11, or D13 is found AND no URL was provided as argument:** prompt the operator:
 
 ```
 [PREP] No pre-existing data found (D14, D11, or D13).
 
-Share any client data you have:
-- Inquiry form answers
-- Meeting prep notes, emails
-- Any format works
+Do you have a client website URL to research?
+  -> Provide URL and I will run client research first
 
-I will analyze it and produce an interview guide.
+Or share any client data you have:
+  -> Inquiry form answers, meeting prep notes, emails
+  -> Any format works
 ```
 
-Accept input in ANY format: inquiry form answers, emails, bullet points, stream-of-consciousness text.
+- If operator provides a URL: branch to Research Dispatch.
+- If operator provides manual data: accept it and proceed to Topic Reference.
+
+---
+
+## Research Dispatch
+
+When D14 does not exist and a URL is available (either from argument or operator input), dispatch client research as a sub-agent:
+
+```
+[PREP] No D14 found. Running client research on [URL]...
+```
+
+Dispatch the client-researcher skill via Task tool:
+
+```
+Task(subagent_type="general-purpose", prompt="You are running the client-researcher skill. Follow the skill definition exactly.
+
+Read and follow: ${CLAUDE_PLUGIN_ROOT}/skills/client-researcher/SKILL.md
+
+Client URL: [URL]
+[Optional context from operator if provided]
+
+Complete all steps: web search, website crawl (via web-crawler agent), business registry lookup, D14 synthesis, save and compress. Write output to brief/D14-client-research-profile.raw.md and compress to brief/D14-client-research-profile.md.
+
+IMPORTANT: Present the page selection to the operator for confirmation before crawling. For all other progress updates, proceed without waiting for confirmation.")
+```
+
+Wait for the Task to complete. Then load the compressed D14 from `brief/D14-client-research-profile.md` and continue:
+
+```
+[PREP] D14: Client Research Profile complete.
+
+Sources: [web search findings count] external findings, [pages count] pages analyzed, registry: [status]
+Output: brief/D14-client-research-profile.md (compressed)
+
+Analyzing findings for interview guide...
+```
+
+Proceed to Topic Reference below.
 
 ---
 
@@ -159,7 +201,7 @@ After producing the PREP Report, write or update `brief/intake-session.md`.
 If the file already exists (e.g., from a prior RESEARCH phase), preserve existing data and merge:
 
 - Set `current_phase: PREP`
-- Add `PREP` to `phases_completed` (preserve any earlier phases like RESEARCH)
+- Add `PREP` to `phases_completed`. If research was dispatched in this session, also add `RESEARCH`.
 - Record conditional domain statuses (active, inactive, unknown)
 - Record key facts extracted from available data
 - Record topic gap summary (which topics have gaps, which are well covered)

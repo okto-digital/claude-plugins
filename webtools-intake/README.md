@@ -6,17 +6,16 @@ Client intake, research, and project brief creation for the webtools website pip
 
 This plugin handles the discovery phase of the webtools pipeline. It researches client companies (web search, website crawling, business registry), generates tailored questionnaires, and processes client input in real-time across four modes (PREP, MEETING, REVIEW, BRIEF) with progressive questioning, confidence-scored solutions, and structured project brief output.
 
-**v3.0.0 changes:** Unified RESEARCH+PREP flow via `/webtools-intake-research`. Website crawling delegated to webtools-init's web-crawler agent. Web search added for external intelligence (news, reviews, social, jobs). D14 and D1 use the `.raw.md` compression pattern via webtools-init's document-compressor agent.
+**v3.1.0 changes:** PREP auto-dispatches client research when D14 is missing -- `/webtools-intake-research` removed, `/webtools-intake-prep` is the single entry point. D14 condensed to telegraphic format (12K chars raw, 5.4-6K compressed). Website crawling delegated to webtools-init's web-crawler agent. D14 and D1 use the `.raw.md` compression pattern via webtools-init's document-compressor agent.
 
 ## Recommended Workflow
 
 ```
-1. RESEARCH+PREP  ->  /webtools-intake-research [url]
-   - Web search for client intelligence (news, reviews, social, jobs)
-   - Website crawl via webtools-init web-crawler agent
-   - Business registry lookup (finstat.sk / dnb.com)
-   - Save D14.raw.md -> compress to D14.md
-   - Auto-enter PREP: score against domains, produce interview guide
+1. PREP  ->  /webtools-intake-prep [url]
+   - If D14 missing: auto-dispatches client research as sub-agent
+     (web search, website crawl, business registry -> D14)
+   - If D14 exists: loads it directly
+   - Analyzes findings by topic, produces interview guide
 
 2. QUESTIONNAIRE or MEETING  (branching or sequential)
    - /webtools-intake-questionnaire   Generate D11
@@ -36,9 +35,8 @@ This plugin handles the discovery phase of the webtools pipeline. It researches 
 | Type | Name | Description |
 |------|------|-------------|
 | Command | `/webtools-intake` | Orientation: show available workflows and current project state |
-| Command | `/webtools-intake-research` | Research client + prepare interview guide (D14 + PREP) |
+| Command | `/webtools-intake-prep` | Research client + produce interview guide (auto-researches if no D14) |
 | Command | `/webtools-intake-questionnaire` | Generate tailored client intake questionnaire (D11) |
-| Command | `/webtools-intake-prep` | Analyze pre-existing data, produce interview guide (PREP mode) |
 | Command | `/webtools-intake-meeting` | Live meeting companion with submarine mode (MEETING mode) |
 | Command | `/webtools-intake-review` | Post-meeting gap analysis and inference review (REVIEW mode) |
 | Command | `/webtools-intake-brief` | Generate D1: Project Brief (BRIEF mode) |
@@ -52,21 +50,6 @@ All commands follow the `webtools-{plugin}-{action}` naming convention. See `ref
 ### /webtools-intake
 
 Show available intake workflows, current project state, and suggested next step. Read-only orientation command.
-
-### /webtools-intake-research
-
-Unified Research+Prep command. Chains client research into PREP mode automatically.
-
-```
-/webtools-intake-research https://example.com
-```
-
-**Arguments:**
-- `$1` -- Client website URL (required). Optional context can be provided in conversation.
-
-**Flow:** Web search -> website crawl (via web-crawler agent) -> business registry -> D14 (.raw.md + compressed) -> auto-enter PREP -> interview guide
-
-**Output:** `brief/D14-client-research-profile.md` (compressed), `brief/D14-client-research-profile.raw.md` (original), PREP report, session state
 
 ### /webtools-intake-questionnaire
 
@@ -92,11 +75,20 @@ The questionnaire includes three sections:
 
 ### /webtools-intake-prep
 
-Enter PREP mode. Analyze pre-existing client data (inquiry forms, D11 answers, notes, URLs), score against domain checkpoints, run inference engine, and produce a PREP Report with an interview guide.
+The primary entry point for meeting preparation. If D14 exists, loads it and produces an interview guide. If D14 does not exist, auto-dispatches client research as a sub-agent (web search, website crawl, business registry -> D14), then produces the interview guide. Also accepts manual data input (inquiry forms, emails, notes) when no URL is available.
 
-**Note:** Consider using `/webtools-intake-research` instead, which combines client research and PREP into one flow. Use this standalone command when D14 already exists or when working from non-website sources.
+```
+/webtools-intake-prep https://example.com
+/webtools-intake-prep
+```
 
-**Input:** Any format -- inquiry form answers, D11 responses, meeting notes, emails, URLs.
+**Arguments:**
+- `$1` -- Client website URL (optional). If D14 is missing and no URL provided, PREP will ask for a URL or manual data.
+
+**Flow (D14 missing + URL):** Dispatch client-researcher sub-agent -> D14 (.raw.md + compressed) -> topic analysis -> interview guide
+**Flow (D14 exists):** Load D14 -> topic analysis -> interview guide
+**Flow (manual data):** Accept input -> topic analysis -> interview guide
+
 **Output:** PREP Report with interview guide. Session state saved to `brief/intake-session.md`.
 **Next:** `/webtools-intake-meeting`
 
@@ -127,7 +119,7 @@ Enter BRIEF mode. Generate D1: Project Brief from all accumulated data. Checks p
 Phase commands persist state across conversations via `brief/intake-session.md`. Each phase reads accumulated state from prior phases and writes updated state on completion. This enables workflows that span multiple sessions:
 
 ```
-Session 1: /webtools-intake-research -> state saved (RESEARCH+PREP)
+Session 1: /webtools-intake-prep [url] -> researches + state saved (RESEARCH+PREP)
 Session 2: /webtools-intake-meeting -> loads PREP state, saves MEETING state
 Session 3: /webtools-intake-review -> loads all state, saves REVIEW state
 Session 4: /webtools-intake-brief -> loads all state, generates D1
@@ -196,7 +188,7 @@ The agent accommodates Whisper or similar voice-to-text integration. Transcribed
 
 | Doc ID | Document | File Path | Generated By |
 |--------|----------|-----------|--------------|
-| D14 | Client Research Profile | `brief/D14-client-research-profile.md` (.raw.md + compressed) | `client-researcher` skill / `/webtools-intake-research` |
+| D14 | Client Research Profile | `brief/D14-client-research-profile.md` (.raw.md + compressed) | `client-researcher` skill (via `/webtools-intake-prep`) |
 | D11 | Client Questionnaire | `brief/D11-client-questionnaire.md` | `/webtools-intake-questionnaire` command |
 | D13 | Client Follow-Up Questionnaire | `brief/D13-client-followup.md` | `brief-generator` (REVIEW mode) |
 | D1 | Project Brief | `brief/D1-project-brief.md` (.raw.md + compressed) | `brief-generator` (BRIEF mode) |
