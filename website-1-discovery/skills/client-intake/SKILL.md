@@ -7,7 +7,7 @@ version: 2.0.0
 
 # Client Intake
 
-Research a client online, dispatch 21 domain-analyst agents in parallel to score 636 checkpoints, and produce D1: a pre-interview document with research findings, domain analysis, gap-targeted questions, and note space.
+Research a client online, dispatch 21 domain-analyst agents in waves of 6 to score 636 checkpoints, and produce D1: a pre-interview document with research findings, domain analysis, gap-targeted questions, and note space.
 
 **Core principle:** Research first, write research context to file, THEN let specialized agents analyze each domain independently.
 
@@ -69,14 +69,21 @@ Checkpoint to operator: "Research found X key facts across Y sources. Written to
 
 ### Step 5: Dispatch domain-analyst agents
 
-Dispatch all 21 domain-analyst agents in parallel via the `dispatch-subagent` skill. All use **sonnet** model.
+Dispatch all 21 domain-analyst agents via the `dispatch-subagent` skill. All use **sonnet** model.
+
+**Concurrency limit: maximum 6 sub-agents at a time.** Dispatch in waves of up to 6, wait for the wave to complete, then dispatch the next wave. Four waves total:
+
+- **Wave 1:** business-context, competitive-landscape, target-audience, project-scope, analytics-and-measurement, site-structure
+- **Wave 2:** content-strategy, design-and-brand, technical-platform, performance, security-and-compliance, forms-and-lead-capture
+- **Wave 3:** seo-and-discoverability, accessibility, post-launch, ecommerce (conditional), blog-and-editorial (conditional), multilingual (conditional)
+- **Wave 4:** user-accounts (conditional), migration-and-redesign (conditional), booking-and-scheduling (conditional)
 
 Each dispatch provides:
 - Domain name
 - Domain file path: `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/[domain].md`
 - Research context path: `intake/research-context.md`
 - Conditional flag: `yes` or `no`
-- Model: sonet or opus
+- Model: sonnet
 
 **15 universal domains** (conditional=no):
 business-context, competitive-landscape, target-audience, project-scope, analytics-and-measurement, site-structure, content-strategy, design-and-brand, technical-platform, performance, security-and-compliance, forms-and-lead-capture, seo-and-discoverability, accessibility, post-launch
@@ -84,7 +91,7 @@ business-context, competitive-landscape, target-audience, project-scope, analyti
 **6 conditional domains** (conditional=yes):
 ecommerce, blog-and-editorial, multilingual, user-accounts, migration-and-redesign, booking-and-scheduling
 
-Dispatch all 21 in a single parallel batch. Collect all returns before proceeding.
+Wait for each wave to complete before dispatching the next. Collect all returns before proceeding to Step 6.
 
 ### Step 6: Assemble D1
 
@@ -145,4 +152,4 @@ All shared references are at the plugin root:
 Sub-agents dispatched by this skill (via dispatch-subagent):
 
 - `web-crawler` -- Crawl client website pages
-- `domain-analyst` -- Analyze one domain's checkpoints against research context (21 instances dispatched in parallel)
+- `domain-analyst` -- Analyze one domain's checkpoints against research context (21 instances, dispatched in waves of 6)
