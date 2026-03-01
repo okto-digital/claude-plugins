@@ -13,12 +13,12 @@ Two possible configurations exist. Try the invocation below -- if it fails, Apif
 **Hosted mode** (remote MCP server):
 - Server URL: `https://mcp.apify.com`
 - Exposes general-purpose tools: `call-actor`, `search-actors`, `get-actor-output`, etc.
-- Tool names in Claude Code: `mcp__apify__call-actor`, `mcp__apify__get-actor-output`
+- Tool names in Claude Code: `mcp__Apify__call-actor`, `mcp__Apify__get-actor-output`
 
 **Stdio mode** (local npx):
 - Command: `npx @apify/actors-mcp-server --tools apify/website-content-crawler`
 - Exposes actor as direct tool (name varies by configuration)
-- Tool name example: `mcp__apify__apify-slash-website-content-crawler`
+- Tool name example: `mcp__Apify__apify-slash-website-content-crawler`
 
 ---
 
@@ -29,7 +29,7 @@ Two possible configurations exist. Try the invocation below -- if it fails, Apif
 **Preferred actor:** `apify/website-content-crawler`
 
 ```
-mcp__apify__call-actor(
+mcp__Apify__call-actor(
   actorId: "apify/website-content-crawler",
   input: {
     "startUrls": [{ "url": "[TARGET_URL]" }],
@@ -42,7 +42,7 @@ mcp__apify__call-actor(
 **Fallback actor:** `apify/rag-web-browser`
 
 ```
-mcp__apify__call-actor(
+mcp__Apify__call-actor(
   actorId: "apify/rag-web-browser",
   input: {
     "startUrls": [{ "url": "[TARGET_URL]" }],
@@ -56,7 +56,7 @@ mcp__apify__call-actor(
 Tool name depends on MCP server configuration. Invoke directly with the URL:
 
 ```
-mcp__apify__apify-slash-website-content-crawler(
+mcp__Apify__apify-slash-website-content-crawler(
   url: "[TARGET_URL]"
 )
 ```

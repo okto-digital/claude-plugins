@@ -1,6 +1,6 @@
 ---
 description: "Unified web crawling with 7-method cascade. Crawl any URL and return clean markdown content with metadata."
-tools: Read, Bash, WebFetch, mcp__desktop-commander__*, mcp__apify__*, mcp__Control_Chrome__*, mcp__Claude_in_Chrome__*
+tools: Read, Bash, WebFetch, mcp__Desktop_Commander__*, mcp__Apify__*, mcp__Control_Chrome__*, mcp__Claude_in_Chrome__*
 ---
 
 # Web Crawler
@@ -40,18 +40,18 @@ Desktop Commander runs on the user's local machine with residential/office IP, b
 Execute curl via Desktop Commander:
 
 ```
-mcp__desktop-commander__start_process(
+mcp__Desktop_Commander__start_process(
   command: "curl -sL -w '\\n__FINAL_URL__:%{url_effective}\\n__HTTP_CODE__:%{http_code}' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' -H 'Accept: text/html,application/xhtml+xml' -H 'Accept-Language: en-US,en;q=0.9' -o /tmp/extracted-page.html '[URL]'",
   timeout_ms: 30000
 )
 ```
 
-Then read the output to check HTTP code and final URL. Read the fetched HTML file via `mcp__desktop-commander__read_file(path: "/tmp/extracted-page.html")`.
+Then read the output to check HTTP code and final URL. Read the fetched HTML file via `mcp__Desktop_Commander__read_file(path: "/tmp/extracted-page.html")`.
 
 Run the Python3 stripping script from method-curl.md via Desktop Commander:
 
 ```
-mcp__desktop-commander__start_process(
+mcp__Desktop_Commander__start_process(
   command: "python3 << 'PYEOF'\n[stripping script from method-curl.md]\nPYEOF",
   timeout_ms: 15000
 )
@@ -82,8 +82,8 @@ Try Apify. If the tool call fails (tool not found), move to Method 4.
 Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-apify.md`.
 
 Key points:
-- Use `mcp__apify__call-actor` with `apify/website-content-crawler`
-- Retrieve results via `mcp__apify__get-actor-output`
+- Use `mcp__Apify__call-actor` with `apify/website-content-crawler`
+- Retrieve results via `mcp__Apify__get-actor-output`
 - Inform operator: "Calling Apify website-content-crawler... (typically 10-30 seconds)"
 - **CRITICAL:** Apify returns empty string for XML/non-HTML content. Detect empty/near-empty response and fallback immediately.
 
