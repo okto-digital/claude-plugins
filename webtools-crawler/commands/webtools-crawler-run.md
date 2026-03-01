@@ -28,12 +28,24 @@ Before dispatching the crawler, decide what output you need based on your contex
 
 Include your decision as output instructions in the dispatch prompt. If unsure, omit instructions -- the crawler defaults to clean markdown with metadata headers.
 
+## Model Selection
+
+Choose the model based on what the crawler needs to **do** with the fetched content:
+
+| Model | When | Why |
+|---|---|---|
+| `haiku` | Metadata only, links only, raw HTML, site mapping, quick profiling | Mechanical extraction. No reasoning needed -- just fetch, strip, and return. Fastest and cheapest. |
+| `sonnet` | Clean markdown (default), exact content preservation, technology auditing | Needs judgment for HTML-to-markdown conversion: identifying main content area, preserving formatting, resolving relative URLs, expanding collapsibles. |
+| `opus` | Research summaries, intelligence extraction, analytical condensation | Needs reasoning to analyze page content, extract key facts, synthesize findings, and produce telegraphic intelligence rather than raw content. |
+
+**Rule of thumb:** If the output instructions say "only" or "just" (links only, metadata only, raw HTML) -- use haiku. If the output needs faithful conversion -- use sonnet. If the output needs analysis or synthesis -- use opus.
+
 ## Dispatch
 
 Dispatch the web-crawler as a sub-agent via Task tool:
 
 ```
-Task(subagent_type="general-purpose", prompt="You are the web-crawler agent. Crawl this URL and return content: [URL]
+Task(subagent_type="general-purpose", model="[haiku|sonnet|opus per Model Selection above]", prompt="You are the web-crawler agent. Crawl this URL and return content: [URL]
 
 Read and follow the agent definition at: ${CLAUDE_PLUGIN_ROOT}/agents/web-crawler.md
 
