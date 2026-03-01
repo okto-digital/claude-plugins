@@ -115,4 +115,4 @@ Note which elements appear across 3+ sites (expected) vs individual choices (dif
 - Navigation Patterns (industry standard vs variations)
 - Conversion Flow Patterns (dominant CTA approach with evidence)
 - Design Trends (visual style, interactive elements, trust signals)
-- Client Gap Analysis (how client's current site compares to benchmarks, using D1/D2 data)
+- Client Gap Analysis (how client's current site compares to benchmarks, using D1 data)

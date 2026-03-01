@@ -22,11 +22,11 @@
 
 ### Step 1: Extract Baseline Hypothesis
 
-From D1 and D2, document:
+From D1, document:
 - Client's stated target audience segments
 - Audience signals from client website (who testimonials mention, what language case studies use)
 - Any demographic or psychographic claims the client makes
-- Any audience insights from the client interview (D2)
+- Client interview answers about audience (if filled in)
 
 This is the **hypothesis to validate**. Label it clearly as "client-stated" throughout.
 

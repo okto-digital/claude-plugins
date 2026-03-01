@@ -23,7 +23,9 @@ If project-state.md does not exist, stop and tell the operator: "Run project-ini
 
 If D1 is not complete, stop and tell the operator: "D1 (Client Intake) must be complete before running D3 research. Run client-intake first."
 
-### Step 2: Load D1 + D2
+If D1 status is `research-complete` (not yet `interview-complete`), warn the operator: "D1 has research findings but no interview answers yet. Research will be more targeted after filling in client answers. Proceed anyway?" Use AskUserQuestion to confirm.
+
+### Step 2: Load D1
 
 Read the D1 document (path from project-state.md). Extract a summary for research context:
 - Client name, company name, URL
@@ -32,11 +34,8 @@ Read the D1 document (path from project-state.md). Extract a summary for researc
 - Key findings from research
 - Competitors identified
 - Domain analysis highlights (top gaps, critical findings)
-
-If D2 exists (path from project-state.md), also read it and extract:
-- Client priorities and constraints
-- Decisions from interview
-- Additional context not in D1
+- Client interview answers (if D1 status is `interview-complete`)
+- Client priorities, constraints, and decisions (from filled-in answers)
 
 Combine into a **project context block** -- a text summary that will be passed to each researcher agent in the dispatch prompt. Keep it under 2000 words.
 
@@ -199,7 +198,7 @@ Write the updated project-state.md. Do not modify any other rows.
 
 - If a researcher agent fails, note which topic was affected, report to operator, and continue with remaining topics
 - If fewer than 4 topics complete successfully, warn the operator that D3 coverage will be limited
-- If D2 does not exist, proceed with D1 only -- D2 enriches context but is not required
+- If D1 is research-complete (no interview answers), proceed but warn operator that results will be less targeted
 - Wave 2 topics can run without their cross-topic inputs -- they just produce slightly less cross-referenced output
 
 ---

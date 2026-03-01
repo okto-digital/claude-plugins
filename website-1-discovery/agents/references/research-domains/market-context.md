@@ -59,7 +59,7 @@ Identify timing factors that affect web strategy:
 
 - WebSearch "[industry] seasonal trends"
 - WebSearch "[industry] peak season"
-- Check D1/D2 for client-mentioned peak seasons
+- Check D1 for client-mentioned peak seasons
 
 Record:
 - **Peak periods** -- when does demand surge? (months, events, seasons)
@@ -98,13 +98,13 @@ Record:
 - **Relevant associations** -- name, URL, membership requirements
 - **Membership benefits for web presence** -- directory listings, certification badges, trust signals
 - **Website requirements** -- do associations require members to display certain information?
-- **Client membership status** -- is the client a member? (check D1/D2 for badges/logos)
+- **Client membership status** -- is the client a member? (check D1 for badges/logos)
 
 ### Step 6: Validate D1 Market Statements
 
 Compare the client's market claims against external findings:
 
-For each market statement in D1/D2:
+For each market statement in D1:
 - **Confirmed** -- external data supports the claim
 - **Extended** -- external data adds nuance the client did not mention
 - **Challenged** -- external data contradicts or questions the claim
@@ -120,4 +120,4 @@ For each market statement in D1/D2:
 - Seasonal Patterns (timing factors for web strategy)
 - Digital Trends (shifts affecting web presence)
 - Professional Associations (relevant bodies, membership benefits)
-- D1/D2 Statement Validation (confirmed, extended, challenged, unverifiable)
+- D1 Statement Validation (confirmed, extended, challenged, unverifiable)

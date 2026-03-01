@@ -22,9 +22,9 @@
 
 ### Step 1: Discover Competitors
 
-Start with any competitors named in D1/D2, then expand using **location + business type** queries.
+Start with any competitors named in D1, then expand using **location + business type** queries.
 
-Determine from D1/D2:
+Determine from D1:
 - **Business type** -- the category a customer would search for (e.g., "hotel", "web design agency")
 - **Location** -- city, region, or area the business serves
 

@@ -56,7 +56,6 @@ Write `project-state.md` in the current working directory using this template. R
 | Doc | Name | Status | File | Updated |
 |---|---|---|---|---|
 | D1 | Client Intake | -- | -- | -- |
-| D2 | Client Interview | -- | -- | -- |
 | D3 | Project Research | -- | -- | -- |
 | D4 | Project Brief | -- | -- | -- |
 ```
@@ -99,11 +98,10 @@ For each pipeline row where File is not `--`, verify the file exists on disk usi
 
 PIPELINE STATUS
   D1 Client Intake       [{status}]
-  D2 Client Interview    [{status}]
   D3 Project Research    [{status}]
   D4 Project Brief       [{status}]
 
-Progress: {n}/4 complete
+Progress: {n}/3 complete
 
 Next step: {suggestion}
 ```
@@ -120,8 +118,8 @@ Apply this logic in order:
 | Condition | Suggestion |
 |---|---|
 | D1 not complete | "Run client-intake to produce D1." |
-| D1 complete, D2 not complete | "Run intake-interview to produce D2." |
-| D2 complete, D3 not complete | "Run research to produce D3." |
+| D1 research-complete | "Interview the client and fill answers into D1. Then run project-research to produce D3." |
+| D1 interview-complete, D3 not complete | "Run project-research to produce D3." |
 | D3 complete, D4 not complete | "Run brief-writer to produce D4." |
 | All complete | "Pipeline complete." |
 

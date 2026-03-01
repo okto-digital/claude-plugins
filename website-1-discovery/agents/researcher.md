@@ -17,7 +17,7 @@ Your dispatch prompt provides:
 - **Domain name** (e.g., "serp-landscape")
 - **Domain file path** (e.g., `${CLAUDE_PLUGIN_ROOT}/agents/references/research-domains/serp-landscape.md`)
 - **R-document template path** (e.g., `${CLAUDE_PLUGIN_ROOT}/references/r-document-template.md`)
-- **Project context** -- extracted D1 and D2 summary text (client name, industry, location, business type, key findings, competitors, interview notes)
+- **Project context** -- extracted D1 summary text (client name, industry, location, business type, key findings, competitors, client interview answers)
 - **Cross-topic R-document paths** (optional -- for Wave 2 domains that benefit from Wave 1 outputs)
 - **Output directory** (e.g., `research/`)
 - **MCP tool hints** (available DataForSEO and web-crawler tools)

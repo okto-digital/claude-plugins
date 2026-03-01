@@ -124,9 +124,11 @@ Write to `intake/D1-pre-interview.md`.
 ### Step 7: Update state
 
 Read project-state.md. Update the D1 row:
-- status: complete
+- status: research-complete
 - file: intake/D1-pre-interview.md
 - updated: today's date
+
+**Note:** D1 has two states. `research-complete` means research and gap analysis are done but client interview answers have not been filled in yet. After the operator fills in interview answers, they should update the status to `interview-complete` (manually or via a future command). The project-research skill checks for this distinction.
 
 Write the updated project-state.md. Do not modify any other rows.
 

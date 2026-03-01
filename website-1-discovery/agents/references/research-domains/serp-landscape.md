@@ -22,7 +22,7 @@
 
 ### Step 1: Derive Search Queries
 
-Extract 5-10 core service keywords from D1 and D2:
+Extract 5-10 core service keywords from D1:
 - Primary service terms (what the client sells/does)
 - Industry category terms (how the market describes this type of business)
 - Problem/solution terms (what customers search when they need this service)

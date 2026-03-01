@@ -12,12 +12,11 @@ Produce a proposal that is specific to this client's business, grounded in evide
 
 ## Discovery Pipeline
 
-Four deliverables, in order:
+Three deliverables, in order:
 
-1. **D1: Client Intake** -- Online research + 21-domain gap analysis. Produces a pre-interview document with findings, gaps, and targeted questions for each domain.
-2. **D2: Client Interview** -- Fill gaps from D1. Capture client priorities, constraints, and decisions that only they can provide.
-3. **D3: Project Research** -- Deep-dive intelligence across 8 research domains, informed by D1 + D2. One generic researcher agent dispatched per domain (max 2 concurrent), each loading a domain-specific methodology file. Domains: R1 SERP & Search Landscape, R2 Competitor Landscape, R3 Audience & User Personas, R4 UX/UI Patterns & Benchmarks, R5 Content Landscape & Strategy, R6 Reputation & Social Proof, R7 Technology & Performance, R8 Industry & Market Context. Wave 1 domains run independently; Wave 2 domains (R4, R5) benefit from Wave 1 outputs. Each produces an R-document; all consolidate into D3 summary with cross-topic findings, strategic opportunities, and proposal inputs.
-4. **D4: Project Brief** -- Consolidated proposal: current state, strategic guidance, proposed solution. Specific enough to quote from.
+1. **D1: Client Intake** -- Online research + 21-domain gap analysis. Produces a pre-interview document with findings, gaps, and targeted questions for each domain. After the client interview, answers are filled directly into D1 (status moves from `research-complete` to `interview-complete`). One document, two phases.
+2. **D3: Project Research** -- Deep-dive intelligence across 8 research domains, informed by D1 (including interview answers). One generic researcher agent dispatched per domain (max 2 concurrent), each loading a domain-specific methodology file. Domains: R1 SERP & Search Landscape, R2 Competitor Landscape, R3 Audience & User Personas, R4 UX/UI Patterns & Benchmarks, R5 Content Landscape & Strategy, R6 Reputation & Social Proof, R7 Technology & Performance, R8 Industry & Market Context. Wave 1 domains run independently; Wave 2 domains (R4, R5) benefit from Wave 1 outputs. Each produces an R-document; all consolidate into D3 summary with cross-topic findings, strategic opportunities, and proposal inputs.
+3. **D4: Project Brief** -- Consolidated proposal: current state, strategic guidance, proposed solution. Specific enough to quote from.
 
 ## Available Capabilities
 

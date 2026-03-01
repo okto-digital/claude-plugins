@@ -51,7 +51,7 @@ Classify each metric: Good / Needs Improvement / Poor (using Google's thresholds
 ### Step 2: Competitor Performance Comparison
 
 Run PageSpeed API for 2-3 competitor URLs:
-- From D1/D2 -- competitors mentioned
+- From D1 -- competitors mentioned
 - From WebSearch -- top-ranking competitor for the client's core service query
 
 Create a comparison table:

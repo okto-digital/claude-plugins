@@ -71,7 +71,7 @@ Record:
 
 ### Step 4: Social Media Audit
 
-Using social media links from D1/D2 (or discovered via search):
+Using social media links from D1 (or discovered via search):
 
 For each platform where the client has a presence:
 - **Platform name**
@@ -91,7 +91,7 @@ Assess overall social media health:
 
 ### Step 5: Social Proof Validation
 
-Compare client claims (from D1 and D2) against external evidence:
+Compare client claims (from D1) against external evidence:
 
 For each claim the client makes:
 - "X years in business" -- corroborated by company registration, about page, earliest web archive?
