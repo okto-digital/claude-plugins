@@ -2,7 +2,7 @@
 name: dispatch-subagent
 description: "Dispatch a sub-agent via the Task tool with correct model selection, MCP tool hints, and agent definition loading. ALWAYS use before spawning any sub-agent. Invoke whenever a sub-agent needs to be dispatched via Task tool, the pipeline delegates work to a specialist agent, or a Task call to a registered agent is required."
 allowed-tools: Task, Read, Glob
-version: 1.0.0
+version: 1.1.0
 ---
 
 # Dispatch Sub-Agent
@@ -16,6 +16,7 @@ Dispatch any registered agent as a sub-agent via the Task tool. Ensures correct 
 | Agent | Path | Purpose |
 |---|---|---|
 | web-crawler | `${CLAUDE_PLUGIN_ROOT}/agents/web-crawler.md` | Crawl a URL, return content in requested format |
+| domain-analyst | `${CLAUDE_PLUGIN_ROOT}/agents/domain-analyst.md` | Analyze one domain's checkpoints against research context |
 
 Add new agents to this table as the pipeline grows.
 

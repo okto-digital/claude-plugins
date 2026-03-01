@@ -1,0 +1,8 @@
+{
+  "name": "website-1-discovery",
+  "version": "0.2.0",
+  "description": "Client discovery for website projects: research, 21-domain gap analysis, and pre-interview document generation",
+  "author": {
+    "name": "okto.digital"
+  }
+}
