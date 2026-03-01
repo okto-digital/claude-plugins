@@ -39,19 +39,29 @@ Proceed once the operator provides at least a company name and URL.
 3. Dispatch web-crawler for each high-value page (parallel where possible).
 
 **Web search:**
-Run 4 WebSearch queries:
+Run 4 WebSearch queries about the client:
 - "[company name]"
 - "[company name] reviews"
 - "[company name] [industry]"
 - "[company name] news [current year]"
 
+**Competitor discovery:**
+After crawling the client site, determine the business type and location (city, region, or area). Then run 2-3 WebSearch queries to find competitors:
+- "[business type] [location]" (e.g., "hotel Zilina", "accommodation Mala Fatra")
+- "[business type] near [city/area]" (e.g., "wellness hotel near Zilina")
+- "best [business type] [region] [current year]" (e.g., "best hotels Mala Fatra 2026")
+
+Record competitor names and URLs found. These feed into the competitive-landscape domain analysis and downstream R2 research.
+
 **Business registry lookup:**
 1. Detect company country from research so far (company address, domain TLD, site language).
-2. Look up the company in the appropriate registry:
-   - **Slovak company** -- WebSearch: `site:finstat.sk [company name]`. If a match is found, fetch the result page for details.
-   - **Other countries** -- WebSearch: `site:dnb.com [company name]` (or relevant local D&B domain). If a match is found, fetch the result page for details.
-3. Extract: legal name, registration ID, founded year, legal form, revenue range, employee count, registered address.
-4. If no registry match is found, note "No business registry data available" and continue.
+2. Determine the **legal entity name** -- this is often different from the brand or product name. Look for it in website footer, imprint/legal page, terms of service, or privacy policy. A hotel called "Dubna Skala" may be operated by "ABC s.r.o." -- you need the entity name, not the brand.
+3. Look up the company in the appropriate registry using the legal entity name (or company registration ID if found):
+   - **Slovak company** -- WebSearch: `site:finstat.sk "[legal entity name]"`. If a match is found, fetch the result page for details.
+   - **Other countries** -- WebSearch: `site:dnb.com "[legal entity name]"` (or relevant local D&B domain). If a match is found, fetch the result page for details.
+   - If the legal entity name yields no results, try the brand name as fallback -- but the entity name is the primary search term.
+4. Extract: legal name, registration ID, founded year, legal form, revenue range, employee count, registered address.
+5. If no registry match is found, note "No business registry data available" and continue.
 
 ### Step 4: Write research context
 

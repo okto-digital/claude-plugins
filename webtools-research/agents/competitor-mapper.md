@@ -35,17 +35,23 @@ If either document is unavailable, work with what is provided. D1 is the minimum
 
 ### Step 1: Discover Competitors
 
-Start with any competitors named in D1/D14, then expand:
+Start with any competitors named in D1/D14, then expand using **location + business type** queries. The key is to search how a potential customer would search -- by what they need and where they are, not by the client's brand name.
 
-- WebSearch "[industry] [location]" and "[service] companies [location]"
-- WebSearch "[service] near [city]" (if local/regional business)
+Determine from D1/D14:
+- **Business type** -- the category a customer would search for (e.g., "hotel", "accommodation", "wellness hotel", "restaurant", "web design agency")
+- **Location** -- city, region, or area the business serves (e.g., "Zilina", "Mala Fatra", "London")
+
+Then run discovery queries:
+- WebSearch "[business type] [city/area]" (e.g., "hotel Zilina", "accommodation Mala Fatra")
+- WebSearch "[business type] near [city]" (e.g., "wellness hotel near Zilina")
+- WebSearch "best [business type] [region] [year]" for curated lists and rankings
 - WebSearch "[industry] directory [country]" to find industry listing pages
-- WebSearch "best [service] [location] [year]" for curated lists
+- WebSearch "[business type] [location] reviews" for review aggregator results
 - Note domains appearing in R1 SERP results if available (cross-topic reference)
 
 **Target:** Identify 8-15 distinct competitors. Record company name, URL, and discovery source for each.
 
-**IMPORTANT:** Do not stop at client-named competitors. The value of R2 is discovering competitors the client may not be aware of.
+**IMPORTANT:** Do not stop at client-named competitors. The value of R2 is discovering competitors the client may not be aware of. Customers find alternatives by searching for the service + location, so that is how you must search too.
 
 ### Step 2: Surface Scan Each Competitor
 
