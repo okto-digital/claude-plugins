@@ -6,7 +6,7 @@ Client intake, research, and project brief creation for the webtools website pip
 
 This plugin handles the discovery phase of the webtools pipeline. It researches client companies (web search, website crawling, business registry), generates tailored questionnaires, and processes client input in real-time across four modes (PREP, MEETING, REVIEW, BRIEF) with progressive questioning, confidence-scored solutions, and structured project brief output.
 
-**v3.2.0 changes:** PREP now orchestrates research inline -- directly dispatches web-crawler sub-agents and uses WebSearch, eliminating the client-researcher skill (three-level nesting reduced to two). D14 condensed to telegraphic format (12K chars raw, 5.4-6K compressed). Website crawling delegated to webtools-init's web-crawler agent. D14 and D1 use the `.raw.md` compression pattern via webtools-init's document-compressor agent.
+**v3.2.0 changes:** PREP now orchestrates research inline -- directly dispatches web-crawler sub-agents and uses WebSearch, eliminating the client-researcher skill (three-level nesting reduced to two). D14 condensed to telegraphic format (12K chars raw, 5.4-6K compressed). Website crawling delegated to webtools-crawler's web-crawler agent. D14 and D1 use the `.raw.md` compression pattern via webtools-init's document-compressor agent.
 
 ## Recommended Workflow
 
@@ -198,7 +198,8 @@ D13 is always generated after the meeting (even for minimal gaps) to maintain a 
 
 ## Dependencies
 
-- **webtools-init** -- Required for web-crawler agent (website crawling) and document-compressor agent (D14/D1 compression). Both agents are invoked via the Task tool from PREP's inline research phase and BRIEF mode.
+- **webtools-crawler** -- Required for web-crawler agent (website crawling). Invoked via the Task tool from PREP's inline research phase.
+- **webtools-init** -- Required for document-compressor agent (D14/D1 compression). Invoked via the Task tool from PREP and BRIEF mode.
 
 ## Reference Files
 
@@ -252,7 +253,8 @@ Located in `references/domains/`. Used by the brief-generator for gap analysis a
 
 This plugin is part of the webtools website creation pipeline:
 
-1. **webtools-init** -- Project setup, management, and utility agents (web-crawler, document-compressor)
+1. **webtools-init** -- Project setup, management, and utility agents (document-compressor)
+1b. **webtools-crawler** -- Unified web crawling with 7-method cascade
 2. **webtools-intake** (this plugin) -- Client research, questionnaire, and brief generation
 3. **webtools-research** -- Multi-topic research with parallel agent dispatch
 4. **webtools-brand** -- Brand voice profiling

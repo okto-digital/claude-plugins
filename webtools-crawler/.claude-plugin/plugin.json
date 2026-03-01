@@ -1,0 +1,8 @@
+{
+  "name": "webtools-crawler",
+  "version": "1.0.0",
+  "description": "Unified web crawling with 7-method cascade and caller-driven output formats. Crawl any URL and return content tailored to the caller's needs -- clean markdown, structured data, metadata only, or raw HTML. Commands: /webtools-crawler (orientation), /webtools-crawler-run (dispatch). Used by webtools-intake, webtools-research, and other plugins that need web content extraction.",
+  "author": {
+    "name": "Oktodigital"
+  }
+}

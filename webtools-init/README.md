@@ -14,7 +14,6 @@ This plugin provides the foundation layer for the webtools suite. It creates pro
 | `/webtools-init-status` | Show project status dashboard with document progress and next actions |
 | `/webtools-init-health` | Run comprehensive project health check (directories, registry, naming, headers, dependencies) |
 | `/webtools-init-rebuild` | Rebuild project registry from disk scan (recovery tool) |
-| `/webtools-init-crawl` | Crawl a URL and return clean markdown |
 | `/webtools-init-compress` | Compress a document for token efficiency |
 | `/webtools-init-load` | Load prerequisite documents for a downstream plugin |
 | `/webtools-init-registry` | Update project registry after document production |
@@ -25,7 +24,6 @@ Bundled agents available to all webtools plugins via the Task tool:
 
 | Agent | Description |
 |-------|-------------|
-| `web-crawler` | 7-method cascade web crawling |
 | `document-compressor` | Reduce document verbosity, preserve substance |
 | `prerequisite-loader` | Load documents with auto-compression detection |
 | `registry-updater` | Update registry after document production |
@@ -43,8 +41,6 @@ Canonical reference documents used by all webtools plugins:
 | `references/dependency-map.md` | Full document dependency graph |
 | `references/naming-conventions.md` | File naming and directory mapping rules |
 | `references/compression-rules.md` | Compression strategy and rules |
-| `references/crawl-methods/` | Web crawling method references (7 methods) |
-
 ## Usage
 
 ### Starting a New Project

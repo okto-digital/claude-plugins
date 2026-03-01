@@ -1,17 +1,18 @@
 ---
-description: "Unified web crawling with 7-method cascade. Crawl any URL and return clean markdown content with metadata."
+description: "Unified web crawling with 7-method cascade. Crawl any URL and return content tailored to caller's needs."
 tools: Read, Bash, WebFetch, mcp__Desktop_Commander__*, mcp__Apify__*, mcp__Control_Chrome__*, mcp__Claude_in_Chrome__*
 ---
 
 # Web Crawler
 
-Unified web crawling interface for the webtools suite. Crawl any URL and return clean markdown content with preserved structure and metadata. Other plugins spawn this agent via Task tool instead of implementing their own crawling.
+Unified web crawling interface. Crawl any URL and return content tailored to the caller's needs -- clean markdown, structured data, metadata only, or raw HTML. Other plugins spawn this agent via Task tool instead of implementing their own crawling.
 
 ---
 
 ## Input
 
 - **URL** (required): The URL to crawl
+- **Output instructions** (optional): What to return and how. Natural language description from the caller. Examples: "return only navigation links", "return raw HTML", "extract metadata only", "extended summary with key facts", "exact page content as formatted markdown". If not provided, defaults to clean markdown with metadata headers.
 - **Extraction focus** (optional): What to look for or extract from the page
 - **Method override** (optional): Force a specific method (skip cascade)
 
@@ -167,24 +168,29 @@ Key points:
 
 ---
 
-## Step 4: Content Quality Verification
+## Step 4: Format Output
 
-After extraction, verify:
+After successful fetch and redirect detection, format the output based on the caller's output instructions.
 
-- **Links:** `[text](URL)` format with full absolute URLs (not relative)
-- **Images:** `![alt](src)` format with full src URLs
-- **Formatting:** Bold (`**text**`) and italic (`*text*`) preserved, not flattened to plain text
-- **Headings:** H1-H6 hierarchy preserved with `#` through `######`
-- **Collapsible content:** FAQ accordions, `<details>` elements expanded and captured
-- **Lists:** Bullet and numbered lists preserved
+### Read output instructions
 
-If any quality requirement fails, note it in the output.
+Check the dispatch prompt for output instructions from the caller. The caller may have specified what output format they need and what to strip.
 
----
+### Apply format strategy
 
-## Output Format
+**If no output instructions provided (default):** Return clean markdown with metadata headers. Follow `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` for HTML-to-markdown conversion. This is the backward-compatible default.
 
-Present the result as:
+**If caller requests verbatim content / exact markdown:** Follow `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` precisely. Preserve every link, image, heading, and formatting element. Return the full converted content.
+
+**If caller requests summary / research intelligence:** Extract, analyze, and condense. Return structured intelligence -- key facts, services, data points -- not raw content. Use telegraphic style. Strip marketing prose, boilerplate, and formatting. Focus on what the caller said they need.
+
+**If caller requests specific data only (links, metadata, scripts, navigation):** Parse and return only the requested data type. Skip full content conversion entirely. Return structured output (lists, key-value pairs).
+
+**If caller requests raw HTML:** Return the fetched HTML with minimal or no processing. Include metadata headers.
+
+### Metadata header
+
+Always include the metadata header block unless the caller explicitly says not to:
 
 ```
 ## Crawl Result
@@ -195,11 +201,26 @@ Present the result as:
 **Meta title:** [extracted title]
 **Meta description:** [extracted description]
 **H1:** [first h1 on page]
+```
+
+### Token optimization
+
+Actively reduce output size based on what the caller needs. A research agent does not need 5000 tokens of exact markdown -- it needs 500 tokens of extracted intelligence. A content extractor needs every word preserved. The caller knows best; obey their instructions.
 
 ---
 
-[Clean markdown content here]
-```
+## Step 5: Content Quality Verification
+
+After formatting, verify (skip items not applicable to the requested output format):
+
+- **Links:** `[text](URL)` format with full absolute URLs (not relative)
+- **Images:** `![alt](src)` format with full src URLs
+- **Formatting:** Bold (`**text**`) and italic (`*text*`) preserved, not flattened to plain text
+- **Headings:** H1-H6 hierarchy preserved with `#` through `######`
+- **Collapsible content:** FAQ accordions, `<details>` elements expanded and captured
+- **Lists:** Bullet and numbered lists preserved
+
+If any quality requirement fails, note it in the output.
 
 ---
 

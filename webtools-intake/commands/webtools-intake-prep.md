@@ -82,7 +82,7 @@ Use **WebSearch** for external intelligence -- reputation, news, competitors, in
 
 Use the **web-crawler agent** for all URL crawling (client website pages, business registries). Dispatch each URL using the same pattern as the crawl command:
 
-@${CLAUDE_PLUGIN_ROOT}/../webtools-init/commands/webtools-init-crawl.md
+@${CLAUDE_PLUGIN_ROOT}/../webtools-crawler/commands/webtools-crawler-run.md
 
 Follow the Dispatch section from the crawl command above. For each URL, spawn a separate sub-agent via Task tool. Multiple URLs can be dispatched in parallel.
 

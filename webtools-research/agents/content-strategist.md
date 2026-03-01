@@ -219,14 +219,12 @@ status: complete
 
 When fetching ranking pages or competitor blog sections (Steps 2-3), use the crawl method cascade:
 
-The canonical crawl implementation is the **web-crawler** utility agent in the `webtools-init` plugin. When spawned programmatically via the Task tool, it provides a 7-method cascade (Apify, curl, Desktop Commander, WebFetch, Browser Fetch, Browser Navigation, Paste-in) with automatic fallback.
+The canonical crawl implementation is the **web-crawler** utility agent in the `webtools-crawler` plugin. When spawned programmatically via the Task tool, it provides a 7-method cascade (Desktop Commander, curl, Apify, Chrome Control Fetch, Chrome Automation Nav, WebFetch, Paste-in) with automatic fallback and caller-driven output formats.
 
-**For manual invocation:** `/webtools-init-crawl [URL]`
+**For manual invocation:** `/webtools-crawler-run [URL]`
 
 **For programmatic use (from orchestrator or other agents):**
-Spawn the web-crawler agent from webtools-init with the target URL.
-
-Local crawl method references have been consolidated into webtools-init to avoid duplication across plugins.
+Spawn the web-crawler agent from webtools-crawler with the target URL. Include output instructions in the dispatch prompt to control what format the crawler returns (e.g., "Return extended summary with key facts. Telegraphic, no prose." for research contexts).
 
 **Key distinction:** WebSearch (discovery queries, gap identification) works from any IP. The crawl cascade is only needed for fetching specific URLs to assess depth and frequency.
 

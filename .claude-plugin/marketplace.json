@@ -12,12 +12,17 @@
     {
       "name": "webtools-init",
       "source": "./webtools-init",
-      "description": "Project initialization, health checks, registry management, and shared utility agents for the webtools website creation pipeline. 8 commands (/webtools-init, /webtools-init-status, /webtools-init-health, /webtools-init-rebuild, /webtools-init-crawl, /webtools-init-compress, /webtools-init-load, /webtools-init-registry), 4 utility agents (web-crawler, document-compressor, prerequisite-loader, registry-updater), and canonical data model references (D1-D15, R1-R8)."
+      "description": "Project initialization, health checks, registry management, and shared utility agents for the webtools website creation pipeline. 7 commands (/webtools-init, /webtools-init-status, /webtools-init-health, /webtools-init-rebuild, /webtools-init-compress, /webtools-init-load, /webtools-init-registry), 3 utility agents (document-compressor, prerequisite-loader, registry-updater), and canonical data model references (D1-D15, R1-R8)."
+    },
+    {
+      "name": "webtools-crawler",
+      "source": "./webtools-crawler",
+      "description": "Unified web crawling with 7-method cascade and caller-driven output formats. Crawl any URL and return content tailored to the caller's needs. 2 commands (/webtools-crawler, /webtools-crawler-run), 1 agent (web-crawler), and crawl method references. Used by webtools-intake, webtools-research, and other plugins."
     },
     {
       "name": "webtools-intake",
       "source": "./webtools-intake",
-      "description": "Client intake, research, and project brief creation. /webtools-intake-prep auto-dispatches client research (web search, website crawling via webtools-init web-crawler, business registry) when D14 is missing, or loads existing D14 directly. Generate questionnaires (/webtools-intake-questionnaire) and produce structured project briefs through phase commands (/webtools-intake-meeting, /webtools-intake-review, /webtools-intake-brief). D14 and D1 use .raw.md compression. Produces D14, D11, D13, and D1."
+      "description": "Client intake, research, and project brief creation. /webtools-intake-prep auto-dispatches client research (web search, website crawling via webtools-crawler, business registry) when D14 is missing, or loads existing D14 directly. Generate questionnaires (/webtools-intake-questionnaire) and produce structured project briefs through phase commands (/webtools-intake-meeting, /webtools-intake-review, /webtools-intake-brief). D14 and D1 use .raw.md compression. Produces D14, D11, D13, and D1."
     },
     {
       "name": "webtools-brand",
