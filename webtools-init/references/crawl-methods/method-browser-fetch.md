@@ -1,40 +1,39 @@
-# Method 3: Browser Fetch
+# Method 4: Chrome Control Fetch
 
-Use the browser's `fetch()` API to retrieve raw HTML from the user's browser. This combines the reliability of curl (raw HTML, no JS execution, clean redirect detection) with the browser's advantage (user's IP address, bypasses WAF/bot protection).
+Use the browser's `fetch()` API to retrieve raw HTML from the user's browser via Chrome Control MCP (`mcp__Control_Chrome__*`). This combines the reliability of curl (raw HTML, no JS execution, clean redirect detection) with the browser's advantage (user's IP address, bypasses WAF/bot protection).
 
 ---
 
 ## Why this method exists
 
-In cloud environments (e.g., Cowork), curl and WebFetch run from datacenter IPs that get blocked by WAFs (403 Forbidden). Browser MCP tools run in the user's local browser. By using `fetch()` inside the browser, we make an HTTP request from the user's machine -- same IP, same cookies -- but without navigating to the page. This avoids all the tab management, stale content, and client-side redirect problems of full browser navigation.
+In cloud environments (e.g., Cowork), curl and WebFetch run from datacenter IPs that get blocked by WAFs (403 Forbidden). Chrome Control MCP tools run in the user's local browser. By using `fetch()` inside the browser, we make an HTTP request from the user's machine -- same IP, same cookies -- but without navigating to the page. This avoids all the tab management, stale content, and client-side redirect problems of full browser navigation.
 
 ---
 
 ## Prerequisites
 
-- Browser MCP tools must be available (Playwright or Chrome extension)
-- `browser_evaluate` must be functional
+- Chrome Control MCP tools must be available (`mcp__Control_Chrome__*`)
+- `mcp__Control_Chrome__execute_javascript` must be functional
 
 ---
 
 ## Step-by-Step
 
-### 1. Open a new tab and establish origin
+### 1. Open URL and establish origin
 
-Open a new tab and navigate to the **domain root** of the target URL. This establishes same-origin context so `fetch()` works without CORS issues.
+Open the **domain root** of the target URL in the browser. This establishes same-origin context so `fetch()` works without CORS issues.
 
 ```
-browser_tabs → action: "new"
-browser_navigate → https://[domain]/
+mcp__Control_Chrome__open_url(url: "https://[domain]/")
 ```
 
-For example, if the target URL is `https://oktodigital.com/services/website-development/`, navigate to `https://oktodigital.com/`.
+For example, if the target URL is `https://oktodigital.com/services/website-development/`, open `https://oktodigital.com/`.
 
 Wait for the page to load (1-2 seconds is sufficient -- we only need the origin established, not the full page content).
 
 ### 2. Fetch the target page via JavaScript
 
-Use `browser_evaluate` to run a single `fetch()` call that retrieves the raw HTML and extracts everything:
+Use `mcp__Control_Chrome__execute_javascript` to run a single `fetch()` call that retrieves the raw HTML and extracts everything:
 
 ```javascript
 async () => {
@@ -146,7 +145,7 @@ async () => {
 
 Check the returned data:
 
-- **HTTP status:** Must be 200. If 403/404/5xx, this method failed -- move to Method 4 (Browser Navigation).
+- **HTTP status:** Must be 200. If 403/404/5xx, this method failed -- move to Method 5 (Chrome Automation Navigation).
 - **Redirect check:** If `redirected` is `true`, compare `final_url` with the requested URL. Trigger redirect detection (see SKILL.md).
 - **Content check:** Verify `html` contains substantial content (not empty or just navigation). The `h1` should match the expected page.
 - **Links/images check:** Verify `links` and `images` arrays have entries.
@@ -162,7 +161,7 @@ Using the `html` from the extraction result, convert to markdown following `refe
 
 ### 5. Close the tab
 
-Close the tab using `browser_tabs` with action `"close"`.
+Close the tab using `mcp__Control_Chrome__close_tab`.
 
 ### 6. Proceed
 
@@ -172,19 +171,19 @@ Proceed to the Review step in SKILL.md.
 
 ## When this method fails
 
-Move to Method 4 (Browser Navigation) if:
+Move to Method 5 (Chrome Automation Navigation) if:
 - `fetch()` returns non-200 status
 - Response is empty, a challenge page, or CAPTCHA HTML
 - Content is clearly incomplete (some sites block fetch but allow full page loads)
 - The page requires JavaScript rendering to produce content (SPAs that return skeleton HTML)
 
-Move to Method 5 (Paste-in) if Browser Navigation also fails.
+Move to Method 7 (Paste-in) if Chrome Automation Navigation also fails.
 
 ---
 
 ## Limitations
 
 - **No JavaScript execution on the fetched page.** The HTML is parsed via `DOMParser`, not rendered. Collapsed elements (`<details>`) are in the HTML source and extractable, but content injected by client-side JS after page load will be missing.
-- **Same-origin only.** Must navigate to the target domain first to avoid CORS errors.
-- **Depends on browser MCP** being configured in the session.
-- **Large pages** may exceed `browser_evaluate` return size limits. If content is truncated, extract metadata and content in two separate fetch+parse calls.
+- **Same-origin only.** Must open the target domain first to avoid CORS errors.
+- **Depends on Chrome Control MCP** (`mcp__Control_Chrome__*`) being configured in the session.
+- **Large pages** may exceed `execute_javascript` return size limits. If content is truncated, extract metadata and content in two separate fetch+parse calls.

@@ -1,6 +1,6 @@
 ---
 description: "Unified web crawling with 7-method cascade. Crawl any URL and return clean markdown content with metadata."
-tools: Read, Bash, WebFetch, mcp__desktop-commander__*, mcp__apify__*, mcp__playwright__*
+tools: Read, Bash, WebFetch, mcp__desktop-commander__*, mcp__apify__*, mcp__Control_Chrome__*, mcp__Claude_in_Chrome__*
 ---
 
 # Web Crawler
@@ -19,11 +19,11 @@ Unified web crawling interface for the webtools suite. Crawl any URL and return 
 
 ## Step 1: Tool Availability
 
-MCP tools (Apify, Desktop Commander, Playwright) may or may not be available depending on session configuration. **Do not attempt to detect tools upfront.** Instead, try each method in the cascade. If a tool call fails because the tool does not exist, catch the error and move to the next method.
+MCP tools (Desktop Commander, Apify, Chrome Control, Chrome Automation) may or may not be available depending on session configuration. **Do not attempt to detect tools upfront.** Instead, try each method in the cascade. If a tool call fails because the tool does not exist, catch the error and move to the next method.
 
 The dispatcher may include MCP tool hints in your prompt (e.g., "You have Desktop Commander available"). If hints are provided, those tools are confirmed available -- use them when the cascade calls for them. If no hints are provided, still try MCP methods -- they may work.
 
-Cascade order: curl -> Desktop Commander -> Apify -> WebFetch -> Browser Fetch -> Browser Nav -> Paste-in
+Cascade order: Desktop Commander -> curl -> Apify -> Chrome Control Fetch -> Chrome Automation Nav -> WebFetch -> Paste-in
 
 If a method override was provided, skip to that method directly.
 
@@ -33,27 +33,11 @@ If a method override was provided, skip to that method directly.
 
 Try methods in strict order. Move to the next method only when the current one fails.
 
-### Method 1: curl + Local Processing
+### Method 1: curl via Desktop Commander
 
-**Skip if:** No shell tool available.
+Desktop Commander runs on the user's local machine with residential/office IP, bypassing WAF restrictions that block datacenter IPs. Produces the most complete content (footer, images, social links, badges).
 
-Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-curl.md`.
-
-Key points:
-- Fetch via curl with browser User-Agent to `/tmp/extracted-page.html`
-- **ALWAYS** strip non-content HTML via Python3/Node.js before reading (60-80% size reduction)
-- Extract meta title and description via grep
-- Convert stripped HTML to markdown
-
-**Fail triggers -> Method 2:** No shell tool, curl missing, HTTP != 200, empty/tiny HTML, WAF challenge (403, exit code 56).
-
-### Method 2: curl via Desktop Commander
-
-**Triggered when:** Method 1 (curl via Bash) fails with HTTP 403 or curl exit code 56 (WAF block).
-
-Desktop Commander runs on the user's local machine with residential/office IP, bypassing WAF restrictions that block datacenter IPs.
-
-Execute the same curl command from Method 1, but via Desktop Commander:
+Execute curl via Desktop Commander:
 
 ```
 mcp__desktop-commander__start_process(
@@ -73,10 +57,23 @@ mcp__desktop-commander__start_process(
 )
 ```
 
-Then read `/tmp/extracted-content.html` via Desktop Commander and convert to markdown.
+Then read `/tmp/extracted-content.html` via Desktop Commander and convert to markdown. Follow `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-curl.md` for full stripping script and processing details.
 
-**If Desktop Commander tool call fails** (tool not found): move to Method 3.
-**If still WAF blocked** via Desktop Commander: move to Method 3.
+**Fail triggers -> Method 2:** Desktop Commander tool not found, HTTP != 200, empty/tiny HTML, WAF block.
+
+### Method 2: curl via Bash
+
+**Skip if:** No Bash tool available.
+
+Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-curl.md`.
+
+Key points:
+- Same curl command as Method 1, but via Bash (may run on cloud VM with datacenter IP)
+- **ALWAYS** strip non-content HTML via Python3/Node.js before reading (60-80% size reduction)
+- Extract meta title and description via grep
+- Convert stripped HTML to markdown
+
+**Fail triggers -> Method 3:** No Bash tool, curl missing, HTTP != 200, empty/tiny HTML, WAF challenge (403, exit code 56).
 
 ### Method 3: Apify MCP
 
@@ -92,7 +89,47 @@ Key points:
 
 **Fail triggers -> Method 4:** Tool not found, empty response, actor error, timeout.
 
-### Method 4: WebFetch
+### Method 4: Chrome Control Fetch
+
+Uses `mcp__Control_Chrome__*` tools to fetch page content from the user's browser. Simple tab control -- opens URL, reads content, no JS execution on the fetched page.
+
+Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-browser-fetch.md`.
+
+Key tools:
+- `mcp__Control_Chrome__open_url` -- open URL in browser tab
+- `mcp__Control_Chrome__get_page_content` -- get page content
+- `mcp__Control_Chrome__execute_javascript` -- run extraction script
+- `mcp__Control_Chrome__close_tab` -- close tab after extraction
+
+Key points:
+- Open URL, then execute single `fetch()` call via `execute_javascript`
+- Parse HTML via DOMParser (no JS execution on fetched page)
+- Extract metadata, content, links, images, FAQs in one call
+
+**Fail triggers -> Method 5:** Chrome Control tools not found, non-200 status, CAPTCHA, SPA skeleton.
+
+### Method 5: Chrome Automation Navigation
+
+Uses `mcp__Claude_in_Chrome__*` tools for full browser automation. Navigates to the page, waits for JS rendering, extracts content. Use when Chrome Control Fetch (Method 4) fails because the page requires JavaScript rendering.
+
+Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-browser.md`.
+
+Key tools:
+- `mcp__Claude_in_Chrome__navigate` -- navigate to URL
+- `mcp__Claude_in_Chrome__read_page` -- read page content
+- `mcp__Claude_in_Chrome__screenshot` -- screenshot for verification
+- `mcp__Claude_in_Chrome__click` -- interact with elements
+
+Key points:
+- Navigate to URL, inject redirect blocker IMMEDIATELY
+- Wait 2-3 seconds for full render
+- **CRITICAL:** Single atomic extraction script (never split across multiple calls)
+- Expand all collapsibles before extraction
+- Close tab after extraction
+
+**Fail triggers -> Method 6:** Chrome Automation tools not found, navigation fails, persistent redirect.
+
+### Method 6: WebFetch
 
 **Always available** (built-in Claude Code tool).
 
@@ -104,40 +141,7 @@ Key points:
 - Limitation: datacenter IPs, blocked by most WAFs
 - Limitation: AI may summarize instead of preserving verbatim
 
-**Fail triggers -> Method 5:** HTTP 403, timeout, challenge page, incomplete content.
-
-### Method 5: Browser Fetch
-
-Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-browser-fetch.md`.
-
-Browser MCP tools may use different naming conventions depending on configuration:
-- **Playwright MCP:** `mcp__playwright__playwright_navigate`, `mcp__playwright__playwright_evaluate`, `mcp__playwright__playwright_get_visible_html`
-- **Other browser MCP:** `browser_navigate`, `browser_evaluate`, `browser_tabs`
-
-Try Playwright naming first. If not found, try alternative naming. If neither works, move to Method 7.
-
-Key points:
-- Navigate to domain root for same-origin context
-- Execute single `fetch()` call via `playwright_evaluate` or `browser_evaluate`
-- Parse HTML via DOMParser (no JS execution on fetched page)
-- Extract metadata, content, links, images, FAQs in one call
-
-**Fail triggers -> Method 6:** Browser tools unavailable (both naming conventions), non-200 status, CAPTCHA, SPA skeleton.
-
-### Method 6: Browser Navigation
-
-Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/references/crawl-methods/method-browser.md`.
-
-Uses the same browser MCP tools as Method 5 (try Playwright naming first, then alternative naming).
-
-Key points:
-- Open new tab, navigate (`playwright_navigate` or `browser_navigate`), inject redirect blocker IMMEDIATELY
-- Wait 2-3 seconds for full render
-- **CRITICAL:** Single atomic extraction script (never split across multiple evaluate calls)
-- Expand all collapsibles before extraction
-- Close tab after extraction
-
-**Fail triggers -> Method 7:** Browser unavailable (both naming conventions), navigation fails, persistent redirect.
+**Fail triggers -> Method 7:** HTTP 403, timeout, challenge page, incomplete content.
 
 ### Method 7: Paste-in (Manual Fallback)
 
@@ -204,7 +208,7 @@ Present the result as:
 <critical>
 **NEVER** read large HTML files directly into context without stripping first. Always run the Python3/Node.js stripping script from method-curl.md for curl-based methods.
 
-**NEVER** split browser extraction across multiple `browser_evaluate` calls. Client-side redirects fire between calls.
+**NEVER** split browser extraction across multiple `execute_javascript` / JS evaluation calls. Client-side redirects fire between calls.
 
 **ALWAYS** close browser tabs after extraction to prevent tab pollution.
 
