@@ -2,7 +2,7 @@
 name: dispatch-subagent
 description: "Dispatch a sub-agent via the Task tool with correct model selection, MCP tool hints, and agent definition loading. ALWAYS use before spawning any sub-agent. Invoke whenever a sub-agent needs to be dispatched via Task tool, the pipeline delegates work to a specialist agent, or a Task call to a registered agent is required."
 allowed-tools: Task, Read, Glob
-version: 1.1.0
+version: 1.2.0
 ---
 
 # Dispatch Sub-Agent
@@ -17,6 +17,7 @@ Dispatch any registered agent as a sub-agent via the Task tool. Ensures correct 
 |---|---|---|
 | web-crawler | `${CLAUDE_PLUGIN_ROOT}/agents/web-crawler.md` | Crawl a URL, return content in requested format |
 | domain-analyst | `${CLAUDE_PLUGIN_ROOT}/agents/domain-analyst.md` | Analyze one domain's checkpoints against research context |
+| researcher | `${CLAUDE_PLUGIN_ROOT}/agents/researcher.md` | Execute domain-specific research, produce R-document |
 
 Add new agents to this table as the pipeline grows.
 
@@ -86,6 +87,7 @@ Lookup table mapping agent `tools:` wildcards to specific tool names. Include th
 | `mcp__Apify__*` | `- Apify: mcp__Apify__call-actor, mcp__Apify__get-actor-output (headless browser crawling, WAF bypass)` |
 | `mcp__Control_Chrome__*` | `- Chrome Control: mcp__Control_Chrome__open_url, mcp__Control_Chrome__get_page_content, mcp__Control_Chrome__execute_javascript, mcp__Control_Chrome__close_tab (browser tab control, fetch-based)` |
 | `mcp__Claude_in_Chrome__*` | `- Chrome Automation: mcp__Claude_in_Chrome__navigate, mcp__Claude_in_Chrome__read_page, mcp__Claude_in_Chrome__screenshot, mcp__Claude_in_Chrome__click (full browser automation with JS rendering)` |
+| `mcp__dataforseo__*` | `- DataForSEO: mcp__dataforseo__serp_organic_live_advanced, mcp__dataforseo__serp_locations, mcp__dataforseo__kw_data_google_ads_search_volume, mcp__dataforseo__kw_data_dfs_trends_explore, mcp__dataforseo__on_page_lighthouse, mcp__dataforseo__on_page_instant_pages, mcp__dataforseo__on_page_content_parsing, mcp__dataforseo__dataforseo_labs_google_ranked_keywords, mcp__dataforseo__dataforseo_labs_google_competitors_domain, mcp__dataforseo__dataforseo_labs_google_domain_rank_overview, mcp__dataforseo__dataforseo_labs_google_keyword_ideas, mcp__dataforseo__dataforseo_labs_google_related_keywords, mcp__dataforseo__business_data_business_listings_search, mcp__dataforseo__domain_analytics_technologies_domain_technologies, mcp__dataforseo__content_analysis_search (SEO data, SERP analysis, technology detection, business listings)` |
 
 Add rows as new MCP servers are configured.
 

@@ -16,16 +16,16 @@ Four deliverables, in order:
 
 1. **D1: Client Intake** -- Online research + 21-domain gap analysis. Produces a pre-interview document with findings, gaps, and targeted questions for each domain.
 2. **D2: Client Interview** -- Fill gaps from D1. Capture client priorities, constraints, and decisions that only they can provide.
-3. **D3: Project Research** -- Deep-dive intelligence across topics, informed by D1 + D2. Parallel research agents covering SERP, competitors, audience, UX, content, reputation, tech, and market.
+3. **D3: Project Research** -- Deep-dive intelligence across 8 research domains, informed by D1 + D2. One generic researcher agent dispatched per domain (max 2 concurrent), each loading a domain-specific methodology file. Domains: R1 SERP & Search Landscape, R2 Competitor Landscape, R3 Audience & User Personas, R4 UX/UI Patterns & Benchmarks, R5 Content Landscape & Strategy, R6 Reputation & Social Proof, R7 Technology & Performance, R8 Industry & Market Context. Wave 1 domains run independently; Wave 2 domains (R4, R5) benefit from Wave 1 outputs. Each produces an R-document; all consolidate into D3 summary with cross-topic findings, strategic opportunities, and proposal inputs.
 4. **D4: Project Brief** -- Consolidated proposal: current state, strategic guidance, proposed solution. Specific enough to quote from.
 
 ## Available Capabilities
 
-- **Skills:** project-init (initialize project + state tracking), client-intake (research + D1 generation), dispatch-subagent (agent orchestration via Task tool)
-- **Sub-agents:** web-crawler (website crawling, 6-method cascade), domain-analyst (gap analysis checkpoint scoring, 21 domains in parallel)
-- **MCP tools:** web search, web fetch, business registry lookup
+- **Skills:** project-init (initialize project + state tracking), client-intake (research + D1 generation), project-research (D3 research orchestration -- 8 domains in waves of 2), dispatch-subagent (agent orchestration via Task tool)
+- **Sub-agents:** web-crawler (website crawling, 6-method cascade), domain-analyst (gap analysis checkpoint scoring, 21 domains in parallel), researcher (domain-specific research execution, produces R-documents)
+- **MCP tools:** web search, web fetch, business registry lookup, DataForSEO (SEO data, SERP analysis, technology detection, business listings -- used by researcher agent when available)
 - **Project state:** `project-state.md` in the project directory tracks pipeline progress and document status
-- **References:** D1 template, questioning strategy guide, domain quick-reference, crawl method specs
+- **References:** D1 template, R-document template, questioning strategy guide, domain quick-reference, 8 research domain methodology files, crawl method specs
 
 ## How to Think
 
