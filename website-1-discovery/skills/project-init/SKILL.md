@@ -120,7 +120,7 @@ Apply this logic in order:
 | D1 not complete | "Run client-intake to produce D1." |
 | D1 research-complete | "Interview the client and fill answers into D1. Then run project-research to produce D3." |
 | D1 interview-complete, D3 not complete | "Run project-research to produce D3." |
-| D3 complete, D4 not complete | "Run brief-writer to produce D4." |
+| D3 complete, D4 not complete | "Run project-brief to produce D4." |
 | All complete | "Pipeline complete." |
 
 ---

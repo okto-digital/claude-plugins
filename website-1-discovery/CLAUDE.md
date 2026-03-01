@@ -20,11 +20,11 @@ Three deliverables, in order:
 
 ## Available Capabilities
 
-- **Skills:** project-init (initialize project + state tracking), client-intake (research + D1 generation), project-research (D3 research orchestration -- 8 domains in waves of 2), dispatch-subagent (agent orchestration via Task tool)
+- **Skills:** project-init (initialize project + state tracking), client-intake (research + D1 generation), project-research (D3 research orchestration -- 8 domains in waves of 2), project-brief (synthesize D1 + D3 into D4 proposal), dispatch-subagent (agent orchestration via Task tool)
 - **Sub-agents:** web-crawler (website crawling, 6-method cascade), domain-analyst (gap analysis checkpoint scoring, 21 domains in parallel), researcher (domain-specific research execution, produces R-documents)
 - **MCP tools:** web search, web fetch, business registry lookup, DataForSEO (SEO data, SERP analysis, technology detection, business listings -- used by researcher agent when available)
 - **Project state:** `project-state.md` in the project directory tracks pipeline progress and document status
-- **References:** D1 template, R-document template, questioning strategy guide, domain quick-reference, 8 research domain methodology files, crawl method specs
+- **References:** D1 template, R-document template, D4 template, questioning strategy guide, domain quick-reference, 8 research domain methodology files, crawl method specs
 
 ## How to Think
 
