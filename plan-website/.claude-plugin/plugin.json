@@ -1,0 +1,8 @@
+{
+  "name": "plan-website",
+  "version": "0.1.0",
+  "description": "Website planning and creation pipeline",
+  "author": {
+    "name": "okto.digital"
+  }
+}
