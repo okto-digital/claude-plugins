@@ -17,7 +17,7 @@ Dispatch researcher agents for up to 8 research domains in waves of 2, then cons
 
 ### Step 1: Load project context
 
-Read `project-state.md` from the project working directory. Extract client name, URL, project type, and document status.
+Read `project-state.md` from the project working directory. Extract client name, URL, project type, document status, and language configuration (primary language, primary market, secondary languages).
 
 If project-state.md does not exist, stop and tell the operator: "Run project-init first to set up the project."
 
@@ -36,8 +36,20 @@ Read the D1 document (path from project-state.md). Extract a summary for researc
 - Domain analysis highlights (top gaps, critical findings)
 - Client interview answers (if D1 status is `interview-complete`)
 - Client priorities, constraints, and decisions (from filled-in answers)
+- Language configuration: primary language, primary market, secondary languages (from project-state.md)
+- Language research notes from D1 (which local-language queries were productive)
 
 Combine into a **project context block** -- a text summary that will be passed to each researcher agent in the dispatch prompt. Keep it under 2000 words.
+
+The project context block includes a Language Configuration sub-section:
+
+```
+## Language Configuration
+- Primary language: [language]
+- Primary market: [market]
+- Secondary languages: [list or "none"]
+- Research languages: [confirmed list from operator -- see Step 4]
+```
 
 ### Step 3: Check existing R-documents
 
@@ -65,6 +77,22 @@ Present all 8 research topics to the operator with wave labels:
 
 Use AskUserQuestion with multiSelect=true. Pre-select all topics that do not have existing R-documents. Let the operator deselect topics they want to skip or select already-completed topics for re-run.
 
+**Language selection:**
+
+After the operator selects topics, present the research languages question.
+
+Build a suggested list from the language configuration:
+- Primary language (always suggested -- this is where deepest research happens)
+- Each secondary language (suggested if configured)
+- If the project has multilingual options or international intent visible from D1, suggest additional relevant languages -- but do NOT add languages the operator did not configure without explaining why
+
+Present:
+"I suggest researching in these languages: [suggested list]. The primary language ([name]) will get the deepest research. Additional languages get lighter coverage (2-3 queries per domain step). You can add or remove languages."
+
+Use AskUserQuestion with multiSelect=true. Pre-select all suggested languages. Let operator adjust.
+
+Store the confirmed list as "research languages" in the project context block passed to each researcher. Mark which one is primary.
+
 ### Step 5: Wave dispatch
 
 Dispatch selected researcher agents via the `dispatch-subagent` skill. All researcher agents use **opus** model (analysis + synthesis needed).
@@ -86,6 +114,7 @@ Dispatch selected researcher agents via the `dispatch-subagent` skill. All resea
 - Domain file path: `${CLAUDE_PLUGIN_ROOT}/agents/references/research-domains/[domain].md`
 - R-document template path: `${CLAUDE_PLUGIN_ROOT}/references/r-document-template.md`
 - Project context block (from Step 2)
+- Research languages (confirmed list from Step 4)
 - Cross-topic R-document paths (Wave 2 only, if available)
 - Output directory: `research/`
 - MCP tool hints: include both DataForSEO and web-crawler tool hints from dispatch-subagent

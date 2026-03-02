@@ -17,7 +17,7 @@ Research a client online, dispatch 21 domain-analyst agents in waves of 6 to sco
 
 ### Step 1: Load project context
 
-Read `project-state.md` from the project working directory. Extract client name, URL, and project type.
+Read `project-state.md` from the project working directory. Extract client name, URL, project type, and language configuration (primary language, primary market, secondary languages).
 
 If project-state.md does not exist, stop and tell the operator: "Run project-init first to set up the project."
 
@@ -39,17 +39,30 @@ Proceed once the operator provides at least a company name and URL.
 3. Dispatch web-crawler for each high-value page (parallel where possible).
 
 **Web search:**
-Run 4 WebSearch queries about the client:
+
+Read the language configuration from project-state.md. Run queries in the primary language. If secondary languages are configured, run a lighter set in each.
+
+**Always run (company name is universal):**
 - "[company name]"
-- "[company name] reviews"
-- "[company name] [industry]"
-- "[company name] news [current year]"
+
+**Per configured language** (primary language gets all, secondary get the first two):
+- "[company name] [reviews in this language]" (e.g., Slovak: "recenzie", German: "Bewertungen", English: "reviews")
+- "[company name] [industry in this language]"
+- "[company name] [news in this language] [current year]"
+- "[business type in this language] [location]"
+
+Construct queries using natural phrasing in each language, not literal word-for-word translation. The goal is to find what sources in each language say about this company.
 
 **Competitor discovery:**
-After crawling the client site, determine the business type and location (city, region, or area). Then run 2-3 WebSearch queries to find competitors:
-- "[business type] [location]" (e.g., "hotel Zilina", "accommodation Mala Fatra")
-- "[business type] near [city/area]" (e.g., "wellness hotel near Zilina")
-- "best [business type] [region] [current year]" (e.g., "best hotels Mala Fatra 2026")
+
+After crawling the client site, determine the business type and location (city, region, or area). Run queries in each configured language. Primary language gets the full set; secondary languages get the top 2 queries.
+
+**Per configured language:**
+- "[business type in this language] [location]" (e.g., Slovak: "hotel Zilina", English: "hotel Zilina")
+- "[business type in this language] [region]" (e.g., Slovak: "ubytovanie Mala Fatra", English: "accommodation Mala Fatra")
+- "[best in this language] [business type in this language] [region] [year]" (e.g., Slovak: "najlepsie hotely Mala Fatra 2026", English: "best hotels Mala Fatra 2026")
+
+Different languages surface different competitors -- local-only businesses, regional directories, and review aggregators are often language-specific.
 
 Record competitor names and URLs found. These feed into the competitive-landscape domain analysis and downstream R2 research.
 
@@ -73,6 +86,7 @@ Structure the file:
 - **Website assessment:** Structure, content quality, tech stack, issues found
 - **Competitive context:** Competitors identified, market positioning
 - **External intelligence:** News, reviews, social presence, job postings
+- **Language context:** Primary language, primary market, which queries were run in which language, whether different-language results differed meaningfully from each other
 - **Registry data:** Legal name, ID, legal form, revenue, employees, address (or "No business registry data available")
 
 Checkpoint to operator: "Research found X key facts across Y sources. Written to intake/research-context.md."

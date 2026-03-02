@@ -14,6 +14,7 @@ topic: "[topic name]"
 title: "R[N] [Topic Name] -- [Company Name]"
 project: "[client name from project-state, or 'standalone']"
 sources_consulted: [number]
+research_languages: [list of languages in which research queries were executed]
 confidence: [high/medium/low]
 created: [YYYY-MM-DD]
 created_by: website-1-discovery
@@ -26,6 +27,7 @@ status: complete
 - `document_id`: R1 through R8, matching the topic ID
 - `topic`: One of: SERP & Search Landscape, Competitor Landscape, Audience & User Personas, UX/UI Patterns & Benchmarks, Content Landscape & Strategy, Reputation & Social Proof, Technology & Performance, Industry & Market Context
 - `sources_consulted`: Total number of distinct sources (URLs, documents, searches) consulted
+- `research_languages`: Languages used for search queries in this research topic (e.g., ["Slovak", "English"])
 - `confidence`: Overall confidence in findings -- high (3+ sources per key finding), medium (2 sources), low (single source or inference)
 
 ---

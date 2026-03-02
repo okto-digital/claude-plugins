@@ -29,8 +29,11 @@ Ask the operator for:
 1. **Client name** (required) -- the name of the client or project
 2. **Client website URL** (optional) -- used later by client-intake
 3. **Project type** (required) -- one of: `new-build`, `redesign`, `landing-page`, `ecommerce`
+4. **Primary language** (required) -- the main language of the website and its target audience (e.g., "Slovak", "German", "English"). Default suggestion: detect from URL TLD if provided (.sk → Slovak, .de → German, .nl → Dutch), otherwise ask.
+5. **Primary market** (required) -- the geographic market the website targets (e.g., "Slovakia", "DACH region", "US").
+6. **Secondary languages** (optional) -- other languages relevant to the project. Ask: "Are there other languages that matter? For example, if targeting Slovakia, Czech or English might be relevant for research." Record as comma-separated list, or "none".
 
-Do not proceed until client name and project type are provided.
+Do not proceed until client name, project type, primary language, and primary market are provided.
 
 ### 2. Create Directory Structure
 
@@ -51,6 +54,12 @@ Write `project-state.md` in the current working directory using this template. R
 **Type:** {project type}
 **Created:** {YYYY-MM-DD}
 
+## Language Configuration
+
+**Primary language:** {language}
+**Primary market:** {market}
+**Secondary languages:** {comma-separated list or "none"}
+
 ## Pipeline
 
 | Doc | Name | Status | File | Updated |
@@ -69,6 +78,8 @@ Project initialized.
 
   Client: {name}
   Type: {type}
+  Language: {primary language} | Market: {primary market}
+  Secondary: {secondary languages or "none"}
   State: project-state.md
   Directories: intake/, research/
 
@@ -95,6 +106,8 @@ For each pipeline row where File is not `--`, verify the file exists on disk usi
 
 ```
 [INIT] Project: {name} ({type})
+Language: {primary language} | Market: {primary market}
+Secondary: {secondary languages or "none"}
 
 PIPELINE STATUS
   D1 Client Intake       [{status}]
