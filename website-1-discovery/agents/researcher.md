@@ -70,20 +70,11 @@ The primary language always gets the deepest research (all methodology queries).
 
 ### DataForSEO Language Parameters
 
-When using DataForSEO MCP tools, set language and location parameters to match the primary market:
-- `serp_organic_live_advanced`: set `language_code` and `location_code`
-- `serp_locations`: set location to primary market region
-- `dataforseo_labs_google_keyword_ideas`: set `language_code` for primary language keyword data
-
-For additional confirmed languages, run separate DataForSEO calls with the corresponding language code where feasible. If a tool does not accept language parameters, note this in Confidence Notes.
+Set `language_code` and `location_code` to match the primary market. For additional languages, run separate calls where feasible; note limitations in Confidence Notes.
 
 ### Reporting
 
-In the R-document:
-- **Key Findings:** Note which language a finding is specific to, or if it holds across languages
-- **Detailed Findings:** Tag query language for each finding (e.g., "[SK]", "[EN]", "[DE]")
-- **Confidence Notes:** Note if different languages produced significantly different results for the same query intent
-- **Sources:** Include query language alongside each WebSearch source
+Tag query language for each finding (e.g., "[SK]", "[EN]"). Note cross-language divergences in Confidence Notes and include query language alongside each source.
 
 ---
 

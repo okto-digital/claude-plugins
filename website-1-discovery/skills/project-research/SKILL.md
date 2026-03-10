@@ -1,13 +1,13 @@
 ---
 name: project-research
-description: "Run D3 project research: dispatch researcher agents for 8 domains in waves of 2, consolidate into D3 summary. Invoke when the user asks to run project research, generate D3, research the project, or start the research phase."
+description: "Run D2 project research: dispatch researcher agents for 8 domains in waves of 3, consolidate into D2 summary. Invoke when the user asks to run project research, generate D2, research the project, or start the research phase."
 allowed-tools: Read, Write, Glob, Bash, WebSearch, Task, AskUserQuestion
 version: 1.0.0
 ---
 
 # Project Research
 
-Dispatch researcher agents for up to 8 research domains in waves of 2, then consolidate all R-documents into D3: Project Research summary. Each researcher agent loads a domain-specific methodology file, executes research using WebSearch + web-crawler + optionally DataForSEO, and produces an R-document.
+Dispatch researcher agents for up to 8 research domains in waves of 3, then consolidate all R-documents into D2: Project Research summary. Each researcher agent loads a domain-specific methodology file, executes research using WebSearch + web-crawler + optionally DataForSEO, and produces an R-document.
 
 **Core principle:** One generic researcher agent, many domain reference files. The orchestrator handles topic selection, wave dispatch, progress reporting, and final consolidation.
 
@@ -17,11 +17,9 @@ Dispatch researcher agents for up to 8 research domains in waves of 2, then cons
 
 ### Step 1: Load project context
 
-Read `project-state.md` from the project working directory. Extract client name, URL, project type, document status, and language configuration (primary language, primary market, secondary languages).
-
-If project-state.md does not exist, stop and tell the operator: "Run project-init first to set up the project."
-
-If D1 is not complete, stop and tell the operator: "D1 (Client Intake) must be complete before running D3 research. Run client-intake first."
+Read `project-state.md`. Extract: client name, URL, project type, document status, language config.
+If missing, stop: "Run project-init first."
+If D1 not complete, stop: "Run client-intake first."
 
 If D1 status is `research-complete` (not yet `interview-complete`), warn the operator: "D1 has research findings but no interview answers yet. Research will be more targeted after filling in client answers. Proceed anyway?" Use AskUserQuestion to confirm.
 
@@ -97,15 +95,14 @@ Store the confirmed list as "research languages" in the project context block pa
 
 Dispatch selected researcher agents via the `dispatch-subagent` skill. All researcher agents use **opus** model (analysis + synthesis needed).
 
-**Concurrency limit: maximum 2 sub-agents at a time.** Dispatch in batches of 2, wait for the batch to complete, then dispatch the next batch.
+**Concurrency limit: maximum 3 sub-agents at a time.** Dispatch in batches of 3, wait for the batch to complete, then dispatch the next batch.
 
 **Dispatch order:**
 
-1. All selected Wave 1 topics, in batches of 2:
-   - Batch 1: first 2 selected Wave 1 topics
-   - Batch 2: next 2 selected Wave 1 topics
-   - Batch 3: remaining Wave 1 topics (1-2)
-2. All selected Wave 2 topics, in batches of 2:
+1. All selected Wave 1 topics, in batches of 3:
+   - Batch 1: first 3 selected Wave 1 topics
+   - Batch 2: remaining Wave 1 topics (up to 3)
+2. All selected Wave 2 topics (up to 2, single batch):
    - For R4: include R2 output path as cross-topic input (if R2 was run or exists)
    - For R5: include R1 output path as cross-topic input (if R1 was run or exists)
 
@@ -125,17 +122,17 @@ Dispatch selected researcher agents via the `dispatch-subagent` skill. All resea
 - Key Findings from each (the 3-5 bullet summary returned by each agent)
 - Any failures (and whether to retry or skip)
 
-### Step 6: Consolidate into D3
+### Step 6: Consolidate into D2
 
 After all dispatched researchers complete, read all R-documents in `research/`.
 
-Synthesize D3: Project Research with this structure:
+Synthesize D2: Project Research with this structure:
 
 ```markdown
 ---
 document_type: project-research
-document_id: D3
-title: "D3 Project Research -- [Company Name]"
+document_id: D2
+title: "D2 Project Research -- [Company Name]"
 project: "[client name]"
 topics_completed: [N of 8]
 created: [YYYY-MM-DD]
@@ -143,11 +140,13 @@ created_by: website-1-discovery
 status: complete
 ---
 
-# D3 Project Research -- [Company Name]
+# D2 Project Research -- [Company Name]
 
 ## Executive Summary
 
 5-8 cross-topic findings that emerge from looking across all R-documents together. These are patterns visible only when combining multiple research angles -- not just restating individual R-document findings.
+
+Cross-topic synthesis method: For each R-document pair, check if findings from one change the interpretation of another. Look for: same competitor appearing across topics, gap-as-opportunity pairs (e.g., competitor weakness + audience need), technical limits blocking content/UX strategies, audience insights reframing SERP findings.
 
 ## Strategic Opportunities
 
@@ -173,7 +172,7 @@ Challenges and threats that the proposal must address:
 
 ## Proposal Inputs
 
-Concrete elements ready to include in D4 (Project Brief):
+Concrete elements ready to include in D3 (Project Brief):
 
 ### Problem Statement
 [Synthesized from research findings -- what is the core problem the project solves?]
@@ -201,13 +200,15 @@ Concrete elements ready to include in D4 (Project Brief):
 | R8 Industry & Market Context | complete/skipped | ... | N |
 ```
 
-Write to `research/D3-project-research.md`.
+If `research/D2-project-research.md` already exists, warn: "D2 already exists. Overwrite?" Use AskUserQuestion. If declined, stop.
+
+Write to `research/D2-project-research.md`.
 
 ### Step 7: Update state
 
-Read project-state.md. Update the D3 row:
+Read project-state.md. Update the D2 row:
 - status: complete
-- file: research/D3-project-research.md
+- file: research/D2-project-research.md
 - updated: today's date
 
 Write the updated project-state.md. Do not modify any other rows.
@@ -217,16 +218,16 @@ Write the updated project-state.md. Do not modify any other rows.
 ## Rules
 
 <critical>
-- **NEVER** skip D1 prerequisite check -- D1 must be complete before D3
-- **NEVER** dispatch more than 2 researcher agents concurrently
-- **NEVER** fabricate or embellish D3 findings beyond what R-documents contain
-- **NEVER** modify project-state.md beyond the D3 row
+- **NEVER** skip D1 prerequisite check -- D1 must be complete before D2
+- **NEVER** dispatch more than 3 researcher agents concurrently
+- **NEVER** fabricate or embellish D2 findings beyond what R-documents contain
+- **NEVER** modify project-state.md beyond the D2 row
 - **NEVER** run without project-state.md -- require project-init first
 - **NEVER** read the domain reference files directly -- leave this to the dispatched researcher agents
 </critical>
 
 - If a researcher agent fails, note which topic was affected, report to operator, and continue with remaining topics
-- If fewer than 4 topics complete successfully, warn the operator that D3 coverage will be limited
+- If fewer than 4 topics complete successfully, warn the operator that D2 coverage will be limited
 - If D1 is research-complete (no interview answers), proceed but warn operator that results will be less targeted
 - Wave 2 topics can run without their cross-topic inputs -- they just produce slightly less cross-referenced output
 
@@ -241,4 +242,4 @@ All shared references are at the plugin root:
 
 Sub-agents dispatched by this skill (via dispatch-subagent):
 
-- `researcher` -- Execute domain-specific research, produce R-document (up to 8 instances, dispatched in waves of 2)
+- `researcher` -- Execute domain-specific research, produce R-document (up to 8 instances, dispatched in waves of 3)

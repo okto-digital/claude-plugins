@@ -36,7 +36,7 @@ status: complete
 
 ### 1. Key Findings
 
-3-5 bullet points summarizing the most important takeaways. These are what get pulled into D3.
+3-5 bullet points summarizing the most important takeaways. These are what get pulled into D2.
 
 Each finding should be:
 - Specific (include numbers, names, evidence)
@@ -75,7 +75,7 @@ Example:
 2. **Add a pricing calculator for renovation projects** -- No competitor offers an interactive estimation tool. Self-service pricing attracts high-intent visitors and pre-qualifies leads before contact. Expected: differentiation from all local competitors and reduced time on unqualified inquiries. [2][4][7]
 ```
 
-This section is what makes each R-document directly proposal-ready -- the recommendations feed into D4 (Project Brief) as specific line items.
+This section is what makes each R-document directly proposal-ready -- the recommendations feed into D3 (Project Brief) as specific line items.
 
 ### 4. Opportunities & Risks
 

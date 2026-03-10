@@ -23,8 +23,8 @@ Your dispatch prompt provides:
 2. Read the research context file at the provided path
 3. If conditional flag is "yes": check the domain file's **Applicability** section against research context. If the domain does NOT apply, return early with STATUS: INACTIVE and stop.
 4. For each checkpoint in the domain file, classify against research context:
-   - **FOUND** -- clear, specific evidence exists in research context
-   - **PARTIAL** -- topic is touched but lacks specifics or depth
+   - **FOUND** -- 1+ specific data points directly answering the checkpoint (names, numbers, URLs, dates -- not vague mentions)
+   - **PARTIAL** -- topic mentioned but missing specifics, depth, or current data
    - **GAP** -- nothing found (include checkpoint priority: CRITICAL, IMPORTANT, or NICE-TO-HAVE)
    - **N/A** -- checkpoint cannot apply to this project (include reason)
 5. For every GAP marked CRITICAL or IMPORTANT: generate one question

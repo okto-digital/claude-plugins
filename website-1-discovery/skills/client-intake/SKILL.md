@@ -1,7 +1,7 @@
 ---
 name: client-intake
 description: "Run client intake research and produce D1 pre-interview document. Invoke when the user asks to research a client, prepare for a client meeting, run intake, generate the D1 document, or start the intake phase of a website project."
-allowed-tools: Read, Write, Glob, Bash, WebSearch, Task
+allowed-tools: Read, Write, Glob, Bash, WebSearch, Task, AskUserQuestion
 version: 2.0.0
 ---
 
@@ -17,19 +17,12 @@ Research a client online, dispatch 21 domain-analyst agents in waves of 6 to sco
 
 ### Step 1: Load project context
 
-Read `project-state.md` from the project working directory. Extract client name, URL, project type, and language configuration (primary language, primary market, secondary languages).
-
-If project-state.md does not exist, stop and tell the operator: "Run project-init first to set up the project."
+Read `project-state.md`. Extract: client name, URL, project type, language config (primary language, primary market, secondary languages).
+If missing, stop: "Run project-init first."
 
 ### Step 2: Gather additional input
 
-Ask the operator for context not already in project-state.md:
-- Client URL (if missing from state)
-- Brief description of the client or project
-- Industry (if known)
-- Any additional context: emails, inquiry form answers, notes, specific concerns
-
-Proceed once the operator provides at least a company name and URL.
+Ask for anything not in project-state.md: URL (if missing), brief description, industry, additional context (emails, notes, concerns). Proceed once company name and URL are available.
 
 ### Step 3: Research
 
@@ -40,31 +33,23 @@ Proceed once the operator provides at least a company name and URL.
 
 **Web search:**
 
-Read the language configuration from project-state.md. Run queries in the primary language. If secondary languages are configured, run a lighter set in each.
+Run in primary language (all queries) + secondary languages (first two queries each). Natural phrasing per language, not literal translation.
 
-**Always run (company name is universal):**
-- "[company name]"
-
-**Per configured language** (primary language gets all, secondary get the first two):
-- "[company name] [reviews in this language]" (e.g., Slovak: "recenzie", German: "Bewertungen", English: "reviews")
-- "[company name] [industry in this language]"
-- "[company name] [news in this language] [current year]"
-- "[business type in this language] [location]"
-
-Construct queries using natural phrasing in each language, not literal word-for-word translation. The goal is to find what sources in each language say about this company.
+- "[company name]" (always, language-neutral)
+- "[company name] [reviews]" (e.g., Slovak: "recenzie", German: "Bewertungen")
+- "[company name] [industry]"
+- "[company name] [news] [current year]"
+- "[business type] [location]"
 
 **Competitor discovery:**
 
-After crawling the client site, determine the business type and location (city, region, or area). Run queries in each configured language. Primary language gets the full set; secondary languages get the top 2 queries.
+Determine business type and location from crawl results. Primary language gets all queries; secondary get top 2.
 
-**Per configured language:**
-- "[business type in this language] [location]" (e.g., Slovak: "hotel Zilina", English: "hotel Zilina")
-- "[business type in this language] [region]" (e.g., Slovak: "ubytovanie Mala Fatra", English: "accommodation Mala Fatra")
-- "[best in this language] [business type in this language] [region] [year]" (e.g., Slovak: "najlepsie hotely Mala Fatra 2026", English: "best hotels Mala Fatra 2026")
+- "[business type] [location]" (e.g., "hotel Zilina")
+- "[business type] [region]" (e.g., "ubytovanie Mala Fatra")
+- "[best] [business type] [region] [year]" (e.g., "najlepsie hotely Mala Fatra 2026")
 
-Different languages surface different competitors -- local-only businesses, regional directories, and review aggregators are often language-specific.
-
-Record competitor names and URLs found. These feed into the competitive-landscape domain analysis and downstream R2 research.
+Record competitor names and URLs -- feed into competitive-landscape domain and R2 research.
 
 **Business registry lookup:**
 1. Detect company country from research so far (company address, domain TLD, site language).
@@ -93,31 +78,20 @@ Checkpoint to operator: "Research found X key facts across Y sources. Written to
 
 ### Step 5: Dispatch domain-analyst agents
 
-Dispatch all 21 domain-analyst agents via the `dispatch-subagent` skill. All use **sonnet** model.
-
-**Concurrency limit: maximum 6 sub-agents at a time.** Dispatch in waves of up to 6, wait for the wave to complete, then dispatch the next wave. Four waves total:
+Dispatch all 21 domain-analyst agents via `dispatch-subagent`. Model: **sonnet**. Max 6 concurrent -- dispatch in waves, wait for each wave before the next.
 
 - **Wave 1:** business-context, competitive-landscape, target-audience, project-scope, analytics-and-measurement, site-structure
 - **Wave 2:** content-strategy, design-and-brand, technical-platform, performance, security-and-compliance, forms-and-lead-capture
-- **Wave 3:** seo-and-discoverability, accessibility, post-launch, ecommerce (conditional), blog-and-editorial (conditional), multilingual (conditional)
-- **Wave 4:** user-accounts (conditional), migration-and-redesign (conditional), booking-and-scheduling (conditional)
+- **Wave 3:** seo-and-discoverability, accessibility, post-launch, ecommerce (cond.), blog-and-editorial (cond.), multilingual (cond.)
+- **Wave 4:** user-accounts (cond.), migration-and-redesign (cond.), booking-and-scheduling (cond.)
 
-Each dispatch provides:
-- Domain name
-- Domain file path: `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/[domain].md`
-- Research context path: `intake/research-context.md`
-- Conditional flag: `yes` or `no`
-- Model: sonnet
+Each dispatch: domain name, domain file path (`${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/[domain].md`), research context path (`intake/research-context.md`), conditional flag (`yes`/`no`), model: sonnet.
 
-**15 universal domains** (conditional=no):
-business-context, competitive-landscape, target-audience, project-scope, analytics-and-measurement, site-structure, content-strategy, design-and-brand, technical-platform, performance, security-and-compliance, forms-and-lead-capture, seo-and-discoverability, accessibility, post-launch
-
-**6 conditional domains** (conditional=yes):
-ecommerce, blog-and-editorial, multilingual, user-accounts, migration-and-redesign, booking-and-scheduling
-
-Wait for each wave to complete before dispatching the next. Collect all returns before proceeding to Step 6.
+15 universal domains (conditional=no), 6 conditional domains (conditional=yes): ecommerce, blog-and-editorial, multilingual, user-accounts, migration-and-redesign, booking-and-scheduling.
 
 ### Step 6: Assemble D1
+
+If `intake/D1-pre-interview.md` already exists, warn: "D1 already exists. Overwrite?" Use AskUserQuestion. If declined, stop.
 
 Read `${CLAUDE_PLUGIN_ROOT}/references/d1-template.md`.
 
@@ -142,7 +116,11 @@ Read project-state.md. Update the D1 row:
 - file: intake/D1-pre-interview.md
 - updated: today's date
 
-**Note:** D1 has two states. `research-complete` means research and gap analysis are done but client interview answers have not been filled in yet. After the operator fills in interview answers, they should update the status to `interview-complete` (manually or via a future command). The project-research skill checks for this distinction.
+**D1 states:**
+- `research-complete` -- research + gap analysis done, interview not yet conducted
+- `interview-complete` -- operator filled in client answers (update via project-init Update Mode)
+
+Downstream skills check this distinction: project-research warns if only `research-complete`, project-brief warns if proposal will lack client priorities.
 
 Write the updated project-state.md. Do not modify any other rows.
 

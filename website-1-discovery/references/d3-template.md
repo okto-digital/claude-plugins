@@ -1,8 +1,8 @@
 # Project Brief & Proposal -- Template
 
-Output template for D4: Project Brief & Proposal. Used by the project-brief skill to structure the final client-facing document. Follow this structure exactly.
+Output template for D3: Project Brief & Proposal. Used by the project-brief skill to structure the final client-facing document. Follow this structure exactly.
 
-**Audience:** This document goes directly to the client. No internal codes (R1, D3), no gap/checkpoint language, no confidence scores, no intake questions. Written in second person ("your website", "your competitors") where natural.
+**Audience:** This document goes directly to the client. No internal codes (R1, D2), no gap/checkpoint language, no confidence scores, no intake questions. Written in second person ("your website", "your competitors") where natural.
 
 ---
 
@@ -11,7 +11,7 @@ Output template for D4: Project Brief & Proposal. Used by the project-brief skil
 ```yaml
 ---
 document_type: project-brief
-document_id: D4
+document_id: D3
 title: "Project Brief & Proposal -- [Company Name]"
 project: "[client name from project-state.md]"
 created: [YYYY-MM-DD]
@@ -196,13 +196,13 @@ Example:
 
 Internal reference for the skill. Not included in the output document.
 
-| D4 Section | Primary Sources |
+| D3 Section | Primary Sources |
 |---|---|
-| 1. Executive Summary | D1 (identity, project type), D3 (strategic summary) |
-| 2. Current State Assessment | D1 sections 1.3-1.6, D3 topic summaries |
-| 3. Key Findings | D3 executive summary, strategic opportunities |
-| 4. Proposed Solution | D3 recommendations + proposal inputs, D1 active domains |
+| 1. Executive Summary | D1 (identity, project type), D2 (strategic summary) |
+| 2. Current State Assessment | D1 sections 1.3-1.6, D2 topic summaries |
+| 3. Key Findings | D2 executive summary, strategic opportunities |
+| 4. Proposed Solution | D2 recommendations + proposal inputs, D1 active domains |
 | 5. Scope & Timeline | Skill hour estimation logic + D1 complexity signals |
 | 6. Total Hours Summary | Computed from Section 5 |
-| 7. Success Metrics | D1 client priorities, D3 research baselines |
+| 7. Success Metrics | D1 client priorities, D2 research baselines |
 | 8. Next Steps | Standard + project-specific needs |

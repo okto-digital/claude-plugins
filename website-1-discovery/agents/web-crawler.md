@@ -2,7 +2,6 @@
 description: "Unified web crawling with 7-method cascade. Crawl any URL and return content tailored to caller's needs."
 tools: Read, Bash, WebFetch, mcp__Desktop_Commander__*, mcp__Apify__*, mcp__Control_Chrome__*, mcp__Claude_in_Chrome__*
 ---
-
 # Web Crawler
 
 Unified web crawling interface. Crawl any URL and return content tailored to the caller's needs -- clean markdown, structured data, metadata only, or raw HTML. Other plugins spawn this agent via Task tool instead of implementing their own crawling.
@@ -20,13 +19,11 @@ Unified web crawling interface. Crawl any URL and return content tailored to the
 
 ## Step 1: Tool Availability
 
-MCP tools (Desktop Commander, Apify, Chrome Control, Chrome Automation) may or may not be available depending on session configuration. **Do not attempt to detect tools upfront.** Instead, try each method in the cascade. If a tool call fails because the tool does not exist, catch the error and move to the next method.
+**Do not detect tools upfront.** Try each method in cascade order; if a tool call fails, move to next. Dispatcher MCP hints confirm availability when present.
 
-The dispatcher may include MCP tool hints in your prompt (e.g., "You have Desktop Commander available"). If hints are provided, those tools are confirmed available -- use them when the cascade calls for them. If no hints are provided, still try MCP methods -- they may work.
+Cascade: Desktop Commander -> curl -> Apify -> Chrome Control Fetch -> Chrome Automation Nav -> WebFetch -> Paste-in
 
-Cascade order: Desktop Commander -> curl -> Apify -> Chrome Control Fetch -> Chrome Automation Nav -> WebFetch -> Paste-in
-
-If a method override was provided, skip to that method directly.
+If method override provided, skip to that method directly.
 
 ---
 
@@ -64,96 +61,37 @@ Then read `/tmp/extracted-content.html` via Desktop Commander and convert to mar
 
 ### Method 2: curl via Bash
 
-**Skip if:** No Bash tool available.
+Same as Method 1 but via Bash (datacenter IP -- less WAF bypass). Follow `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-curl.md`. **ALWAYS** strip HTML before reading.
 
-Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-curl.md`.
-
-Key points:
-- Same curl command as Method 1, but via Bash (may run on cloud VM with datacenter IP)
-- **ALWAYS** strip non-content HTML via Python3/Node.js before reading (60-80% size reduction)
-- Extract meta title and description via grep
-- Convert stripped HTML to markdown
-
-**Fail triggers -> Method 3:** No Bash tool, curl missing, HTTP != 200, empty/tiny HTML, WAF challenge (403, exit code 56).
+**Fail triggers -> Method 3:** No Bash tool, HTTP != 200, WAF challenge (403, exit code 56).
 
 ### Method 3: Apify MCP
 
-Try Apify. If the tool call fails (tool not found), move to Method 4.
-
-Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-apify.md`.
-
-Key points:
-- Use `mcp__Apify__call-actor` with `apify/website-content-crawler`
-- Retrieve results via `mcp__Apify__get-actor-output`
-- Inform operator: "Calling Apify website-content-crawler... (typically 10-30 seconds)"
-- **CRITICAL:** Apify returns empty string for XML/non-HTML content. Detect empty/near-empty response and fallback immediately.
+Headless browser crawl. Follow `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-apify.md`. **CRITICAL:** Apify returns empty for XML/non-HTML -- detect and fallback immediately.
 
 **Fail triggers -> Method 4:** Tool not found, empty response, actor error, timeout.
 
 ### Method 4: Chrome Control Fetch
 
-Uses `mcp__Control_Chrome__*` tools to fetch page content from the user's browser. Simple tab control -- opens URL, reads content, no JS execution on the fetched page.
+Browser tab control via `mcp__Control_Chrome__*` -- fetch-based, no JS rendering. Follow `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-browser-fetch.md`. Open URL, execute single `fetch()` + DOMParser extraction, close tab.
 
-Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-browser-fetch.md`.
-
-Key tools:
-- `mcp__Control_Chrome__open_url` -- open URL in browser tab
-- `mcp__Control_Chrome__get_page_content` -- get page content
-- `mcp__Control_Chrome__execute_javascript` -- run extraction script
-- `mcp__Control_Chrome__close_tab` -- close tab after extraction
-
-Key points:
-- Open URL, then execute single `fetch()` call via `execute_javascript`
-- Parse HTML via DOMParser (no JS execution on fetched page)
-- Extract metadata, content, links, images, FAQs in one call
-
-**Fail triggers -> Method 5:** Chrome Control tools not found, non-200 status, CAPTCHA, SPA skeleton.
+**Fail triggers -> Method 5:** Tools not found, non-200 status, CAPTCHA, SPA skeleton.
 
 ### Method 5: Chrome Automation Navigation
 
-Uses `mcp__Claude_in_Chrome__*` tools for full browser automation. Navigates to the page, waits for JS rendering, extracts content. Use when Chrome Control Fetch (Method 4) fails because the page requires JavaScript rendering.
+Full browser automation via `mcp__Claude_in_Chrome__*` -- JS rendering, interaction. Follow `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-browser.md`. **CRITICAL:** Single atomic extraction script, inject redirect blocker immediately, close tab after.
 
-Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-browser.md`.
-
-Key tools:
-- `mcp__Claude_in_Chrome__navigate` -- navigate to URL
-- `mcp__Claude_in_Chrome__read_page` -- read page content
-- `mcp__Claude_in_Chrome__screenshot` -- screenshot for verification
-- `mcp__Claude_in_Chrome__click` -- interact with elements
-
-Key points:
-- Navigate to URL, inject redirect blocker IMMEDIATELY
-- Wait 2-3 seconds for full render
-- **CRITICAL:** Single atomic extraction script (never split across multiple calls)
-- Expand all collapsibles before extraction
-- Close tab after extraction
-
-**Fail triggers -> Method 6:** Chrome Automation tools not found, navigation fails, persistent redirect.
+**Fail triggers -> Method 6:** Tools not found, navigation fails, persistent redirect.
 
 ### Method 6: WebFetch
 
-**Always available** (built-in Claude Code tool).
-
-Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-webfetch.md`.
-
-Key points:
-- Use WebFetch with detailed extraction prompt requesting markdown output
-- Check for redirects by comparing FINAL_URL with requested URL
-- Limitation: datacenter IPs, blocked by most WAFs
-- Limitation: AI may summarize instead of preserving verbatim
+Always available. Follow `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-webfetch.md`. Datacenter IP (blocked by most WAFs); AI may summarize instead of preserving verbatim.
 
 **Fail triggers -> Method 7:** HTTP 403, timeout, challenge page, incomplete content.
 
 ### Method 7: Paste-in (Manual Fallback)
 
-Read detailed instructions from `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-paste-in.md`.
-
-Key points:
-- Report which methods failed and why
-- Prompt operator to open page in browser, copy content, paste
-- Process pasted text/HTML into markdown
-- Ask for meta information separately
-- Confirm final URL from browser address bar
+Follow `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-paste-in.md`. Report failed methods, prompt operator to paste content, process into markdown.
 
 ---
 

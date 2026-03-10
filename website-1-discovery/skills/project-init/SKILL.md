@@ -1,6 +1,6 @@
 ---
 name: project-init
-description: "Initialize a new website project or show current pipeline status. Creates project directory structure and state file. Invoke when the user says 'initialize project', 'start new project', 'project status', 'what documents are done', or begins work on a new client website."
+description: "Initialize a new website project, show pipeline status, or update document state. Invoke when the user says 'initialize project', 'start new project', 'project status', 'what documents are done', 'mark D1 interview complete', 'update D1 status', or begins work on a new client website."
 allowed-tools: Read, Write, Glob, Bash
 version: 1.0.0
 ---
@@ -15,8 +15,9 @@ Initialize a new project or display pipeline status. Mode is determined automati
 
 Check whether `project-state.md` exists in the current working directory.
 
-- File exists: go to **Status Mode**.
 - File does not exist: go to **Initialize Mode**.
+- File exists AND operator requested a state update (e.g., "mark D1 interview complete"): go to **Update Mode**.
+- File exists (no update request): go to **Status Mode**.
 
 ---
 
@@ -65,8 +66,8 @@ Write `project-state.md` in the current working directory using this template. R
 | Doc | Name | Status | File | Updated |
 |---|---|---|---|---|
 | D1 | Client Intake | -- | -- | -- |
-| D3 | Project Research | -- | -- | -- |
-| D4 | Project Brief | -- | -- | -- |
+| D2 | Project Research | -- | -- | -- |
+| D3 | Project Brief | -- | -- | -- |
 ```
 
 ### 4. Confirm
@@ -111,8 +112,8 @@ Secondary: {secondary languages or "none"}
 
 PIPELINE STATUS
   D1 Client Intake       [{status}]
-  D3 Project Research    [{status}]
-  D4 Project Brief       [{status}]
+  D2 Project Research    [{status}]
+  D3 Project Brief       [{status}]
 
 Progress: {n}/3 complete
 
@@ -131,22 +132,46 @@ Apply this logic in order:
 | Condition | Suggestion |
 |---|---|
 | D1 not complete | "Run client-intake to produce D1." |
-| D1 research-complete | "Interview the client and fill answers into D1. Then run project-research to produce D3." |
-| D1 interview-complete, D3 not complete | "Run project-research to produce D3." |
-| D3 complete, D4 not complete | "Run project-brief to produce D4." |
+| D1 research-complete | "Interview the client and fill answers into D1. Then run project-research to produce D2." |
+| D1 interview-complete, D2 not complete | "Run project-research to produce D2." |
+| D2 complete, D3 not complete | "Run project-brief to produce D3." |
 | All complete | "Pipeline complete." |
+
+---
+
+## Update Mode
+
+For manual state transitions that no downstream skill handles automatically.
+
+### 1. Parse Request
+
+Read `project-state.md`. Identify which document and target status the operator wants to set.
+
+Currently supported:
+
+| Request | Action |
+|---|---|
+| "mark D1 interview complete" | Set D1 status from `research-complete` to `interview-complete` |
+
+If the request does not match a supported transition, inform the operator and stop.
+
+### 2. Validate
+
+Check that the current status allows the transition. D1 must be `research-complete` before it can become `interview-complete`. If the precondition is not met, warn the operator and stop.
+
+### 3. Update and Confirm
+
+Update the pipeline row in `project-state.md` (status + updated date). Display: "D1 status updated to interview-complete. Next step: Run project-research to produce D2."
 
 ---
 
 ## State Update Convention
 
-This skill does NOT include a state update mode. Each downstream skill updates `project-state.md` directly after producing its document.
-
-**Pattern for downstream skills:**
+Each downstream skill updates `project-state.md` directly after producing its document:
 
 1. Read `project-state.md`
 2. Find the pipeline row matching the document just produced
 3. Update the row: Status → `complete`, File → relative path to output, Updated → `YYYY-MM-DD`
 4. Write `project-state.md`
 
-This keeps state maintenance distributed -- each skill owns its own row update.
+Manual transitions (e.g., D1 `research-complete` → `interview-complete`) use this skill's Update Mode.

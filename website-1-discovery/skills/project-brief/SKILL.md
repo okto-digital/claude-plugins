@@ -1,13 +1,13 @@
 ---
 name: project-brief
-description: "Generate D4: Project Brief & Proposal from D1 + D3. Client-facing document with current state assessment, key findings, proposed solution, scope, timeline, and success metrics. Invoke when the user asks to generate the brief, write the proposal, produce D4, or finalize discovery."
+description: "Generate D3: Project Brief & Proposal from D1 + D2. Client-facing document with current state assessment, key findings, proposed solution, scope, timeline, and success metrics. Invoke when the user asks to generate the brief, write the proposal, produce D3, or finalize discovery."
 allowed-tools: Read, Write, Glob, AskUserQuestion
 version: 1.0.0
 ---
 
 # Project Brief
 
-Read D1 (Client Intake) and D3 (Project Research), synthesize into D4: a client-facing Project Brief & Proposal. Single pass -- no sub-agents needed.
+Read D1 (Client Intake) and D2 (Project Research), synthesize into D3: a client-facing Project Brief & Proposal. Single pass -- no sub-agents needed.
 
 **Core principle:** Every recommendation traces to evidence. Every section tells the client something actionable. No internal jargon, no raw research dumps.
 
@@ -21,27 +21,26 @@ Read `project-state.md` from the project working directory. Extract client name,
 
 If project-state.md does not exist, stop and tell the operator: "Run project-init first to set up the project."
 
-If D1 is not complete, stop and tell the operator: "D1 (Client Intake) must be complete before generating D4. Run client-intake first."
+If D1 is not complete, stop: "Run client-intake first."
 
-If D3 is not complete, warn the operator: "D3 (Project Research) is not complete. D4 can be generated from D1 alone, but the proposal will lack research-backed evidence and will be significantly weaker. Proceed anyway?" Use AskUserQuestion to confirm. If operator declines, stop.
+If D1 is `research-complete` (not `interview-complete`), warn: "D1 has research findings but no client answers. Proposal will lack client priorities. Proceed?" Use AskUserQuestion.
+
+If D2 is not complete, warn: "D2 not complete. D3 from D1 alone will lack research evidence. Proceed?" Use AskUserQuestion. If declined, stop.
 
 ### Step 2: Load D1
 
 Read the full D1 document (path from project-state.md). Extract:
 
-- **Company identity:** Name, industry, location, services, business model, positioning
-- **Current website assessment:** Structure, content, tech stack, issues (Section 1.3)
-- **Digital presence:** Social, SEO, conversion elements, analytics (Section 1.4)
-- **Competitive context:** Competitors identified, client positioning (Section 1.5)
-- **External intelligence:** News, reviews, social presence (Section 1.6)
-- **Client priorities:** From interview answers throughout Section 2 domains
-- **Active domains:** Which of the 21 domains had STATUS: ACTIVE (determines applicable phases)
-- **Key gaps:** CRITICAL gaps that were not resolved in the interview
-- **Complexity signals:** Page count (from site-structure domain), integration count (from technical-platform), content volume (from content-strategy), conditional domains active (migration, ecommerce, booking, multilingual)
+- Company identity (name, industry, location, services, positioning)
+- Website assessment, digital presence, competitive context, external intelligence (Sections 1.3-1.6)
+- Client priorities from interview answers (Section 2 domains)
+- Active domains (determines applicable phases)
+- Unresolved CRITICAL gaps
+- Complexity signals: page count, integration count, content volume, conditional domains active
 
-### Step 3: Load D3
+### Step 3: Load D2
 
-Read the full D3 document (path from project-state.md). Extract:
+Read the full D2 document (path from project-state.md). Extract:
 
 - **Executive summary:** Cross-topic findings and overall assessment
 - **Strategic opportunities:** Market gaps, differentiation angles, quick wins
@@ -51,12 +50,12 @@ Read the full D3 document (path from project-state.md). Extract:
 
 ### Step 4: Load R-documents (selective)
 
-Scan `research/` for R-document files. Read individual R-documents only where D3 summaries lack sufficient detail for specific recommendations. Focus on:
+Scan `research/` for R-document files. Read individual R-documents only where D2 summaries lack sufficient detail for specific recommendations. Focus on:
 
 - **Recommendations sections** -- these contain the specific, actionable items that feed into Section 4
 - **Key findings** -- for evidence to cite in Sections 2 and 3
 
-Do not read all R-documents by default. D3 consolidates the essentials. Only go deeper when writing a section and the D3 summary is too thin for specifics.
+Do not read all R-documents by default. D2 consolidates the essentials. Only go deeper when writing a section and the D2 summary is too thin for specifics.
 
 ### Step 5: Determine applicable phases
 
@@ -78,11 +77,7 @@ Record the list of applicable phases for use in Steps 7 and 8.
 
 ### Step 6: Estimate hours
 
-Apply baseline ranges per phase, adjusted by complexity signals from D1.
-
-**Complexity determination:**
-
-Assess overall project complexity as simple, medium, or complex based on these signals:
+Assess complexity as simple/medium/complex from D1 signals, then apply baseline hour ranges:
 
 | Signal | Simple | Medium | Complex |
 |---|---|---|---|
@@ -114,55 +109,46 @@ Notes:
 - Testing & Launch and Post-Launch are sub-phases of "Launch & Post-Launch" -- show them as separate rows in the scope table
 - These are starting estimates for the proposal, not fixed quotes
 
-### Step 7: Read D4 template
+### Step 7: Read D3 template
 
-Read `references/d4-template.md` (relative to the plugin root -- use `${CLAUDE_PLUGIN_ROOT}/references/d4-template.md` or locate via Glob). This provides the output structure, formatting rules, and section guidelines.
+Read `references/d3-template.md` (relative to the plugin root -- use `${CLAUDE_PLUGIN_ROOT}/references/d3-template.md` or locate via Glob). This provides the output structure, formatting rules, and section guidelines.
 
-### Step 8: Write D4
+### Step 8: Write D3
 
 Create the `brief/` directory in the project working directory if it does not exist.
 
-Synthesize all extracted data into the D4 template structure. Write to `brief/D4-project-brief.md`.
+If `brief/D3-project-brief.md` already exists, warn: "D3 already exists at brief/D3-project-brief.md. Overwrite?" Use AskUserQuestion. If declined, stop.
+
+Synthesize all extracted data into the D3 template structure. Write to `brief/D3-project-brief.md`.
 
 **Section-by-section synthesis:**
 
-**Section 1 (Executive Summary):** Combine D1 company identity + project type + D3 strategic summary into a one-page overview. Lead with who the client is, what we propose, and the expected business outcome.
-
-**Section 2 (Current State Assessment):** Build from D1 Sections 1.3-1.6 (website assessment, digital presence, competitive context, external intelligence) enriched with D3 topic summaries. Organize by the five client-facing areas (Online Presence, Search Visibility, Competitive Position, Technical Health, Reputation & Trust). Write narrative prose with specific evidence. End each area with a "Bottom line:" statement.
-
-**Section 3 (Key Findings):** Synthesize from D3 executive summary and strategic opportunities. Select 5-8 findings that directly drive the proposal. Each finding must have a specific evidence statement and a business impact explanation. These are cross-topic insights, not per-topic summaries.
-
-**Section 4 (Proposed Solution):** For each applicable phase (from Step 5), write 3-6 specific actions. Each action traces to a finding from Section 3 or an observation from Section 2. Include the "why" and "expected outcome" for each. Use R-document recommendations as the source for specific action items -- go back to individual R-documents (Step 4) if D3 summaries lack the specificity needed.
-
-**Section 5 (Scope & Timeline):** Build the table using applicable phases, hour estimates from Step 6, and project-specific deliverables. Timeline assumes sequential phases with natural overlap. Add a total row.
-
-**Section 6 (Total Hours Summary):** Sum the ranges from Section 5. If total exceeds 120h, present MVP vs full scope split.
-
-**Section 7 (Success Metrics):** Select 3-5 KPIs from D1 client priorities and D3 research baselines. Each needs a current baseline (from research data) and a realistic 6-month target.
-
-**Section 8 (Next Steps):** 2-3 concrete actions. Always include: review brief, schedule kickoff. Add project-specific items (provide access to hosting, CMS, brand materials, etc.) based on what D1 identified as needed.
+1. **Executive Summary:** D1 identity + project type + D2 strategic summary. One page. Who, what, why, expected outcome.
+2. **Current State Assessment:** D1 Sections 1.3-1.6 enriched with D2 topics. Five areas: Online Presence, Search Visibility, Competitive Position, Technical Health, Reputation & Trust. Narrative prose, specific evidence, end each with "Bottom line:" statement.
+3. **Key Findings:** 5-8 cross-topic insights from D2 executive summary + strategic opportunities. Each needs evidence + business impact.
+4. **Proposed Solution:** 3-6 actions per applicable phase (from Step 5). Each traces to Section 3 finding or Section 2 observation with "why" and "expected outcome". Use R-documents (Step 4) when D2 summaries lack specificity.
+5. **Scope & Timeline:** Table with applicable phases, hour estimates (Step 6), project-specific deliverables. Add total row.
+6. **Total Hours Summary:** Sum from Section 5. If >120h, split MVP vs full scope.
+7. **Success Metrics:** 3-5 measurable KPIs from D1 priorities + D2 baselines with 6-month targets.
+8. **Next Steps:** 2-3 actions: review brief, schedule kickoff, provide access to needed assets.
 
 ### Writing rules
 
-Apply these rules throughout the document:
+Apply throughout:
 
 - **Second person** where natural ("your website", "your competitors")
-- **No internal codes** -- never write R1, R2, D1, D3 in the output document
-- **No intake questions** -- D4 contains answers and recommendations, never questions
-- **No confidence scores** -- internal quality tracking stays internal
-- **No gap/checkpoint language** -- no "FOUND", "PARTIAL", "GAP", "CRITICAL gap"
+- **No internal codes** -- never write R1, R2, D1, D2 in the output
+- **No internal language** -- no intake questions, confidence scores, "FOUND"/"PARTIAL"/"GAP" labels
 - **Evidence over assertion** -- every recommendation links to an observed fact
-- **Business language** -- "this will help you capture more leads" not "this improves conversion rate optimization"
 - **Specific over generic** -- name competitors, cite numbers, reference actual pages
-- **Prose over bullets** in Sections 2 and 3 -- use narrative paragraphs, not bullet dumps
-- **Bullets for actions** in Section 4 -- each action is a distinct line item
+- **Prose** in Sections 2-3, **bullets** for actions in Section 4
 
 ### Step 9: Present to operator
 
-After writing D4, display a summary to the operator:
+After writing D3, display a summary to the operator:
 
 ```
-D4: Project Brief & Proposal -- [Client Name]
+D3: Project Brief & Proposal -- [Client Name]
 
 Sections written:
   1. Executive Summary
@@ -174,20 +160,20 @@ Sections written:
   7. Success Metrics ([N] KPIs)
   8. Next Steps
 
-Output: brief/D4-project-brief.md
+Output: brief/D3-project-brief.md
 
 Review the document and let me know if any sections need adjustment.
 ```
 
-Wait for operator feedback. If they request changes, edit D4 in place.
+Wait for operator feedback. If they request changes, edit D3 in place.
 
 ### Step 10: Update state
 
 After operator approves (or does not request changes), update `project-state.md`:
 
 1. Read `project-state.md`
-2. Find the D4 pipeline row
-3. Update: Status to `complete`, File to `brief/D4-project-brief.md`, Updated to today's date
+2. Find the D3 pipeline row
+3. Update: Status to `complete`, File to `brief/D3-project-brief.md`, Updated to today's date
 4. Write `project-state.md`
 
-Display: "D4 complete. Pipeline status: 3/3 documents done."
+Display: "D3 complete. Pipeline status: 3/3 documents done."
