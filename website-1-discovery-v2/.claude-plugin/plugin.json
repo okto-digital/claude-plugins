@@ -1,0 +1,8 @@
+{
+  "name": "website-1-discovery-v2",
+  "version": "0.1.0",
+  "description": "Website discovery pipeline v2 — 6-phase sequential process from INIT to proposal",
+  "author": {
+    "name": "okto.digital"
+  }
+}
