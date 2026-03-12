@@ -72,7 +72,11 @@ Each dispatch provides:
 
 ### Step 6: Consolidate with bash
 
-After all domains complete, produce D4 with two bash operations.
+<critical>
+**This step is purely mechanical.** Use ONLY bash commands (jq, cat, echo). Do NOT use the Read tool on any G-file, R-file, or D-file. Extract counts and client name via jq, not by reading files into context. Reading output files here wastes thousands of tokens for no reason.
+</critical>
+
+After all domains complete, produce D4 with bash operations only.
 
 **JSON consolidation:**
 
@@ -80,31 +84,24 @@ After all domains complete, produce D4 with two bash operations.
 jq -s '{meta:{date:(now|todate),active_domains:[.[]|select(.status=="ACTIVE")|.domain],inactive_domains:[.[]|select(.status=="INACTIVE")|.domain],total_critical_unresolved:([.[]|select(.status=="ACTIVE")|(.counts.critical_total-.counts.critical_resolved)]|add//0),status:"awaiting_answers"},domains:.}' gap-analysis/G*-*.json > D4-Gap-Analysis.json
 ```
 
-**Markdown consolidation:**
+**Markdown consolidation (all bash):**
 
-Read the just-created `D4-Gap-Analysis.json` to extract meta counts (active domains, critical unresolved). Read client name from `D1-Init.json`. Then:
-
-1. Write the D4 header to `D4-Gap-Analysis.md`:
-
-```
-# Domain Gap Analysis -- {Client Name}
-*Generated: {date} | Active domains: {active}/{total} | Critical unresolved: {n}*
+```bash
+CLIENT=$(jq -r '.project.client' D1-Init.json)
+ACTIVE=$(jq '[.meta.active_domains|length]|.[0]' D4-Gap-Analysis.json)
+TOTAL=$(jq '[.meta.active_domains,.meta.inactive_domains]|map(length)|add' D4-Gap-Analysis.json)
+CRIT=$(jq '.meta.total_critical_unresolved' D4-Gap-Analysis.json)
+DATE=$(date +%Y-%m-%d)
+echo "# Domain Gap Analysis -- $CLIENT
+*Generated: $DATE | Active domains: $ACTIVE/$TOTAL | Critical unresolved: $CRIT*
 *Answer all CRITICAL questions before proceeding to Concept Creation.*
 
 ---
-```
-
-2. Append all per-domain markdown files (G-codes sort naturally):
-
-```bash
+" > D4-Gap-Analysis.md
 cat gap-analysis/G*-*.md >> D4-Gap-Analysis.md
-```
-
-3. Append footer:
-
-```
+echo "
 ---
-*Return this document with all CRITICAL questions answered to proceed to Concept Creation.*
+*Return this document with all CRITICAL questions answered to proceed to Concept Creation.*" >> D4-Gap-Analysis.md
 ```
 
 ### Step 7: Update project-state.md

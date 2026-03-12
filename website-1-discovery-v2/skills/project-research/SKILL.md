@@ -130,6 +130,10 @@ Dispatch for substages 3.8, 3.9. R8 gets R3 + R7 paths. R9 gets R2 + R3 + R4 + R
 
 ### Step 6: Consolidate with bash
 
+<critical>
+**This step is purely mechanical.** Use ONLY bash commands (jq, cat, echo). Do NOT read any R-file into context — no Read tool, no opening JSON/MD files. The whole point is to merge files without consuming context tokens. If you read research files here, you are wasting thousands of tokens for no reason.
+</critical>
+
 After all waves complete, produce D3 from the per-substage files. This is a convenience consolidation for human review — downstream agents read individual R-files, not D3.
 
 **JSON consolidation:**
@@ -138,21 +142,18 @@ After all waves complete, produce D3 from the per-substage files. This is a conv
 jq -s '{meta:{date:(now|todate),completed:[.[].code],count:length},substages:.}' research/R*-*.json > D3-Research.json
 ```
 
-**Markdown consolidation:**
-
-Write a header to `D3-Research.md`, then append all per-substage markdown files in order:
+**Markdown consolidation (all bash):**
 
 ```bash
-cat research/R*-*.md >> D3-Research.md
-```
-
-Header format:
-
-```
-# Research Overview — {Client Name}
-*Generated: {date} | Substages completed: {n}/9*
+CLIENT=$(jq -r '.project.client' D1-Init.json)
+COUNT=$(jq '.meta.count' D3-Research.json)
+DATE=$(date +%Y-%m-%d)
+echo "# Research Overview — $CLIENT
+*Generated: $DATE | Substages completed: $COUNT/9*
 
 ---
+" > D3-Research.md
+cat research/R*-*.md >> D3-Research.md
 ```
 
 ### Step 7: Update project-state.md

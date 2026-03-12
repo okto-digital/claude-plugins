@@ -82,7 +82,11 @@ Wait for Wave 1 to complete. Then dispatch:
 
 ### Step 6: Consolidate with bash
 
-After all sections complete, produce D5 with two bash operations.
+<critical>
+**This step is purely mechanical.** Use ONLY bash commands (jq, cat, echo). Do NOT use the Read tool on any C-file or D-file. Extract counts and client name via jq, not by reading files into context. Reading output files here wastes thousands of tokens for no reason.
+</critical>
+
+After all sections complete, produce D5 with bash operations only.
 
 **JSON consolidation:**
 
@@ -90,30 +94,22 @@ After all sections complete, produce D5 with two bash operations.
 jq -s '{meta:{date:(now|todate),sections:[.[].code],count:length},sections:.}' concept/C*-*.json > D5-Concept.json
 ```
 
-**Markdown consolidation:**
+**Markdown consolidation (all bash):**
 
-Read client name from `D1-Init.json`. Write the D5 header to `D5-Concept.md`:
-
-```
-# Website Concept -- {Client Name}
-*Generated: {date} | Sections: {n}/5*
+```bash
+CLIENT=$(jq -r '.project.client' D1-Init.json)
+COUNT=$(jq '.meta.count' D5-Concept.json)
+DATE=$(date +%Y-%m-%d)
+echo "# Website Concept -- $CLIENT
+*Generated: $DATE | Sections: $COUNT/5*
 *Review and approve this concept before proceeding to Proposal generation.*
 
 ---
-
-```
-
-Append all per-section markdown files in order:
-
-```bash
+" > D5-Concept.md
 cat concept/C*-*.md >> D5-Concept.md
-```
-
-Append footer:
-
-```
+echo "
 ---
-*Approve this concept to proceed to Proposal & Brief generation.*
+*Approve this concept to proceed to Proposal & Brief generation.*" >> D5-Concept.md
 ```
 
 ### Step 7: Update project-state.md
