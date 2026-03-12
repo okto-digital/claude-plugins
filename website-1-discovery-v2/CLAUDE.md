@@ -167,6 +167,23 @@ Raw input → Agent processing → JSON output → Markdown generated → Human 
 **Temporary files:** All temporary files (curl downloads, HTML stripping, debug logs) MUST be written to the project's `tmp/` directory (`{working_directory}/tmp/`), NOT to system `/tmp/`. This directory is created by project-init and is gitignored. In Cowork sessions, system `/tmp/` may not exist or be writable — the project-local `tmp/` is always safe.
 </critical>
 
+### MCP Context Budget
+
+MCP tool definitions consume context tokens in every session — including sub-agents dispatched via Task, which inherit ALL parent MCP tools. With DataForSEO + Desktop Commander + Apify + Chrome Control + Chrome Automation loaded, MCP tools alone can consume 100k+ tokens (~50% of a 200k context window), leaving little room for actual work.
+
+**Phase-specific MCP requirements:**
+
+| Phase | MCP tools needed | Can disable the rest? |
+|---|---|---|
+| 1 Init | None | Yes — all MCP is waste |
+| 2 Client Intelligence | Desktop Commander | Disable DataForSEO, Apify, Chrome |
+| 3 Research | DataForSEO + Desktop Commander | Disable Chrome (unless crawler needs it) |
+| 4 Gap Analysis | **None** | Yes — agents use only Read/Write |
+| 5 Concept Creation | **None** | Yes — agents use only Read/Write |
+| 6 Proposal | **None** | Yes — skill uses only Read/Write |
+
+**Recommendation:** Start a fresh Cowork session per phase group. Phases 4-6 need zero MCP tools — running them in a session without MCP servers saves ~100k tokens of context for actual work.
+
 ## How to Think
 
 - **Evidence first** -- Every recommendation needs backing from crawled pages, search results, or client statements. Never recommend blind.
