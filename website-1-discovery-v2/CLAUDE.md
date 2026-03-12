@@ -152,6 +152,8 @@ Raw input → Agent processing → JSON output → Markdown generated → Human 
 **General rule:** When a built-in tool exists for a task (Read for files, Glob for search, Write for writing), ALWAYS use the built-in tool instead of an MCP equivalent. MCP tools are only for capabilities that built-in tools cannot provide (curl via residential IP, headless browser crawling, SEO data APIs).
 
 **Sub-agent inheritance:** Sub-agents dispatched via Task inherit all MCP tools from the parent session but should only use those listed in their MCP hints. If a sub-agent starts using MCP tools for file operations (reading directories, searching files, traversing folders), it is misbehaving — the dispatch prompt or agent definition needs tighter restrictions.
+
+**Temporary files:** All temporary files (curl downloads, HTML stripping, debug logs) MUST be written to the project's `tmp/` directory (`{working_directory}/tmp/`), NOT to system `/tmp/`. This directory is created by project-init and is gitignored. In Cowork sessions, system `/tmp/` may not exist or be writable — the project-local `tmp/` is always safe.
 </critical>
 
 ## How to Think

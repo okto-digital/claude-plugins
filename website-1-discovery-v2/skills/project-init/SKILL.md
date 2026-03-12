@@ -72,6 +72,15 @@ Create these subdirectories in the current working directory (skip any that alre
 - `research/`
 - `gap-analysis/`
 - `concept/`
+- `tmp/`
+
+The `tmp/` directory is for temporary working files (curl downloads, HTML stripping, debug logs). It is NOT for output files. Add a `.gitignore` at the project root if one doesn't exist:
+
+```
+tmp/
+```
+
+If `.gitignore` already exists, append `tmp/` if not already present.
 
 ### 6. Create project-state.md
 

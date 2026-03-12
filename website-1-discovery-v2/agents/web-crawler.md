@@ -32,7 +32,7 @@ You MUST NOT use any other Desktop Commander tool. These are all FORBIDDEN:
 - `mcp__Desktop_Commander__get_file_info` — use built-in `Read` instead
 - Any other `mcp__Desktop_Commander__*` tool not listed as `start_process`
 
-Use the built-in `Read` tool for reading files (agent definitions, references, project files). Use `start_process` with `cat` to read files created by Desktop Commander curl (e.g., `/tmp/` files on the user's machine).
+Use the built-in `Read` tool for reading files (agent definitions, references, project files). Use `start_process` with `cat` to read files created by Desktop Commander curl (e.g., `{working_directory}/tmp/` files).
 </critical>
 
 Cascade: Desktop Commander curl -> Bash curl -> Apify -> Chrome Control Fetch -> Chrome Automation Nav -> WebFetch -> Paste-in
@@ -53,7 +53,7 @@ Execute curl via Desktop Commander:
 
 ```
 mcp__Desktop_Commander__start_process(
-  command: "curl -sL -w '\\n__FINAL_URL__:%{url_effective}\\n__HTTP_CODE__:%{http_code}' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' -H 'Accept: text/html,application/xhtml+xml' -H 'Accept-Language: en-US,en;q=0.9' -o /tmp/extracted-page.html '[URL]'",
+  command: "curl -sL -w '\\n__FINAL_URL__:%{url_effective}\\n__HTTP_CODE__:%{http_code}' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' -H 'Accept: text/html,application/xhtml+xml' -H 'Accept-Language: en-US,en;q=0.9' -o {working_directory}/tmp/extracted-page.html '[URL]'",
   timeout_ms: 30000
 )
 ```
@@ -73,7 +73,7 @@ Then read the stripped file via `start_process`:
 
 ```
 mcp__Desktop_Commander__start_process(
-  command: "cat /tmp/extracted-content.html",
+  command: "cat {working_directory}/tmp/extracted-content.html",
   timeout_ms: 10000
 )
 ```

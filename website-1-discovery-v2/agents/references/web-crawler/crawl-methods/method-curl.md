@@ -4,6 +4,8 @@ Preferred extraction method. curl follows redirects transparently, reports the f
 
 **Requires shell access.** This method works with any shell execution tool -- Bash, Desktop Commander, terminal MCP, or similar. If no shell tool is available, skip to Method 2.
 
+**Temporary files:** All paths use `{working_directory}/tmp/` -- the project-local temp directory. Replace `{working_directory}` with the absolute project path from your dispatch prompt. This ensures temp files are written to the project directory, not system `/tmp/` (which may not exist or be writable in Cowork sessions).
+
 <critical>
 **Shell tool priority in cloud environments (Cowork):**
 If multiple shell tools are available, prefer tools that execute on the **user's local machine** (e.g., Desktop Commander: `mcp__Desktop_Commander__start_process`) over tools that execute on the **cloud VM** (e.g., Bash in Cowork). Cloud VMs use datacenter IPs that get blocked by WAFs (curl exits with code 56 or returns 403). Desktop Commander runs on the user's machine with their residential/office IP, bypassing WAF restrictions.
@@ -22,7 +24,7 @@ curl -sL -w '\n__FINAL_URL__:%{url_effective}\n__HTTP_CODE__:%{http_code}' \
   -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' \
   -H 'Accept: text/html,application/xhtml+xml' \
   -H 'Accept-Language: en-US,en;q=0.9' \
-  -o /tmp/extracted-page.html \
+  -o {working_directory}/tmp/extracted-page.html \
   '[URL]'
 ```
 
@@ -39,10 +41,10 @@ Run via shell (or read the file directly and extract manually):
 
 ```bash
 # Extract meta title
-grep -oPm1 '(?<=<title>).*?(?=</title>)' /tmp/extracted-page.html
+grep -oPm1 '(?<=<title>).*?(?=</title>)' {working_directory}/tmp/extracted-page.html
 
 # Extract meta description
-grep -oPm1 '<meta[^>]*name=["\x27]description["\x27][^>]*content=["\x27]\K[^"\x27]*' /tmp/extracted-page.html
+grep -oPm1 '<meta[^>]*name=["\x27]description["\x27][^>]*content=["\x27]\K[^"\x27]*' {working_directory}/tmp/extracted-page.html
 ```
 
 If grep patterns fail (multiline title tags, different quote styles), read the HTML file directly and extract the values manually.
@@ -60,7 +62,7 @@ If grep patterns fail (multiline title tags, different quote styles), read the H
 python3 << 'PYEOF'
 import re
 
-with open('/tmp/extracted-page.html', 'r', encoding='utf-8', errors='ignore') as f:
+with open('{working_directory}/tmp/extracted-page.html', 'r', encoding='utf-8', errors='ignore') as f:
     html = f.read()
 
 # Remove head section entirely
@@ -79,24 +81,24 @@ html = re.sub(r'\s+style="[^"]*"', '', html)
 # Collapse whitespace runs
 html = re.sub(r'\n\s*\n', '\n\n', html)
 
-with open('/tmp/extracted-content.html', 'w', encoding='utf-8') as f:
+with open('{working_directory}/tmp/extracted-content.html', 'w', encoding='utf-8') as f:
     f.write(html.strip())
 
 import os
-original = os.path.getsize('/tmp/extracted-page.html')
-stripped = os.path.getsize('/tmp/extracted-content.html')
+original = os.path.getsize('{working_directory}/tmp/extracted-page.html')
+stripped = os.path.getsize('{working_directory}/tmp/extracted-content.html')
 print(f'Stripped: {original/1024:.0f}KB -> {stripped/1024:.0f}KB ({100-stripped/original*100:.0f}% removed)')
 PYEOF
 ```
 
-Then read `/tmp/extracted-content.html` (not the original) for conversion.
+Then read `{working_directory}/tmp/extracted-content.html` (not the original) for conversion.
 
 If `python3` is not available, use `python` instead. If neither is available, try `node`:
 
 ```bash
 node -e "
 const fs = require('fs');
-let html = fs.readFileSync('/tmp/extracted-page.html', 'utf8');
+let html = fs.readFileSync('{working_directory}/tmp/extracted-page.html', 'utf8');
 html = html.replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '');
 ['script','style','noscript','svg'].forEach(t => {
   html = html.replace(new RegExp('<'+t+'[^>]*>[\\\\s\\\\S]*?</'+t+'>','gi'), '');
@@ -104,15 +106,15 @@ html = html.replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '');
 html = html.replace(/<!--[\s\S]*?-->/g, '');
 html = html.replace(/\s+style=\"[^\"]*\"/g, '');
 html = html.replace(/\n\s*\n/g, '\n\n');
-fs.writeFileSync('/tmp/extracted-content.html', html.trim());
-const o = fs.statSync('/tmp/extracted-page.html').size;
-const s = fs.statSync('/tmp/extracted-content.html').size;
+fs.writeFileSync('{working_directory}/tmp/extracted-content.html', html.trim());
+const o = fs.statSync('{working_directory}/tmp/extracted-page.html').size;
+const s = fs.statSync('{working_directory}/tmp/extracted-content.html').size;
 console.log('Stripped: '+(o/1024|0)+'KB -> '+(s/1024|0)+'KB ('+(100-s/o*100|0)+'% removed)');
 "
 ```
 </critical>
 
-After stripping, read `/tmp/extracted-content.html` and convert the main content to markdown.
+After stripping, read `{working_directory}/tmp/extracted-content.html` and convert the main content to markdown.
 
 1. Identify the main content area (see `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/formatting-rules.md` for selectors).
 2. Apply all conversion rules from `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/formatting-rules.md`.
