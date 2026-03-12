@@ -182,7 +182,13 @@ MCP tool definitions consume context tokens in every session — including sub-a
 | 5 Concept Creation | **None** | Yes — agents use only Read/Write |
 | 6 Proposal | **None** | Yes — skill uses only Read/Write |
 
-**Recommendation:** Start a fresh Cowork session per phase group. Phases 4-6 need zero MCP tools — running them in a session without MCP servers saves ~100k tokens of context for actual work.
+**Mitigations:**
+
+1. **MCP Tool Search (automatic):** Project-init creates `.claude/settings.json` with `ENABLE_TOOL_SEARCH=auto:5`. This loads MCP tools on-demand instead of preloading all definitions — saving 50-70% of MCP token overhead.
+
+2. **DataForSEO module filtering:** Set `ENABLED_MODULES` in the DataForSEO MCP server config to load only needed modules. This plugin uses: `SERP,KEYWORDS_DATA,ONPAGE,DATAFORSEO_LABS,BUSINESS_DATA,DOMAIN_ANALYTICS,CONTENT_ANALYSIS`. Drop `BACKLINKS`, `AI_OPTIMIZATION`, and YouTube to save ~20k tokens.
+
+3. **Phase-grouped sessions:** Phases 4-6 need zero MCP tools — running them in a session without MCP servers saves ~100k tokens of context for actual work.
 
 ## How to Think
 

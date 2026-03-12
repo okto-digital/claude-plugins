@@ -82,6 +82,22 @@ tmp/
 
 If `.gitignore` already exists, append `tmp/` if not already present.
 
+### 5b. Create .claude/settings.json
+
+Create `.claude/settings.json` in the project root if it doesn't exist:
+
+```json
+{
+  "env": {
+    "ENABLE_TOOL_SEARCH": "auto:5"
+  }
+}
+```
+
+This enables MCP Tool Search, which dynamically loads MCP tool definitions on-demand instead of preloading all of them. Without this, MCP servers like DataForSEO (90+ tools) consume 50%+ of the context window before any work begins.
+
+If `.claude/settings.json` already exists, merge the `env` block without overwriting existing keys.
+
 ### 6. Create project-state.md
 
 Write `project-state.md` using the template in `${CLAUDE_PLUGIN_ROOT}/skills/project-init/references/templates.md` § Project State Template.
