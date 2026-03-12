@@ -158,9 +158,9 @@ Raw input → Agent processing → JSON output → Markdown generated → Human 
 ## MCP Tool Discipline
 
 <critical>
-**Desktop Commander:** The ONLY permitted tool is `mcp__Desktop_Commander__start_process` for running curl commands. ALL other Desktop Commander tools are FORBIDDEN — no `read_file`, `write_file`, `search_files`, `list_directory`, or `get_file_info`. Use built-in Read/Write/Glob tools for file operations. Use `start_process` with `cat` to read files created by curl on the user's machine.
+**mcp-curl:** Use `mcp__mcp-curl__curl_get` for standard HTTP requests and `mcp__mcp-curl__curl_advanced` for custom curl arguments. This MCP server runs on the user's local machine with residential IP, bypassing WAF restrictions. For HTML stripping and file operations after curl, use Bash (python scripts) and the built-in Read tool.
 
-**General rule:** When a built-in tool exists for a task (Read for files, Glob for search, Write for writing), ALWAYS use the built-in tool instead of an MCP equivalent. MCP tools are only for capabilities that built-in tools cannot provide (curl via residential IP, headless browser crawling, SEO data APIs).
+**General rule:** When a built-in tool exists for a task (Read for files, Glob for search, Write for writing), ALWAYS use the built-in tool instead of an MCP equivalent. MCP tools are only for capabilities that built-in tools cannot provide (HTTP requests via residential IP, headless browser crawling, SEO data APIs).
 
 **Sub-agent inheritance:** Sub-agents dispatched via Task inherit all MCP tools from the parent session but should only use those listed in their MCP hints. If a sub-agent starts using MCP tools for file operations (reading directories, searching files, traversing folders), it is misbehaving — the dispatch prompt or agent definition needs tighter restrictions.
 
@@ -169,15 +169,15 @@ Raw input → Agent processing → JSON output → Markdown generated → Human 
 
 ### MCP Context Budget
 
-MCP tool definitions consume context tokens in every session — including sub-agents dispatched via Task, which inherit ALL parent MCP tools. With DataForSEO + Desktop Commander + Apify + Chrome Control + Chrome Automation loaded, MCP tools alone can consume 100k+ tokens (~50% of a 200k context window), leaving little room for actual work.
+MCP tool definitions consume context tokens in every session — including sub-agents dispatched via Task, which inherit ALL parent MCP tools. With DataForSEO + mcp-curl + Apify loaded, MCP tools can consume 40-50k tokens (~25% of a 200k context window).
 
 **Phase-specific MCP requirements:**
 
 | Phase | MCP tools needed | Can disable the rest? |
 |---|---|---|
 | 1 Init | None | Yes — all MCP is waste |
-| 2 Client Intelligence | Desktop Commander | Disable DataForSEO, Apify, Chrome |
-| 3 Research | DataForSEO + Desktop Commander | Disable Chrome (unless crawler needs it) |
+| 2 Client Intelligence | mcp-curl | Disable DataForSEO, Apify |
+| 3 Research | DataForSEO + mcp-curl | Disable Apify (re-enable if curl cascade fails) |
 | 4 Gap Analysis | **None** | Yes — agents use only Read/Write |
 | 5 Concept Creation | **None** | Yes — agents use only Read/Write |
 | 6 Proposal | **None** | Yes — skill uses only Read/Write |

@@ -1,6 +1,6 @@
 ---
 description: "Unified web crawling with 7-method cascade. Crawl any URL and return content tailored to caller's needs."
-tools: Read, Bash, WebFetch, mcp__Desktop_Commander__*, mcp__Apify__*, mcp__Control_Chrome__*, mcp__Claude_in_Chrome__*
+tools: Read, Bash, WebFetch, mcp__mcp-curl__*, mcp__Apify__*, mcp__Control_Chrome__*, mcp__Claude_in_Chrome__*
 ---
 # Web Crawler
 
@@ -22,20 +22,12 @@ Unified web crawling interface. Crawl any URL and return content tailored to the
 **Do not detect tools upfront.** Try each method in cascade order; if a tool call fails, move to next. Dispatcher MCP hints confirm availability when present.
 
 <critical>
-**Desktop Commander: ONLY `mcp__Desktop_Commander__start_process` for running curl commands.**
+**mcp-curl** is the primary HTTP tool. It runs on the user's local machine with residential IP. Use `mcp__mcp-curl__curl_get` for standard requests or `mcp__mcp-curl__curl_advanced` for custom curl arguments.
 
-You MUST NOT use any other Desktop Commander tool. These are all FORBIDDEN:
-- `mcp__Desktop_Commander__read_file` — use built-in `Read` tool or `start_process` with `cat` instead
-- `mcp__Desktop_Commander__write_file` — use built-in `Write` tool instead
-- `mcp__Desktop_Commander__search_files` — use built-in `Glob` or `Grep` instead
-- `mcp__Desktop_Commander__list_directory` — use built-in `Glob` instead
-- `mcp__Desktop_Commander__get_file_info` — use built-in `Read` instead
-- Any other `mcp__Desktop_Commander__*` tool not listed as `start_process`
-
-Use the built-in `Read` tool for reading files (agent definitions, references, project files). Use `start_process` with `cat` to read files created by Desktop Commander curl (e.g., `{working_directory}/tmp/` files).
+For file operations, HTML stripping, and script execution after fetching: use Bash and the built-in Read tool. NEVER use MCP tools for file reading or writing.
 </critical>
 
-Cascade: Desktop Commander curl -> Bash curl -> Apify -> Chrome Control Fetch -> Chrome Automation Nav -> WebFetch -> Paste-in
+Cascade: mcp-curl -> Bash curl -> Apify -> Chrome Control Fetch -> Chrome Automation Nav -> WebFetch -> Paste-in
 
 If method override provided, skip to that method directly.
 
@@ -45,42 +37,35 @@ If method override provided, skip to that method directly.
 
 Try methods in strict order. Move to the next method only when the current one fails.
 
-### Method 1: curl via Desktop Commander
+### Method 1: curl via mcp-curl
 
-Desktop Commander runs on the user's local machine with residential/office IP, bypassing WAF restrictions that block datacenter IPs. Produces the most complete content (footer, images, social links, badges).
+mcp-curl runs on the user's local machine with residential/office IP, bypassing WAF restrictions that block datacenter IPs. Produces the most complete content (footer, images, social links, badges).
 
-Execute curl via Desktop Commander:
+Execute curl via mcp-curl using `curl_advanced` (saves to file for stripping):
 
 ```
-mcp__Desktop_Commander__start_process(
-  command: "curl -sL -w '\\n__FINAL_URL__:%{url_effective}\\n__HTTP_CODE__:%{http_code}' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' -H 'Accept: text/html,application/xhtml+xml' -H 'Accept-Language: en-US,en;q=0.9' -o {working_directory}/tmp/extracted-page.html '[URL]'",
-  timeout_ms: 30000
+mcp__mcp-curl__curl_advanced(
+  args: "-sL -w '\\n__FINAL_URL__:%{url_effective}\\n__HTTP_CODE__:%{http_code}' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' -H 'Accept: text/html,application/xhtml+xml' -H 'Accept-Language: en-US,en;q=0.9' -o {working_directory}/tmp/extracted-page.html '[URL]'"
 )
 ```
 
 Then check the curl output for HTTP code and final URL.
 
-Run the Python3 stripping script from method-curl.md via Desktop Commander `start_process`:
+Run the Python3 stripping script from method-curl.md via Bash:
 
 ```
-mcp__Desktop_Commander__start_process(
-  command: "python3 << 'PYEOF'\n[stripping script from method-curl.md]\nPYEOF",
-  timeout_ms: 15000
-)
+Bash("python3 << 'PYEOF'\n[stripping script from method-curl.md]\nPYEOF")
 ```
 
-Then read the stripped file via `start_process`:
+Then read the stripped file via Bash or Read tool:
 
 ```
-mcp__Desktop_Commander__start_process(
-  command: "cat {working_directory}/tmp/extracted-content.html",
-  timeout_ms: 10000
-)
+Bash("cat {working_directory}/tmp/extracted-content.html")
 ```
 
 Convert the returned content to markdown. Follow `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-curl.md` for full stripping script and processing details.
 
-**Fail triggers -> Method 2:** Desktop Commander tool not found, HTTP != 200, empty/tiny HTML, WAF block.
+**Fail triggers -> Method 2:** mcp-curl tool not found, HTTP != 200, empty/tiny HTML, WAF block.
 
 ### Method 2: curl via Bash
 
@@ -188,7 +173,7 @@ If any quality requirement fails, note it in the output.
 ## Boundaries
 
 <critical>
-**NEVER** use Desktop Commander tools other than `mcp__Desktop_Commander__start_process`. No `read_file`, `write_file`, `search_files`, `list_directory`, or any other Desktop Commander tool. Use `start_process` with `cat` to read files created by curl.
+**NEVER** use MCP tools for file operations. Use built-in Read/Write/Glob tools for files. Use Bash for scripts and cat. mcp-curl is for HTTP requests only.
 
 **NEVER** read large HTML files directly into context without stripping first. Always run the Python3/Node.js stripping script from method-curl.md for curl-based methods.
 

@@ -2,22 +2,21 @@
 
 Preferred extraction method. curl follows redirects transparently, reports the final URL, and fetches raw HTML. Most reliable for redirect detection.
 
-**Requires shell access.** This method works with any shell execution tool -- Bash, Desktop Commander, terminal MCP, or similar. If no shell tool is available, skip to Method 2.
+**Requires HTTP and shell access.** This method uses mcp-curl for fetching (residential IP) and Bash for post-fetch processing (HTML stripping). If neither is available, skip to Method 2.
 
 **Temporary files:** All paths use `{working_directory}/tmp/` -- the project-local temp directory. Replace `{working_directory}` with the absolute project path from your dispatch prompt. This ensures temp files are written to the project directory, not system `/tmp/` (which may not exist or be writable in Cowork sessions).
 
 <critical>
-**Shell tool priority in cloud environments (Cowork):**
-If multiple shell tools are available, prefer tools that execute on the **user's local machine** (e.g., Desktop Commander: `mcp__Desktop_Commander__start_process`) over tools that execute on the **cloud VM** (e.g., Bash in Cowork). Cloud VMs use datacenter IPs that get blocked by WAFs (curl exits with code 56 or returns 403). Desktop Commander runs on the user's machine with their residential/office IP, bypassing WAF restrictions.
+**mcp-curl runs on the user's local machine** with residential/office IP, bypassing WAF restrictions that block datacenter IPs. Always use `mcp__mcp-curl__curl_advanced` (or `curl_get`) as the primary fetch method. Bash curl runs on the cloud VM with datacenter IP — use it only as fallback (Method 2) when mcp-curl is unavailable.
 
-**If the first curl attempt fails with exit code 56 (connection reset) or HTTP 403, and Desktop Commander is available, retry immediately via Desktop Commander before moving to Method 2.** Do not waste attempts retrying with the same tool.
+**If mcp-curl fails with HTTP 403 or connection reset, move to Method 2 (Bash curl).** If Bash curl also fails (same WAF block), move to Method 3 (Apify). Do not retry the same method.
 </critical>
 
 ---
 
 ## Step 1: Fetch raw HTML
 
-Run via any available shell tool (preferring Desktop Commander over VM Bash in cloud environments):
+Run via mcp-curl (preferred, residential IP) or Bash (fallback, datacenter IP):
 
 ```bash
 curl -sL -w '\n__FINAL_URL__:%{url_effective}\n__HTTP_CODE__:%{http_code}' \
@@ -124,8 +123,8 @@ After stripping, read `{working_directory}/tmp/extracted-content.html` and conve
 
 ## When this method fails
 
-Move to Method 2 (WebFetch) if:
-- No shell tool is available (no Bash, Desktop Commander, or similar)
+Move to Method 2 (Bash curl) or Method 3 (Apify) if:
+- mcp-curl and Bash are both unavailable
 - `which curl` returns nothing (curl not installed)
 - HTTP status code is not 200 (403 Forbidden, 5xx, etc.)
 - HTML file is empty or under 500 bytes

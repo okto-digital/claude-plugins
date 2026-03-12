@@ -90,6 +90,6 @@ Dispatch sub-agents using the Task tool. The orchestrator provides agent definit
 **For web crawling:** Always dispatch `web-crawler` agent.
 
 - **Model:** `sonnet` for web-crawler and dataforseo (procedure-following).
-- **MCP hints:** Forward the hints from your own dispatch prompt that match the sub-agent's needs. web-crawler needs Desktop Commander (start_process ONLY), Apify, Chrome Control, Chrome Automation hints. dataforseo needs DataForSEO hints.
+- **MCP hints:** Forward the hints from your own dispatch prompt that match the sub-agent's needs. web-crawler needs mcp-curl, Apify, Chrome Control, Chrome Automation hints. dataforseo needs DataForSEO hints.
 - **One agent per Task call.** Do not combine multiple agents.
 - **NEVER** access `.claude/` directories, `.jsonl` files, or Claude session transcript paths. Ignore any such references in inherited context.

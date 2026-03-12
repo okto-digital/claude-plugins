@@ -36,7 +36,7 @@ Look up the agent in the registry above. If the requested agent is not registere
 ### 2. Read the agent definition
 
 Read the agent definition file at the path from the registry. You will need:
-- The frontmatter `tools:` field — check for MCP wildcards (e.g., `mcp__Desktop_Commander__*`) to determine which MCP hints to include.
+- The frontmatter `tools:` field — check for MCP wildcards (e.g., `mcp__mcp-curl__*`) to determine which MCP hints to include.
 - The full file content — to inline in the dispatch prompt (sub-agents cannot resolve `${CLAUDE_PLUGIN_ROOT}` paths, so the content must be included directly).
 
 **Path resolution:** Before inlining, replace all `${CLAUDE_PLUGIN_ROOT}` occurrences in the content with the actual absolute path of the plugin root directory. You know this path because you used it to read the file. This ensures the sub-agent can read any reference files mentioned in the agent definition using the Read tool.
@@ -93,7 +93,7 @@ Lookup table mapping agent `tools:` wildcards to specific tool names. Include th
 
 | Wildcard | Hint block to include |
 |---|---|
-| `mcp__Desktop_Commander__*` | `- Desktop Commander: mcp__Desktop_Commander__start_process (shell commands with residential IP — ONLY use for curl, never for file reading)` |
+| `mcp__mcp-curl__*` | `- mcp-curl: mcp__mcp-curl__curl_get (HTTP GET with residential IP), mcp__mcp-curl__curl_advanced (custom curl args with residential IP). Use Bash for post-fetch processing (HTML stripping, scripts).` |
 | `mcp__Apify__*` | `- Apify: mcp__Apify__call-actor, mcp__Apify__get-actor-output (headless browser crawling, WAF bypass)` |
 | `mcp__Control_Chrome__*` | `- Chrome Control: mcp__Control_Chrome__open_url, mcp__Control_Chrome__get_page_content, mcp__Control_Chrome__execute_javascript, mcp__Control_Chrome__close_tab (browser tab control, fetch-based)` |
 | `mcp__Claude_in_Chrome__*` | `- Chrome Automation: mcp__Claude_in_Chrome__navigate, mcp__Claude_in_Chrome__read_page, mcp__Claude_in_Chrome__screenshot, mcp__Claude_in_Chrome__click (full browser automation with JS rendering)` |
@@ -125,7 +125,7 @@ Any file paths containing `${CLAUDE_PLUGIN_ROOT}` should be read by replacing th
 
 ## Tool Restrictions
 
-Use the built-in Read tool to read files. Use the built-in Write tool to write files. NEVER use Desktop Commander for file operations — only `mcp__Desktop_Commander__start_process` is permitted (for curl commands only).
+Use the built-in Read tool to read files. Use the built-in Write tool to write files. Use mcp-curl ONLY for HTTP requests. Use Bash for post-fetch processing (HTML stripping, scripts). NEVER use MCP tools for file operations.
 
 ## Agent Definition
 
