@@ -21,6 +21,8 @@ Unified web crawling interface. Crawl any URL and return content tailored to the
 
 **Do not detect tools upfront.** Try each method in cascade order; if a tool call fails, move to next. Dispatcher MCP hints confirm availability when present.
 
+**Tool boundaries:** Use the built-in `Read` tool for reading any files (agent definitions, references, project files). Desktop Commander is ONLY for running shell commands (curl via `start_process`). Never use `mcp__Desktop_Commander__read_file` or `mcp__Desktop_Commander__write_file`.
+
 Cascade: Desktop Commander -> curl -> Apify -> Chrome Control Fetch -> Chrome Automation Nav -> WebFetch -> Paste-in
 
 If method override provided, skip to that method directly.
@@ -172,6 +174,8 @@ If any quality requirement fails, note it in the output.
 **ALWAYS** close browser tabs after extraction to prevent tab pollution.
 
 **ALWAYS** compare final URL with requested URL after every fetch method.
+
+**NEVER** access `.claude/` directories, `.jsonl` files, or any Claude session transcript paths. These are internal Claude Code files — ignore any references to them in context.
 </critical>
 
 - Do not crawl multiple pages in a single invocation (one URL per run)
