@@ -33,9 +33,13 @@ Follow these steps for every sub-agent dispatch:
 
 Look up the agent in the registry above. If the requested agent is not registered, stop and inform the operator.
 
-### 2. Read the agent's tool requirements
+### 2. Read the agent definition
 
-Read the agent definition file. Check the frontmatter `tools:` field for MCP wildcards (e.g., `mcp__Desktop_Commander__*`). These indicate which MCP servers the agent may use.
+Read the agent definition file at the path from the registry. You will need:
+- The frontmatter `tools:` field — check for MCP wildcards (e.g., `mcp__Desktop_Commander__*`) to determine which MCP hints to include.
+- The full file content — to inline in the dispatch prompt (sub-agents cannot resolve `${CLAUDE_PLUGIN_ROOT}` paths, so the content must be included directly).
+
+**Path resolution:** Before inlining, replace all `${CLAUDE_PLUGIN_ROOT}` occurrences in the content with the actual absolute path of the plugin root directory. You know this path because you used it to read the file. This ensures the sub-agent can read any reference files mentioned in the agent definition using the Read tool.
 
 ### 3. Select the model
 
@@ -57,7 +61,7 @@ For each MCP wildcard in the agent's `tools:` field, include the corresponding h
 
 Use the dispatch template below, filling in:
 - Agent name (from registry)
-- Agent definition path (from registry)
+- Agent definition content (read in step 2 — inline the full content, not a path)
 - Task-specific instruction (what to do)
 - MCP tool hints (from step 4)
 - Additional context or extraction focus (if any)
@@ -103,9 +107,18 @@ Task(
   model="[selected model]",
   prompt="You are the [agent-name] agent. [task-specific instruction]
 
-Read and follow the agent definition at: ${CLAUDE_PLUGIN_ROOT}/agents/[agent-name].md
+## Plugin Root
 
-MCP tools available in this session:
+[resolved absolute path of the plugin root directory]
+
+Any file paths containing `${CLAUDE_PLUGIN_ROOT}` should be read by replacing that variable with the path above.
+
+## Agent Definition
+
+[full content of the agent definition file, inlined from step 2 with ${CLAUDE_PLUGIN_ROOT} resolved]
+
+## MCP Tools
+
 [MCP hints from lookup table -- only those matching the agent's tools: field]
 
 [Additional context if any]
@@ -119,6 +132,7 @@ Return the full result."
 **Placeholders:**
 - `[agent-name]` -- from the Agent Registry
 - `[selected model]` -- from step 3
+- `[agent definition content]` -- full content of the agent .md file read in step 2 (NEVER pass a `${CLAUDE_PLUGIN_ROOT}` path — sub-agents cannot resolve it)
 - `[task-specific instruction]` -- what the agent should do (e.g., "Crawl this URL and return content: https://example.com")
 - `[MCP hints]` -- assembled from the MCP Tool Hints table, one line per MCP server
 - `[Additional context]` -- extraction focus, format preferences, constraints
@@ -132,5 +146,6 @@ Return the full result."
 - **ALWAYS** include MCP tool hints for every MCP wildcard in the agent's `tools:` field
 - **NEVER** dispatch an agent not listed in the registry -- add it first
 - **NEVER** hard-code MCP tool names in the dispatch prompt without checking the agent's `tools:` field
+- **NEVER** pass `${CLAUDE_PLUGIN_ROOT}` paths to sub-agents — they cannot resolve this variable. Always inline file content or pass absolute paths resolved by the orchestrator
 - Pass output instructions through verbatim -- let the sub-agent decide how to format
 - One agent per dispatch -- do not combine multiple agents in a single Task call

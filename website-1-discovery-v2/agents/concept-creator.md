@@ -15,17 +15,15 @@ Produce one concept section by synthesising project research and gap analysis fi
 
 The dispatch prompt provides:
 - **C-code and slug** (e.g., "C1", "Sitemap")
-- **Concept definition file path** — e.g., `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/c1-sitemap.md`
+- **Concept definition** — full content of the concept definition file, inlined in the prompt
 - **Available project files** — list of all existing file paths (D1-Init.json, D2, R1–R9, G01–G21)
 - **Upstream C-file path** (Wave 2 only) — path to a prior concept section output this section depends on
-
-Concept definition files are at `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/`.
 
 ## Process
 
 ### 1. Read concept definition
 
-Read the concept definition file at the provided path. Extract:
+The concept definition is provided inline in your dispatch prompt. Extract:
 - Section purpose and scope
 - Methodology guidance
 - JSON schema for this section's output

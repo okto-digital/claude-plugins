@@ -93,12 +93,11 @@ Ask: "Run all waves automatically, or step through one at a time?" Use AskUserQu
 Dispatch researcher agents via the `dispatch-subagent` skill. Max 3 concurrent per wave.
 
 **Each dispatch provides:**
-- Substage definition path (see file mapping below)
+- Substage definition content: read the file from the mapping below and inline its full content in the dispatch prompt
 - Project context block (from Step 1)
 - Paths to `D1-Init.json` and `D2-Client-Intelligence.json`
 - Paths to prior R-file dependencies (resolved, from `research/` directory)
 - research_config from D1-Init.json
-- Sub-agent paths: resolved `${CLAUDE_PLUGIN_ROOT}/agents/web-crawler.md` and `${CLAUDE_PLUGIN_ROOT}/agents/dataforseo.md`
 - MCP tool hints: DataForSEO + all web-crawler hints from dispatch-subagent
 - Model: opus
 

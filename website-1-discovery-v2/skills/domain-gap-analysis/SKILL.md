@@ -59,8 +59,8 @@ Dispatch selected domains via the `dispatch-subagent` skill.
 Each dispatch provides:
 - Domain name (e.g., "business-context")
 - G-code and slug (e.g., "G05", "Business") — see G-code mapping below
-- Domain file path: `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/{domain-id}.md`
-- Template file path: `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/templates/domain-output-template.md`
+- Domain file content: read `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/{domain-id}.md` and inline its full content
+- Template file content: read `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/templates/domain-output-template.md` and inline its full content
 - Available project files: full list from Step 4
 - Conditional flag: "yes" for the 6 conditional domains, "no" for always-active
 - Model: sonnet

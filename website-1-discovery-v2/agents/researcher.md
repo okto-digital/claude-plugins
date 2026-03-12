@@ -11,17 +11,16 @@ Execute one research substage. Read the substage definition for methodology, gat
 ## Input
 
 The dispatch prompt provides:
-- **Substage definition path** — e.g., `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/3-1-serp.md`
+- **Substage definition** — full content of the substage definition file, inlined in the prompt
 - **Project files** — paths to `D1-Init.json`, `D2-Client-Intelligence.json`, and any prior substage outputs needed
 - **research_config** — depth (`basic`/`deep`), output format (`concise`/`verbose`), numeric caps
 - **MCP tool hints** — which MCP tools are available in this session
-- **Sub-agent paths** — resolved paths to `web-crawler.md` and `dataforseo.md` for sub-agent dispatch
 
 ## Process
 
 ### 1. Read the substage definition
 
-Substage definitions are at `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/`. Read the file at the provided path. Extract:
+The substage definition is provided inline in your dispatch prompt. Extract:
 - **Code** (e.g., R1) and **Slug** (e.g., SERP) — together determine output filenames (`{code}-{slug}`)
 - **Dependencies** — which prior outputs to read
 - **Data sources** — what to extract from D1-Init.json, D2-Client-Intelligence.json, and prior R-files
@@ -82,7 +81,7 @@ Follow the substage definition's methodology steps in order. For each step:
 
 ## Sub-agent Dispatch
 
-Dispatch sub-agents using the `dispatch-subagent` skill. The orchestrator provides resolved agent paths in the dispatch prompt.
+Dispatch sub-agents using the Task tool. The orchestrator provides agent definitions inline in your dispatch prompt.
 
 **Preference order for DataForSEO data:**
 1. Use DataForSEO MCP tools directly (available via MCP hints in dispatch prompt) — preferred

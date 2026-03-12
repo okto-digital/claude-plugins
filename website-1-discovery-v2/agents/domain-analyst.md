@@ -16,24 +16,22 @@ Analyze one domain's checkpoints against all available project research. Score e
 The dispatch prompt provides:
 - **Domain name** (e.g., "business-context")
 - **G-code and slug** (e.g., "G05", "Business")
-- **Domain file path** — e.g., `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/business-context.md`
-- **Template file path** — `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/templates/domain-output-template.md`
+- **Domain definition** — full content of the domain file, inlined in the prompt
+- **Output template** — full content of the output template file, inlined in the prompt
 - **Available project files** — list of all existing file paths (D1-Init.json, D2-Client-Intelligence.json, R1–R9 JSONs)
 - **Conditional flag** ("yes" or "no")
-
-Domain definition files are at `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/`.
 
 ## Process
 
 ### 1. Read domain definition
 
-Read the domain file at the provided path. Extract:
+The domain definition is provided inline in your dispatch prompt. Extract:
 - Domain name and purpose
 - Applicability section (if conditional)
 - All checkpoint sections with priorities
 - Question templates
 
-Read the template file for the output JSON schema and markdown format.
+The output template (JSON schema and markdown format) is also provided inline in your dispatch prompt.
 
 ### 2. Handle conditional domains
 

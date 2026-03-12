@@ -64,7 +64,7 @@ Dispatch selected sections via the `dispatch-subagent` skill.
 
 Each dispatch provides:
 - C-code and slug (e.g., "C1", "Sitemap")
-- Concept definition file path: `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/{filename}.md`
+- Concept definition content: read `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/{filename}.md` and inline its full content
 - Available project files: full list from Step 4
 - Model: opus (synthesis and reasoning)
 - MCP hints: none (concept creation uses Read + Write only)
