@@ -1,6 +1,6 @@
 # DataForSEO REST API — SERP Endpoints
 
-Reference for the 4 DataForSEO HTTP endpoints used by the `dataforseo-api` agent for R1-SERP research.
+Reference for SERP endpoints: Google organic, YouTube, and location lookups.
 
 **Base URL:** `https://api.dataforseo.com`
 **Auth:** `Authorization: Basic {dataforseo_auth}` (base64 of `login:password`, provided in dispatch prompt)
@@ -195,6 +195,86 @@ mcp__mcp-curl__curl_advanced with args:
   - `competition_level` — "LOW", "MEDIUM", "HIGH"
   - `cpc` — cost per click (float, USD)
   - `monthly_searches[]` — array of {year, month, search_volume} for trend data
+
+---
+
+## 5. YouTube Organic SERP
+
+YouTube search results for keywords.
+
+**URL:** `https://api.dataforseo.com/v3/serp/youtube/organic/live/advanced`
+**Method:** POST
+**Max items per request:** 100
+
+**Request body:**
+```json
+[{"keyword": "web design tutorial", "location_code": 2703, "language_code": "sk"}]
+```
+
+**Required:** `keyword`, `location_code` or `location_name`, `language_code` or `language_name`
+**Optional:** `depth` (default 20)
+
+**Response:** `tasks[i].result[0].items[]` — each with:
+- `title` — video title
+- `url` — video URL
+- `channel_name` — channel name
+- `views_count` — view count
+- `timestamp` — upload date
+- `description` — video description
+
+---
+
+## 6. YouTube Video Info
+
+Metadata for a specific YouTube video.
+
+**URL:** `https://api.dataforseo.com/v3/serp/youtube/video_info/live/advanced`
+**Method:** POST
+
+**Request body:**
+```json
+[{"video_id": "dQw4w9WgXcQ", "location_code": 2840, "language_code": "en"}]
+```
+
+**Required:** `video_id`, `location_code` or `location_name`, `language_code` or `language_name`
+
+**Response:** `tasks[0].result[0].items[]` — title, channel, views, likes, description, publish date
+
+---
+
+## 7. YouTube Video Comments
+
+Top comments on a YouTube video.
+
+**URL:** `https://api.dataforseo.com/v3/serp/youtube/video_comments/live/advanced`
+**Method:** POST
+
+**Request body:**
+```json
+[{"video_id": "dQw4w9WgXcQ", "location_code": 2840, "language_code": "en"}]
+```
+
+**Required:** `video_id`, `location_code` or `location_name`, `language_code` or `language_name`
+
+**Response:** `tasks[0].result[0].items[]` — comments with engagement metrics
+
+---
+
+## 8. YouTube Video Subtitles
+
+Video subtitles/transcript.
+
+**URL:** `https://api.dataforseo.com/v3/serp/youtube/video_subtitles/live/advanced`
+**Method:** POST
+
+**Request body:**
+```json
+[{"video_id": "dQw4w9WgXcQ", "location_code": 2840, "language_code": "en"}]
+```
+
+**Required:** `video_id`, `location_code` or `location_name`, `language_code` or `language_name`
+
+**Response:** `tasks[0].result[0].items[]` — subtitle text segments
 
 ---
 
