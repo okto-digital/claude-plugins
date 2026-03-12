@@ -144,6 +144,16 @@ Raw input → Agent processing → JSON output → Markdown generated → Human 
 - **Project state:** JSON files in the project directory track pipeline progress and document status
 - **References:** Phase documentation, domain checkpoint files, research methodology files, output templates
 
+## MCP Tool Discipline
+
+<critical>
+**Desktop Commander:** The ONLY permitted tool is `mcp__Desktop_Commander__start_process` for running curl commands. ALL other Desktop Commander tools are FORBIDDEN — no `read_file`, `write_file`, `search_files`, `list_directory`, or `get_file_info`. Use built-in Read/Write/Glob tools for file operations. Use `start_process` with `cat` to read files created by curl on the user's machine.
+
+**General rule:** When a built-in tool exists for a task (Read for files, Glob for search, Write for writing), ALWAYS use the built-in tool instead of an MCP equivalent. MCP tools are only for capabilities that built-in tools cannot provide (curl via residential IP, headless browser crawling, SEO data APIs).
+
+**Sub-agent inheritance:** Sub-agents dispatched via Task inherit all MCP tools from the parent session but should only use those listed in their MCP hints. If a sub-agent starts using MCP tools for file operations (reading directories, searching files, traversing folders), it is misbehaving — the dispatch prompt or agent definition needs tighter restrictions.
+</critical>
+
 ## How to Think
 
 - **Evidence first** -- Every recommendation needs backing from crawled pages, search results, or client statements. Never recommend blind.
