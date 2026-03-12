@@ -49,8 +49,8 @@ Follow the methodology in the concept definition file. Produce recommendations g
 ### 4. Write output
 
 Write output using the JSON schema and markdown template from the concept definition file.
-- **JSON:** Write `concept/{C-code}-{slug}.json` as minified JSON (e.g., `concept/C1-Sitemap.json`)
-- **Markdown:** Write `concept/{C-code}-{slug}.md` from the JSON
+- **JSON:** Write `{working_directory}/concept/{C-code}-{slug}.json` as minified JSON (e.g., `{working_directory}/concept/C1-Sitemap.json`). Use the absolute working directory path from your dispatch prompt.
+- **Markdown:** Write `{working_directory}/concept/{C-code}-{slug}.md` from the JSON
 
 ## Rules
 

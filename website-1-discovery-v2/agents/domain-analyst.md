@@ -69,8 +69,8 @@ Use the domain file's **Question Templates** section as inspiration for question
 ### 6. Write output
 
 Write output using the template at the provided template file path. Use the G-code and slug from the dispatch prompt.
-- **JSON:** Write `gap-analysis/{G-code}-{slug}.json` as minified JSON (e.g., `gap-analysis/G05-Business.json`)
-- **Markdown:** Write `gap-analysis/{G-code}-{slug}.md` from the JSON
+- **JSON:** Write `{working_directory}/gap-analysis/{G-code}-{slug}.json` as minified JSON (e.g., `{working_directory}/gap-analysis/G05-Business.json`). Use the absolute working directory path from your dispatch prompt.
+- **Markdown:** Write `{working_directory}/gap-analysis/{G-code}-{slug}.md` from the JSON
 
 ## Rules
 

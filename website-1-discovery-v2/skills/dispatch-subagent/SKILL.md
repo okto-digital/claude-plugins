@@ -67,7 +67,11 @@ Use the dispatch template below, filling in:
 - Additional context or extraction focus (if any)
 - Output instructions (if any)
 
-### 6. Call Task tool
+### 6. Debug log (when enabled)
+
+If the operator has requested debug mode (`debug: true` in project-state.md or by saying "enable debug"), write the full constructed prompt to `debug/dispatch-{agent-name}-{timestamp}.md` before dispatching. This lets the operator inspect exactly what the sub-agent receives.
+
+### 7. Call Task tool
 
 ```
 Task(
@@ -77,7 +81,7 @@ Task(
 )
 ```
 
-### 7. Handle the result
+### 8. Handle the result
 
 Present the sub-agent's result as-is unless the caller explicitly needs transformation. Do not summarize or reprocess. If the sub-agent reports failure, surface the failure reason to the operator.
 
@@ -107,11 +111,21 @@ Task(
   model="[selected model]",
   prompt="You are the [agent-name] agent. [task-specific instruction]
 
+## Working Directory
+
+[absolute path of the current project directory — where output files should be written]
+
+ALL file paths (Read and Write) MUST use absolute paths based on this directory. For example, to write `research/R2-Keywords.json`, use `[working directory]/research/R2-Keywords.json`. NEVER use relative paths — they resolve to the wrong location in Cowork sessions.
+
 ## Plugin Root
 
 [resolved absolute path of the plugin root directory]
 
 Any file paths containing `${CLAUDE_PLUGIN_ROOT}` should be read by replacing that variable with the path above.
+
+## Tool Restrictions
+
+Use the built-in Read tool to read files. Use the built-in Write tool to write files. NEVER use Desktop Commander for file operations — only `mcp__Desktop_Commander__start_process` is permitted (for curl commands only).
 
 ## Agent Definition
 
@@ -132,7 +146,8 @@ Return the full result."
 **Placeholders:**
 - `[agent-name]` -- from the Agent Registry
 - `[selected model]` -- from step 3
-- `[agent definition content]` -- full content of the agent .md file read in step 2 (NEVER pass a `${CLAUDE_PLUGIN_ROOT}` path — sub-agents cannot resolve it)
+- `[working directory]` -- absolute path of the current project directory (use `pwd` or read from project-state.md). This is where the sub-agent writes output files. Critical for Cowork sessions where relative paths resolve to the container root, not the project directory.
+- `[agent definition content]` -- full content of the agent .md file read in step 2 with `${CLAUDE_PLUGIN_ROOT}` resolved to absolute paths
 - `[task-specific instruction]` -- what the agent should do (e.g., "Crawl this URL and return content: https://example.com")
 - `[MCP hints]` -- assembled from the MCP Tool Hints table, one line per MCP server
 - `[Additional context]` -- extraction focus, format preferences, constraints

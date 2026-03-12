@@ -55,9 +55,9 @@ Follow the substage definition's methodology steps in order. For each step:
 
 ### 4. Produce output
 
-**JSON:** Write `research/{code}-{slug}.json` as minified JSON following the template file's JSON schema.
+**JSON:** Write `{working_directory}/research/{code}-{slug}.json` as minified JSON following the template file's JSON schema. Use the absolute working directory path from your dispatch prompt.
 
-**Markdown:** Write `research/{code}-{slug}.md` from the JSON following the template file's markdown template.
+**Markdown:** Write `{working_directory}/research/{code}-{slug}.md` from the JSON following the template file's markdown template.
 
 - If `output_format` = `concise`: markdown targets 1,800 characters or less (hard max 3,600)
 - If `output_format` = `verbose`: markdown targets 5,000 characters (no hard max), but no padding or filler
