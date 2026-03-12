@@ -46,12 +46,23 @@ Phase 1 (INIT)
 
 ### Agent-to-Agent Transport — Minified JSON
 
-All data passed between agents is stored as minified JSON (no whitespace, no indentation). This format is machine-readable, schema-enforced, and token-efficient.
+All data passed between agents is stored as minified JSON — a single line, no newlines, no indentation, no spaces after colons or commas. This format is machine-readable, schema-enforced, and token-efficient.
 
-Example:
-```json
-{"project":{"name":"Krocko Caviar Web","client":"Krocko","build_type":"new","site_type":"ecommerce"}}
+<critical>
+**Minified means ONE LINE.** When using the Write tool for JSON output, the entire file content MUST be a single line with no formatting whitespace.
+
+Correct: `{"project":{"name":"Krocko","build_type":"new","site_type":"ecommerce"}}`
+
+Wrong (pretty-printed — this wastes tokens and breaks downstream parsing expectations):
 ```
+{
+  "project": {
+    "name": "Krocko",
+    "build_type": "new"
+  }
+}
+```
+</critical>
 
 ### Human Review — Markdown (optional)
 

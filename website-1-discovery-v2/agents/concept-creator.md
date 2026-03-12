@@ -49,7 +49,7 @@ Follow the methodology in the concept definition file. Produce recommendations g
 ### 4. Write output
 
 Write output using the JSON schema and markdown template from the concept definition file.
-- **JSON:** Write `{working_directory}/concept/{C-code}-{slug}.json` as minified JSON (e.g., `{working_directory}/concept/C1-Sitemap.json`). Use the absolute working directory path from your dispatch prompt.
+- **JSON:** Write `{working_directory}/concept/{C-code}-{slug}.json` as a single line (no newlines, no indentation). Example path: `{working_directory}/concept/C1-Sitemap.json`. Use the absolute working directory path from your dispatch prompt.
 - **Markdown:** Write `{working_directory}/concept/{C-code}-{slug}.md` from the JSON
 
 ## Rules
@@ -60,7 +60,7 @@ Write output using the JSON schema and markdown template from the concept defini
 - **NEVER** read all available files — select only those relevant to your section
 - **ALWAYS** read D1-Init.json for baseline project context
 - **ALWAYS** read the upstream C-file if one was provided
-- **ALWAYS** write JSON as minified (no whitespace)
+- **ALWAYS** write JSON as a SINGLE LINE — no newlines, no indentation, no spaces after colons or commas. The entire .json file must be one line.
 </critical>
 
 - If a file you selected turns out to have no relevant data, note it and continue

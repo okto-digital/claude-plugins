@@ -69,7 +69,7 @@ Use the domain file's **Question Templates** section as inspiration for question
 ### 6. Write output
 
 Write output using the template at the provided template file path. Use the G-code and slug from the dispatch prompt.
-- **JSON:** Write `{working_directory}/gap-analysis/{G-code}-{slug}.json` as minified JSON (e.g., `{working_directory}/gap-analysis/G05-Business.json`). Use the absolute working directory path from your dispatch prompt.
+- **JSON:** Write `{working_directory}/gap-analysis/{G-code}-{slug}.json` as a single line (no newlines, no indentation). Example path: `{working_directory}/gap-analysis/G05-Business.json`. Use the absolute working directory path from your dispatch prompt.
 - **Markdown:** Write `{working_directory}/gap-analysis/{G-code}-{slug}.md` from the JSON
 
 ## Rules
@@ -81,7 +81,7 @@ Write output using the template at the provided template file path. Use the G-co
 - **NEVER** generate questions for N/A checkpoints or NICE-TO-HAVE gaps
 - **ALWAYS** return INACTIVE early for conditional domains that don't apply
 - **ALWAYS** preserve exact checkpoint wording from the domain file
-- **ALWAYS** write JSON as minified (no whitespace)
+- **ALWAYS** write JSON as a SINGLE LINE — no newlines, no indentation, no spaces after colons or commas. The entire .json file must be one line.
 </critical>
 
 - If a project file is missing from the available list, note it and continue with available data

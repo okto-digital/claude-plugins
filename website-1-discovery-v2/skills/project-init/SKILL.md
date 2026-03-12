@@ -49,7 +49,7 @@ Parse the operator's raw notes (any language, format, or shorthand):
 
 ### 3. Write D1-Init.json
 
-Write `D1-Init.json` to the project root as **minified JSON** (no whitespace, no indentation).
+Write `D1-Init.json` to the project root as **a single line** — no newlines, no indentation, no spaces after colons or commas.
 
 Use the schema and example from `${CLAUDE_PLUGIN_ROOT}/skills/project-init/references/templates.md` § JSON Schema.
 
@@ -201,7 +201,7 @@ Each downstream skill updates `project-state.md` after producing its output:
 
 - **NEVER** proceed without all 7 mandatory fields.
 - **NEVER** skip notes processing -- even empty notes produce an empty array in D1-Init.json.
-- **ALWAYS** write D1-Init.json as minified JSON (no whitespace).
+- **ALWAYS** write D1-Init.json as a single line (no newlines, no indentation).
 - **ALWAYS** generate D1-Init.md from D1-Init.json, not independently.
 - **ALWAYS** mark Phase 1 as complete in project-state.md after initialize.
 

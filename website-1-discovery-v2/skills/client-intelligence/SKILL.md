@@ -96,7 +96,7 @@ Same process as Step 4N above. Identical registry lookup regardless of build_typ
 
 ## Step 6: Write D2-Client-Intelligence.json
 
-Write `D2-Client-Intelligence.json` to the project root as **minified JSON** (no whitespace).
+Write `D2-Client-Intelligence.json` to the project root as **a single line** — no newlines, no indentation, no spaces after colons or commas.
 
 Use the schema from `${CLAUDE_PLUGIN_ROOT}/skills/client-intelligence/references/templates.md` § JSON Schema.
 
@@ -141,7 +141,7 @@ Next step: Run project-research.
 - **NEVER** write output without completing all prior steps
 - **NEVER** modify project-state.md beyond the Phase 2 row
 - **ALWAYS** keep all JSON blocks present regardless of build_type (null for missing)
-- **ALWAYS** write JSON as minified
+- **ALWAYS** write JSON as a single line (no newlines, no indentation)
 - **ALWAYS** generate markdown from JSON, not independently
 </critical>
 

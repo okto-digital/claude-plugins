@@ -82,7 +82,7 @@ Write the executive summary last (it synthesises everything):
 
 ### Step 8: Write D6
 
-Write `D6-Proposal.json` as minified JSON using the schema below.
+Write `D6-Proposal.json` as a single line (no newlines, no indentation, no spaces after colons or commas) using the schema below.
 Write `D6-Proposal.md` from the JSON using the markdown template below.
 
 ### Step 9: Operator review
@@ -312,7 +312,7 @@ Estimated: {hours} hours
 - **NEVER** include raw JSON or technical formatting in the proposal
 - **ALWAYS** write for a business audience — lead with value and business impact, not technical detail
 - **ALWAYS** present traffic estimates with the disclaimer that they are theoretical and depend on execution
-- **ALWAYS** write JSON as minified (no whitespace)
+- **ALWAYS** write JSON as a single line (no newlines, no indentation)
 </critical>
 
 - Skip research domains that have no meaningful findings (e.g., no reputation data found)

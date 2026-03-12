@@ -55,7 +55,7 @@ Follow the substage definition's methodology steps in order. For each step:
 
 ### 4. Produce output
 
-**JSON:** Write `{working_directory}/research/{code}-{slug}.json` as minified JSON following the template file's JSON schema. Use the absolute working directory path from your dispatch prompt.
+**JSON:** Write `{working_directory}/research/{code}-{slug}.json` as a single line (no newlines, no indentation) following the template file's JSON schema. Use the absolute working directory path from your dispatch prompt.
 
 **Markdown:** Write `{working_directory}/research/{code}-{slug}.md` from the JSON following the template file's markdown template.
 
@@ -66,7 +66,7 @@ Follow the substage definition's methodology steps in order. For each step:
 
 <critical>
 - **ALWAYS** follow the substage definition's methodology — do not skip steps or invent your own
-- **ALWAYS** write JSON as minified (no whitespace)
+- **ALWAYS** write JSON as a SINGLE LINE — no newlines, no indentation, no spaces after colons or commas. The entire .json file must be one line.
 - **ALWAYS** generate markdown from JSON, not independently
 - **NEVER** invent data or fabricate research findings
 - **NEVER** exceed research_config caps when depth = basic
