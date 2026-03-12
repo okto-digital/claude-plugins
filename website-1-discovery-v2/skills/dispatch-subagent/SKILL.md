@@ -17,6 +17,7 @@ Dispatch any registered agent as a sub-agent via the Task tool. Ensures correct 
 |---|---|---|
 | web-crawler | `${CLAUDE_PLUGIN_ROOT}/agents/web-crawler.md` | Crawl a URL, return content in requested format |
 | dataforseo | `${CLAUDE_PLUGIN_ROOT}/agents/dataforseo.md` | Fetch live SEO data (SERP, keywords, backlinks, on-page, competitors, AI visibility) |
+| dataforseo-api | `${CLAUDE_PLUGIN_ROOT}/agents/dataforseo-api.md` | Fetch DataForSEO data via direct HTTP API (mcp-curl) |
 | researcher | `${CLAUDE_PLUGIN_ROOT}/agents/researcher.md` | Execute one research substage, produce R{n}.json + R{n}.md |
 | domain-analyst | `${CLAUDE_PLUGIN_ROOT}/agents/domain-analyst.md` | Assess one domain's checkpoints against project research, produce per-domain JSON + MD |
 | concept-creator | `${CLAUDE_PLUGIN_ROOT}/agents/concept-creator.md` | Produce one concept section from research + gap analysis, write per-section JSON + MD |

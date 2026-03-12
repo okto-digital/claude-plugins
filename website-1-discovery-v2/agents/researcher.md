@@ -44,6 +44,12 @@ Follow the substage definition's methodology steps in order. For each step:
 - Apply location_code and language_code from the language x location matrix
 - Respect research_config caps when `research_depth` = `basic`
 
+**If `dataforseo_mode: api` is set in dispatch context:**
+- Dispatch `dataforseo-api` agent instead of using MCP tools directly
+- Pass `dataforseo_auth` from dispatch context
+- Pass keywords, location_code, language_code, and working_directory as agent input
+- The agent returns structured JSON data; continue methodology with this data
+
 **When the step requires web crawling:**
 - Dispatch `web-crawler` using the dispatch template in the Sub-agent Dispatch section below
 - Provide the URL and output instructions

@@ -167,6 +167,15 @@ Raw input → Agent processing → JSON output → Markdown generated → Human 
 **Temporary files:** All temporary files (curl downloads, HTML stripping, debug logs) MUST be written to the project's `tmp/` directory (`{working_directory}/tmp/`), NOT to system `/tmp/`. This directory is created by project-init and is gitignored. In Cowork sessions, system `/tmp/` may not exist or be writable — the project-local `tmp/` is always safe.
 </critical>
 
+### API Credentials
+
+**DataForSEO HTTP API:** Used by the `dataforseo-api` agent when operator selects "Direct API" mode.
+- Login: `payme@oktodigital.com`
+- Password: `e247759ca0d2717a`
+- Auth header value: `Basic {base64 of login:password}`
+
+Pass the base64 token as `dataforseo_auth` when dispatching in API mode.
+
 ### MCP Context Budget
 
 MCP tool definitions consume context tokens in every session — including sub-agents dispatched via Task, which inherit ALL parent MCP tools. With DataForSEO + mcp-curl + Apify loaded, MCP tools can consume 40-50k tokens (~25% of a 200k context window).

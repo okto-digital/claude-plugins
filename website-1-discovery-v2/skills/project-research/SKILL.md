@@ -103,6 +103,21 @@ Dispatch researcher agents via the `dispatch-subagent` skill. Max 3 concurrent p
 
 **Wave execution:**
 
+**Before Wave 1 — DataForSEO mode selection:**
+
+Use AskUserQuestion:
+- question: "How should R1-SERP fetch DataForSEO data?"
+- options:
+  - label: "MCP (current setup)"
+    description: "Use DataForSEO MCP server. Requires MCP server running. No changes to current behavior."
+  - label: "Direct API (experimental)"
+    description: "Use dataforseo-api agent via mcp-curl HTTP calls. Saves ~26k context tokens. Requires mcp-curl MCP."
+
+If **MCP** chosen: dispatch researcher exactly as today. No additional fields.
+If **Direct API** chosen: add two extra fields to the R1 researcher dispatch context:
+  - `dataforseo_mode: api`
+  - `dataforseo_auth: {base64 token from CLAUDE.md API Credentials section}`
+
 **Wave 1 — R1-SERP** (single)
 Dispatch for substage 3.1. No prior R-file dependencies.
 
