@@ -21,9 +21,21 @@ Unified web crawling interface. Crawl any URL and return content tailored to the
 
 **Do not detect tools upfront.** Try each method in cascade order; if a tool call fails, move to next. Dispatcher MCP hints confirm availability when present.
 
-**Tool boundaries:** Use the built-in `Read` tool for reading any files (agent definitions, references, project files). Desktop Commander is ONLY for running shell commands (curl via `start_process`). Never use `mcp__Desktop_Commander__read_file` or `mcp__Desktop_Commander__write_file`.
+<critical>
+**Desktop Commander: ONLY `mcp__Desktop_Commander__start_process` for running curl commands.**
 
-Cascade: Desktop Commander -> curl -> Apify -> Chrome Control Fetch -> Chrome Automation Nav -> WebFetch -> Paste-in
+You MUST NOT use any other Desktop Commander tool. These are all FORBIDDEN:
+- `mcp__Desktop_Commander__read_file` — use built-in `Read` tool or `start_process` with `cat` instead
+- `mcp__Desktop_Commander__write_file` — use built-in `Write` tool instead
+- `mcp__Desktop_Commander__search_files` — use built-in `Glob` or `Grep` instead
+- `mcp__Desktop_Commander__list_directory` — use built-in `Glob` instead
+- `mcp__Desktop_Commander__get_file_info` — use built-in `Read` instead
+- Any other `mcp__Desktop_Commander__*` tool not listed as `start_process`
+
+Use the built-in `Read` tool for reading files (agent definitions, references, project files). Use `start_process` with `cat` to read files created by Desktop Commander curl (e.g., `/tmp/` files on the user's machine).
+</critical>
+
+Cascade: Desktop Commander curl -> Bash curl -> Apify -> Chrome Control Fetch -> Chrome Automation Nav -> WebFetch -> Paste-in
 
 If method override provided, skip to that method directly.
 
@@ -46,9 +58,9 @@ mcp__Desktop_Commander__start_process(
 )
 ```
 
-Then read the output to check HTTP code and final URL. Read the fetched HTML file via `mcp__Desktop_Commander__read_file(path: "/tmp/extracted-page.html")`.
+Then check the curl output for HTTP code and final URL.
 
-Run the Python3 stripping script from method-curl.md via Desktop Commander:
+Run the Python3 stripping script from method-curl.md via Desktop Commander `start_process`:
 
 ```
 mcp__Desktop_Commander__start_process(
@@ -57,7 +69,16 @@ mcp__Desktop_Commander__start_process(
 )
 ```
 
-Then read `/tmp/extracted-content.html` via Desktop Commander and convert to markdown. Follow `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-curl.md` for full stripping script and processing details.
+Then read the stripped file via `start_process`:
+
+```
+mcp__Desktop_Commander__start_process(
+  command: "cat /tmp/extracted-content.html",
+  timeout_ms: 10000
+)
+```
+
+Convert the returned content to markdown. Follow `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-curl.md` for full stripping script and processing details.
 
 **Fail triggers -> Method 2:** Desktop Commander tool not found, HTTP != 200, empty/tiny HTML, WAF block.
 
@@ -167,6 +188,8 @@ If any quality requirement fails, note it in the output.
 ## Boundaries
 
 <critical>
+**NEVER** use Desktop Commander tools other than `mcp__Desktop_Commander__start_process`. No `read_file`, `write_file`, `search_files`, `list_directory`, or any other Desktop Commander tool. Use `start_process` with `cat` to read files created by curl.
+
 **NEVER** read large HTML files directly into context without stripping first. Always run the Python3/Node.js stripping script from method-curl.md for curl-based methods.
 
 **NEVER** split browser extraction across multiple `execute_javascript` / JS evaluation calls. Client-side redirects fire between calls.

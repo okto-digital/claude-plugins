@@ -44,9 +44,9 @@ mcp__Desktop_Commander__start_process(
 )
 ```
 
-Then read the output to check HTTP code and final URL. Read the fetched HTML file via `mcp__Desktop_Commander__read_file(path: "/tmp/extracted-page.html")`.
+Then check the curl output for HTTP code and final URL.
 
-Run the Python3 stripping script from method-curl.md via Desktop Commander:
+Run the Python3 stripping script from method-curl.md via Desktop Commander `start_process`:
 
 ```
 mcp__Desktop_Commander__start_process(
@@ -55,7 +55,16 @@ mcp__Desktop_Commander__start_process(
 )
 ```
 
-Then read `/tmp/extracted-content.html` via Desktop Commander and convert to markdown. Follow `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-curl.md` for full stripping script and processing details.
+Then read the stripped file via `start_process`:
+
+```
+mcp__Desktop_Commander__start_process(
+  command: "cat /tmp/extracted-content.html",
+  timeout_ms: 10000
+)
+```
+
+Convert the returned content to markdown. Follow `${CLAUDE_PLUGIN_ROOT}/agents/references/web-crawler/crawl-methods/method-curl.md` for full stripping script and processing details.
 
 **Fail triggers -> Method 2:** Desktop Commander tool not found, HTTP != 200, empty/tiny HTML, WAF block.
 

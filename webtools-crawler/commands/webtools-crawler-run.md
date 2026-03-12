@@ -50,7 +50,7 @@ Task(subagent_type="general-purpose", model="[haiku|sonnet|opus per Model Select
 Read and follow the agent definition at: ${CLAUDE_PLUGIN_ROOT}/agents/web-crawler.md
 
 MCP tools available in this session:
-- Desktop Commander: mcp__Desktop_Commander__start_process, mcp__Desktop_Commander__read_file, mcp__Desktop_Commander__write_file (local machine curl with residential IP, best content completeness)
+- Desktop Commander: mcp__Desktop_Commander__start_process (local machine curl with residential IP — ONLY use for curl and cat, never for file reading/writing/searching)
 - Apify: mcp__Apify__call-actor, mcp__Apify__get-actor-output (headless browser crawling, WAF bypass)
 - Chrome Control: mcp__Control_Chrome__open_url, mcp__Control_Chrome__get_page_content, mcp__Control_Chrome__execute_javascript, mcp__Control_Chrome__close_tab (browser tab control, fetch-based)
 - Chrome Automation: mcp__Claude_in_Chrome__navigate, mcp__Claude_in_Chrome__read_page, mcp__Claude_in_Chrome__screenshot, mcp__Claude_in_Chrome__click (full browser automation with JS rendering)
