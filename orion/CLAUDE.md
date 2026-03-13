@@ -20,7 +20,7 @@ Six phases, executed sequentially. Each phase produces JSON output, a markdown r
 | 2 | **Client Intelligence** | Who is this client and what is their current state? | Client profile, digital footprint, competitive context |
 | 3 | **Research** (9 substages) | What does the market, audience, and competitive landscape look like? | 9 research documents (R1–R9), progressive competitor list, keyword map |
 | 4 | **Domain Gap Analysis** | What do we know vs. what do we still need to ask? | 21 domain scores (FOUND/PARTIAL/GAP), targeted interview questions |
-| 5 | **Concept Creation** | What should we build and how? | Sitemap with traffic estimates, functional requirements, tech stack, content strategy, visual direction |
+| 5 | **Concept Creation** | What should we build and how? | 9 concept sections: sitemap, functional, visual, technical architecture, content strategy, UX strategy, project roadmap, SEO strategy, compliance |
 | 6 | **Proposal & Brief** | What do we deliver to the client? | Modular proposal with selectable scope (must/should/nice-to-have) |
 
 ### Flow
@@ -30,7 +30,7 @@ Phase 1 (INIT)
   → Phase 2 (Client Intelligence)
     → Phase 3 (Research: 3.1 → 3.2 → ... → 3.9, sequential with human gates)
       → Phase 4 (Domain Gap Analysis: 6 domain groups scored against all research)
-        → Phase 5 (Concept Creation: 5 deliverables from accumulated intelligence)
+        → Phase 5 (Concept Creation: 9 sections from accumulated intelligence + coherence check)
           → Phase 6 (Proposal: modular brief assembled from all phases)
 ```
 
@@ -124,9 +124,13 @@ Concept sections (C-codes, by wave):
 |---|---|---|---|
 | C1 | Sitemap | 1 | -- |
 | C2 | Functional | 1 | -- |
-| C3 | Tech-Stack | 2 | C2 |
-| C4 | Content-Strategy | 2 | C1 |
 | C5 | Visual | 1 | -- |
+| C3 | Technical-Architecture | 2 | C2 |
+| C4 | Content-Strategy | 2 | C1 |
+| C6 | UX-Strategy | 2 | C1 |
+| C7 | Project-Roadmap | 3 | C1, C2, C3 |
+| C8 | SEO-Strategy | 3 | C1 |
+| C9 | Compliance | 3 | C2 |
 
 ## Available Capabilities
 

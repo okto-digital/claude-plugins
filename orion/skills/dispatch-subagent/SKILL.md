@@ -1,6 +1,6 @@
 ---
 name: dispatch-subagent
-description: "Dispatch a sub-agent via the Task tool with correct model selection, dispatch mode, and agent definition loading. ALWAYS use before spawning any sub-agent. Invoke whenever a sub-agent needs to be dispatched via Task tool, the pipeline delegates work to a specialist agent, or a Task call to a registered agent is required."
+description: "Dispatch a sub-agent via the Task tool with correct model selection, dispatch mode, and agent definition loading. Required before any sub-agent Task dispatch. Invoke whenever a sub-agent needs to be dispatched via Task tool, the pipeline delegates work to a specialist agent, or a Task call to a registered agent is required."
 allowed-tools: Task, Read, Glob
 version: 2.0.0
 ---
@@ -23,7 +23,8 @@ Dispatch any registered agent as a sub-agent via the Task tool. Automatically se
 | dataforseo-api | `${CLAUDE_PLUGIN_ROOT}/agents/dataforseo-api.md` | Fetch DataForSEO data via direct HTTP API (mcp-curl) |
 | researcher | `${CLAUDE_PLUGIN_ROOT}/agents/researcher.md` | Execute one research substage, produce R{n}.json + R{n}.md |
 | domain-analyst | `${CLAUDE_PLUGIN_ROOT}/agents/domain-analyst.md` | Assess a group of domains' checkpoints, produce per-domain findings + questions |
-| concept-creator | `${CLAUDE_PLUGIN_ROOT}/agents/concept-creator.md` | Produce one concept section from research + gap analysis, write per-section JSON + MD |
+| concept-creator | `${CLAUDE_PLUGIN_ROOT}/agents/concept-creator.md` | Produce one concept section from pre-merged context, write per-section JSON + MD |
+| concept-reviewer | `${CLAUDE_PLUGIN_ROOT}/agents/concept-reviewer.md` | Read D5-Concept.json, check inter-section coherence, write D5-Review-Notes.md |
 | answer-resolver | `${CLAUDE_PLUGIN_ROOT}/agents/answer-resolver.md` | Revise one domain's G-file after mechanical answer insertion, rewrite evidence + summary |
 
 ---
