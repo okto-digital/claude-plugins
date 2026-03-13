@@ -1,13 +1,31 @@
 ---
 name: proposal
-description: "Generate D6: Proposal & Brief from all pipeline outputs. Invoke when the user says 'generate proposal', 'write proposal', 'run phase 6', 'create brief', or after Concept Creation is reviewed and approved."
+description: "Generate D6: Proposal from all pipeline outputs (Phases 1-5). Produces JSON, Markdown, and branded HTML with print-ready CSS. Invoke when the user says 'generate proposal', 'write proposal', 'run phase 6', 'create brief', or after Concept Creation is reviewed and approved."
 allowed-tools: Read, Write, Glob, AskUserQuestion
-version: 1.0.0
+version: 2.0.0
 ---
 
-# Proposal & Brief Generation
+# Proposal Generation
 
-Distill everything from Phases 1–5 into a single client-facing proposal. Evidence-based but readable — every section earns its place. The document is modular: the client sees cost and time impact of including or deferring specific functionality.
+Distill everything from Phases 1-5 into a client-facing proposal with 9 sections. Evidence-based but readable. Modular -- the client sees cost and time impact of including or deferring specific functionality.
+
+**Output:** `D6-Proposal.json` + `D6-Proposal.md` + `D6-Proposal.html`
+
+**Proposal sections:**
+
+| # | Section | Primary data source |
+|---|---|---|
+| 1 | Title Page | D1 meta |
+| 2 | Executive Summary | Synthesis of all (written last) |
+| 3 | Problem Statement | D2, R-files, G-files |
+| 4 | Proposed Solution | C4, C5, C6, C8, C9 |
+| 5 | Scope of Work & Deliverables | C2 modules + C1 sitemap |
+| 6 | Timeline & Milestones | C7 roadmap + module dependencies |
+| 7 | Investment | Module hours (operator adds rates) |
+| 8 | About Us | Placeholder for operator |
+| 9 | Conclusion & Acceptance | Next steps + signature block |
+
+---
 
 ## Process
 
@@ -27,75 +45,132 @@ Glob for all project files:
 - `gap-analysis/G*-*.json`
 - `concept/C*-*.json`
 
-Build the file list with names visible. Select which files to read based on their names — not all files are needed for every proposal section.
+**ALWAYS read:** D1-Init.json, C1-Sitemap.json, C2-Functional.json.
 
-**ALWAYS read:**
-- `D1-Init.json` (project parameters)
-- `concept/C1-Sitemap.json` (sitemap with traffic estimates)
-- `concept/C2-Functional.json` (functional requirements for module assembly)
+**Read selectively** based on relevance to each section:
+- D2, R-files, G-files for problem statement evidence
+- C4, C5, C6, C8, C9 for proposed solution narrative
+- C3 for technical context (if relevant to scope)
+- C7 for timeline and milestones
 
-**Read selectively** based on relevance to each proposal section:
-- R-files and G-files for research findings extraction
-- C3, C4, C5 for concept sections (tech stack, content strategy, visual direction)
-- D2 for client profile context
+### Step 3: Build title page
 
-### Step 3: Extract key findings
+Populate from D1-Init.json:
+- `project_title` from project_name
+- `client_name` from client
+- `prepared_by` defaults to "oktodigital" if not set
+- `date` is today
+- `version` starts at "1.0"
 
-Read research R-files and extract the highest-value findings per research domain.
+### Step 4: Build problem statement
 
-**Selection criteria:**
-- Findings backed by numbers are prioritised over qualitative observations
-- Findings with direct website implications are prioritised over general market context
-- Maximum 3–5 bullet points per research domain
-- Gaps and opportunities are prioritised over confirmations
+Read D2 (client profile), R-files (research), and G-files (gap analysis). Extract:
 
-Group findings into proposal-friendly categories: Search & SEO, Competitive Landscape, Market & Industry, Target Audience, Technology & Performance, Reputation & Trust, UX & Visual, Content.
+1. **Current situation** -- 2-3 sentences describing where the client is today. Draw from D2 web presence assessment and R-file findings about current site performance.
+2. **Pain points** -- specific business problems the website should solve. Source from G-files (gaps identified) and D2 (weaknesses observed).
+3. **Key challenges** -- obstacles or constraints (technical, market, competitive). Source from R-files.
+4. **Evidence** -- grouped by research domain, max 3-5 findings per domain.
 
-### Step 4: Assemble modules
+**Selection criteria for evidence:**
+- Numbers over qualitative observations
+- Direct website impact over general market context
+- Gaps and opportunities over confirmations
+- Skip domains with no meaningful findings
 
-Build the scope of work from `concept/C2-Functional.json` functional requirements.
+Group into: Search & SEO, Competitive Landscape, Market & Industry, Target Audience, Technology & Performance, Reputation & Trust, UX & Visual, Content.
 
+### Step 5: Build proposed solution
+
+Read C4 (content strategy), C5 (visual direction), C6 (UX strategy), C8 (SEO strategy), C9 (compliance). Synthesise into:
+
+1. **Strategy overview** -- 2-3 paragraph narrative of the overall approach. Connect back to the pain points from Step 4. Write as a story, not a feature list.
+2. **Methodology** -- how the project will be executed (discovery-driven, iterative, etc.)
+3. **Desired outcome** -- what the finished website achieves for the business.
+4. **Concept highlights** -- one-sentence client-friendly summaries:
+   - Positioning (from C5 positioning_mood)
+   - Visual direction (from C5 colour, typography, imagery)
+   - Tone of voice (from C4 tone_of_voice)
+   - UX approach (from C6 mobile_strategy, navigation, conversion_funnels)
+   - SEO approach (from C8 link_acquisition, search_features)
+
+### Step 6: Assemble scope of work
+
+Build from `C2-Functional.json` functional requirements + embed sitemap from `C1-Sitemap.json`.
+
+**Modules:**
 1. Group related requirements into work modules
-2. Assign each module a category: strategy, design, frontend, backend, ecommerce, integration, content, seo, migration, multilingual, analytics, post-launch
-3. Estimate hours per module based on complexity signals from C2
-4. Set module phase: `launch` or `post-launch`
-5. Set initial selection:
-   - `must_have` requirements → `selected: true`
-   - `should_have` and `nice_to_have` → `selected: false`
+2. Assign category per the enum in `references/json-schema.md` (scope_of_work.modules[].category)
+3. Estimate hours per module from C2 complexity signals
+4. Set phase: `launch` or `post-launch`
+5. Set selection: `must_have` = `selected: true`; `should_have` and `nice_to_have` = `selected: false`
 6. Note dependencies between modules
 
-### Step 5: Calculate timeline
+**Sitemap summary:**
+- Total page count from C1
+- Aggregate traffic potential (conservative, realistic, optimistic)
+- Page tree with per-page traffic estimates (recursive, arbitrary depth)
 
-Build a phased timeline from selected modules and their dependencies. Output high-level phases with estimated durations — not a Gantt chart.
+### Step 7: Calculate timeline
 
-### Step 6: Summarise investment
+Read C7-Project-Roadmap.json. Build phased timeline from selected modules and dependencies.
 
-Aggregate selected module hours into a total. Break down by module so the client sees exact cost impact of each scope decision.
+- Map C7 phases to timeline entries with duration estimates
+- Add milestones for key dates (content freeze, UAT, launch)
+- Calculate total duration
+- Output high-level phases -- not a Gantt chart
 
-### Step 7: Build executive summary
+### Step 8: Summarise investment
 
-Write the executive summary last (it synthesises everything):
-- Headline: one-sentence project positioning
-- Project overview: 2–3 sentences on who, what, why
-- Opportunity statement: what this website can achieve for the business
-- Traffic potential from C1-Sitemap
+Aggregate hours from `selected: true` modules. Break down by module with category so the client sees exact cost impact of each scope decision.
 
-### Step 8: Write D6
+Set `pricing_note` to "To be completed by operator" -- the agent NEVER generates pricing.
 
-Write `D6-Proposal.json` as a single line (no newlines, no indentation, no spaces after colons or commas) using the schema below.
-Write `D6-Proposal.md` from the JSON using the markdown template below.
+### Step 9: Build executive summary
 
-### Step 9: Operator review
+Write LAST (it synthesises everything):
+- **Headline:** one-sentence project positioning
+- **Project overview:** 2-3 sentences on who, what, why
+- **Opportunity statement:** what this website achieves for the business
+- **Traffic potential** from C1-Sitemap aggregate numbers
+
+### Step 10: Write D6-Proposal.json
+
+Write as **minified single-line JSON** (no newlines, no indentation, no spaces after colons or commas).
+
+Use the schema from `${CLAUDE_PLUGIN_ROOT}/skills/proposal/references/json-schema.md`.
+
+`about_us` fields use placeholder content: `company_intro` = "About [company name]...", arrays empty, `note` = "placeholder".
+
+`conclusion.acceptance` fields are empty strings (rendered as signature lines).
+
+### Step 11: Write D6-Proposal.md
+
+Generate from D6-Proposal.json using the template in `${CLAUDE_PLUGIN_ROOT}/skills/proposal/references/markdown-template.md`.
+
+Follow the rendering rules in that file (conditional sections, module grouping, sitemap tree nesting).
+
+### Step 12: Write D6-Proposal.html
+
+Read the HTML template at `${CLAUDE_PLUGIN_ROOT}/skills/proposal/references/html-template.html`. The template provides a complete CSS design system in `<head>` and a design brief in HTML comments -- the `<body>` is a blank canvas.
+
+Generate the full page content creatively inside `<div class="page">`, composing sections from the pre-defined CSS components. Each proposal should be visually unique -- choose layouts, components, and emphasis based on the specific proposal content. Follow the design brief's required sections, component toolkit, creative direction, and hard rules.
+
+Design tokens and brand elements are documented in `${CLAUDE_PLUGIN_ROOT}/skills/proposal/references/design-tokens.md`. Use the correct category colours for module borders and priority badges. Use bracket numbers, corner accents, stat blocks, visual timelines, and other brand elements where they enhance readability.
+
+The HTML must be self-contained (inline CSS, embedded fonts). Verify all 9 sections are present and print CSS would produce clean page breaks.
+
+### Step 13: Operator review
 
 Present D6-Proposal.md for operator review. The operator may:
 - Adjust module selection (toggle `selected` on/off)
 - Edit hour estimates
 - Add pricing, rates, or payment terms
 - Modify text for client tone
+- Fill in the About Us section
 
-If the operator makes changes, regenerate the affected sections (timeline, investment summary) and rewrite D6.
+If changes are made, regenerate affected sections (timeline, investment) and rewrite all three D6 files.
 
-### Step 10: Update project-state.md
+### Step 14: Update project-state.md
 
 Update Phase 6 (Proposal & Brief) row:
 - Status: `complete`
@@ -107,199 +182,14 @@ Display summary:
 ```
 Proposal complete.
 
+  Sections: 9
   Modules: {selected}/{total} selected
   Total hours: {n}
-  Traffic potential: {conservative}–{realistic}/mo (optimistic: {optimistic}/mo)
+  Traffic potential: {conservative}-{realistic}/mo (optimistic: {optimistic}/mo)
+  Output: D6-Proposal.json, D6-Proposal.md, D6-Proposal.html
   Phase 6 status: complete
 
-Pipeline complete. Deliver D6-Proposal.md to the client.
-```
-
----
-
-## JSON Schema
-
-Write JSON as **minified** (no whitespace, no indentation).
-
-```json
-{
-  "proposal": {
-    "meta": {
-      "date_run": "string",
-      "client": "string",
-      "project_name": "string",
-      "prepared_by": "string | null",
-      "version": "string"
-    },
-    "executive_summary": {
-      "headline": "string",
-      "project_overview": "string",
-      "opportunity_statement": "string",
-      "traffic_potential": {
-        "conservative_monthly": "number",
-        "realistic_monthly": "number",
-        "optimistic_monthly": "number"
-      }
-    },
-    "research_findings": [
-      {
-        "domain": "string (e.g. Search & SEO, Competitive Landscape)",
-        "findings": [
-          {
-            "text": "string",
-            "metric": "string | null"
-          }
-        ]
-      }
-    ],
-    "modules": [
-      {
-        "id": "string",
-        "name": "string",
-        "category": "strategy | design | frontend | backend | ecommerce | integration | content | seo | migration | multilingual | analytics | post-launch",
-        "description": "string",
-        "inclusions": ["string"],
-        "hours_est": "number",
-        "complexity": "simple | moderate | complex",
-        "dependencies": ["string (module id)"],
-        "phase": "launch | post-launch",
-        "priority": "must_have | should_have | nice_to_have",
-        "selected": "boolean"
-      }
-    ],
-    "timeline": [
-      {
-        "phase": "string",
-        "description": "string",
-        "duration": "string",
-        "modules_included": ["string (module id)"]
-      }
-    ],
-    "investment": {
-      "modules_selected": ["string (module id)"],
-      "total_hours": "number",
-      "breakdown": [
-        {
-          "module_id": "string",
-          "module_name": "string",
-          "hours": "number"
-        }
-      ],
-      "notes": "string | null"
-    },
-    "next_steps": ["string"],
-    "notes": ["string"]
-  }
-}
-```
-
-Write to `D6-Proposal.json`.
-
----
-
-## Markdown Template
-
-Generate `D6-Proposal.md` from the JSON:
-
-```markdown
-# Website Proposal -- {Client Name}
-*Prepared by {prepared_by} | {date} | Version {version}*
-
----
-
-## Executive Summary
-
-{project_overview}
-
-{opportunity_statement}
-
-**Organic traffic potential:** {conservative}–{realistic} visits/month at target rankings
-*(optimistic scenario: {optimistic} visits/month at peak SEO performance)*
-
----
-
-## Research Findings
-
-### {domain}
-- {finding text} {metric if available}
-- {finding text}
-
-*(repeat per domain)*
-
----
-
-## Website Concept
-
-### Positioning
-{from C5 visual_direction.positioning_mood}
-
-### Visual Direction
-{from C5 — colour, typography, imagery summary}
-
-### Tone of Voice
-{from C4 content_strategy.tone_of_voice}
-- *"{tone_example 1}"*
-- *"{tone_example 2}"*
-
-### Messaging Pillars
-- **{pillar}** -- {description}
-
----
-
-## Proposed Sitemap
-
-**Organic traffic potential across all pages:**
-Conservative {n}/mo -- Realistic {n}/mo -- Optimistic {n}/mo*
-
-- **{Page Name}** `{path}` -- {conservative}–{realistic} visits/mo*
-  - **{Child Page}** `{path}` -- {conservative}–{realistic} visits/mo*
-
-*Theoretical organic traffic based on keyword search volume data and average CTR benchmarks.
-Actual performance depends on SEO execution, content quality and competition.*
-
----
-
-## Scope of Work
-
-*Modules marked with a circle are optional -- included for consideration but can be deferred.*
-
-### {Category} {checkmark or circle}
-**{Module name}** -- {description}
-Includes: {inclusions}
-Estimated: {hours} hours
-
-*(repeat per module, grouped by category)*
-
----
-
-## Timeline
-
-| Phase | Description | Duration |
-|---|---|---|
-| {phase} | {description} | {duration} |
-
-**Estimated total duration:** {sum of durations}
-
----
-
-## Investment Summary
-
-| Module | Hours |
-|---|---|
-| {module name} | {hours} |
-| **Total** | **{total_hours}** |
-
-{investment notes if any}
-
----
-
-## Next Steps
-
-1. {next step}
-2. {next step}
-3. {next step}
-
----
+Pipeline complete. Review D6-Proposal.html in browser (Cmd+P for PDF).
 ```
 
 ---
@@ -307,15 +197,27 @@ Estimated: {hours} hours
 ## Writing Rules
 
 <critical>
-- **NEVER** fabricate findings, metrics, or traffic numbers — every data point must trace to a research or concept file
-- **NEVER** include internal codes (R1, G05, C2) in the proposal text — this is a client-facing document
+- **NEVER** fabricate findings, metrics, or traffic numbers -- every data point must trace to a pipeline file
+- **NEVER** include internal codes (R1, G05, C2, D2) in proposal text -- this is a client-facing document
 - **NEVER** include raw JSON or technical formatting in the proposal
-- **ALWAYS** write for a business audience — lead with value and business impact, not technical detail
+- **ALWAYS** write for a business audience -- lead with value and impact, not technical detail
 - **ALWAYS** present traffic estimates with the disclaimer that they are theoretical and depend on execution
 - **ALWAYS** write JSON as a single line (no newlines, no indentation)
+- **ALWAYS** include the About Us placeholder notice for the operator
+- **ALWAYS** include blank signature fields in the Conclusion section
 </critical>
 
-- Skip research domains that have no meaningful findings (e.g., no reputation data found)
-- Skip module categories that don't apply (e.g., no ecommerce section for a portfolio site)
-- The operator may add pricing, rates, and payment terms manually — the agent does not generate pricing
-- Hour estimates are directional — the operator validates before client delivery
+- Skip evidence domains that have no meaningful findings
+- Skip module categories that don't apply (e.g., no ecommerce for a portfolio site)
+- The operator adds pricing manually -- the agent does not generate pricing or rates
+- Hour estimates are directional -- the operator validates before client delivery
+- The strategy narrative in Proposed Solution should connect pain points to solutions -- avoid disconnected feature lists
+
+---
+
+## Reference Files
+
+- `references/json-schema.md` -- D6 JSON schema (9-section structure), field notes, migration guide from v1.0.0
+- `references/markdown-template.md` -- D6 markdown template with rendering rules
+- `references/html-template.html` -- CSS design system + component library + design brief (blank canvas, not fixed layout)
+- `references/design-tokens.md` -- oktodigital brand guide: palette, functional colours, bracket numbers, corner accents, grid motif, stat blocks, icons

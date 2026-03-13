@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proposal</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ========================================
+       FONT FACES
+       ======================================== */
+    @font-face {
+      font-family: "Safiro";
+      src: url("https://oktodigital.com/fonts/safiro-regular.woff2") format("woff2");
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: "Safiro";
+      src: url("https://oktodigital.com/fonts/safiro-semibold.woff2") format("woff2");
+      font-weight: 600; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: "Safiro";
+      src: url("https://oktodigital.com/fonts/safiro-extrabold.woff2") format("woff2");
+      font-weight: 800; font-style: normal; font-display: swap;
+    }
+
+    /* ========================================
+       DESIGN TOKENS
+       ======================================== */
+    :root {
+      /* Core palette */
+      --c-primary:        #FF003D;
+      --c-dark:           #1a2332;
+      --c-text:           #606F7E;
+      --c-text-light:     #9AA7B2;
+      --c-bg:             #FFFFFF;
+      --c-bg-light:       #F2F5F8;
+      --c-bg-alt:         #f0f0f0;
+      --c-border:         #DFE5EB;
+      --c-primary-tint:   rgba(255, 0, 61, 0.10);
+
+      /* Functional accent colors (mapped to service phases) */
+      --c-green:          #4DEDB1;   /* Plan */
+      --c-green-bg:       rgba(77, 237, 177, 0.15);
+      --c-yellow:         #EDDF4C;   /* Build */
+      --c-yellow-bg:      rgba(237, 223, 76, 0.15);
+      --c-pink:           #FF8EA9;   /* Care */
+      --c-pink-bg:        rgba(255, 142, 169, 0.15);
+      --c-purple:         #B199F9;   /* Grow */
+      --c-purple-bg:      rgba(177, 153, 249, 0.15);
+
+      /* Legacy alias */
+      --c-red:            var(--c-pink);
+      --c-red-bg:         var(--c-pink-bg);
+
+      /* Typography */
+      --font:             "Safiro", "Inter", sans-serif;
+      --fs-base:          18px;
+      --fs-sm:            14px;
+      --fs-xs:            12px;
+      --fs-lg:            22px;
+      --fs-xl:            28px;
+      --fs-h1:            48px;
+      --fs-h2:            32px;
+      --fs-h3:            24px;
+      --fs-display:       64px;
+      --fs-stat:          56px;
+      --lh-base:          1.5;
+      --lh-heading:       1.2;
+      --fw-normal:        400;
+      --fw-semibold:      600;
+      --fw-extrabold:     800;
+
+      /* Layout */
+      --max-width:        900px;
+      --section-py:       80px;
+      --container-px:     48px;
+      --shadow:           0 5px 15px rgba(0, 0, 0, 0.15);
+
+      /* Spacing scale */
+      --sp-xs:            4px;
+      --sp-sm:            8px;
+      --sp-md:            16px;
+      --sp-lg:            24px;
+      --sp-xl:            40px;
+      --sp-2xl:           64px;
+    }
+
+    /* ========================================
+       RESET & BASE
+       ======================================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font);
+      font-size: var(--fs-base);
+      font-weight: var(--fw-normal);
+      line-height: var(--lh-base);
+      color: var(--c-text);
+      background: var(--c-bg-alt);
+    }
+
+    h1, h2, h3, h4 {
+      color: var(--c-dark);
+      line-height: var(--lh-heading);
+      font-weight: var(--fw-extrabold);
+    }
+
+    h1 { font-size: var(--fs-h1); }
+    h2 { font-size: var(--fs-h2); margin-bottom: var(--sp-lg); }
+    h3 { font-size: var(--fs-h3); margin-bottom: var(--sp-md); }
+
+    p { margin-bottom: var(--sp-md); }
+    p:last-child { margin-bottom: 0; }
+
+    strong { font-weight: var(--fw-semibold); color: var(--c-dark); }
+    em { font-style: italic; }
+
+    a { color: var(--c-primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    ul, ol { padding-left: var(--sp-lg); margin-bottom: var(--sp-md); }
+    li { margin-bottom: 6px; }
+    li:last-child { margin-bottom: 0; }
+
+    /* ========================================
+       PAGE WRAPPER
+       ======================================== */
+    .page {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      background: var(--c-bg);
+      box-shadow: var(--shadow);
+    }
+
+    /* ========================================
+       SECTIONS
+       ======================================== */
+    .section {
+      padding: var(--section-py) var(--container-px);
+    }
+
+    .section--alt {
+      background: var(--c-bg-light);
+    }
+
+    .section--dark {
+      background: var(--c-dark);
+      color: #FFFFFF;
+    }
+
+    .section--dark h1,
+    .section--dark h2,
+    .section--dark h3,
+    .section--dark h4,
+    .section--dark strong {
+      color: #FFFFFF;
+    }
+
+    .section--dark p,
+    .section--dark li {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    /* ========================================
+       BRACKET NUMBERS  { 01 }
+       Brand typographic signature.
+       ======================================== */
+    .bracket-num {
+      font-family: var(--font);
+      font-weight: var(--fw-extrabold);
+      letter-spacing: 0.05em;
+    }
+
+    /* Inline: small label next to headings */
+    .bracket-num--inline {
+      font-size: var(--fs-sm);
+      color: var(--c-text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      display: block;
+      margin-bottom: var(--sp-sm);
+    }
+    .bracket-num--inline::before { content: "{ "; }
+    .bracket-num--inline::after  { content: " }"; }
+
+    /* Stacked: large display number */
+    .bracket-num--stacked {
+      font-size: var(--fs-display);
+      line-height: 1;
+      display: block;
+      margin-bottom: var(--sp-md);
+    }
+    .bracket-num--stacked::before { content: "{ "; }
+    .bracket-num--stacked::after  { content: " }"; }
+
+    /* Watermark: oversized faded background number */
+    .bracket-num--watermark {
+      font-size: 200px;
+      line-height: 1;
+      opacity: 0.04;
+      position: absolute;
+      top: -20px;
+      right: -10px;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* Color variants */
+    .bracket-num--green  { color: var(--c-green); }
+    .bracket-num--yellow { color: var(--c-yellow); }
+    .bracket-num--pink   { color: var(--c-pink); }
+    .bracket-num--purple { color: var(--c-purple); }
+
+    /* ========================================
+       CORNER ACCENTS
+       Colored L-shaped bracket on blocks.
+       Always top-left. Apply to a positioned parent.
+       ======================================== */
+    .corner-accent {
+      position: relative;
+    }
+
+    .corner-accent::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 24px;
+      height: 24px;
+      border-top: 3px solid var(--c-green);
+      border-left: 3px solid var(--c-green);
+    }
+
+    .corner-accent--green::before  { border-color: var(--c-green); }
+    .corner-accent--yellow::before { border-color: var(--c-yellow); }
+    .corner-accent--pink::before   { border-color: var(--c-pink); }
+    .corner-accent--purple::before { border-color: var(--c-purple); }
+    .corner-accent--primary::before { border-color: var(--c-primary); }
+
+    /* ========================================
+       GRID MOTIF
+       Subtle dot-grid texture for dark sections.
+       ======================================== */
+    .grid-motif {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    /* ========================================
+       DIVIDERS
+       ======================================== */
+    .divider {
+      height: 1px;
+      background: var(--c-border);
+      margin: var(--sp-xl) 0;
+    }
+
+    .divider--accent {
+      height: 3px;
+      width: 60px;
+      background: var(--c-primary);
+    }
+
+    .divider--four-color {
+      height: 4px;
+      background: linear-gradient(to right,
+        var(--c-green) 25%,
+        var(--c-yellow) 25%, var(--c-yellow) 50%,
+        var(--c-pink) 50%, var(--c-pink) 75%,
+        var(--c-purple) 75%
+      );
+    }
+
+    /* Numbered section break: { 03 } centered with lines */
+    .divider--numbered {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-md);
+      margin: var(--sp-xl) 0;
+      color: var(--c-text-light);
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-semibold);
+      letter-spacing: 0.1em;
+    }
+    .divider--numbered::before,
+    .divider--numbered::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--c-border);
+    }
+
+    /* ========================================
+       STAT BLOCKS
+       Large colored numbers with labels.
+       ======================================== */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: var(--sp-lg);
+    }
+
+    .stat-block {
+      text-align: center;
+      padding: var(--sp-lg);
+    }
+
+    .stat-number {
+      font-size: var(--fs-stat);
+      font-weight: var(--fw-extrabold);
+      line-height: 1;
+      margin-bottom: var(--sp-sm);
+    }
+
+    .stat-number--green  { color: var(--c-green); }
+    .stat-number--yellow { color: var(--c-yellow); }
+    .stat-number--pink   { color: var(--c-pink); }
+    .stat-number--purple { color: var(--c-purple); }
+
+    .stat-label {
+      font-size: var(--fs-sm);
+      color: var(--c-text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ========================================
+       HIGHLIGHT BOX
+       ======================================== */
+    .highlight-box {
+      background: var(--c-primary-tint);
+      border-left: 4px solid var(--c-primary);
+      padding: 20px 24px;
+      margin: var(--sp-lg) 0;
+    }
+
+    .highlight-box--green  { background: var(--c-green-bg);  border-left-color: var(--c-green); }
+    .highlight-box--yellow { background: var(--c-yellow-bg); border-left-color: var(--c-yellow); }
+    .highlight-box--pink   { background: var(--c-pink-bg);   border-left-color: var(--c-pink); }
+    .highlight-box--purple { background: var(--c-purple-bg); border-left-color: var(--c-purple); }
+
+    /* ========================================
+       CARDS & GRIDS
+       ======================================== */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--sp-lg);
+    }
+
+    .card {
+      padding: var(--sp-lg);
+      background: var(--c-bg-light);
+    }
+
+    .section--alt .card {
+      background: var(--c-bg);
+    }
+
+    .card__label {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-semibold);
+      color: var(--c-text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .card__value {
+      color: var(--c-dark);
+    }
+
+    /* ========================================
+       TABLES
+       ======================================== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: var(--sp-lg) 0;
+    }
+
+    thead th {
+      background: var(--c-bg-light);
+      color: var(--c-dark);
+      font-weight: var(--fw-semibold);
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--c-border);
+    }
+
+    tbody td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--c-border);
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    tfoot td {
+      padding: 12px 16px;
+      border-top: 2px solid var(--c-border);
+      font-weight: var(--fw-semibold);
+      color: var(--c-dark);
+    }
+
+    .section--alt thead th { background: var(--c-bg); }
+
+    /* ========================================
+       MODULES (Scope of Work)
+       ======================================== */
+    .module {
+      border-left: 4px solid var(--c-border);
+      padding: 20px 24px;
+      margin-bottom: var(--sp-md);
+      background: var(--c-bg);
+    }
+
+    .section--alt .module { background: var(--c-bg); }
+
+    .module-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--sp-sm);
+    }
+
+    .module-name {
+      font-size: var(--fs-lg);
+      font-weight: var(--fw-semibold);
+      color: var(--c-dark);
+    }
+
+    .module-description { margin: var(--sp-sm) 0; }
+
+    .module-inclusions {
+      font-size: var(--fs-sm);
+      color: var(--c-text);
+      margin-top: var(--sp-sm);
+    }
+
+    .module-meta {
+      font-size: var(--fs-sm);
+      color: var(--c-text-light);
+      margin-top: var(--sp-sm);
+    }
+
+    /* Module category borders */
+    .module--strategy    { border-left-color: var(--c-purple); }
+    .module--design      { border-left-color: var(--c-yellow); }
+    .module--content     { border-left-color: var(--c-yellow); }
+    .module--seo         { border-left-color: var(--c-yellow); }
+    .module--frontend    { border-left-color: var(--c-green); }
+    .module--backend     { border-left-color: var(--c-pink); }
+    .module--ecommerce   { border-left-color: var(--c-pink); }
+    .module--integration { border-left-color: var(--c-pink); }
+    .module--migration   { border-left-color: var(--c-purple); }
+    .module--multilingual { border-left-color: var(--c-purple); }
+    .module--analytics   { border-left-color: var(--c-green); }
+    .module--post-launch { border-left-color: var(--c-green); }
+
+    /* ========================================
+       BADGES
+       ======================================== */
+    .badge {
+      display: inline-block;
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-semibold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 12px;
+    }
+
+    .badge--must     { color: #1a7a4e; background: var(--c-green-bg); }
+    .badge--should   { color: #8a7a1a; background: var(--c-yellow-bg); }
+    .badge--nice     { color: #6b5bb8; background: var(--c-purple-bg); }
+    .badge--included { color: #1a7a4e; background: var(--c-green-bg); }
+    .badge--optional {
+      color: var(--c-text-light);
+      background: var(--c-bg-light);
+      border: 1px solid var(--c-border);
+    }
+
+    /* ========================================
+       SITEMAP TREE
+       ======================================== */
+    .sitemap-tree { list-style: none; padding-left: 0; }
+    .sitemap-tree ul { list-style: none; padding-left: 28px; margin-bottom: 0; }
+    .sitemap-tree li { position: relative; padding: 6px 0; margin-bottom: 0; }
+    .sitemap-tree .page-name { font-weight: var(--fw-semibold); color: var(--c-dark); }
+    .sitemap-tree .page-path {
+      font-size: var(--fs-sm); color: var(--c-text-light);
+      font-family: monospace; margin-left: var(--sp-sm);
+    }
+    .sitemap-tree .page-traffic {
+      font-size: var(--fs-sm); color: var(--c-green); margin-left: var(--sp-sm);
+    }
+
+    /* ========================================
+       VISUAL TIMELINE
+       ======================================== */
+    .timeline-visual {
+      position: relative;
+      padding-left: 32px;
+    }
+
+    .timeline-visual::before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--c-border);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: var(--sp-xl);
+    }
+    .timeline-item:last-child { padding-bottom: 0; }
+
+    .timeline-dot {
+      position: absolute;
+      left: -32px;
+      top: 4px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--c-bg);
+      border: 3px solid var(--c-green);
+      z-index: 1;
+    }
+
+    .timeline-dot--green  { border-color: var(--c-green); }
+    .timeline-dot--yellow { border-color: var(--c-yellow); }
+    .timeline-dot--pink   { border-color: var(--c-pink); }
+    .timeline-dot--purple { border-color: var(--c-purple); }
+
+    .timeline-phase {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-semibold);
+      color: var(--c-text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .timeline-title {
+      font-size: var(--fs-lg);
+      font-weight: var(--fw-semibold);
+      color: var(--c-dark);
+      margin: var(--sp-xs) 0;
+    }
+
+    .timeline-duration {
+      font-size: var(--fs-sm);
+      color: var(--c-text-light);
+    }
+
+    /* ========================================
+       ACCORDION (CSS-only via details/summary)
+       ======================================== */
+    .accordion details {
+      border-bottom: 1px solid var(--c-border);
+    }
+
+    .accordion summary {
+      padding: var(--sp-md) 0;
+      font-weight: var(--fw-semibold);
+      color: var(--c-dark);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .accordion summary::-webkit-details-marker { display: none; }
+
+    .accordion summary::after {
+      content: "+";
+      font-size: var(--fs-lg);
+      color: var(--c-text-light);
+      transition: transform 0.2s;
+    }
+
+    .accordion details[open] summary::after {
+      content: "\2212";
+    }
+
+    .accordion .accordion-body {
+      padding: 0 0 var(--sp-md) 0;
+      color: var(--c-text);
+    }
+
+    /* ========================================
+       PROGRESS BAR
+       ======================================== */
+    .progress-bar {
+      height: 8px;
+      background: var(--c-bg-light);
+      overflow: hidden;
+      margin: var(--sp-sm) 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      transition: width 0.6s ease;
+    }
+
+    .progress-fill--green  { background: var(--c-green); }
+    .progress-fill--yellow { background: var(--c-yellow); }
+    .progress-fill--pink   { background: var(--c-pink); }
+    .progress-fill--purple { background: var(--c-purple); }
+
+    /* ========================================
+       ICONS
+       Inline SVG: geometric, 2px stroke,
+       sharp corners (square linecap, miter join).
+       ======================================== */
+    .icon {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      vertical-align: middle;
+    }
+
+    .icon--lg { width: 48px; height: 48px; }
+
+    .icon svg {
+      width: 100%;
+      height: 100%;
+      stroke-width: 2;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      fill: none;
+    }
+
+    /* ========================================
+       ACCEPTANCE / SIGNATURE
+       ======================================== */
+    .acceptance-block {
+      margin-top: var(--sp-xl);
+      padding: 32px;
+      border: 2px solid var(--c-border);
+    }
+
+    .acceptance-block h3 { margin-bottom: var(--sp-lg); }
+
+    .signature-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .signature-row:last-child { margin-bottom: 0; }
+
+    .signature-label {
+      width: 120px;
+      font-weight: var(--fw-semibold);
+      color: var(--c-dark);
+      flex-shrink: 0;
+    }
+
+    .signature-line {
+      flex: 1;
+      border-bottom: 1px solid var(--c-dark);
+      padding-bottom: 4px;
+      min-height: 24px;
+    }
+
+    /* ========================================
+       OPERATOR NOTICE
+       ======================================== */
+    .placeholder-notice {
+      background: var(--c-yellow-bg);
+      border-left: 4px solid var(--c-yellow);
+      padding: 16px 20px;
+      margin-top: var(--sp-lg);
+      font-size: var(--fs-sm);
+      color: #8a7a1a;
+      font-weight: var(--fw-semibold);
+    }
+
+    /* ========================================
+       FOOTER
+       ======================================== */
+    .footer {
+      text-align: center;
+      padding: 32px var(--container-px);
+      font-size: var(--fs-sm);
+      color: var(--c-text-light);
+      border-top: 1px solid var(--c-border);
+    }
+
+    /* ========================================
+       UTILITY CLASSES
+       ======================================== */
+    .text-center   { text-align: center; }
+    .text-right    { text-align: right; }
+    .text-light    { color: var(--c-text-light); }
+    .text-dark     { color: var(--c-dark); }
+    .text-white    { color: #FFFFFF; }
+    .text-sm       { font-size: var(--fs-sm); }
+    .text-lg       { font-size: var(--fs-lg); }
+    .text-italic   { font-style: italic; }
+    .fw-semibold   { font-weight: var(--fw-semibold); }
+    .fw-extrabold  { font-weight: var(--fw-extrabold); }
+    .mt-0  { margin-top: 0; }
+    .mt-sm { margin-top: var(--sp-sm); }
+    .mt-md { margin-top: var(--sp-md); }
+    .mt-lg { margin-top: var(--sp-lg); }
+    .mt-xl { margin-top: var(--sp-xl); }
+    .mb-0  { margin-bottom: 0; }
+    .mb-sm { margin-bottom: var(--sp-sm); }
+    .mb-md { margin-bottom: var(--sp-md); }
+    .mb-lg { margin-bottom: var(--sp-lg); }
+    .mb-xl { margin-bottom: var(--sp-xl); }
+    .relative        { position: relative; }
+    .overflow-hidden { overflow: hidden; }
+
+    /* ========================================
+       PRINT STYLES
+       ======================================== */
+    @media print {
+      body {
+        background: #FFFFFF;
+        font-size: 11pt;
+      }
+
+      .page {
+        max-width: 100%;
+        box-shadow: none;
+        margin: 0;
+      }
+
+      .section {
+        padding: 40px;
+        page-break-inside: avoid;
+      }
+
+      .section--break-before {
+        page-break-before: always;
+      }
+
+      .section--dark {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      h2, h3 { page-break-after: avoid; }
+
+      .module, .card, .stat-block,
+      .timeline-item, .acceptance-block {
+        page-break-inside: avoid;
+      }
+
+      tr { page-break-inside: avoid; }
+
+      .bracket-num--watermark { display: none; }
+
+      .page, .module, .highlight-box, .card {
+        box-shadow: none;
+      }
+
+      .section--alt, .section--dark,
+      .badge, .module, .card,
+      .highlight-box, .placeholder-notice,
+      .progress-fill, .stat-number,
+      .corner-accent::before, .timeline-dot,
+      .divider--four-color {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      a[href]::after {
+        content: " (" attr(href) ")";
+        font-size: 9pt;
+        color: var(--c-text-light);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <!-- Generate all proposal content here using the design system above. -->
+</div>
+
+<!--
+  ============================================================
+  DESIGN BRIEF -- Instructions for generating D6-Proposal.html
+  ============================================================
+
+  This file is a CSS design system and component library, NOT a fixed layout.
+  Generate the full page content creatively based on D6-Proposal.json.
+  Every proposal should be visually unique -- choose layouts and components
+  based on the specific content and its emphasis.
+
+
+  REQUIRED SECTIONS (always in this order)
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  1. Title Page      -- dark bg (.section--dark .grid-motif), logo, project title, client, meta
+  2. Executive Summary -- headline, overview, opportunity, traffic potential
+  3. The Challenge    -- current situation, pain points, challenges, evidence by domain
+  4. Our Approach     -- strategy narrative, methodology, desired outcome, concept highlights
+  5. Scope of Work    -- sitemap tree with traffic, modules grouped by category
+  6. Timeline         -- phased timeline, optional milestones, total duration
+  7. Investment       -- hours breakdown table, pricing note
+  8. About Us         -- placeholder (MUST include .placeholder-notice)
+  9. Conclusion       -- call to action, next steps, acceptance block with signature fields
+
+
+  COMPONENT TOOLKIT (all CSS classes are pre-defined above)
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Layout:
+    .section / .section--alt / .section--dark    Section backgrounds
+    .section--break-before                       Page break for print
+
+  Brand elements:
+    .bracket-num--inline                         { 02 } small section label
+    .bracket-num--stacked                        { 03 } large display number
+    .bracket-num--watermark                      Oversized faded bg number
+    .bracket-num--green/yellow/pink/purple       Color variants
+    .corner-accent                               L-bracket top-left accent
+    .corner-accent--green/yellow/pink/purple     Color variants
+    .grid-motif                                  Dot-grid texture (dark sections)
+    .divider--accent                             Short red accent line
+    .divider--four-color                         Green-yellow-pink-purple strip
+    .divider--numbered                           { 03 } centered with lines
+
+  Data display:
+    .stat-grid + .stat-block                     Large number + label grid
+    .stat-number / .stat-number--green/etc.      Colored stat numbers
+    .stat-label                                  Small uppercase label
+    .highlight-box / --green/yellow/pink/purple  Accent callout boxes
+    .progress-bar + .progress-fill--color        Horizontal progress bars
+
+  Content structure:
+    .card-grid + .card + .card__label/value      Card grid layout
+    .accordion > details > summary + body        Expandable sections (CSS-only)
+    .timeline-visual + .timeline-item            Visual vertical timeline
+    .timeline-dot--green/yellow/pink/purple      Colored timeline dots
+    .sitemap-tree                                Nested page tree
+
+  Scope of work:
+    .module + .module--{category}                Category-colored left border
+    .badge--must/should/nice                     Priority badges
+    .badge--included/optional                    Selection badges
+
+  Tables:
+    Standard table/thead/tbody/tfoot             Pre-styled
+
+  Signature:
+    .acceptance-block + .signature-row           Signature fields
+    .placeholder-notice                          Operator warning box
+
+  Utilities:
+    .text-center/right/light/dark/white/sm/lg
+    .fw-semibold/extrabold
+    .mt-sm/md/lg/xl   .mb-sm/md/lg/xl
+    .relative  .overflow-hidden
+
+
+  CREATIVE DIRECTION
+  ~~~~~~~~~~~~~~~~~~
+  - Use stat blocks for key numbers (traffic potential, page count, total hours)
+  - Use the visual timeline (.timeline-visual) instead of a plain table for phases
+  - Use corner accents on key content blocks for brand texture
+  - Use bracket numbers { 01 } as section labels throughout
+  - Use the four-color strip as a divider between major sections
+  - Alternate section backgrounds: white / light / dark where appropriate
+  - Title page: .section--dark with .grid-motif, centered, logo at top
+  - Consider accordions for evidence domains or module categories when there are many
+  - Use card grids for concept highlights (5 cards: positioning, visual, tone, UX, SEO)
+  - Use progress bars to visualize module hours distribution or category breakdowns
+  - Sharp corners throughout (0px radius) -- built into the CSS, no overrides needed
+  - All icons must be inline SVG: geometric, 2px stroke, square linecap, miter join
+  - Footer always includes: copyright oktodigital + confidentiality note
+  - Add .section--break-before to sections 3, 5, 6, 7, 8, 9 for clean print breaks
+
+
+  HARD RULES
+  ~~~~~~~~~~
+  - MUST include all 9 sections in order
+  - MUST include .placeholder-notice in About Us section
+  - MUST include .acceptance-block with 3 signature rows (Client, Date, Signature)
+  - MUST include sitemap traffic disclaimer (italic, small text after tree)
+  - NEVER skip sections even if data is sparse
+  - NEVER add border-radius to any element (sharp corners are the brand)
+  - Self-contained: no external resources except the font links in <head>
+  - The logo in the title page uses a simple SVG text element:
+    <svg viewBox="0 0 180 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <text x="0" y="24" fill="#FFFFFF" font-family="Safiro, Inter, sans-serif"
+            font-size="24" font-weight="800">oktodigital</text>
+    </svg>
+-->
+
+</body>
+</html>
