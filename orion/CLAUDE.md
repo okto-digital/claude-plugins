@@ -169,12 +169,9 @@ Raw input → Agent processing → JSON output → Markdown generated → Human 
 
 ### API Credentials
 
-**DataForSEO HTTP API:** Used by the `dataforseo-api` agent when operator selects "Direct API" mode.
-- Login: `payme@oktodigital.com`
-- Password: `e247759ca0d2717a`
-- Auth header value: `Basic {base64 of login:password}`
+**DataForSEO HTTP API:** Used by the `dataforseo-api` agent when operator selects "Direct API" mode. Credentials are NOT stored in this file.
 
-Pass the base64 token as `dataforseo_auth` when dispatching in API mode.
+On first use, ask the operator for DataForSEO login and password. Compute the Base64 auth token (`base64 of login:password`) and store it in `D1-Init.json` under `research_config.dataforseo_auth`. All subsequent dispatches read the token from there.
 
 ### MCP Context Budget
 
