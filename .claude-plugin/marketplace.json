@@ -75,9 +75,9 @@
       "description": "Client discovery for website projects: research, 21-domain gap analysis, and pre-interview document generation"
     },
     {
-      "name": "website-1-discovery-v2",
-      "source": "./website-1-discovery-v2",
-      "description": "Website discovery pipeline v2 — 6-phase sequential process from INIT to proposal"
+      "name": "orion",
+      "source": "./orion",
+      "description": "Orion — website discovery pipeline from research to proposal"
     }
   ]
 }
