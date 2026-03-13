@@ -17,12 +17,19 @@ Write JSON as **minified** (no whitespace, no indentation).
       "cap_applied": "number",
       "date_run": "string"
     },
+    "client_rankings": [
+      {
+        "keyword": "string",
+        "position": "number",
+        "url": "string",
+        "traffic_share": "number | null"
+      }
+    ],
     "keywords": [
       {
         "keyword": "string",
         "language": "string",
         "location": "string",
-        "search_engine": "string",
         "intent": "navigational | informational | commercial | transactional",
         "volume_est": "number | null",
         "client_position": "number | null",
@@ -55,28 +62,33 @@ Write to `research/R1-SERP.json`.
 Generate `research/R1-SERP.md` from the JSON:
 
 ```markdown
-# SERP Research — [Client Name]
+# SERP Research — {Client Name}
 
 ## Overview
-[2-3 sentence summary: how competitive the SERP landscape is, whether the client
-appears, dominant site types in results]
+{2-3 sentence summary: how competitive the SERP landscape is, whether the client
+appears, dominant site types in results}
 
 ## Language & Location Matrix
 | Language | Location | Search Engine |
 |---|---|---|
-| [language] | [location] | [search_engine] |
+| {language} | {location} | {search_engine} |
+
+## Client Current Rankings
+| Keyword | Position | URL | Traffic Share |
+|---|---|---|---|
+| {keyword} | {position} | {url} | {traffic_share} |
 
 ## Keyword Results
 | Keyword | Lang | Location | Intent | Volume | Client Pos | Top Result | Page Suggestion |
 |---|---|---|---|---|---|---|---|
-| [keyword] | [lang] | [loc] | [intent] | [vol] | [pos / —] | [domain] | [page_type] |
+| {keyword} | {lang} | {loc} | {intent} | {vol} | {pos / —} | {domain} | {page_type} |
 
 ## Top Competitor Domains
 | Domain | Site Type | Appearances | Languages | Notes |
 |---|---|---|---|---|
-| [domain] | [type] | [count] | [langs] | [notes] |
+| {domain} | {type} | {count} | {langs} | {notes} |
 
 ## Notes
-- [note 1]
-- [note 2]
+- {note 1}
+- {note 2}
 ```

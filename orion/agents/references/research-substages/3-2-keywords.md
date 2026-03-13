@@ -24,8 +24,9 @@ From `D1-Init.json`:
 - `project.location` — primary + additional markets
 
 From `R1-SERP.json`:
-- `keywords` — full seed keyword list with intent and volume estimates
-- `competitors` — commercial competitor domain list with keyword appearance counts
+- `keywords` — seed keyword list with intent and volume estimates
+- `client_rankings` — keywords the client already ranks for (baseline)
+- `competitors` — commercial competitor domain list
 - `meta.language_location_matrix` — search engine settings per language x location
 
 ---
@@ -34,53 +35,60 @@ From `R1-SERP.json`:
 
 ### Step 1: Keyword expansion
 
-Call `dataforseo_labs_keyword_suggestions` on the seed keyword list from R1-SERP. Run per language x location combination from the matrix.
+Call `dataforseo_labs_google_keyword_suggestions` and `dataforseo_labs_google_related_keywords` on the seed keywords from R1-SERP. Run per language x location combination from the matrix.
 
 Deduplicate against existing keywords. Add net-new terms to the candidate list.
 
-### Step 2: Volume and difficulty enrichment
+### Step 2: Competitor rankings
 
-Call `kw_data_google_ads_search_volume` on the full expanded keyword list. Returns accurate monthly search volume per keyword per location.
+Call `dataforseo_labs_google_ranked_keywords` on top 3 commercial competitors from R1-SERP. Returns keywords each competitor ranks for, with positions and traffic share.
 
-Call `dataforseo_labs_keyword_difficulty` on the full expanded keyword list. Returns keyword difficulty score (0–100) indicating how hard it is to rank organically.
+Cross-reference against R1 keywords + expanded list. Keywords competitors rank for that are absent from the client's list are flagged as gap opportunities.
 
-### Step 3: Trend analysis
+### Step 3: Domain intersection
 
-Call `dataforseo_labs_google_trends` on the top 20 keywords by search volume only. Classify each as:
+Call `dataforseo_labs_google_domain_intersection` with the client domain + top competitors. Reveals shared keywords (overlap) and unique keywords per domain.
+
+### Step 4: Competitor discovery
+
+Call `dataforseo_labs_google_competitors_domain` on the client domain. Surfaces additional competing domains not found in R1 SERP results. Add any net-new commercial competitors to the competitor list.
+
+### Step 5: Difficulty scoring
+
+Call `dataforseo_labs_bulk_keyword_difficulty` on the full expanded keyword list. Returns keyword difficulty score (0–100).
+
+### Step 6: Trend analysis
+
+Call `kw_data_google_trends_explore` on the top 20 keywords by search volume. Classify each as:
 - `rising` — growing search interest
 - `stable` — consistent search interest
 - `declining` — shrinking search interest
 - `seasonal` — significant periodic spikes
 
-Trend status influences keyword priority — a high-volume declining keyword is deprioritised versus a lower-volume rising one.
-
-### Step 4: Competitor keyword gap analysis
-
-Call `dataforseo_labs_competitors_domain` on the client domain (if exists) and top 3 commercial competitors from R1-SERP.
-
-Call `dataforseo_labs_ranked_keywords` on top 3 commercial competitors. Cross-reference against current keyword list to identify uncovered opportunities.
-
-Produce a gap list — keywords competitors rank for that are not in the client keyword set — flagged as opportunities.
-
-### Step 5: Prioritisation and capping
+### Step 7: Prioritisation and capping
 
 Score each keyword:
-- High volume + low difficulty + commercial or transactional intent = highest priority
+- High volume + low difficulty + commercial/transactional intent = highest priority
+- Rising trend boosts priority; declining trend downgrades regardless of volume
 - Informational keywords retained but ranked lower unless content strategy signals need them
-- Declining trend keywords downgraded regardless of volume
+- Gap opportunities (competitors rank, client doesn't) get priority boost
 
 Trim to `research_config.search_landscape_max_keywords` (default: 100). Log deprioritised keywords in `notes`.
 
-### Step 6: Page intent grouping
+### Step 8: Keyword clustering
 
-Organise the final keyword list into page intent groups based on `page_type_suggestion` from R1-SERP and refined intent signals:
-- `homepage`
-- `product_category`
-- `product_detail`
-- `service_page`
-- `location_page`
-- `blog`
-- `other`
+Group the final keyword list into semantic clusters. Each cluster represents one topic that a single page should target.
+
+For each cluster:
+- **primary_keyword** — the highest-volume keyword in the cluster (the main target)
+- **supporting_keywords** — semantically related keywords that belong on the same page
+- **page_type** — suggested page type: `homepage`, `service`, `portfolio`, `location`, `blog`, `landing`, `other`
+- **total_volume** — sum of all keyword volumes in the cluster
+- **avg_difficulty** — average difficulty across cluster keywords
+
+Use semantic similarity and SERP overlap to group: if two keywords return largely the same top 10 results, they belong in the same cluster. `dataforseo_labs_google_related_keywords` output from Step 1 informs this grouping.
+
+One keyword should appear in only one cluster. If a keyword could fit multiple clusters, assign it to the one with the closest semantic match.
 
 ---
 
@@ -92,4 +100,4 @@ Write output using the templates at `templates/R2-Keywords-template.md`.
 
 ## What passes to the next substage
 
-`research/R2-Keywords.json` — substage 3.3 reads the commercial competitor domain list (enriched from both R1 and R2) to build the final competitor list (capped at `competitors_max`). The `page_groups` block feeds into Concept Creation for site structure planning.
+`research/R2-Keywords.json` — R3 reads the enriched competitor domain list (from R1 SERP appearances + R2 domain intersection + R2 competitor discovery) to build the final competitor profile list. The `keyword_clusters` block feeds into Concept Creation (C1-Sitemap) for hub-and-spoke architecture planning.

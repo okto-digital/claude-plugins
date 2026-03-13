@@ -28,6 +28,7 @@ From `D1-Init.json`:
 - `notes` — competitor hints, SEO keyword suggestions from operator
 
 From `D2-Client-Intelligence.json`:
+- `services_or_products` — primary source for keyword generation
 - `profile` — industry, description, markets
 - `website.url` — client domain for position tracking
 - `registry` — legal name for brand variant queries
@@ -36,15 +37,23 @@ From `D2-Client-Intelligence.json`:
 
 ## Methodology
 
-### Step 1: Keyword generation
+### Step 1: Language x location matrix
 
-Generate a keyword list based on:
+For each language x location combination, determine the correct search engine settings:
+- Primary location + primary language → e.g., SK + Slovak → google.sk
+- Primary location + secondary language → e.g., SK + English → google.sk in English
+- Secondary location + language → e.g., CZ + Czech → google.cz
+
+Map each combination to DataForSEO `location_code` and `language_code` parameters.
+
+### Step 2: Keyword generation
+
+Call `dataforseo_labs_google_keyword_ideas` with seed keywords derived from:
+- `D2.services_or_products` (primary source) — each service/product name and category
 - Client name and brand variants (including legal name if different)
-- Services and products identified from INIT notes and client profile
-- Location modifiers (city, region, country) per primary and secondary markets
-- Language variants per primary and secondary languages
+- INIT notes (competitor hints, operator keyword suggestions)
 
-Keywords are generated as combinations with natural phrasing per language — not literal translations.
+Combine with location modifiers (city, region, country) and language variants. Natural phrasing per language — not literal translations.
 
 **Cap rules (when research_depth = basic):**
 - Max 5 keywords per service or product
@@ -54,42 +63,34 @@ Keywords are generated as combinations with natural phrasing per language — no
 
 **Priority if cap reached:** core service/product keywords first, brand variants second, location modifiers third. Log deprioritised keywords in `notes`.
 
-### Step 2: Language x location matrix
+### Step 3: Client current rankings
 
-For each language x location combination, determine the correct search engine settings:
-- Primary location + primary language → e.g., SK + Slovak → google.sk
-- Primary location + secondary language → e.g., SK + English → google.sk in English
-- Secondary location + language → e.g., CZ + Czech → google.cz
+Call `dataforseo_labs_google_ranked_keywords` on the client domain. Returns keywords the client already ranks for, with positions and traffic share.
 
-Map each combination to DataForSEO `location_code` and `language_code` parameters.
+Call `dataforseo_labs_google_top_searches` on the client domain. Returns queries where the client domain appears in results.
 
-### Step 3: SERP execution
+Merge any net-new keywords into the keyword list. Mark existing keywords with client position data.
 
-For every keyword in the matrix, call `serp_organic_live_advanced` with the correct location_code, language_code, and search engine.
+### Step 4: SERP check
+
+For every keyword in the list, call `serp_organic_live_advanced` with the correct location_code, language_code, and search engine.
 
 Record per keyword:
 - Client domain position (1–10 or `null` if not present)
 - All domains appearing in top 10
-- Result type (organic, featured snippet, local pack, etc.)
 - Top result domain
 
-### Step 4: Intent classification
+### Step 5: Intent classification
 
 Call `dataforseo_labs_search_intent` on the full keyword list.
 
-Classify each keyword as:
-- `navigational` — looking for specific brand or site
-- `informational` — seeking knowledge or answers
-- `commercial` — researching before purchase
-- `transactional` — ready to act or buy
+Classify each keyword as: `navigational`, `informational`, `commercial`, `transactional`.
 
-### Step 5: Volume estimation
+### Step 6: Volume estimation
 
-Call `kw_data_google_ads_search_volume` on the full keyword list.
+Call `kw_data_google_ads_search_volume` on the full keyword list. Returns estimated monthly search volume per keyword per location.
 
-Returns estimated monthly search volume per keyword per location. First signal on keyword priority before deeper analysis in 3.2.
-
-### Step 6: Competitor frequency compilation
+### Step 7: Competitor frequency compilation
 
 Count domain appearances across all SERP results. Compile top 10 most frequently appearing domains. Classify each by site type:
 - `commercial` — direct competitor selling same product/service
@@ -98,11 +99,11 @@ Count domain appearances across all SERP results. Compile top 10 most frequently
 - `marketplace` — multi-vendor platform
 - `informational` — Wikipedia, how-to, reference
 
-Only `commercial` domains carry forward to 3.3 (Competitor Landscape). All others are noted but not profiled.
+Only `commercial` domains carry forward to R2 and R3. All others are noted but not profiled.
 
-### Step 7: Page type suggestions
+### Step 8: Page type suggestions
 
-For each keyword, suggest which page type it likely maps to based on intent and topic: `homepage`, `product_category`, `product_detail`, `service_page`, `blog`, `location_page`, `faq`, `landing_page`. This is a first-pass signal for site structure in Concept Creation.
+For each keyword, suggest which page type it likely maps to based on intent and topic: `homepage`, `product_category`, `product_detail`, `service_page`, `blog`, `location_page`, `faq`, `landing_page`.
 
 ---
 
@@ -114,4 +115,4 @@ Write output using the templates at `templates/R1-SERP-template.md`.
 
 ## What passes to the next substage
 
-`research/R1-SERP.json` — substage 3.2 reads the keyword list as seeds for expansion, and the competitor domain list to cross-reference against keyword-based discovery.
+`research/R1-SERP.json` — R2 reads: seed keywords for expansion, client current rankings as baseline, competitor domain list for gap analysis.
