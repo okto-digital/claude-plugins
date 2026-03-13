@@ -11,14 +11,6 @@
 
 ---
 
-## Priority Definitions
-
-- **CRITICAL:** Brief cannot be accurate without this. Must resolve before drafting.
-- **IMPORTANT:** Brief will be thinner without this. Resolve in second pass if time allows.
-- **NICE-TO-HAVE:** Useful depth. Surface once, accept skip.
-
----
-
 ## 1. Core Security
 
 | Checkpoint | Priority |

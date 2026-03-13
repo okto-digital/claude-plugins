@@ -21,80 +21,36 @@ The dispatch prompt provides:
 
 ## Process
 
-### 1. Read the G-file
+### 1. Read and identify
 
-Read the JSON. Identify findings that need revision:
-- Findings where `evidence` starts with `"Client:"` — mechanically inserted, needs rewriting
-- Findings where `reason` is `"Not applicable (client)"` — may need minor refinement
+Read the G-file JSON. Findings needing revision have `evidence` starting with `"Client:"` (mechanical insert) or `reason` of `"Not applicable (client)"`.
 
-### 2. Rewrite evidence text
+### 2. Rewrite evidence
 
-For each finding with `"Client:"` evidence:
-- Rewrite into coherent, professional evidence text
-- Preserve the factual content — do not add or infer beyond what the client stated
-- Append `"(client response)"` attribution
-- Keep under 2 sentences
+For each `"Client:"` finding, rewrite into coherent evidence. Preserve factual content, append `"(client response)"`, keep under 2 sentences.
 
-**Examples:**
+Examples:
 - `"Client: WordPress"` → `"Client confirmed WordPress as current CMS platform (client response)"`
-- `"Client: B2B SaaS with annual contracts, ~€2M revenue"` → `"B2B SaaS model with annual contract structure, approximately €2M annual revenue (client response)"`
-- `"Client: 3 main competitors: X, Y, Z"` → `"Three primary competitors identified: X, Y, Z (client response)"`
+- `"Client: B2B SaaS, ~€2M revenue"` → `"B2B SaaS model, approximately €2M annual revenue (client response)"`
 
-For N/A findings with `"Not applicable (client)"`:
-- Leave reason as-is unless it is clearly incoherent — the mechanical text is already clear
+For N/A findings: leave `"Not applicable (client)"` as-is unless clearly incoherent.
 
-### 3. Update summary
+### 3. Update summary and verify counts
 
-Rewrite the `summary` field to reflect the post-resolution state:
-- Reference the updated counts (found/partial/gap)
-- Note client-resolved items if they changed the domain's overall picture
-- Keep to 1-2 sentences
+Rewrite `summary` to reflect post-resolution state (1-2 sentences). Recalculate all count fields from findings — fix any mismatches. Leave `questions_resolved` as-is (set by resolve-answers.sh).
 
-### 4. Verify counts
+### 4. Write output
 
-Recalculate all count fields from findings. If any mismatch, correct them:
-- `found`: findings with status FOUND
-- `partial`: findings with status PARTIAL
-- `gap`: findings with status GAP
-- `na`: findings with status N/A
-- `critical_resolved`: FOUND findings with CRITICAL priority
-- `critical_total`: all findings with CRITICAL priority
-- `questions_resolved`: leave as-is (set by resolve-answers.sh)
+- **G-file:** Write updated JSON to same path, minified single line
+- **Markdown:** Regenerate from JSON using the same format as the original (see domain-output-template.md active domain format). Overwrite existing file.
 
-### 5. Write revised G-file
-
-Write the updated JSON to the same path. Minified, single line.
-
-### 6. Write revised markdown
-
-Generate markdown from the revised JSON using this format:
-
-**Active domain:**
-```
-## {Domain Name}
-**{domain-id}** — {found} FOUND, {partial} PARTIAL, {gap} GAP, {na} N/A | {critical_resolved}/{critical_total} CRITICAL resolved | {questions_generated} questions
-
-### {Section Name}
-- [FOUND] {checkpoint} — evidence: "{evidence}"
-- [PARTIAL] {checkpoint} — evidence: "{evidence}"
-- [GAP] {checkpoint} [{priority}]
-- [N/A] {checkpoint} — reason: {reason}
-
----
-```
-
-Write to the markdown path, overwriting the existing file.
-
-### 7. Return summary
-
-Report: domain name, findings revised count, updated counts snapshot.
+Return: domain name, findings revised count, updated counts.
 
 ## Rules
 
 <critical>
 - NEVER invent evidence beyond what the client stated
 - NEVER change finding status — only rewrite evidence/reason text
-- NEVER modify findings that were NOT mechanically inserted (no "Client:" prefix)
+- NEVER modify findings without `"Client:"` prefix in evidence
 - ALWAYS write JSON as a SINGLE LINE — no newlines, no indentation
-- ALWAYS preserve the original section grouping order in markdown
 </critical>
