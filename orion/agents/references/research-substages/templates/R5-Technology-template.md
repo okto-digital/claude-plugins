@@ -65,10 +65,7 @@ Write JSON as **minified** (no whitespace, no indentation).
       }
     ],
     "gap_analysis": {
-      "tech_stack_gaps": [],
-      "performance_gaps": [],
-      "accessibility_gaps": [],
-      "gdpr_gaps": [],
+      "gaps": [],
       "opportunities": []
     },
     "notes": [
@@ -77,6 +74,8 @@ Write JSON as **minified** (no whitespace, no indentation).
   }
 }
 ```
+
+**Note on `gap_analysis`:** One line per item. `gaps` covers tech stack, performance, accessibility, and GDPR together — no separate subsections. `opportunities` = where technical superiority would differentiate. Do not restate per-site findings.
 
 Write to `research/R5-Technology.json`.
 
@@ -87,55 +86,47 @@ Write to `research/R5-Technology.json`.
 Generate `research/R5-Technology.md` from the JSON:
 
 ```markdown
-# Technology & Performance — [Client Name]
+# Technology & Performance — {Client Name}
 
 ## Overview
-[2-3 sentence narrative summarising the technical landscape —
-how the client compares technically, most important gaps or opportunities]
+{2-3 sentence narrative summarising the technical landscape —
+how the client compares technically, most important gaps or opportunities}
 
 ## Site Analysis
 
-### [Client Name] — [domain] *(Client)*
+### {Client Name} — {domain} *(Client)*
 
 #### Pages Analysed
 | Page | Type | Perf | Access. | Best Prac. | SEO | LCP | INP | CLS |
 |---|---|---|---|---|---|---|---|---|
-| [url] | homepage | [score] | [score] | [score] | [score] | [lcp] | [inp] | [cls] |
+| {url} | homepage | {score} | {score} | {score} | {score} | {lcp} | {inp} | {cls} |
 
 #### Tech Stack
-- **CMS:** [cms] | **Framework:** [framework]
-- **Hosting:** [hosting] | **CDN:** [cdn] | **SSL:** [ssl]
-- **Analytics:** [analytics]
-- **Marketing tools:** [marketing_tools]
+- **CMS:** {cms} | **Framework:** {framework}
+- **Hosting:** {hosting} | **CDN:** {cdn} | **SSL:** {ssl}
+- **Analytics:** {analytics}
+- **Marketing tools:** {marketing_tools}
 
 #### WCAG Accessibility *(surface scan — AA level)*
-- **Score:** [score] | **Level met:** [level_met]
-- **Critical violations:** [critical_violations]
+- **Score:** {score} | **Level met:** {level_met}
+- **Critical violations:** {critical_violations}
 
 #### GDPR *(surface scan — not a legal assessment)*
-- **Cookie consent:** [cookie_consent] ([consent_type])
-- **Privacy policy:** [privacy_policy]
-- **Tracking scripts detected:** [tracking_scripts]
+- **Cookie consent:** {cookie_consent} ({consent_type})
+- **Privacy policy:** {privacy_policy}
+- **Tracking scripts detected:** {tracking_scripts}
 
 ---
 *(repeat for each competitor and reference site)*
 
 ## Gap Analysis
-### Technology Stack Gaps
-- [gap 1]
 
-### Performance Gaps
-- [gap 1]
-
-### Accessibility Gaps
-- [gap 1]
-
-### GDPR Gaps
-- [gap 1]
+### Gaps
+- {gap — what's weak + why it matters}
 
 ### Opportunities
-- [opportunity 1]
+- {opportunity — where technical superiority would differentiate}
 
 ## Notes
-- [note 1]
+- {note 1}
 ```

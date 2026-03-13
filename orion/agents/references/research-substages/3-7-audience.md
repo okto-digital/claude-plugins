@@ -32,7 +32,7 @@ From `R1-SERP.json`:
 
 From `R2-Keywords.json`:
 - `keywords` — keyword gap and audience segment signals
-- `page_groups` — how search demand clusters around page types
+- `keyword_clusters` — semantic keyword clusters with page type mapping
 
 From `R3-Competitors.json`:
 - `competitors` — competitor audience targeting signals, positioning, messaging
@@ -41,7 +41,7 @@ From `R4-Market.json`:
 - `customer_behaviour` — discovery patterns, buying journey, content preferences, device preferences
 - `website_expectations` — standard functionality, trust signals, conversion patterns
 - `payment_patterns` — payment method expectations
-- `website_implications` — market-to-website connections
+- `gap_analysis.opportunities` — market-to-website connections
 
 ---
 
@@ -58,41 +58,20 @@ Personas are built from segments — not the other way around.
 
 ### Step 2: Persona construction
 
-For each segment (max 3) construct a full persona profile:
+For each segment (max 3) construct a persona profile. Be concise — short phrases, not paragraphs:
 - **Demographics:** name, age, location, occupation, income level, lifestyle
-- **Psychographics:** personality type, values, beliefs, lifestyle preferences
-- **Buying motivation:** what problem they solve, emotional triggers, objections
-- **Digital behaviour:** where they search, preferred content types, device and channel preferences
-- **Trust threshold:** how much convincing before converting (high, medium, low)
-- **Decision process:** research-heavy vs impulsive, influences they trust
-- **Marketing messaging:** 1–2 positioning statements that resonate with this persona
-- **Keyword mapping:** which keywords from R2-Keywords this persona uses at each funnel stage
+- **Profile:** personality type, values, emotional triggers, objections, decision process (research-heavy vs impulsive, influences they trust). Combine psychographics and buying motivation — they overlap.
+- **Digital behaviour:** where they search, preferred content types, device preference, acquisition channel most likely to reach them
+- **Trust threshold:** high, medium, low
+- **Keyword mapping:** which keywords from R2-Keywords this persona uses at each funnel stage (awareness, consideration, decision)
+- **Messaging:** 1–2 positioning statements that resonate with this persona
 - **Primary flag:** one persona is flagged as the primary design target
 
-### Step 3: Psychographics and buying motivation table
-
-For each persona build a structured evidence table connecting research findings to persona characteristics:
-
-| Psychographic Factor | Source | Key Findings | Patterns Identified | Strategic Implications |
-|---|---|---|---|---|
-
-Factors: lifestyle preferences, values and beliefs, emotional triggers, buying behaviour, brand perception and loyalty.
-
-### Step 4: Industry benchmarks per persona
-
-Map relevant industry benchmarks from R4-Market to each persona segment:
-- Expected conversion rate for this audience type
-- Average CAC signals
-- Retention likelihood
-- Most effective acquisition channel for this segment
-
-These give Concept Creation concrete performance targets.
-
-### Step 5: User journey map per persona
+### Step 3: User journey map per persona
 
 Map the five-stage journey — awareness, consideration, decision, retention, advocacy:
 
-| Stage | User Mindset | Where They Go | Pain Points | Content Needed | Website Implication |
+| Stage | Mindset | Where They Go | Pain Points | Content Needed | Website Implication |
 |---|---|---|---|---|---|
 
 `Website Implication` per stage is the most important column — translates persona behaviour directly into website page and content requirements.

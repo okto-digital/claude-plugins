@@ -46,12 +46,12 @@ Write JSON as **minified** (no whitespace, no indentation).
     "trends": {
       "current": [],
       "innovations": [],
-      "future": [],
-      "local_vs_global_gap": "string | null"
+      "future": []
     },
-    "website_implications": [
-      "string"
-    ],
+    "gap_analysis": {
+      "local_vs_global_gap": "string | null",
+      "opportunities": ["string"]
+    },
     "notes": [
       "string"
     ]
@@ -59,9 +59,9 @@ Write JSON as **minified** (no whitespace, no indentation).
 }
 ```
 
-**Note on `website_implications`:** Most important field for downstream phases. Agent-written statements connecting market findings to website decisions — e.g. "Mobile-first design is critical — 78% of searches in this category are on mobile in SK." Concept Creation reads this directly.
+**Note on `gap_analysis.opportunities`:** Most important field for downstream phases. Max 5 cross-cutting insights that synthesise findings from multiple dimensions into concrete website decisions. Each must combine at least two dimensions — do not restate individual findings already covered in the structured sections above. Example: "Mobile-first + booking integration — 78% mobile searches combined with no-friction conversion expectations means booking flow must be thumb-optimised and single-page." Concept Creation reads this directly.
 
-**Note on `local_vs_global_gap`:** What global markets are doing that the local market hasn't adopted yet. Consistent source of differentiation opportunities for the proposal.
+**Note on `gap_analysis.local_vs_global_gap`:** What global markets are doing that the local market hasn't adopted yet. Consistent source of differentiation opportunities for the proposal.
 
 Write to `research/R4-Market.json`.
 
@@ -72,57 +72,59 @@ Write to `research/R4-Market.json`.
 Generate `research/R4-Market.md` from the JSON:
 
 ```markdown
-# Industry & Market Context — [Client Name]
+# Industry & Market Context — {Client Name}
 
 ## Overview
-[2-3 sentence narrative summarising the most important industry findings
-and what they mean for the website project]
+{2-3 sentence narrative summarising the most important industry findings
+and what they mean for the website project}
 
 ## Search Sources
 | Source | Type | Relevance |
 |---|---|---|
-| [title] ([url]) | local / global | [relevance note] |
+| {title} ({url}) | local / global | {relevance note} |
 
 ## Current Market State
-- **Maturity:** [market_maturity]
-- **Dynamics:** [market_dynamics]
-- **Regulatory considerations:** [list]
-- **Seasonal patterns:** [seasonal_patterns]
+- **Maturity:** {market_maturity}
+- **Dynamics:** {market_dynamics}
+- **Regulatory considerations:** {list}
+- **Seasonal patterns:** {seasonal_patterns}
 
 ## Customer Behaviour
-- **Discovery patterns:** [discovery_patterns]
-- **Buying journey:** [buying_journey]
-- **Common questions:** [list]
-- **Preferred content formats:** [list]
-- **Device preferences:** [device_preferences]
+- **Discovery patterns:** {discovery_patterns}
+- **Buying journey:** {buying_journey}
+- **Common questions:** {list}
+- **Preferred content formats:** {list}
+- **Device preferences:** {device_preferences}
 
 ## Website Expectations
-- **Standard functionality:** [list]
-- **Trust signals:** [list]
-- **IA patterns:** [ia_patterns]
-- **Conversion patterns:** [conversion_patterns]
+- **Standard functionality:** {list}
+- **Trust signals:** {list}
+- **IA patterns:** {ia_patterns}
+- **Conversion patterns:** {conversion_patterns}
 
 ## Payment Patterns
-- **Local methods:** [list]
-- **Emerging behaviours:** [list]
+- **Local methods:** {list}
+- **Emerging behaviours:** {list}
 
 ## Trends
 ### Current
-- [trend 1]
+- {trend 1}
 
 ### Innovations
-- [innovation 1]
+- {innovation 1}
 
 ### Future Direction
-- [future trend 1]
+- {future trend 1}
+
+## Gap Analysis
 
 ### Local vs Global Gap
-[local_vs_global_gap]
+{local_vs_global_gap}
 
-## Website Implications
-- [implication 1]
-- [implication 2]
+### Opportunities
+- {opportunity 1}
+- {opportunity 2}
 
 ## Notes
-- [note 1]
+- {note 1}
 ```

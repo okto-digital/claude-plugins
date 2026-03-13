@@ -11,9 +11,9 @@
 
 ## Purpose
 
-Final research substage and one of the most direct inputs into Concept Creation. Three parts: brand voice analysis (how everyone communicates), content structure analysis (how pages are built), and a page structure recommendation (suggested site architecture with supporting SEO pages). The page structure output is essentially the first draft of the site map.
+Final research substage. Two parts: brand voice analysis (how everyone communicates) and content structure analysis (how pages are built). Social tone data from R6-Reputation is reused — no re-scraping needed.
 
-Social communication data from R6-Reputation is reused to enrich brand voice analysis — no re-scraping of social needed.
+Site architecture is NOT produced here — that is C1-Sitemap's job using R2 keyword clusters and these findings as input.
 
 ---
 
@@ -27,17 +27,19 @@ From `D1-Init.json`:
 From `D2-Client-Intelligence.json`:
 - `website.url` — client domain
 - `website.tone_of_voice` — existing tone signals
+- `services_or_products` — service/product list for content mapping
 
 From `R2-Keywords.json`:
-- `page_groups` — keyword clusters by page type
+- `keyword_clusters` — semantic keyword clusters with page type mapping and volume data
 - `gap_analysis.keywords_not_targeted` — untargeted keyword opportunities
 
 From `R3-Competitors.json`:
 - `competitors` ranks 1–3 for content analysis
+- `competitors[].website.tone_of_voice` — surface-level tone from R3. Brand voice analysis here goes deeper across 10+ dimensions; use R3 as baseline, not as the full picture.
 
 From `R4-Market.json`:
 - `website_expectations` — functionality and content standards in this industry
-- `website_implications` — market-to-website connections
+- `gap_analysis.opportunities` — market-to-website connections
 
 From `R7-Audience.json`:
 - `personas` — persona definitions, journey map, keyword mapping
@@ -48,7 +50,7 @@ From `R6-Reputation.json` (soft dependency):
 - `sites[].social[].content_types` — content types used
 
 From `R8-UX.json` (optional — may not be available if R8 runs in parallel):
-- `gap_analysis.ux_gaps` — UX issues informing content structure
+- `gap_analysis.gaps` — UX/UI issues informing content structure
 - `sites[].ux.information_architecture` — page structure patterns
 
 ---
@@ -87,6 +89,7 @@ For each key page type, analyse how client and competitors structure content —
 - About page
 - Contact page
 - Blog or content hub (if present)
+- Other high value pages (pricing, portfolio, FAQ, landing pages)
 
 #### Step 4: Search-informed structure signals
 
@@ -103,22 +106,6 @@ From R4-Market, identify:
 - Content depth standards — detail level customers expect
 - Supporting content patterns that help conversion
 
-### Part 3 — Page Structure Recommendation
-
-#### Step 6: Site architecture suggestion
-
-Produce a nested page structure recommendation. Each page classified by priority:
-- `must_have` — core pages required for the site to function and convert
-- `should_have` — important pages improving SEO or UX significantly
-- `nice_to_have` — supporting pages adding depth and long-tail SEO value
-
-Each page entry includes:
-- Page name and type
-- Purpose and which persona it primarily serves
-- Target keywords from R2-Keywords mapping
-- Suggested content sections in order
-- SEO rationale for supporting pages
-
 ---
 
 ## Output
@@ -129,6 +116,6 @@ Write output using the templates at `templates/R9-Content-template.md`.
 
 ## What passes to the next phase
 
-`research/R9-Content.json` — this is the final research substage output. Concept Creation reads `page_structure_recommendation` as the primary site architecture input, `brand_voice` findings for messaging direction, and `gap_analysis.opportunities` for content strategy recommendations.
+`research/R9-Content.json` — final research output. Concept Creation reads `brand_voice` findings for messaging direction and `gap_analysis` for content strategy inputs. C1-Sitemap combines this with R2 keyword clusters for site architecture.
 
 **The Research phase is now complete. All 9 substages have been run and reviewed.**

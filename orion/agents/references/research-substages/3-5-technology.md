@@ -52,7 +52,7 @@ When `research_depth` = `deep`: expand to all locked competitors from R3, not ju
 For each site, identify the 3 most representative subpages by crawling the site structure. Priority order:
 1. Primary conversion page (product, pricing, booking, contact)
 2. Category or content page (if exists)
-3. Secondary landing page or about page
+3. Other high value page (portfolio, FAQ, landing page, about page)
 
 Log selected pages in the JSON output.
 
@@ -91,12 +91,7 @@ Note as surface scan only — not a legal assessment.
 
 ### Step 6: Gap analysis
 
-Compare client against analysed competitors and reference sites across all dimensions:
-- Technology stack gaps — outdated stack vs modern competitors
-- Performance gaps — Core Web Vitals and Lighthouse comparison
-- Accessibility gaps — WCAG compliance level comparison
-- GDPR gaps — compliance signal comparison
-- Opportunities — where technical superiority would be a differentiator
+Compare client against analysed competitors and reference sites. Each gap is one line: what's weak + why it matters. Do not restate per-site findings — synthesise across sites. Covers tech stack, performance, accessibility, and GDPR together in flat `gaps` + `opportunities` lists.
 
 ---
 
@@ -108,4 +103,4 @@ Write output using the templates at `templates/R5-Technology-template.md`.
 
 ## What passes to the next substage
 
-`research/R5-Technology.json` — Concept Creation reads `gap_analysis.opportunities` and `tech_stack` for technology recommendations. Proposal reads `wcag`, `gdpr` and `performance_gaps` for compliance and technical recommendations.
+`research/R5-Technology.json` — Concept Creation reads `gap_analysis.opportunities` and `tech_stack` for technology recommendations. Proposal reads `wcag`, `gdpr` and `gap_analysis.gaps` for compliance and technical recommendations.

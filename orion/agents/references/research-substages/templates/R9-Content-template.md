@@ -49,43 +49,14 @@ Write JSON as **minified** (no whitespace, no indentation).
       }
     ],
     "gap_analysis": {
-      "voice_gaps": [],
-      "content_structure_gaps": [],
-      "missing_page_types": [],
+      "gaps": [],
       "opportunities": []
-    },
-    "page_structure_recommendation": {
-      "primary_pages": [
-        {
-          "name": "string",
-          "type": "string",
-          "priority": "must_have | should_have | nice_to_have",
-          "purpose": "string",
-          "primary_persona": "string",
-          "target_keywords": [],
-          "suggested_sections": [],
-          "seo_rationale": "string | null"
-        }
-      ],
-      "supporting_pages": [
-        {
-          "name": "string",
-          "type": "string",
-          "priority": "must_have | should_have | nice_to_have",
-          "purpose": "string",
-          "primary_persona": "string",
-          "target_keywords": [],
-          "suggested_sections": [],
-          "seo_rationale": "string | null"
-        }
-      ]
-    },
-    "notes": [
-      "string"
-    ]
+    }
   }
 }
 ```
+
+**Note on `gap_analysis`:** One line per item. `gaps` covers voice, content structure, and missing page types together — no separate subsections. `opportunities` = what to do + expected impact. Do not restate per-site findings.
 
 Write to `research/R9-Content.json`.
 
@@ -96,26 +67,26 @@ Write to `research/R9-Content.json`.
 Generate `research/R9-Content.md` from the JSON:
 
 ```markdown
-# Content Landscape & Strategy — [Client Name]
+# Content Landscape & Strategy — {Client Name}
 
 ## Overview
-[2-3 sentence narrative summarising the content landscape — communication style comparison,
-key structural patterns, most important content opportunities]
+{2-3 sentence narrative summarising the content landscape — communication style comparison,
+key structural patterns, most important content opportunities}
 
 ## Brand Voice Analysis
 
-### [Client Name] — [domain] *(Client)*
+### {Client Name} — {domain} *(Client)*
 | Dimension | Finding |
 |---|---|
-| Tone | [tone] |
-| Language complexity | [simple/moderate/complex] |
-| Messaging pillars | [pillars] |
-| Value proposition clarity | [clear/moderate/unclear] |
-| Emotional vs rational | [balance] |
-| CTA style | [style] |
-| Localisation quality | [strong/moderate/weak] |
-| Content length | [brief/moderate/comprehensive] |
-| Storytelling vs features | [balance] |
+| Tone | {tone} |
+| Language complexity | {simple/moderate/complex} |
+| Messaging pillars | {pillars} |
+| Value proposition clarity | {clear/moderate/unclear} |
+| Emotional vs rational | {balance} |
+| CTA style | {style} |
+| Localisation quality | {strong/moderate/weak} |
+| Content length | {brief/moderate/comprehensive} |
+| Storytelling vs features | {balance} |
 
 ---
 *(repeat for each competitor and reference site)*
@@ -125,51 +96,23 @@ key structural patterns, most important content opportunities]
 ### Homepage Structure Comparison
 | Site | Sections | Depth |
 |---|---|---|
-| [domain] | [sections] | [depth] |
+| {domain} | {sections} | {depth} |
 
 ### Product / Service Page Structure
 | Site | Sections | Depth |
 |---|---|---|
-| [domain] | [sections] | [depth] |
+| {domain} | {sections} | {depth} |
 
 ### Supporting Content Patterns
 | Site | Blog | FAQ | Schema | Other |
 |---|---|---|---|---|
-| [domain] | [yes/no] | [yes/no] | [signals] | [other] |
+| {domain} | {yes/no} | {yes/no} | {signals} | {other} |
 
 ## Gap Analysis
-### Voice & Communication Gaps
-- [gap 1]
 
-### Content Structure Gaps
-- [gap 1]
-
-### Missing Page Types
-- [gap 1]
+### Gaps
+- {gap — what's weak + why it matters}
 
 ### Opportunities
-- [opportunity 1]
-
----
-
-## Suggested Page Structure
-
-### Primary Pages
-- **[Page Name]** *(must have)*
-  - Purpose: [purpose]
-  - Persona: [persona]
-  - Keywords: [keywords]
-  - Sections: [section 1], [section 2], [section 3]
-  - SEO rationale: [rationale]
-
-### Supporting Pages
-- **[Page Name]** *(should have)*
-  - Purpose: [purpose]
-  - Persona: [persona]
-  - Keywords: [keywords]
-  - Sections: [section 1], [section 2]
-  - SEO rationale: [rationale]
-
-## Notes
-- [note 1]
+- {opportunity — what to do + expected impact}
 ```

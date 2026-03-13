@@ -37,17 +37,10 @@ Write JSON as **minified** (no whitespace, no indentation).
           "income_level": "string | null",
           "lifestyle": "string | null"
         },
-        "psychographics": {
+        "profile": {
           "personality_type": "string | null",
           "values": [],
-          "lifestyle_preferences": [],
           "emotional_triggers": [],
-          "buying_behaviour": "string | null",
-          "brand_perception": "string | null"
-        },
-        "buying_motivation": {
-          "problem_solving": "string | null",
-          "emotional_drivers": [],
           "objections": [],
           "decision_process": "string | null",
           "trusted_influences": []
@@ -56,14 +49,9 @@ Write JSON as **minified** (no whitespace, no indentation).
           "search_channels": [],
           "preferred_content": [],
           "device_preference": "mobile | desktop | mixed",
-          "active_hours": "string | null"
+          "acquisition_channel": "string | null"
         },
         "trust_threshold": "high | medium | low",
-        "benchmarks": {
-          "conversion_rate_est": "string | null",
-          "acquisition_channel": "string | null",
-          "retention_likelihood": "string | null"
-        },
         "keyword_mapping": {
           "awareness": [],
           "consideration": [],
@@ -71,15 +59,6 @@ Write JSON as **minified** (no whitespace, no indentation).
         },
         "messaging": [
           "string"
-        ],
-        "psychographics_table": [
-          {
-            "factor": "string",
-            "source": "string",
-            "findings": "string",
-            "patterns": "string",
-            "implications": "string"
-          }
         ],
         "journey_map": [
           {
@@ -109,69 +88,52 @@ Write to `research/R7-Audience.json`.
 Generate `research/R7-Audience.md` from the JSON:
 
 ```markdown
-# Audience & Personas — [Client Name]
+# Audience & Personas — {Client Name}
 
 ## Overview
-[2-3 sentence narrative summarising who the audiences are, which persona is primary,
-and the most important insight about how they make decisions]
+{2-3 sentence narrative summarising who the audiences are, which persona is primary,
+and the most important insight about how they make decisions}
 
 ## Audience Segments
 | Segment | Description | Importance | Identified From |
 |---|---|---|---|
-| [name] | [description] | primary/secondary | [sources] |
+| {name} | {description} | primary/secondary | {sources} |
 
 ---
 
-## Persona: [Name] — [Segment]
+## Persona: {Name} — {Segment}
 *Primary design target* (if applicable)
 
 ### Demographics
-- **Age:** [age] | **Location:** [location]
-- **Occupation:** [occupation] | **Income:** [income_level]
-- **Lifestyle:** [lifestyle]
+- **Age:** {age} | **Location:** {location} | **Occupation:** {occupation}
+- **Income:** {income_level} | **Lifestyle:** {lifestyle}
 
-### Psychographics
-- **Personality:** [personality_type]
-- **Values:** [values]
-- **Emotional triggers:** [emotional_triggers]
-- **Buying behaviour:** [buying_behaviour]
-
-### Buying Motivation
-- **Problem solving:** [problem_solving]
-- **Objections:** [objections]
-- **Decision process:** [decision_process]
-- **Trusted influences:** [trusted_influences]
+### Profile
+- **Personality:** {personality_type} | **Values:** {values}
+- **Emotional triggers:** {emotional_triggers}
+- **Objections:** {objections}
+- **Decision process:** {decision_process} | **Trusted influences:** {trusted_influences}
 
 ### Digital Behaviour
-- **Search channels:** [search_channels]
-- **Preferred content:** [preferred_content]
-- **Device:** [device_preference]
-- **Trust threshold:** [trust_threshold]
-
-### Benchmarks
-- **Est. conversion rate:** [conversion_rate_est]
-- **Best acquisition channel:** [acquisition_channel]
+- **Search channels:** {search_channels} | **Preferred content:** {preferred_content}
+- **Device:** {device_preference} | **Acquisition channel:** {acquisition_channel}
+- **Trust threshold:** {trust_threshold}
 
 ### Keyword Mapping
 | Funnel Stage | Keywords |
 |---|---|
-| Awareness | [keywords] |
-| Consideration | [keywords] |
-| Decision | [keywords] |
-
-### Psychographics & Buying Motivation Table
-| Factor | Source | Findings | Patterns | Implications |
-|---|---|---|---|---|
-| [factor] | [source] | [findings] | [patterns] | [implications] |
+| Awareness | {keywords} |
+| Consideration | {keywords} |
+| Decision | {keywords} |
 
 ### Messaging
-- "[message 1]"
-- "[message 2]"
+- "{message 1}"
+- "{message 2}"
 
-### User Journey Map
+### Journey Map
 | Stage | Mindset | Where They Go | Pain Points | Content Needed | Website Implication |
 |---|---|---|---|---|---|
-| Awareness | [mindset] | [channels] | [pain points] | [content] | [implication] |
+| Awareness | {mindset} | {channels} | {pain points} | {content} | {implication} |
 | Consideration | ... | ... | ... | ... | ... |
 | Decision | ... | ... | ... | ... | ... |
 | Retention | ... | ... | ... | ... | ... |
@@ -180,5 +142,5 @@ and the most important insight about how they make decisions]
 ---
 
 ## Notes
-- [note 1]
+- {note 1}
 ```

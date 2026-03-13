@@ -61,6 +61,12 @@ Follow the substage definition's methodology steps in order. For each step:
 - If `output_format` = `concise`: markdown targets 1,800 characters or less (hard max 3,600)
 - If `output_format` = `verbose`: markdown targets 5,000 characters (no hard max), but no padding or filler
 
+**Output size by section type:**
+- **Per-site data tables:** Same structure regardless of format. Concise shortens field values (fewer words per cell). Verbose allows fuller descriptions.
+- **Gap analysis:** Always concise. One line per gap/opportunity. Never restate per-site findings — synthesise. This rule applies in BOTH concise and verbose modes.
+- **Overview narrative:** 2-3 sentences in concise, 3-5 sentences in verbose.
+- **Notes array:** Operational items only (capped keywords, skipped URLs, tool failures). Not a dumping ground for extra findings.
+
 ## Rules
 
 <critical>

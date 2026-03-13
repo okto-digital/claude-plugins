@@ -93,20 +93,15 @@ Write JSON as **minified** (no whitespace, no indentation).
       }
     ],
     "gap_analysis": {
-      "ux_gaps": [],
-      "ui_gaps": [],
-      "visual_opportunities": [],
-      "ux_opportunities": [],
-      "persona_alignment_notes": []
-    },
-    "notes": [
-      "string"
-    ]
+      "gaps": [],
+      "opportunities": [],
+      "persona_alignment": []
+    }
   }
 }
 ```
 
-**Note on `persona_alignment_notes`:** Agent-written observations connecting UX/UI findings directly to persona expectations from R7-Audience. For example: "Primary persona is mobile-dominant but no competitor has optimised mobile navigation — significant UX opportunity."
+**Note on `gap_analysis`:** One line per item. `gaps` = UX or UI weaknesses vs competitors. `opportunities` = where the client can differentiate. `persona_alignment` = connects findings to persona expectations (e.g. "Primary persona is mobile-dominant but no competitor optimises mobile nav"). Do not restate per-site findings.
 
 Write to `research/R8-UX.json`.
 
@@ -117,59 +112,51 @@ Write to `research/R8-UX.json`.
 Generate `research/R8-UX.md` from the JSON:
 
 ```markdown
-# UX/UI Patterns & Benchmarks — [Client Name]
+# UX/UI Patterns & Benchmarks — {Client Name}
 
 ## Overview
-[2-3 sentence narrative summarising the UX/UI landscape — dominant patterns,
-where the client stands, key opportunities]
+{2-3 sentence narrative summarising the UX/UI landscape — dominant patterns,
+where the client stands, key opportunities}
 
 ## Site Analysis
 
-### [Client Name] — [domain] *(Client)*
+### {Client Name} — {domain} *(Client)*
 
 #### Behavioural UX
 | Dimension | Finding |
 |---|---|
-| Navigation type | [type] |
-| Clicks to conversion | [number] |
-| CTA placement & language | [notes] |
-| Form complexity | [simple/moderate/complex] |
-| Mobile UX | [notes] |
-| Friction points | [points] |
-| Heuristics violations | [violations] |
-| Accessibility UX | [notes] |
+| Navigation type | {type} |
+| Clicks to conversion | {number} |
+| CTA placement & language | {notes} |
+| Form complexity | {simple/moderate/complex} |
+| Mobile UX | {notes} |
+| Friction points | {points} |
+| Heuristics violations | {violations} |
+| Accessibility UX | {notes} |
 
 #### Visual UI
 | Dimension | Finding |
 |---|---|
-| Primary colours | [hex values + mood] |
-| Typography | [heading font] / [body font] — [mood] |
-| Imagery | [type] — [quality] — [mood] |
-| Layout density | [dense/balanced/spacious] |
-| Whitespace | [generous/moderate/compressed] |
-| Iconography | [style] — [consistency] |
-| Animation | [quality signal] |
-| Brand consistency | [consistent/partial/inconsistent] |
+| Primary colours | {hex values + mood} |
+| Typography | {heading font} / {body font} — {mood} |
+| Imagery | {type} — {quality} — {mood} |
+| Layout density | {dense/balanced/spacious} |
+| Whitespace | {generous/moderate/compressed} |
+| Iconography | {style} — {consistency} |
+| Animation | {quality signal} |
+| Brand consistency | {consistent/partial/inconsistent} |
 
 ---
 *(repeat for each competitor and reference site)*
 
 ## Gap Analysis
-### UX Gaps
-- [gap 1]
 
-### UI / Visual Gaps
-- [gap 1]
+### Gaps
+- {gap — what's weak + why it matters}
 
-### Visual Opportunities
-- [opportunity 1]
+### Opportunities
+- {opportunity — where client can differentiate}
 
-### UX Opportunities
-- [opportunity 1]
-
-### Persona Alignment Notes
-- [note connecting UX/UI finding to persona expectation]
-
-## Notes
-- [note 1]
+### Persona Alignment
+- {finding connected to persona expectation}
 ```

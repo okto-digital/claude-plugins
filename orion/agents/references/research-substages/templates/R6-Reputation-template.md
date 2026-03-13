@@ -84,10 +84,7 @@ Write JSON as **minified** (no whitespace, no indentation).
       }
     ],
     "gap_analysis": {
-      "review_gaps": [],
-      "social_gaps": [],
-      "communication_gaps": [],
-      "trust_signal_gaps": [],
+      "gaps": [],
       "opportunities": []
     },
     "notes": [
@@ -96,6 +93,8 @@ Write JSON as **minified** (no whitespace, no indentation).
   }
 }
 ```
+
+**Note on `gap_analysis`:** Each gap is a single concise line — what's missing + why it matters. Do not restate per-site findings. The detail lives in the `sites` array; the gap analysis synthesises across sites. Max 5 opportunities.
 
 Write to `research/R6-Reputation.json`.
 
@@ -106,62 +105,54 @@ Write to `research/R6-Reputation.json`.
 Generate `research/R6-Reputation.md` from the JSON:
 
 ```markdown
-# Reputation & Social Proof — [Client Name]
+# Reputation & Social Proof — {Client Name}
 
 ## Overview
-[2-3 sentence narrative summarising the trust landscape — how the client compares
-to competitors on reputation and social, most important gaps or opportunities]
+{2-3 sentence narrative summarising the trust landscape — how the client compares
+to competitors on reputation and social, most important gaps or opportunities}
 
 ## Site Analysis
 
-### [Client Name] — [domain] *(Client)*
+### {Client Name} — {domain} *(Client)*
 
 #### Reviews
 | Platform | Rating | Count | Intensity | Responds? |
 |---|---|---|---|---|
-| [platform] | [rating] | [count] | [intensity] | [yes/no] |
+| {platform} | {rating} | {count} | {intensity} | {yes/no} |
 
 **Positive review samples:**
-- "[review text]" — [rating] ([date])
+- "{review text}" — {rating} ({date})
 
 **Medium review samples:**
-- "[review text]" — [rating] ([date])
+- "{review text}" — {rating} ({date})
 
 **Negative review samples:**
-- "[review text]" — [rating] ([date])
+- "{review text}" — {rating} ({date})
 
 #### Social Presence
 | Platform | Followers | Verified | Frequency | Tone |
 |---|---|---|---|---|
-| [platform] | [count] | [yes/no] | [frequency] | [tone] |
+| {platform} | {count} | {yes/no} | {frequency} | {tone} |
 
 **Sampled posts:**
-- [type] — [topic] | [likes] likes, [comments] comments
+- {type} — {topic} | {likes} likes, {comments} comments
 
 #### Website Trust Signals
-- **Case studies:** [present/absent] — [count], [format]
-- **Testimonials:** [present/absent] — [count], [placement], [format]
-- **Other signals:** [other_signals]
+- **Case studies:** {present/absent} — {count}, {format}
+- **Testimonials:** {present/absent} — {count}, {placement}, {format}
+- **Other signals:** {other_signals}
 
 ---
 *(repeat for each competitor and reference site)*
 
 ## Gap Analysis
-### Review Gaps
-- [gap 1]
 
-### Social Gaps
-- [gap 1]
-
-### Communication Style Gaps
-- [gap 1]
-
-### Trust Signal Gaps
-- [gap 1]
+### Gaps
+- {gap — what's weak + why it matters}
 
 ### Opportunities
-- [opportunity 1]
+- {opportunity — what to do + expected impact}
 
 ## Notes
-- [note 1]
+- {note 1}
 ```

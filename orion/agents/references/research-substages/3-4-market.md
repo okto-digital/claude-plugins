@@ -59,7 +59,7 @@ Dispatch `web-crawler` sub-agent to fetch content from selected URLs and extract
 
 If DataForSEO MCP tools are available:
 
-Call `dataforseo_labs_google_trends` on 3–5 core industry terms to assess macro momentum. Use primary language x location for local trends and English x global for international signals.
+Call `kw_data_google_trends_explore` on 3–5 core industry terms to assess macro momentum. Use primary language x location for local trends and English x global for international signals.
 
 ### Step 4: Research synthesis
 
@@ -97,6 +97,9 @@ Organise findings across six dimensions, always filtered through the website len
 - Technologies or approaches gaining adoption
 - What global markets do that the local market hasn't adopted yet
 
+**Gap analysis (max 5 opportunities)**
+Cross-cutting insights that combine findings from multiple dimensions above into concrete website decisions. Each opportunity must reference at least two dimensions. Do not restate individual dimension findings — synthesise across them. Also note what global markets do that the local market hasn't adopted yet (`local_vs_global_gap`).
+
 ---
 
 ## Output
@@ -107,4 +110,4 @@ Write output using the templates at `templates/R4-Market-template.md`.
 
 ## What passes to the next substage
 
-`research/R4-Market.json` — substage R7-Audience reads `customer_behaviour` and `website_expectations` as primary inputs for persona construction. Concept Creation reads `website_implications` and `trends` directly.
+`research/R4-Market.json` — substage R7-Audience reads `customer_behaviour` and `website_expectations` as primary inputs for persona construction. Concept Creation reads `gap_analysis.opportunities` and `trends` directly.

@@ -31,6 +31,7 @@ From `D2-Client-Intelligence.json`:
 
 From `R3-Competitors.json`:
 - `competitors` ranks 1–3 URLs and domains (all locked competitors when `deep`)
+- `competitors[].social` and `competitors[].reputation` — surface-level baseline. Use as starting point to deepen, not re-discover.
 
 ---
 
@@ -81,12 +82,7 @@ For each site, dispatch `web-crawler` to check:
 
 ### Step 4: Gap analysis
 
-Compare client against analysed competitors:
-- Review volume and rating gaps
-- Social activity gaps — platforms competitors use that the client is absent from
-- Communication style gaps — tone and content type differences
-- Trust signal gaps — case studies or testimonials competitors have that the client lacks
-- Opportunities — where better reputation management or social presence would differentiate
+Compare client against analysed competitors. Each gap is one line: what's missing + why it matters. Do not restate per-site findings — synthesise across sites. Covers reviews, social, communication style, and trust signals together in flat `gaps` + `opportunities` lists. Max 5 opportunities.
 
 ---
 
@@ -98,4 +94,4 @@ Write output using the templates at `templates/R6-Reputation-template.md`.
 
 ## What passes to the next substage
 
-`research/R6-Reputation.json` — Proposal reads `reviews.samples` for messaging intelligence (what customers praise and complain about). Concept Creation reads `gap_analysis.trust_signal_gaps` and `website_trust_signals` for page structure and trust element recommendations. R9-Content uses `social` tone of voice signals if available.
+`research/R6-Reputation.json` — Proposal reads `reviews.samples` for messaging intelligence (what customers praise and complain about). Concept Creation reads `gap_analysis.gaps` and `website_trust_signals` for page structure and trust element recommendations. R9-Content uses `social` tone of voice signals if available.

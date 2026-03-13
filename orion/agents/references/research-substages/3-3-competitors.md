@@ -29,6 +29,7 @@ From `R1-SERP.json`:
 
 From `R2-Keywords.json`:
 - `gap_analysis.keywords_not_targeted` — domains owning keywords the client doesn't target
+- Enriched competitor signals from R2 domain intersection and competitor discovery steps
 
 ---
 
@@ -63,11 +64,10 @@ Assess each competitor based on visible signals only — no deep analysis. Flag 
 
 ### Step 4: Gap analysis
 
-Compare the client against the competitor set as a whole:
-- What competitors collectively do well that the client currently doesn't
-- Markets or languages competitors cover that the client is targeting but underserved in
-- Visible positioning gaps — angles no competitor is owning clearly
-- Concrete opportunities for the client to differentiate
+Compare client against the competitor set as a whole. Each gap is one line: what's weak + why it matters. Do not restate per-competitor findings — synthesise across sites.
+
+- Gaps — what competitors collectively do well that the client doesn't, market/language coverage gaps, positioning angles no one owns
+- Opportunities — concrete actions for the client to differentiate
 
 ---
 

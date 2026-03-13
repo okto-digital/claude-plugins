@@ -62,9 +62,7 @@ Write JSON as **minified** (no whitespace, no indentation).
       }
     ],
     "gap_analysis": {
-      "client_vs_competitors": "string",
-      "market_gaps": [],
-      "positioning_gaps": [],
+      "gaps": [],
       "opportunities": []
     },
     "notes": [
@@ -78,6 +76,8 @@ Write JSON as **minified** (no whitespace, no indentation).
 
 **Note on `positioning`:** A single agent-written sentence summarising the competitor's apparent value proposition. This is the most used field in Proposal generation.
 
+**Note on `gap_analysis`:** One line per item. `gaps` covers client-vs-competitor differences, market gaps, and positioning gaps together — no separate subsections. `opportunities` = concrete actions + expected impact. Do not restate per-competitor findings.
+
 Write to `research/R3-Competitors.json`.
 
 ---
@@ -87,48 +87,42 @@ Write to `research/R3-Competitors.json`.
 Generate `research/R3-Competitors.md` from the JSON:
 
 ```markdown
-# Competitor Landscape — [Client Name]
+# Competitor Landscape — {Client Name}
 
 ## Overview
-[2-3 sentence narrative summarising the competitive landscape — how many strong
-competitors exist, how mature the market looks, and the most important finding]
+{2-3 sentence narrative summarising the competitive landscape — how many strong
+competitors exist, how mature the market looks, and the most important finding}
 
 ## Competitor Profiles
 
-### [Rank]. [Competitor Name] — [domain]
-**Positioning:** [positioning]
-**Markets:** [primary] + [other] | **Languages:** [languages_detected]
-**SERP Presence:** [serp_context summary]
+### {Rank}. {Competitor Name} — {domain}
+**Positioning:** {positioning}
+**Markets:** {primary} + {other} | **Languages:** {languages_detected}
+**SERP Presence:** {serp_context summary}
 
 | Dimension | Finding |
 |---|---|
-| Website structure | [structure] |
-| Messaging | [messaging] |
-| Tone of voice | [tone_of_voice] |
-| CTAs | [cta_patterns] |
-| Content | [content_presence] |
-| Social activity | [activity] |
-| Google rating | [google_rating] ([review_count] reviews) |
+| Website structure | {structure} |
+| Messaging | {messaging} |
+| Tone of voice | {tone_of_voice} |
+| CTAs | {cta_patterns} |
+| Content | {content_presence} |
+| Social activity | {activity} |
+| Google rating | {google_rating} ({review_count} reviews) |
 
-**Strengths:** [strengths]
-**Weaknesses:** [weaknesses]
+**Strengths:** {strengths}
+**Weaknesses:** {weaknesses}
 
 ---
 
 ## Gap Analysis
 
-### Client vs Competitor Set
-[agent-written paragraph comparing client against competitors as a whole]
-
-### Market Gaps
-- [gap 1]
-
-### Positioning Gaps
-- [gap 1]
+### Gaps
+- {gap — what's weak + why it matters}
 
 ### Opportunities
-- [opportunity 1]
+- {opportunity — what to do + expected impact}
 
 ## Notes
-- [note 1]
+- {note 1}
 ```
