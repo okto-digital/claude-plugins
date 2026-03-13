@@ -199,6 +199,38 @@ MCP tool definitions consume context tokens in every session — including sub-a
 
 3. **Phase-grouped sessions:** Phases 4-6 need zero MCP tools — running them in a session without MCP servers saves ~100k tokens of context for actual work.
 
+## Utilities
+
+### merge-json.sh — Context Concatenation
+
+Merges multiple project JSON files into a single keyed object for feeding downstream agents. Each file's content is wrapped under a key derived from its filename.
+
+**Location:** `scripts/merge-json.sh`
+
+```bash
+# Merge all research context for a downstream phase
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R*.json -o context.json
+
+# Pretty-print for debugging
+scripts/merge-json.sh research/*.json -p -v
+
+# Pipe to stdout (default)
+scripts/merge-json.sh D1-Init.json research/R1-SERP.json research/R2-Keywords.json
+```
+
+**Output structure:**
+```json
+{
+  "D1-Init": { ... },
+  "D2-Client-Intelligence": { ... },
+  "R1-SERP": { ... }
+}
+```
+
+**Options:** `-o FILE` (write to file), `-p` (pretty-print), `-v` (verbose to stderr). Default is minified to stdout.
+
+**Error handling:** Strips UTF-8 BOM, skips invalid JSON with warning, exits 1 if no valid files found. Requires `jq`.
+
 ## How to Think
 
 - **Evidence first** -- Every recommendation needs backing from crawled pages, search results, or client statements. Never recommend blind.
