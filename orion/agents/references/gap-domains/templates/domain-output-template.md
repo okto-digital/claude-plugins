@@ -1,8 +1,8 @@
 # Domain Output — Templates
 
-Write JSON as **minified** (no whitespace, no indentation).
+Write all JSON as **minified single line** (no whitespace, no indentation).
 
-## JSON Schema
+## JSON Schema — Findings
 
 ### Active domain
 
@@ -19,8 +19,10 @@ Write JSON as **minified** (no whitespace, no indentation).
     "gap": "number",
     "na": "number",
     "total": "number",
-    "critical_resolved": "number",
-    "critical_total": "number"
+    "critical_resolved": "number (FOUND checkpoints with CRITICAL priority)",
+    "critical_total": "number (all CRITICAL priority checkpoints)",
+    "questions_generated": "number (questions written to separate question file)",
+    "questions_resolved": "number (answers applied from D4-Answers.json, 0 initially)"
   },
   "findings": [
     {
@@ -32,19 +34,9 @@ Write JSON as **minified** (no whitespace, no indentation).
       "reason": "string | null (why N/A, if applicable)"
     }
   ],
-  "questions": [
-    {
-      "checkpoint": "string (exact checkpoint this question addresses)",
-      "severity": "CRITICAL | IMPORTANT",
-      "question": "string",
-      "answer": null
-    }
-  ],
   "notes": ["string"]
 }
 ```
-
-`critical_resolved` counts FOUND checkpoints that have CRITICAL priority. `critical_total` counts all CRITICAL priority checkpoints.
 
 ### Inactive domain
 
@@ -58,19 +50,50 @@ Write JSON as **minified** (no whitespace, no indentation).
 }
 ```
 
-Write to `gap-analysis/{code}-{slug}.json` (e.g., `gap-analysis/G05-Business.json`).
+Write to `gap-analysis/{code}-{slug}.json`.
 
 ---
 
-## Markdown Template
+## JSON Schema — Questions
 
-Generate `gap-analysis/{code}-{slug}.md` from the JSON (e.g., `gap-analysis/G05-Business.md`).
+Per-domain question file. Write to `gap-analysis/questions/{code}-{slug}-questions.json`.
+Only written for active domains with CRITICAL or IMPORTANT gaps/partials.
+
+```json
+[
+  {
+    "id": "string ({G-code}-Q{nn}, unique across all domains, sequential starting Q01)",
+    "domain": "string (domain-id)",
+    "checkpoint": "string (exact checkpoint wording from domain file)",
+    "severity": "CRITICAL | IMPORTANT",
+    "question": "string (business-first framing, under 3 sentences)",
+    "context": "string (one line of evidence from research that grounds the question)",
+    "options": [
+      { "id": "na", "label": "Not applicable" },
+      { "id": "a1", "label": "string (most likely answer — agent-suggested)" },
+      { "id": "a2", "label": "string (second option — agent-suggested)" },
+      { "id": "a3", "label": "string (third option — agent-suggested)" },
+      { "id": "other", "label": "Other", "freetext": true }
+    ],
+    "selected": null,
+    "freetext_response": null
+  }
+]
+```
+
+Always exactly 5 options per question. `selected` and `freetext_response` are always null (filled by operator).
+
+---
+
+## Markdown Template — Findings
+
+Generate `gap-analysis/{code}-{slug}.md` from the JSON.
 
 ### Active domain
 
 ```markdown
 ## {Domain Name}
-**{domain-id}** — {found} FOUND, {partial} PARTIAL, {gap} GAP, {na} N/A | {critical_resolved}/{critical_total} CRITICAL resolved
+**{domain-id}** — {found} FOUND, {partial} PARTIAL, {gap} GAP, {na} N/A | {critical_resolved}/{critical_total} CRITICAL resolved | {questions_generated} questions
 
 ### {Section Name}
 - [FOUND] {checkpoint} — evidence: "{evidence}"
@@ -78,14 +101,8 @@ Generate `gap-analysis/{code}-{slug}.md` from the JSON (e.g., `gap-analysis/G05-
 - [GAP] {checkpoint} [{priority}]
 - [N/A] {checkpoint} — reason: {reason}
 
-### Questions
-**1. {Question text}** — {checkpoint} [{severity}]
-*Answer:* _[to be filled]_
-
 ---
 ```
-
-If there are no questions: `### Questions\nNone — all CRITICAL and IMPORTANT checkpoints resolved.`
 
 ### Inactive domain
 
@@ -95,3 +112,25 @@ If there are no questions: `### Questions\nNone — all CRITICAL and IMPORTANT c
 
 ---
 ```
+
+---
+
+## D4-Answers Schema
+
+Answer template generated from D4-Questions.json at the end of gap analysis. Operator fills `answer` field.
+
+```json
+[
+  {
+    "id": "string ({G-code}-Q{nn})",
+    "domain": "string (domain-id)",
+    "checkpoint": "string (exact checkpoint wording)",
+    "answer": "string | \"N/A\" | null"
+  }
+]
+```
+
+**Answer values:**
+- `"text"` — finding becomes FOUND, evidence = answer text
+- `"N/A"` — finding becomes N/A, reason = "Not applicable (client)"
+- `null` — skip (unanswered, finding stays as GAP/PARTIAL)

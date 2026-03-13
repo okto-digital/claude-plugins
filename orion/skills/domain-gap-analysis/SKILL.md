@@ -1,13 +1,40 @@
 ---
 name: domain-gap-analysis
-description: "Run Phase 4 domain gap analysis: dispatch up to 21 domain-analyst agents in parallel, consolidate results with bash. Invoke when the user says 'run gap analysis', 'domain analysis', 'start phase 4', 'run domains', or after Research phase is complete."
+description: "Run Phase 4 domain gap analysis: dispatch up to 6 grouped domain-analyst agents (2 batches of 3), consolidate findings and questions with bash. Invoke when the user says 'run gap analysis', 'domain analysis', 'start phase 4', 'run domains', or after Research phase is complete."
 allowed-tools: Read, Write, Bash, Glob, Task, AskUserQuestion
-version: 1.0.0
+version: 2.0.0
 ---
 
 # Domain Gap Analysis
 
-Dispatch domain-analyst agents for up to 21 domains in parallel, then consolidate per-domain outputs into D4-Gap-Analysis using bash. Each domain is assessed independently against all available project research.
+Dispatch domain-analyst agents for 6 domain groups, then consolidate into D4-Gap-Analysis and D4-Questions using bash.
+
+## Domain Groups
+
+| Group | G-codes | Domains | Context Files |
+|---|---|---|---|
+| **A — Business & Strategy** | G05, G06, G15, G19 | business-context, competitive-landscape, project-scope, target-audience | D1, D2, R3, R4, R7 |
+| **B — Technical Foundation** | G13, G16, G20 | performance, security-and-compliance, technical-platform | D1, D2, R5 |
+| **C — UX & Design** | G01, G08, G10 | accessibility, design-and-brand, forms-and-lead-capture | D1, D2, R5, R8, R6 |
+| **D — Content & SEO** | G07, G17, G18 | content-strategy, seo-and-discoverability, site-structure | D1, D2, R1, R2, R7, R8, R9 |
+| **E — Operations** | G02, G14, G11* | analytics-and-measurement, post-launch, migration-and-redesign* | D1, D2, R1, R5, R6 |
+| **F — Conditional** | G03*, G04*, G09*, G12*, G21* | blog-and-editorial, booking-and-scheduling, ecommerce, multilingual, user-accounts | D1, D2, R2, R5, R8, R9 |
+
+`*` = conditional domain (agent checks applicability, returns INACTIVE if not applicable)
+
+**Dispatch:** Batch 1 (A, B, C concurrent) then Batch 2 (D, E, F concurrent). Max 3 concurrent. If 1-3 groups selected, single batch.
+
+## Slug Reference
+
+| Code | Slug | Code | Slug | Code | Slug |
+|---|---|---|---|---|---|
+| G01 | Accessibility | G08 | Design | G15 | Project-Scope |
+| G02 | Analytics | G09 | Ecommerce | G16 | Security |
+| G03 | Blog | G10 | Forms | G17 | SEO |
+| G04 | Booking | G11 | Migration | G18 | Site-Structure |
+| G05 | Business | G12 | Multilingual | G19 | Target-Audience |
+| G06 | Competitive | G13 | Performance | G20 | Technical |
+| G07 | Content | G14 | Post-Launch | G21 | User-Accounts |
 
 ## Process
 
@@ -21,94 +48,106 @@ Read `D1-Init.json` for project parameters: client name, site_type, build_type, 
 
 ### Step 2: Check existing domain outputs
 
-Glob for `gap-analysis/G*-*.json` to find existing outputs.
-Report: "Found X existing domain assessments: [list]. These will be skipped unless you want to re-run them."
+Glob for `gap-analysis/G*-*.json`. Report existing outputs and note they will be skipped unless re-run requested.
 
 ### Step 3: Domain selection
 
-Present all 21 domains grouped by activation type:
+Present groups from the Domain Groups table. Use AskUserQuestion with multiSelect=true. Pre-select all groups with domains lacking existing outputs. Selection is at group level — all domains within selected groups are included.
 
-**Always active (15):**
-accessibility, analytics-and-measurement, business-context, competitive-landscape, content-strategy, design-and-brand, forms-and-lead-capture, performance, post-launch, project-scope, security-and-compliance, seo-and-discoverability, site-structure, target-audience, technical-platform
+### Step 4: Pre-merge context
 
-**Conditional (6):**
-- blog-and-editorial -- Content signals in research or notes
-- booking-and-scheduling -- Service-based site types
-- ecommerce -- `site_type: ecommerce`
-- migration-and-redesign -- `build_type: redesign`
-- multilingual -- Secondary languages present in INIT
-- user-accounts -- Ecommerce or membership signals
+For each selected group, run `merge-json.sh` to create a group-specific context file:
 
-Use AskUserQuestion with multiSelect=true. Pre-select all domains that don't have existing outputs. Note: "Conditional domains are dispatched with a conditional flag -- the agent checks applicability and returns INACTIVE if the domain doesn't apply."
+```bash
+mkdir -p tmp gap-analysis/questions
 
-### Step 4: Build available files list
+# Group A — Business & Strategy
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R3-Competitors.json research/R4-Market.json research/R7-Audience.json -o tmp/context-group-A.json
 
-Glob for all available project files to pass to domain analysts:
-- `D1-Init.json`
-- `D2-Client-Intelligence.json`
-- `research/R*-*.json` (R1 through R9)
+# Group B — Technical Foundation
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R5-Technology.json -o tmp/context-group-B.json
 
-Only include files that actually exist. This list is passed to every domain-analyst so it can decide which files are relevant to its domain.
+# Group C — UX & Design
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R5-Technology.json research/R8-UX.json research/R6-Reputation.json -o tmp/context-group-C.json
+
+# Group D — Content & SEO
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R1-SERP.json research/R2-Keywords.json research/R7-Audience.json research/R8-UX.json research/R9-Content.json -o tmp/context-group-D.json
+
+# Group E — Operations
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R1-SERP.json research/R5-Technology.json research/R6-Reputation.json -o tmp/context-group-E.json
+
+# Group F — Conditional
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R2-Keywords.json research/R5-Technology.json research/R8-UX.json research/R9-Content.json -o tmp/context-group-F.json
+```
+
+Only run merge for selected groups. merge-json.sh skips missing files with warnings.
 
 ### Step 5: Dispatch domain analysts
 
-Dispatch selected domains via the `dispatch-subagent` skill.
-
-**Max concurrent: 3 agents.** All domains are independent -- no dependency ordering. Dispatch in batches of 3 until all selected domains are processed.
-
-Each dispatch provides:
-- Domain name (e.g., "business-context")
-- G-code and slug (e.g., "G05", "Business") — see G-code mapping below
-- Domain file content: read `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/{domain-id}.md` and inline its full content
-- Template file content: read `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/templates/domain-output-template.md` and inline its full content
-- Available project files: full list from Step 4
-- Conditional flag: "yes" for the 6 conditional domains, "no" for always-active
+Dispatch selected groups via `dispatch-subagent`. Each dispatch provides:
+- Group name and domain list (G-codes, slugs, conditional flags from table above)
+- Domain definitions: read and inline `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/{domain-id}.md` for each domain, separated by `--- DOMAIN: {domain-id} ---` headers
+- Output template: read and inline `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/templates/domain-output-template.md`
+- Context file path: `{working_directory}/tmp/context-group-{letter}.json`
 - Model: sonnet
-- MCP hints: none (domain analysis uses Read + Write only)
+- MCP hints: none
 
-**Progress reporting after each batch:**
-- Which domains completed (ACTIVE vs INACTIVE)
-- Any failures
+**After each batch:** report group completion, per-domain status (ACTIVE/INACTIVE), questions generated, failures.
 
 ### Step 6: Consolidate with bash
 
 <critical>
-**This step is purely mechanical.** Use ONLY bash commands (jq, cat, echo). Do NOT use the Read tool on any G-file, R-file, or D-file. Extract counts and client name via jq, not by reading files into context. Reading output files here wastes thousands of tokens for no reason.
+Use ONLY bash (jq, cat, echo). Do NOT Read any G-file, R-file, or D-file into context.
 </critical>
 
-After all domains complete, produce D4 with bash operations only.
-
-**JSON consolidation:**
+**JSON consolidation (findings):**
 
 ```bash
-jq -s '{meta:{date:(now|todate),active_domains:[.[]|select(.status=="ACTIVE")|.domain],inactive_domains:[.[]|select(.status=="INACTIVE")|.domain],total_critical_unresolved:([.[]|select(.status=="ACTIVE")|(.counts.critical_total-.counts.critical_resolved)]|add//0),status:"awaiting_answers"},domains:.}' gap-analysis/G*-*.json > D4-Gap-Analysis.json
+jq -s '{meta:{date:(now|todate),active_domains:[.[]|select(.status=="ACTIVE")|.domain],inactive_domains:[.[]|select(.status=="INACTIVE")|.domain],total_critical_unresolved:([.[]|select(.status=="ACTIVE")|(.counts.critical_total-.counts.critical_resolved)]|add//0),total_questions:([.[]|select(.status=="ACTIVE")|.counts.questions_generated]|add//0),status:"awaiting_answers"},domains:.}' gap-analysis/G*-*.json > D4-Gap-Analysis.json
 ```
 
-**Markdown consolidation (all bash):**
+**Questions consolidation:**
+
+```bash
+if ls gap-analysis/questions/G*-*-questions.json 1>/dev/null 2>&1; then
+  jq -s 'add' gap-analysis/questions/G*-*-questions.json > D4-Questions.json
+else
+  echo '[]' > D4-Questions.json
+fi
+```
+
+**Answers template:**
+
+```bash
+jq '[.[] | {id, domain, checkpoint, answer: null}]' D4-Questions.json > D4-Answers.json
+```
+
+**Markdown consolidation:**
 
 ```bash
 CLIENT=$(jq -r '.project.client' D1-Init.json)
 ACTIVE=$(jq '[.meta.active_domains|length]|.[0]' D4-Gap-Analysis.json)
 TOTAL=$(jq '[.meta.active_domains,.meta.inactive_domains]|map(length)|add' D4-Gap-Analysis.json)
 CRIT=$(jq '.meta.total_critical_unresolved' D4-Gap-Analysis.json)
+QUESTIONS=$(jq '.meta.total_questions' D4-Gap-Analysis.json)
 DATE=$(date +%Y-%m-%d)
 echo "# Domain Gap Analysis -- $CLIENT
-*Generated: $DATE | Active domains: $ACTIVE/$TOTAL | Critical unresolved: $CRIT*
-*Answer all CRITICAL questions before proceeding to Concept Creation.*
+*Generated: $DATE | Active domains: $ACTIVE/$TOTAL | Critical unresolved: $CRIT | Questions: $QUESTIONS*
+*Answer all CRITICAL questions in D4-Questions.json before proceeding to Concept Creation.*
 
 ---
 " > D4-Gap-Analysis.md
 cat gap-analysis/G*-*.md >> D4-Gap-Analysis.md
 echo "
 ---
-*Return this document with all CRITICAL questions answered to proceed to Concept Creation.*" >> D4-Gap-Analysis.md
+*Return D4-Questions.json with answers to proceed to Concept Creation.*" >> D4-Gap-Analysis.md
 ```
 
 ### Step 7: Update project-state.md
 
-Update Phase 4 (Domain Gap Analysis) row:
-- Status: `complete` (all domains processed) or `partial` (some skipped/failed)
-- Output: `D4-Gap-Analysis.json`
+Update Phase 4 row:
+- Status: `complete` or `partial`
+- Output: `D4-Gap-Analysis.json, D4-Questions.json, D4-Answers.json`
 - Updated: today's date
 
 Display summary:
@@ -116,63 +155,81 @@ Display summary:
 ```
 Domain Gap Analysis complete.
 
-  Active domains: {n}
-  Inactive domains: {n}
-  Skipped: [list]
-  Failed: [list or "none"]
+  Groups dispatched: {n}/6
+  Active domains: {n}  |  Inactive: {n}  |  Failed: {n or "none"}
   Total CRITICAL unresolved: {n}
-  Phase 4 status: complete | partial
+  Total questions generated: {n}
 
-Next step: Answer CRITICAL questions in D4-Gap-Analysis.md, then run concept-creation.
+Output:
+  D4-Gap-Analysis.json — domain findings
+  D4-Questions.json — structured questions with answer options
+  D4-Answers.json — answer template (fill in, then re-run skill to resolve)
+
+Next: Fill in D4-Answers.json, then re-run domain-gap-analysis to resolve.
+```
+
+### Step 8: Answer Resolution (conditional)
+
+Check if `D4-Answers.json` exists in the working directory.
+
+If not found, skip this step entirely (first run — no answers yet).
+
+If found, count answered entries (`answer != null`) using bash:
+
+```bash
+ANSWERED=$(jq '[.[] | select(.answer != null)] | length' D4-Answers.json)
+DOMAINS=$(jq '[.[] | select(.answer != null) | .domain] | unique | length' D4-Answers.json)
+```
+
+If `ANSWERED == 0`, skip (template exists but no answers filled in yet).
+
+If `ANSWERED > 0`, use AskUserQuestion:
+"D4-Answers.json found with {ANSWERED} answers across {DOMAINS} domains. Resolve G-files with client answers?"
+
+If yes:
+
+**8a. Mechanical insert:**
+
+```bash
+scripts/resolve-answers.sh D4-Answers.json gap-analysis/ -v
+```
+
+**8b. Dispatch answer-resolver per updated domain:**
+
+For each domain that was updated (reported by resolve-answers.sh), dispatch `answer-resolver` via `dispatch-subagent`:
+- G-file path: `{working_directory}/gap-analysis/{code}-{slug}.json`
+- Markdown path: `{working_directory}/gap-analysis/{code}-{slug}.md`
+- Model: sonnet
+- MCP hints: none (Lightweight mode)
+- Max 6 concurrent dispatches
+
+**8c. Re-consolidate:**
+
+Rerun the Step 6 bash commands (JSON consolidation, answers template, markdown consolidation) to rebuild D4-Gap-Analysis.json, D4-Answers.json, and D4-Gap-Analysis.md with resolved counts.
+
+**8d. Update project-state.md:**
+
+Update Phase 4 row status to `resolved`. Display:
+
+```
+Answer resolution complete.
+  Domains revised: {n}
+  Questions resolved: {total}
+  Critical unresolved: {x} (was {y})
+  Phase 4 status: resolved
+Next: Run concept-creation.
 ```
 
 ## Rules
 
 <critical>
-- NEVER dispatch more than 3 domain-analyst agents concurrently
+- NEVER dispatch more than 3 group agents concurrently
 - NEVER modify project-state.md beyond Phase 4 rows
-- NEVER read domain definition files directly -- leave this to the dispatched domain-analyst agents
-- ALWAYS use dispatch-subagent skill for every domain-analyst dispatch
-- ALWAYS provide the full list of available project files to each domain-analyst
-- ALWAYS run bash consolidation after all domains complete
+- NEVER Read domain output files into context — use jq extraction only
+- ALWAYS use dispatch-subagent skill for every dispatch
+- ALWAYS pre-merge context files before dispatching
+- ALWAYS create gap-analysis/questions/ directory before dispatching
 </critical>
 
-- If a domain-analyst fails, note which domain was affected, report to operator, continue with remaining domains
+- If a group agent fails, report affected domains, continue with remaining groups
 - If fewer than 10 domains complete, warn that Phase 5 coverage will be limited
-
-## Sub-agents
-
-Dispatched via dispatch-subagent:
-- **domain-analyst** -- Assess one domain, produce per-domain file pair (up to 21 instances, batches of 3)
-
-## G-code Mapping
-
-| Code | Domain ID | Slug | Conditional |
-|---|---|---|---|
-| G01 | accessibility | Accessibility | no |
-| G02 | analytics-and-measurement | Analytics | no |
-| G03 | blog-and-editorial | Blog | yes |
-| G04 | booking-and-scheduling | Booking | yes |
-| G05 | business-context | Business | no |
-| G06 | competitive-landscape | Competitive | no |
-| G07 | content-strategy | Content | no |
-| G08 | design-and-brand | Design | no |
-| G09 | ecommerce | Ecommerce | yes |
-| G10 | forms-and-lead-capture | Forms | no |
-| G11 | migration-and-redesign | Migration | yes |
-| G12 | multilingual | Multilingual | yes |
-| G13 | performance | Performance | no |
-| G14 | post-launch | Post-Launch | no |
-| G15 | project-scope | Project-Scope | no |
-| G16 | security-and-compliance | Security | no |
-| G17 | seo-and-discoverability | SEO | no |
-| G18 | site-structure | Site-Structure | no |
-| G19 | target-audience | Target-Audience | no |
-| G20 | technical-platform | Technical | no |
-| G21 | user-accounts | User-Accounts | yes |
-
-## Reference files
-
-Read by domain-analyst agents, not by this skill:
-- `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/*.md` -- 21 domain checkpoint files
-- `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/templates/domain-output-template.md` -- per-domain output template
