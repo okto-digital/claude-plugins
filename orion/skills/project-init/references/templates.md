@@ -7,10 +7,12 @@
   "project": {
     "name": "string",
     "client": "string",
+    "url": "string | null",
     "build_type": "new | redesign",
     "site_type": "string",
     "goal": "string",
     "languages": {"primary": "string", "other": []},
+    "output_language": "string",
     "location": {"primary": "string", "other": []}
   },
   "research_config": {
@@ -20,17 +22,16 @@
     "search_landscape_max_keywords": 100,
     "competitors_max": 5
   },
+  "pipeline_defaults": {
+    "gap_domains": "ask | all | [list of domain codes]",
+    "parallel_execution": "ask | true | false",
+    "proposal_style": "ask | full | summary_only"
+  },
   "notes": [
     "string",
     "string"
   ]
 }
-```
-
-### Example (Krocko project)
-
-```json
-{"project":{"name":"Krocko Caviar Web","client":"Krocko","build_type":"new","site_type":"ecommerce","goal":"Build B2B/B2C ecommerce for caviar brand targeting HoReCa and events","languages":{"primary":"sk","other":[]},"location":{"primary":"SK","other":["CZ"]}},"research_config":{"research_depth":"basic","output_format":"concise","serp_max_keywords":50,"search_landscape_max_keywords":100,"competitors_max":5},"notes":["Business model is B2B and B2C targeting HoReCa, corporate events and catering","Three segments: HoReCa B2B, end customers B2C, corporate events and catering","Products: caviar, wine, champagne — premium and exclusive positioning","Brand still in development, no name or domain yet, designer is Matej Španík","Requires payment gateway, ERP integration and accounting automation","Investigate FiscalPro integration — fiscalpro.sk","Competitor: royalcaviar.sk","Inspiration site: n25caviar.sk","SEO potential to assess for: kaviar, šampanské, jeseter, losos","Primary market SK for 1-2 years, secondary market CZ","Contract signed for SK and CZ","Paid advertising planned","Partner restaurants to be identified"]}
 ```
 
 ---
@@ -40,28 +41,35 @@
 Generate `D1-Init.md` from D1-Init.json using this template:
 
 ```markdown
-# Project Brief — [project.name]
+# Project Brief — {project.name}
 
 ## Project
-- **Client:** [project.client]
-- **Build type:** [project.build_type]
-- **Site type:** [project.site_type]
-- **Goal:** [project.goal]
-- **Primary language:** [project.languages.primary]
-- **Additional languages:** [project.languages.other] or "none"
-- **Primary market:** [project.location.primary]
-- **Additional markets:** [project.location.other] or "none"
+- **Client:** {project.client}
+- **URL:** {project.url} or "none (new build)"
+- **Build type:** {project.build_type}
+- **Site type:** {project.site_type}
+- **Goal:** {project.goal}
+- **Primary language:** {project.languages.primary}
+- **Additional languages:** {project.languages.other} or "none"
+- **Output language:** {project.output_language}
+- **Primary market:** {project.location.primary}
+- **Additional markets:** {project.location.other} or "none"
 
 ## Research Config
-- **Research depth:** [research_config.research_depth]
-- **Output format:** [research_config.output_format]
-- **SERP max keywords:** [research_config.serp_max_keywords]
-- **Search landscape max keywords:** [research_config.search_landscape_max_keywords]
-- **Max competitors:** [research_config.competitors_max]
+- **Research depth:** {research_config.research_depth}
+- **Output format:** {research_config.output_format}
+- **SERP max keywords:** {research_config.serp_max_keywords}
+- **Search landscape max keywords:** {research_config.search_landscape_max_keywords}
+- **Max competitors:** {research_config.competitors_max}
+
+## Pipeline Defaults
+- **Gap domains:** {pipeline_defaults.gap_domains}
+- **Parallel execution:** {pipeline_defaults.parallel_execution}
+- **Proposal style:** {pipeline_defaults.proposal_style}
 
 ## Notes
-- [notes[0]]
-- [notes[1]]
+- {notes[0]}
+- {notes[1]}
 - ...
 ```
 

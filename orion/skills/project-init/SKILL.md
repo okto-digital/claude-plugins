@@ -29,23 +29,23 @@ Ask the operator for these fields. Do not proceed until all 7 mandatory fields a
 |---|---|---|
 | Client name | Yes | -- |
 | Project name | Yes | -- |
+| URL (existing site, if any) | Yes | -- |
 | Build type (`new` / `redesign`) | Yes | -- |
 | Site type (`ecommerce`, `portfolio`, `corporate`, `portal`) | Yes | -- |
 | Goal (one sentence) | Yes | -- |
 | Languages (primary + additional) | Yes | -- |
+| Output language (language for deliverables) | Yes | -- |
 | Location (primary market + additional) | Yes | -- |
 | Notes (free-form from client meeting) | No | empty |
 | Research depth (`basic` / `deep`) | No | `basic` |
 | Output format (`verbose` / `concise`) | No | `concise` |
+| Gap domains (`ask` / `all` / `[list]`) | No | `ask` |
+| Parallel execution (`ask` / `true` / `false`) | No | `ask` |
+| Proposal style (`ask` / `full` / `summary_only`) | No | `ask` |
 
 ### 2. Process Notes
 
-Parse the operator's raw notes (any language, format, or shorthand):
-
-1. Structure into a clean list of discrete, meaningful statements.
-2. Remove noise (phone numbers, irrelevant fragments) while preserving strategic signals.
-3. Flag notes that represent requirements, constraints, or action items for downstream phases.
-4. If no notes provided, produce an empty array.
+Structure raw notes into clean, discrete statements. Remove noise (phone numbers, irrelevant fragments), preserve strategic signals. Flag requirements, constraints, and action items. No notes = empty array.
 
 ### 3. Write D1-Init.json
 
@@ -56,35 +56,26 @@ Use the schema and example from `${CLAUDE_PLUGIN_ROOT}/skills/project-init/refer
 **research_config defaults:**
 - `research_depth`: `basic`, `output_format`: `concise`
 - `serp_max_keywords`: 50, `search_landscape_max_keywords`: 100, `competitors_max`: 5
-- When `basic`: numeric caps are enforced. When `deep`: caps are guidelines only.
-- Operator can adjust before any phase begins.
+- When `basic`: caps are enforced. When `deep`: caps are guidelines only.
+
+**pipeline_defaults:** When set to `ask` (default), the downstream skill uses AskUserQuestion at execution time. Any other value skips the question.
+- `gap_domains`: `ask` / `all` / `[list of domain codes]`
+- `parallel_execution`: `ask` / `true` / `false`
+- `proposal_style`: `ask` / `full` / `summary_only`
 
 ### 4. Write D1-Init.md
 
 Generate `D1-Init.md` from `D1-Init.json` using the markdown template in `${CLAUDE_PLUGIN_ROOT}/skills/project-init/references/templates.md` § Markdown Template.
 
-This file is a disposable human-review view. The JSON is always the source of truth.
-
 ### 5. Create Directories
 
-Create these subdirectories in the current working directory (skip any that already exist):
+Create these subdirectories (skip any that already exist): `research/`, `gap-analysis/`, `concept/`, `tmp/`.
 
-- `research/`
-- `gap-analysis/`
-- `concept/`
-- `tmp/`
-
-The `tmp/` directory is for temporary working files (curl downloads, HTML stripping, debug logs). It is NOT for output files. Add a `.gitignore` at the project root if one doesn't exist:
-
-```
-tmp/
-```
-
-If `.gitignore` already exists, append `tmp/` if not already present.
+Add `tmp/` to `.gitignore` (create the file if needed, append if it exists).
 
 ### 5b. Create .claude/settings.json
 
-Create `.claude/settings.json` in the project root if it doesn't exist:
+Create `.claude/settings.json` if it doesn't exist. If it exists, merge without overwriting existing keys.
 
 ```json
 {
@@ -94,10 +85,6 @@ Create `.claude/settings.json` in the project root if it doesn't exist:
 }
 ```
 
-This enables MCP Tool Search, which dynamically loads MCP tool definitions on-demand instead of preloading all of them. Without this, MCP servers like DataForSEO (90+ tools) consume 50%+ of the context window before any work begins.
-
-If `.claude/settings.json` already exists, merge the `env` block without overwriting existing keys.
-
 ### 6. Create project-state.md
 
 Write `project-state.md` using the template in `${CLAUDE_PLUGIN_ROOT}/skills/project-init/references/templates.md` § Project State Template.
@@ -106,24 +93,7 @@ Mark Phase 1 (INIT) as `complete` with output `D1-Init.json` and today's date. A
 
 ### 7. Confirm
 
-Display:
-
-```
-Project initialized.
-
-  Client: {client name}
-  Project: {project name}
-  Type: {build_type} | {site_type}
-  Language: {primary} | Market: {primary market}
-  Research: {depth} | Output: {format}
-  Notes: {count} structured notes
-  State: project-state.md
-  Output: D1-Init.json, D1-Init.md
-
-Next step: Run client-intelligence to produce Phase 2 output.
-```
-
-Stop here.
+Summarize what was created and suggest the next step (client-intelligence). Stop here.
 
 ---
 
@@ -142,36 +112,7 @@ For each row where Output is not `--`, verify the file exists on disk using Glob
 
 ### 3. Display Dashboard
 
-```
-[INIT] Project: {name} ({build_type} | {site_type})
-Language: {primary} | Market: {primary market}
-Research: {depth} | Output: {format}
-
-PIPELINE
-  1  INIT                  [{status}]
-  2  Client Intelligence   [{status}]
-  3  Research              [{status}]
-  4  Domain Gap Analysis   [{status}]
-  5  Concept Creation      [{status}]
-  6  Proposal & Brief      [{status}]
-
-RESEARCH SUBSTAGES
-  3.1  R1-SERP          SERP & Search Landscape    [{status}]
-  3.2  R2-Keywords       Keyword Opportunity        [{status}]
-  3.3  R3-Competitors    Competitor Landscape       [{status}]
-  3.4  R4-Market         Industry & Market Context  [{status}]
-  3.5  R5-Technology     Technology & Performance   [{status}]
-  3.6  R6-Reputation     Reputation & Social Proof  [{status}]
-  3.7  R7-Audience       Audience & Personas        [{status}]
-  3.8  R8-UX             UX/UI Patterns             [{status}]
-  3.9  R9-Content        Content Landscape          [{status}]
-
-Progress: {n}/6 phases complete | {m}/9 substages complete
-
-Next step: {suggestion}
-```
-
-Status markers: `[--]` not started, `[OK]` complete, `[IP]` in progress, `[!!]` file missing.
+Display pipeline and research substage status based on `project-state.md`. Flag missing output files as `[!!]`.
 
 ### 4. Determine Next Step
 
