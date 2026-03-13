@@ -12,7 +12,7 @@ Produce a proposal that is specific to this client's business, grounded in evide
 
 ## Discovery Pipeline
 
-Six phases, executed sequentially. Each phase depends on the outputs of the previous phases. Every phase produces JSON output, a markdown review file, and a human review gate before the next phase begins.
+Six phases, executed sequentially. Each phase produces JSON output, a markdown review file, and a human review gate before the next phase begins.
 
 | Phase | Name | Core question | Key output |
 |---|---|---|---|
@@ -29,7 +29,7 @@ Six phases, executed sequentially. Each phase depends on the outputs of the prev
 Phase 1 (INIT)
   → Phase 2 (Client Intelligence)
     → Phase 3 (Research: 3.1 → 3.2 → ... → 3.9, sequential with human gates)
-      → Phase 4 (Domain Gap Analysis: 21 domains scored against all research)
+      → Phase 4 (Domain Gap Analysis: 6 domain groups scored against all research)
         → Phase 5 (Concept Creation: 5 deliverables from accumulated intelligence)
           → Phase 6 (Proposal: modular brief assembled from all phases)
 ```
@@ -44,16 +44,14 @@ Phase 1 (INIT)
 
 ## Data Architecture
 
-### Agent-to-Agent Transport — Minified JSON
-
-All data passed between agents is stored as minified JSON — a single line, no newlines, no indentation, no spaces after colons or commas. This format is machine-readable, schema-enforced, and token-efficient.
+### Minified JSON Transport
 
 <critical>
-**Minified means ONE LINE.** When using the Write tool for JSON output, the entire file content MUST be a single line with no formatting whitespace.
+**Minified means ONE LINE.** All agent-to-agent data is stored as minified JSON — a single line, no newlines, no indentation, no spaces after colons or commas. When using the Write tool for JSON output, the entire file content MUST be a single line.
 
 Correct: `{"project":{"name":"Krocko","build_type":"new","site_type":"ecommerce"}}`
 
-Wrong (pretty-printed — this wastes tokens and breaks downstream parsing expectations):
+Wrong (pretty-printed — wastes tokens and breaks downstream parsing):
 ```
 {
   "project": {
@@ -64,89 +62,71 @@ Wrong (pretty-printed — this wastes tokens and breaks downstream parsing expec
 ```
 </critical>
 
-### Human Review — Markdown (optional)
+### Human Review
 
-At each phase boundary, a Markdown file is generated from the phase JSON. The operator can review and correct it before the next phase starts. Corrections are applied back to the JSON. The Markdown is a disposable, regeneratable view — the JSON is always the source of truth.
-
-Review is optional. The operator can instruct the agent to run phases continuously without pausing for review. This allows the full research pipeline to complete unattended when the operator trusts the defaults.
+At each phase boundary, a Markdown file is generated from the JSON. The operator can review and correct before the next phase starts. Review is optional — the operator can run phases continuously unattended.
 
 ### Document Naming
 
-- **D** prefix — Phase deliverables (e.g., D2-Client-Intelligence)
-- **R** prefix — Research substage outputs, always with category slug (e.g., R1-SERP, R2-Keywords, R3-Competitors)
+Each document exists as two files: `{Code}-{Slug}.json` (source of truth) and `{Code}-{Slug}.md` (disposable review).
 
-Each document exists as two files:
-- `{code}-{slug}.json` — Source of truth (minified, agent-readable)
-- `{code}-{slug}.md` — Human review file (generated from JSON, disposable)
+**File prefixes:** D-codes at root, R-codes in `research/`, G-codes in `gap-analysis/` (+ questions in `gap-analysis/questions/`), C-codes in `concept/`.
 
 Phase deliverables:
 
-| Code | Name | Files |
+| Code | Name |
+|---|---|
+| D1 | Init |
+| D2 | Client Intelligence |
+| D3 | Research Overview |
+| D4 | Gap Analysis |
+| D5 | Concept |
+| D6 | Proposal |
+
+Research substages (R-codes match execution order):
+
+| Code | Slug | Code | Slug | Code | Slug |
+|---|---|---|---|---|---|
+| R1 | SERP | R4 | Market | R7 | Audience |
+| R2 | Keywords | R5 | Technology | R8 | UX |
+| R3 | Competitors | R6 | Reputation | R9 | Content |
+
+Domain gap analysis (G-codes, alphabetical):
+
+| Code | Slug | Domain ID | Code | Slug | Domain ID |
+|---|---|---|---|---|---|
+| G01 | Accessibility | accessibility | G12 | Multilingual | multilingual |
+| G02 | Analytics | analytics-and-measurement | G13 | Performance | performance |
+| G03 | Blog | blog-and-editorial | G14 | Post-Launch | post-launch |
+| G04 | Booking | booking-and-scheduling | G15 | Project-Scope | project-scope |
+| G05 | Business | business-context | G16 | Security | security-and-compliance |
+| G06 | Competitive | competitive-landscape | G17 | SEO | seo-and-discoverability |
+| G07 | Content | content-strategy | G18 | Site-Structure | site-structure |
+| G08 | Design | design-and-brand | G19 | Target-Audience | target-audience |
+| G09 | Ecommerce | ecommerce | G20 | Technical | technical-platform |
+| G10 | Forms | forms-and-lead-capture | G21 | User-Accounts | user-accounts |
+| G11 | Migration | migration-and-redesign | | | |
+
+Domain groups (shared research sources, dispatched as grouped batches):
+
+| Group | Domains | Context Files |
 |---|---|---|
-| D1 | Init | `D1-Init.json`, `D1-Init.md` |
-| D2 | Client Intelligence | `D2-Client-Intelligence.json`, `D2-Client-Intelligence.md` |
-| D3 | Research Overview | `D3-Research.json`, `D3-Research.md` |
-| D4 | Gap Analysis | `D4-Gap-Analysis.json`, `D4-Gap-Analysis.md` |
-| D5 | Concept | `D5-Concept.json`, `D5-Concept.md` |
-| D6 | Proposal | `D6-Proposal.json`, `D6-Proposal.md` |
+| **A — Business & Strategy** | business-context, competitive-landscape, project-scope, target-audience | D1, D2, R3, R4, R7 |
+| **B — Technical Foundation** | performance, security-and-compliance, technical-platform | D1, D2, R5 |
+| **C — UX & Design** | accessibility, design-and-brand, forms-and-lead-capture | D1, D2, R5, R8, R6 |
+| **D — Content & SEO** | content-strategy, seo-and-discoverability, site-structure | D1, D2, R1, R2, R7, R8, R9 |
+| **E — Operations** | analytics-and-measurement, post-launch, migration-and-redesign | D1, D2, R1, R5, R6 |
+| **F — Conditional** | blog-and-editorial, booking-and-scheduling, ecommerce, multilingual, user-accounts | D1, D2, R2, R5, R8, R9 |
 
-Research substage slugs (R-codes match execution order):
+Concept sections (C-codes, by wave):
 
-| Code | Slug | Files |
-|---|---|---|
-| R1 | SERP | `research/R1-SERP.json`, `research/R1-SERP.md` |
-| R2 | Keywords | `research/R2-Keywords.json`, `research/R2-Keywords.md` |
-| R3 | Competitors | `research/R3-Competitors.json`, `research/R3-Competitors.md` |
-| R4 | Market | `research/R4-Market.json`, `research/R4-Market.md` |
-| R5 | Technology | `research/R5-Technology.json`, `research/R5-Technology.md` |
-| R6 | Reputation | `research/R6-Reputation.json`, `research/R6-Reputation.md` |
-| R7 | Audience | `research/R7-Audience.json`, `research/R7-Audience.md` |
-| R8 | UX | `research/R8-UX.json`, `research/R8-UX.md` |
-| R9 | Content | `research/R9-Content.json`, `research/R9-Content.md` |
-
-Domain gap analysis codes (G-codes, alphabetical):
-
-| Code | Slug | Domain ID | Files |
+| Code | Slug | Wave | Depends On |
 |---|---|---|---|
-| G01 | Accessibility | accessibility | `gap-analysis/G01-Accessibility.json`, `.md` |
-| G02 | Analytics | analytics-and-measurement | `gap-analysis/G02-Analytics.json`, `.md` |
-| G03 | Blog | blog-and-editorial | `gap-analysis/G03-Blog.json`, `.md` |
-| G04 | Booking | booking-and-scheduling | `gap-analysis/G04-Booking.json`, `.md` |
-| G05 | Business | business-context | `gap-analysis/G05-Business.json`, `.md` |
-| G06 | Competitive | competitive-landscape | `gap-analysis/G06-Competitive.json`, `.md` |
-| G07 | Content | content-strategy | `gap-analysis/G07-Content.json`, `.md` |
-| G08 | Design | design-and-brand | `gap-analysis/G08-Design.json`, `.md` |
-| G09 | Ecommerce | ecommerce | `gap-analysis/G09-Ecommerce.json`, `.md` |
-| G10 | Forms | forms-and-lead-capture | `gap-analysis/G10-Forms.json`, `.md` |
-| G11 | Migration | migration-and-redesign | `gap-analysis/G11-Migration.json`, `.md` |
-| G12 | Multilingual | multilingual | `gap-analysis/G12-Multilingual.json`, `.md` |
-| G13 | Performance | performance | `gap-analysis/G13-Performance.json`, `.md` |
-| G14 | Post-Launch | post-launch | `gap-analysis/G14-Post-Launch.json`, `.md` |
-| G15 | Project-Scope | project-scope | `gap-analysis/G15-Project-Scope.json`, `.md` |
-| G16 | Security | security-and-compliance | `gap-analysis/G16-Security.json`, `.md` |
-| G17 | SEO | seo-and-discoverability | `gap-analysis/G17-SEO.json`, `.md` |
-| G18 | Site-Structure | site-structure | `gap-analysis/G18-Site-Structure.json`, `.md` |
-| G19 | Target-Audience | target-audience | `gap-analysis/G19-Target-Audience.json`, `.md` |
-| G20 | Technical | technical-platform | `gap-analysis/G20-Technical.json`, `.md` |
-| G21 | User-Accounts | user-accounts | `gap-analysis/G21-User-Accounts.json`, `.md` |
-
-Concept section codes (C-codes, by wave):
-
-| Code | Slug | Wave | Depends On | Files |
-|---|---|---|---|---|
-| C1 | Sitemap | 1 | -- | `concept/C1-Sitemap.json`, `.md` |
-| C2 | Functional | 1 | -- | `concept/C2-Functional.json`, `.md` |
-| C3 | Tech-Stack | 2 | C2 | `concept/C3-Tech-Stack.json`, `.md` |
-| C4 | Content-Strategy | 2 | C1 | `concept/C4-Content-Strategy.json`, `.md` |
-| C5 | Visual | 1 | -- | `concept/C5-Visual.json`, `.md` |
-
-Document codes are assigned per phase. The full catalog is defined in each phase's documentation.
-
-### Flow per phase
-
-```
-Raw input → Agent processing → JSON output → Markdown generated → Human review (optional) → Next phase
-```
+| C1 | Sitemap | 1 | -- |
+| C2 | Functional | 1 | -- |
+| C3 | Tech-Stack | 2 | C2 |
+| C4 | Content-Strategy | 2 | C1 |
+| C5 | Visual | 1 | -- |
 
 ## Available Capabilities
 
@@ -164,7 +144,7 @@ Raw input → Agent processing → JSON output → Markdown generated → Human 
 
 **Sub-agent inheritance:** Sub-agents dispatched via Task inherit all MCP tools from the parent session but should only use those listed in their MCP hints. If a sub-agent starts using MCP tools for file operations (reading directories, searching files, traversing folders), it is misbehaving — the dispatch prompt or agent definition needs tighter restrictions.
 
-**Temporary files:** All temporary files (curl downloads, HTML stripping, debug logs) MUST be written to the project's `tmp/` directory (`{working_directory}/tmp/`), NOT to system `/tmp/`. This directory is created by project-init and is gitignored. In Cowork sessions, system `/tmp/` may not exist or be writable — the project-local `tmp/` is always safe.
+**Temporary files:** All temporary files (curl downloads, HTML stripping, debug logs) MUST be written to the project's `tmp/` directory (`{working_directory}/tmp/`), NOT to system `/tmp/`. This directory is created by project-init and is gitignored.
 </critical>
 
 ### API Credentials
@@ -184,49 +164,31 @@ MCP tool definitions consume context tokens in every session — including sub-a
 | 1 Init | None | Yes — all MCP is waste |
 | 2 Client Intelligence | mcp-curl | Disable DataForSEO, Apify |
 | 3 Research | DataForSEO + mcp-curl | Disable Apify (re-enable if curl cascade fails) |
-| 4 Gap Analysis | **None** | Yes — agents use only Read/Write |
-| 5 Concept Creation | **None** | Yes — agents use only Read/Write |
-| 6 Proposal | **None** | Yes — skill uses only Read/Write |
+| 4-6 | **None** | Yes — agents use only Read/Write |
 
 **Mitigations:**
 
-1. **MCP Tool Search (automatic):** Project-init creates `.claude/settings.json` with `ENABLE_TOOL_SEARCH=auto:5`. This loads MCP tools on-demand instead of preloading all definitions — saving 50-70% of MCP token overhead.
+1. **MCP Tool Search (automatic):** Project-init creates `.claude/settings.json` with `ENABLE_TOOL_SEARCH=auto:5`. Loads MCP tools on-demand instead of preloading — saves 50-70% of MCP token overhead.
 
-2. **DataForSEO module filtering:** Set `ENABLED_MODULES` in the DataForSEO MCP server config to load only needed modules. This plugin uses: `SERP,KEYWORDS_DATA,ONPAGE,DATAFORSEO_LABS,BUSINESS_DATA,DOMAIN_ANALYTICS,CONTENT_ANALYSIS`. Drop `BACKLINKS`, `AI_OPTIMIZATION`, and YouTube to save ~20k tokens.
+2. **DataForSEO module filtering:** Set `ENABLED_MODULES` to load only needed modules: `SERP,KEYWORDS_DATA,ONPAGE,DATAFORSEO_LABS,BUSINESS_DATA,DOMAIN_ANALYTICS,CONTENT_ANALYSIS`. Drop `BACKLINKS`, `AI_OPTIMIZATION`, YouTube to save ~20k tokens.
 
-3. **Phase-grouped sessions:** Phases 4-6 need zero MCP tools — running them in a session without MCP servers saves ~100k tokens of context for actual work.
+3. **Phase-grouped sessions:** Phases 4-6 need zero MCP tools — running without MCP servers saves ~100k tokens.
 
 ## Utilities
 
 ### merge-json.sh — Context Concatenation
 
-Merges multiple project JSON files into a single keyed object for feeding downstream agents. Each file's content is wrapped under a key derived from its filename.
+Merges multiple project JSON files into a single keyed object for downstream agents.
 
 **Location:** `scripts/merge-json.sh`
 
 ```bash
-# Merge all research context for a downstream phase
 scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R*.json -o context.json
-
-# Pretty-print for debugging
-scripts/merge-json.sh research/*.json -p -v
-
-# Pipe to stdout (default)
-scripts/merge-json.sh D1-Init.json research/R1-SERP.json research/R2-Keywords.json
 ```
 
-**Output structure:**
-```json
-{
-  "D1-Init": { ... },
-  "D2-Client-Intelligence": { ... },
-  "R1-SERP": { ... }
-}
-```
+**Output:** `{"D1-Init":{...},"D2-Client-Intelligence":{...},"R1-SERP":{...}}`
 
-**Options:** `-o FILE` (write to file), `-p` (pretty-print), `-v` (verbose to stderr). Default is minified to stdout.
-
-**Error handling:** Strips UTF-8 BOM, skips invalid JSON with warning, exits 1 if no valid files found. Requires `jq`.
+**Options:** `-o FILE` (write to file), `-p` (pretty-print), `-v` (verbose to stderr). Default is minified to stdout. Strips UTF-8 BOM, skips invalid JSON with warning, requires `jq`.
 
 ## How to Think
 

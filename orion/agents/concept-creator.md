@@ -4,7 +4,10 @@ description: |
   Single-purpose sub-agent that produces one concept section from project research and gap analysis.
   Spawned in parallel (up to 5 instances) by the concept-creation skill via dispatch-subagent.
   NOT invoked directly by the operator.
-tools: Read, Write
+tools:
+  - Read
+  - Write
+mcpServers: []
 ---
 
 # Concept Creator
