@@ -53,12 +53,16 @@ Call `dataforseo_labs_google_keyword_ideas` with seed keywords derived from:
 - Client name and brand variants (including legal name if different)
 - INIT notes (competitor hints, operator keyword suggestions)
 
-Combine with location modifiers (city, region, country) and language variants. Natural phrasing per language — not literal translations.
+For each service/product, generate multiple phrasings: noun forms, adjective forms, verb forms, and common synonyms (e.g., "svadobný fotograf", "svadobná fotografia", "fotografovanie svadby", "fotenie svadby"). Natural phrasing per language — not literal translations.
+
+Combine with location modifiers (city, region, country).
+
+**Relevance guardrail:** Every keyword must describe a service the client actually delivers or a direct query about hiring/booking that service. Keywords about adjacent industries, complementary services the client does not offer, or generic topic words (e.g., "svadobný darček" for a photographer, "kameraman" if client does not offer video) are off-topic. Drop off-topic keywords before applying caps.
 
 **Cap rules (when research_depth = basic):**
-- Max 5 keywords per service or product
+- Max 10 keywords per service or product
 - Max 3 location modifier variants per keyword
-- Max 20 keywords per language x location combination
+- Max 30 keywords per language x location combination
 - Hard total cap: `research_config.serp_max_keywords` (default: 50)
 
 **Priority if cap reached:** core service/product keywords first, brand variants second, location modifiers third. Log deprioritised keywords in `notes`.
@@ -92,7 +96,7 @@ Call `kw_data_google_ads_search_volume` on the full keyword list. Returns estima
 
 ### Step 7: Competitor frequency compilation
 
-Count domain appearances across all SERP results. Compile top 10 most frequently appearing domains. Classify each by site type:
+Count domain appearances across all SERP results. Compile top 10 most frequently appearing domains (always 10 — `competitors_max` in research_config applies to R3 detailed profiling, not R1 frequency counting). Classify each by site type:
 - `commercial` — direct competitor selling same product/service
 - `directory` — aggregator or listing site
 - `media` — editorial, news, blog

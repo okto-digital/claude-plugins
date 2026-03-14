@@ -37,7 +37,7 @@ From `R1-SERP.json`:
 
 Call `dataforseo_labs_google_keyword_suggestions` and `dataforseo_labs_google_related_keywords` on the seed keywords from R1-SERP. Run per language x location combination from the matrix.
 
-Deduplicate against existing keywords. Add net-new terms to the candidate list.
+Deduplicate against existing keywords. **Relevance filter:** drop any expanded keyword that does not describe a service the client actually delivers or a direct query about hiring/booking that service. Keywords about adjacent industries or complementary services the client does not offer are off-topic (e.g., "svadobný darček" for a photographer). Add net-new relevant terms to the candidate list.
 
 ### Step 2: Competitor rankings
 

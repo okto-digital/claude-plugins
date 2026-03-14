@@ -20,7 +20,8 @@
     "output_format": "verbose | concise",
     "serp_max_keywords": 50,
     "search_landscape_max_keywords": 100,
-    "competitors_max": 5
+    "competitors_max": 5,
+    "debug": "ask | true | false"
   },
   "pipeline_defaults": {
     "gap_domains": "ask | all | [list of domain codes]",

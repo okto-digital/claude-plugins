@@ -25,7 +25,7 @@ The dispatch prompt provides:
 
 ### 1. Read context
 
-Read the pre-merged context file. Contains D1, D2, and group-specific R-files keyed by filename.
+Read the pre-merged context file. Contains D1, D2, and group-specific R-files keyed by filename. Pay attention to D1 `notes` — operator observations that should influence checkpoint scoring and question generation.
 
 ### 2. Process each domain
 

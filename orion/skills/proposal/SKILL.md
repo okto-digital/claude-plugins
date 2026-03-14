@@ -35,7 +35,7 @@ Read `project-state.md`. Extract project info and document status.
 If missing, stop: "Run project-init first."
 If Phase 5 (Concept Creation) not complete, stop: "Run concept-creation first."
 
-Read `D1-Init.json` for client name, project name, build_type, site_type.
+Read `D1-Init.json` for client name, project name, build_type, site_type, output_language.
 
 ### Step 2: Scan available files
 

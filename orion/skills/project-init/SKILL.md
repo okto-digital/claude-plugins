@@ -42,6 +42,7 @@ Ask the operator for these fields. Do not proceed until all 7 mandatory fields a
 | Gap domains (`ask` / `all` / `[list]`) | No | `ask` |
 | Parallel execution (`ask` / `true` / `false`) | No | `ask` |
 | Proposal style (`ask` / `full` / `summary_only`) | No | `ask` |
+| Debug output (`ask` / `true` / `false`) | No | `false` |
 
 ### 2. Process Notes
 
