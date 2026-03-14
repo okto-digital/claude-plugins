@@ -19,7 +19,7 @@ Six phases, executed sequentially. Each phase produces JSON output, a markdown r
 | 1 | **INIT** | What is the high-level overview of what the client wants? | Project parameters, research config, structured notes |
 | 2 | **Client Intelligence** | Who is this client and what is their current state? | Client profile, digital footprint, competitive context |
 | 3 | **Research** (9 substages) | What does the market, audience, and competitive landscape look like? | 9 research documents (R1–R9), progressive competitor list, keyword map |
-| 4 | **Domain Gap Analysis** | What do we know vs. what do we still need to ask? | 21 domain scores (FOUND/PARTIAL/GAP), targeted interview questions |
+| 4 | **Domain Gap Analysis** | What do we know vs. what do we still need to ask? | 21 domain scores, curated questions (Client/Agency/Deduced/Playbook) |
 | 5 | **Concept Creation** | What should we build and how? | 9 concept sections: sitemap, functional, visual, technical architecture, content strategy, UX strategy, project roadmap, SEO strategy, compliance |
 | 6 | **Proposal & Brief** | What do we deliver to the client? | Modular proposal with selectable scope (must/should/nice-to-have) |
 
@@ -41,6 +41,8 @@ Phase 1 (INIT)
 - **Domain analysis after research** — 21 domains are scored after all 9 research substages complete, giving the richest possible context for gap detection.
 - **JSON as source of truth** — All agent-to-agent data is minified JSON. Markdown files are disposable human-review views regenerated from JSON.
 - **Research depth and output format** — Set at INIT. `basic` (default) enforces caps; `deep` lets agents decide data needs. `concise` (default) keeps outputs short; `verbose` allows more depth.
+- **Output language** — If `output_language` is set in D1-Init.json, client-facing outputs (D6 Proposal, interview questions) MUST be written in that language including section titles and labels; JSON keys, document codes, and enum values always stay in English.
+- **Debug mode** — When `research_config.debug` is `true` in D1-Init.json, every phase that writes `.md` output MUST also write a `-debug.txt` companion: telegraphic style, bullet points, key facts only, no prose, no template structure. Files go to `tmp/debug/` with `-debug.txt` suffix (e.g., `tmp/debug/R1-SERP-debug.txt`, `tmp/debug/D2-Client-Intelligence-debug.txt`). When `ask`, prompt the operator before the first output of each phase. When `false` (default), skip debug files entirely.
 
 ## Data Architecture
 
@@ -70,7 +72,7 @@ At each phase boundary, a Markdown file is generated from the JSON. The operator
 
 Each document exists as two files: `{Code}-{Slug}.json` (source of truth) and `{Code}-{Slug}.md` (disposable review).
 
-**File prefixes:** D-codes at root, R-codes in `research/`, G-codes in `gap-analysis/` (+ questions in `gap-analysis/questions/`), C-codes in `concept/`.
+**File prefixes:** D-codes at root, R-codes in `research/`, G-codes in `gap-analysis/` (+ questions in `gap-analysis/questions/`), C-codes in `concept/`. Phase 4 curated outputs (D4-Questions-Client, D4-Questions-Agency, D4-Deductions, D4-Agency-Playbook) are at root alongside D4-Gap-Analysis.
 
 Phase deliverables:
 

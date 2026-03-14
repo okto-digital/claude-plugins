@@ -26,6 +26,7 @@ Dispatch any registered agent as a sub-agent via the Task tool. Automatically se
 | concept-creator | `${CLAUDE_PLUGIN_ROOT}/agents/concept-creator.md` | Produce one concept section from pre-merged context, write per-section JSON + MD |
 | concept-reviewer | `${CLAUDE_PLUGIN_ROOT}/agents/concept-reviewer.md` | Read D5-Concept.json, check inter-section coherence, write D5-Review-Notes.md |
 | answer-resolver | `${CLAUDE_PLUGIN_ROOT}/agents/answer-resolver.md` | Revise one domain's G-file after mechanical answer insertion, rewrite evidence + summary |
+| question-curator | `${CLAUDE_PLUGIN_ROOT}/agents/question-curator.md` | Classify, deduplicate, rewrite D4 questions into CLIENT/AGENCY/DEDUCED/PLAYBOOK buckets |
 
 ---
 
@@ -64,9 +65,11 @@ For each MCP wildcard in the agent's `tools:` field, include the corresponding h
 
 Use the appropriate template based on dispatch mode (see templates below).
 
-### 6. Debug log (when enabled)
+### 6. Debug log and debug output (when enabled)
 
-If debug mode is active (`debug: true` in project-state.md), write the full prompt to `debug/dispatch-{agent-name}-{timestamp}.md` before dispatching.
+If `research_config.debug` is `true` in D1-Init.json:
+- Write the full dispatch prompt to `tmp/dispatch-{agent-name}-{timestamp}.md` before dispatching.
+- Append to the dispatch prompt: "Debug mode is ON. For every `.md` file you write, also write a `-debug.txt` companion in `tmp/debug/`: telegraphic, bullet points, key facts only, no prose, no template structure."
 
 ### 7. Call Task tool
 

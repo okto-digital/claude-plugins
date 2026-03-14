@@ -32,7 +32,7 @@ Dispatch domain-analyst agents for 6 domain groups, then consolidate into D4 del
 
 Read `project-state.md`. If missing → "Run project-init first." If Phase 3 not complete → "Run project-research first."
 
-Read `D1-Init.json` for project parameters.
+Read `D1-Init.json` for project parameters and `notes` (operator observations that inform gap scoring).
 
 ### Step 2: Check existing domain outputs
 
@@ -105,38 +105,84 @@ echo "
 *Return D4-Questions.json with answers to proceed to Concept Creation.*" >> D4-Gap-Analysis.md
 ```
 
+### Step 6b: Question curation
+
+Dispatch the `question-curator` agent to classify, deduplicate, and rewrite raw questions.
+
+**Pre-merge context:** Reuse D1 + D2 context (same as domain analyst context but without R-files — curator only needs project parameters and client intelligence).
+
+```bash
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json -o tmp/context-curator.json
+```
+
+**Extract output_language:**
+
+```bash
+OUTPUT_LANG=$(jq -r '."D1-Init".output_language // "en"' tmp/context-curator.json)
+```
+
+**Dispatch via `dispatch-subagent`:**
+- Agent: `question-curator`
+- Model: `opus`
+- Mode: Lightweight (no MCP)
+- Prompt payload:
+  - Context file path: `{working_directory}/tmp/context-curator.json`
+  - Questions file path: `{working_directory}/D4-Questions.json`
+  - Output directory: `{working_directory}`
+  - Output language: `{OUTPUT_LANG}`
+
+**After dispatch:** Verify all original question IDs are accounted for:
+
+```bash
+ORIGINAL=$(jq 'length' D4-Questions.json)
+CLIENT=$(jq '[.[].original_ids[]] | length' D4-Questions-Client.json 2>/dev/null || echo 0)
+AGENCY=$(jq '[.[].original_ids[]] | length' D4-Questions-Agency.json 2>/dev/null || echo 0)
+DEDUCED=$(jq 'length' D4-Deductions.json 2>/dev/null || echo 0)
+PLAYBOOK=$(grep -c '\[G[0-9]*-Q[0-9]*\]' D4-Agency-Playbook.md 2>/dev/null || echo 0)
+CURATED=$((CLIENT + AGENCY + DEDUCED + PLAYBOOK))
+if [[ "$CURATED" -lt "$ORIGINAL" ]]; then
+    echo "WARNING: $((ORIGINAL - CURATED)) questions missing from curated output ($CURATED/$ORIGINAL)"
+fi
+```
+
 ### Step 7: Update project-state.md
 
-Update Phase 4: status `complete`/`partial`, output `D4-Gap-Analysis.json, D4-Questions.json, D4-Answers.json`, date today.
+Update Phase 4: status `complete`/`partial`, output files including curated outputs, date today.
 
 ```
 Domain Gap Analysis complete.
   Groups: {n}/6 | Active: {n} | Inactive: {n} | Failed: {n or "none"}
-  Critical unresolved: {n} | Questions: {n}
-Output: D4-Gap-Analysis.json, D4-Questions.json, D4-Answers.json
-Next: Fill in D4-Answers.json, then re-run to resolve.
+  Critical unresolved: {n} | Questions: {n} (Client: {n}, Agency: {n}, Deduced: {n}, Playbook: {n})
+Output: D4-Gap-Analysis.json, D4-Questions.json, D4-Answers.json,
+        D4-Questions-Client.json, D4-Questions-Client.md,
+        D4-Questions-Agency.json, D4-Deductions.json, D4-Agency-Playbook.md
+Next: Fill in D4-Questions-Client.json + D4-Questions-Agency.json, then re-run to resolve.
 ```
 
 ### Step 8: Answer Resolution (conditional)
 
-Check if `D4-Answers.json` exists with answered entries:
+First, compile curated answers into D4-Answers.json:
+
+**8a.** Run `scripts/compile-answers.sh {working_directory} -v` to merge CLIENT + AGENCY + DEDUCED answers into D4-Answers.json.
+
+Check if D4-Answers.json has answered entries after compilation:
 
 ```bash
 ANSWERED=$(jq '[.[] | select(.answer != null)] | length' D4-Answers.json)
 DOMAINS=$(jq '[.[] | select(.answer != null) | .domain] | unique | length' D4-Answers.json)
 ```
 
-Skip if file missing or `ANSWERED == 0`. Otherwise AskUserQuestion: "D4-Answers.json has {ANSWERED} answers across {DOMAINS} domains. Resolve?"
+Skip if `ANSWERED == 0`. Otherwise AskUserQuestion: "D4-Answers.json has {ANSWERED} answers across {DOMAINS} domains. Resolve?"
 
 If yes:
 
-**8a.** Run `scripts/resolve-answers.sh D4-Answers.json gap-analysis/ -v`
+**8b.** Run `scripts/resolve-answers.sh D4-Answers.json gap-analysis/ -v`
 
-**8b.** Dispatch `answer-resolver` per updated domain via `dispatch-subagent` (G-file path + markdown path, model sonnet, Lightweight mode, max 6 concurrent)
+**8c.** Dispatch `answer-resolver` per updated domain via `dispatch-subagent` (G-file path + markdown path, model sonnet, Lightweight mode, max 6 concurrent)
 
-**8c.** Rerun Step 6 bash commands to rebuild D4 consolidation files
+**8d.** Rerun Step 6 bash commands to rebuild D4 consolidation files
 
-**8d.** Update Phase 4 status → `resolved`
+**8e.** Update Phase 4 status → `resolved`
 
 ```
 Answer resolution complete.
