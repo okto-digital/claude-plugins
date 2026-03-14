@@ -1,6 +1,6 @@
-# Method 2: WebFetch
+# Method 6: WebFetch
 
-Fallback when curl is unavailable or blocked. WebFetch is a built-in Claude Code tool that fetches a URL and processes the content through an AI model.
+Fallback when earlier methods fail. WebFetch is a built-in Claude Code tool that fetches a URL and processes the content through an AI model.
 
 ---
 
@@ -54,13 +54,13 @@ Note: WebFetch may not always report redirects accurately since the AI model pro
 
 ## When this method fails
 
-Move to Method 3 (Browser Fetch) if:
+Move to Method 7 (Paste-in) if:
 - HTTP 403 Forbidden (bot protection -- Cloudflare, WAF, Sucuri)
 - Timeout or empty response
 - Content returned is a challenge page or CAPTCHA
 - Content is clearly incomplete (JS-rendered page returned skeleton HTML)
 
-WebFetch runs from cloud/datacenter IPs. If a site blocks datacenter IPs, WebFetch will always fail for that domain -- skip directly to Browser Fetch.
+WebFetch runs from cloud/datacenter IPs. If a site blocks datacenter IPs, WebFetch will always fail for that domain -- skip directly to Paste-in.
 
 ---
 

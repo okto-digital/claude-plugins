@@ -160,20 +160,20 @@ Subdomains with ranking data.
 
 ## Top Searches
 
-Top-searched keywords in a location.
+Top queries mentioning a domain.
 
 **URL:** `/v3/dataforseo_labs/google/top_searches/live`
 **Method:** POST
 
 **Request body:**
 ```json
-[{"location_code": 2703, "language_code": "sk", "limit": 50}]
+[{"target": "example.com", "location_code": 2703, "language_code": "sk", "limit": 50}]
 ```
 
-**Required:** `location_code` or `location_name`, `language_code` or `language_name`
+**Required:** `target` (domain), `location_code` or `location_name`, `language_code` or `language_name`
 **Optional:** `limit`, `filters`, `order_by`
 
-**Response:** `tasks[0].result[0].items[]` — each with `keyword`, `search_volume`, `keyword_difficulty`
+**Response:** `tasks[0].result[0].items[]` — each with `keyword`, `search_volume`, `position`, `traffic_share`
 
 ---
 

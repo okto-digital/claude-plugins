@@ -38,7 +38,7 @@ Look up the agent in the registry. If not registered, stop and inform the operat
 
 ### 2. Read the agent definition and determine dispatch mode
 
-Read the agent definition file. Check the frontmatter `tools:` field for MCP wildcards (patterns like `mcp__*`).
+Read the agent definition file. Check the frontmatter `tools:` field for MCP wildcards (patterns like `mcp__*`). Convention: MCP agents use inline comma-separated `tools:` format; lightweight agents use YAML list format. Both are valid.
 
 - **MCP wildcards found** → **MCP mode**: agent needs external tools, dispatch as `general-purpose`
 - **No MCP wildcards** → **Lightweight mode**: agent uses only built-in tools, dispatch as named agent

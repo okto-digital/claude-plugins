@@ -50,7 +50,7 @@ Run the **Registry Lookup** (see below).
 
 Set `presence_status` to `none`. All web/social/reputation fields remain `null`.
 
-→ Go to **Step 6: Write output**.
+→ Go to **Step 7: Write output**.
 
 ---
 
@@ -65,6 +65,7 @@ Use `dispatch-subagent` to dispatch `web-crawler`. Get URL from D1-Init.json not
 3. Dispatch web-crawler for each high-value page (parallel where possible).
 4. Extract: site structure, navigation, messaging, tone of voice, CTA patterns, content presence.
 5. Extract **services or products** -- identify every distinct service/product the client offers. This list is critical for SERP keyword generation in the research stage.
+6. Flag **dark patterns or red flags** -- hidden content (hidden divs, display:none text), deceptive practices, grey-zone activities, adult/illegal content, cloaked links, or anything that could pose reputational or legal risk for the agency taking on this client.
 
 ### Step 4R: Web search + social + reputation
 
@@ -95,7 +96,7 @@ Run the **Registry Lookup** (see below).
 - `partial` — some data gathered but significant gaps remain
 - `full` — comprehensive data across web, social, reputation, and registry
 
-→ Go to **Step 6: Write output**.
+→ Go to **Step 7: Write output**.
 
 ---
 
@@ -112,7 +113,7 @@ Used by both paths (Step 4N and Step 5R).
 
 ---
 
-## Step 6: Write D2-Client-Intelligence.json
+## Step 7: Write D2-Client-Intelligence.json
 
 Write `D2-Client-Intelligence.json` to the project root as **a single line** — no newlines, no indentation, no spaces after colons or commas.
 
@@ -120,11 +121,11 @@ Use the schema from `${CLAUDE_PLUGIN_ROOT}/skills/client-intelligence/references
 
 All blocks are always present regardless of build_type. Fields with no data are `null`.
 
-## Step 7: Write D2-Client-Intelligence.md
+## Step 8: Write D2-Client-Intelligence.md
 
 Generate from `D2-Client-Intelligence.json` using the markdown template in `${CLAUDE_PLUGIN_ROOT}/skills/client-intelligence/references/templates.md`.
 
-## Step 8: Update project-state.md
+## Step 9: Update project-state.md
 
 Update Phase 2 row: Status → `complete`, Output → `D2-Client-Intelligence.json`, Updated → today's date.
 

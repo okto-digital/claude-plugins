@@ -1,8 +1,8 @@
-# Method 0: Apify MCP
+# Method 3: Apify MCP
 
-Highest-priority crawling method. Apify runs headless browsers on their infrastructure, handling JavaScript rendering, WAF bypass, and anti-bot measures. Uses the user's Apify account via MCP integration.
+Headless browser crawl via Apify infrastructure. Handles JavaScript rendering, WAF bypass, and anti-bot measures. Uses the user's Apify account via MCP integration.
 
-**Requires Apify MCP server configured.** If the tool call fails (tool not found), move to Method 1 (curl).
+**Requires Apify MCP server configured.** If the tool call fails (tool not found), move to Method 4 (Chrome Control Fetch).
 
 ---
 
@@ -85,10 +85,10 @@ The `website-content-crawler` actor returns markdown content directly. Check the
    - Pages with aggressive anti-bot that blocks even Apify
 
    **Detect:** Response body is empty string, whitespace only, or under 100 characters.
-   **Action:** Fallback immediately to Method 1 (curl). Do not retry with Apify.
+   **Action:** Fallback immediately to Method 4 (Chrome Control Fetch). Do not retry with Apify.
 
 3. **Actor error or timeout:** Apify returns error status.
-   **Action:** Fallback to Method 1 (curl).
+   **Action:** Fallback to Method 4 (Chrome Control Fetch).
 
 ---
 

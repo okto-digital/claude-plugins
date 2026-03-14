@@ -1,8 +1,8 @@
-# Method 1: curl + Local Processing
+# Methods 1–2: curl + Local Processing
 
-Preferred extraction method. curl follows redirects transparently, reports the final URL, and fetches raw HTML. Most reliable for redirect detection.
+Preferred extraction method. curl follows redirects transparently, reports the final URL, and fetches raw HTML. Most reliable for redirect detection. Covers two cascade positions: Method 1 (mcp-curl, residential IP) and Method 2 (Bash curl, datacenter IP).
 
-**Requires HTTP and shell access.** This method uses mcp-curl for fetching (residential IP) and Bash for post-fetch processing (HTML stripping). If neither is available, skip to Method 2.
+**Requires HTTP and shell access.** This method uses mcp-curl for fetching (residential IP) and Bash for post-fetch processing (HTML stripping). If neither is available, skip to Method 3 (Apify).
 
 **Temporary files:** All paths use `{working_directory}/tmp/` -- the project-local temp directory. Replace `{working_directory}` with the absolute project path from your dispatch prompt. This ensures temp files are written to the project directory, not system `/tmp/` (which may not exist or be writable in Cowork sessions).
 

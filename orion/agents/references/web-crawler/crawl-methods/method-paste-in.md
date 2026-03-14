@@ -1,4 +1,4 @@
-# Method 5: Paste-in Fallback
+# Method 7: Paste-in Fallback
 
 Manual content extraction when all automated methods fail. The operator provides the content directly.
 
@@ -6,11 +6,12 @@ Manual content extraction when all automated methods fail. The operator provides
 
 ## When to use
 
-Use this method when:
-- Method 1 (curl): not available, HTTP error, or WAF blocked
-- Method 2 (WebFetch): 403 Forbidden, timeout, or empty response
-- Method 3 (Browser Fetch): not available, fetch blocked, or incomplete content
-- Method 4 (Browser Navigation): not available, redirect loop, or stale content issues
+Use this method when all automated methods (1–6) have failed:
+- Methods 1–2 (curl via mcp-curl / Bash): not available, HTTP error, or WAF blocked
+- Method 3 (Apify): not available, empty response, actor error, or timeout
+- Method 4 (Chrome Control Fetch): not available, fetch blocked, or incomplete content
+- Method 5 (Chrome Automation Navigation): not available, redirect loop, or stale content
+- Method 6 (WebFetch): 403 Forbidden, timeout, empty, or summarized content
 
 ---
 
@@ -19,10 +20,11 @@ Use this method when:
 ```
 All automated extraction methods failed for this URL.
 
-Method 1 (curl): [reason -- not available / HTTP [code] / WAF challenge page]
-Method 2 (WebFetch): [reason -- 403 / timeout / empty / summarized content]
-Method 3 (Browser Fetch): [reason -- not available / fetch blocked / incomplete content]
-Method 4 (Browser Navigation): [reason -- not available / redirect loop / stale content]
+Methods 1-2 (curl): [reason -- not available / HTTP [code] / WAF challenge page]
+Method 3 (Apify): [reason -- not available / empty response / actor error / timeout]
+Method 4 (Chrome Control Fetch): [reason -- not available / fetch blocked / incomplete content]
+Method 5 (Chrome Automation Nav): [reason -- not available / redirect loop / stale content]
+Method 6 (WebFetch): [reason -- 403 / timeout / empty / summarized content]
 
 To proceed, open the page in your browser and either:
 (a) Select all main content on the page, copy, and paste it here
