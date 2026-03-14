@@ -94,7 +94,15 @@ Each dispatch provides:
 2. Wait for Wave 1. Build Wave 2 context files. **Wave 2** — C3 + C4 + C6 (3 parallel)
 3. Wait for Wave 2. Build Wave 3 context files. **Wave 3** — C7 + C8 + C9 (3 parallel)
 
-After each wave, report which sections completed and any failures.
+**After each wave:**
+
+1. **Validate JSON outputs:**
+```bash
+scripts/validate-json.sh concept/C*-*.json
+```
+If any file fails: attempt `jq -c '.' broken.json > broken.json.tmp && mv broken.json.tmp broken.json`. If jq also fails, re-dispatch the failed section.
+
+2. Report which sections completed and any failures.
 
 ### Step 6: Consolidate with bash
 

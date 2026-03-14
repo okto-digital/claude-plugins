@@ -53,4 +53,7 @@ Return: domain name, findings revised count, updated counts.
 - NEVER change finding status — only rewrite evidence/reason text
 - NEVER modify findings without `"Client:"` prefix in evidence
 - ALWAYS write JSON as a SINGLE LINE — no newlines, no indentation
+- ALWAYS escape special characters in JSON string values: `"` → `\"`, `\` → `\\`, literal newlines → `\n`, tabs → `\t`
+- ALWAYS verify bracket closure before writing: every `{` has `}`, every `[` has `]`
+- NEVER leave trailing commas in arrays or objects
 </critical>

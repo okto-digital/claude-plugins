@@ -72,6 +72,9 @@ Follow the substage definition's methodology steps in order. For each step:
 <critical>
 - **ALWAYS** follow the substage definition's methodology — do not skip steps or invent your own
 - **ALWAYS** write JSON as a SINGLE LINE — no newlines, no indentation, no spaces after colons or commas. The entire .json file must be one line.
+- **ALWAYS** escape special characters in JSON string values: `"` → `\"`, `\` → `\\`, literal newlines → `\n`, tabs → `\t`
+- **ALWAYS** verify bracket closure before writing: every `{` has `}`, every `[` has `]`
+- **NEVER** leave trailing commas in arrays or objects
 - **ALWAYS** generate markdown from JSON, not independently
 - **NEVER** invent data or fabricate research findings
 - **NEVER** exceed research_config caps when depth = basic

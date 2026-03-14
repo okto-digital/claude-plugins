@@ -156,6 +156,9 @@ Report:
 - ALWAYS preserve original IDs for answer mapping back to D4-Answers.json
 - ALWAYS write client questions and client markdown in output_language
 - ALWAYS write JSON as a SINGLE LINE — no newlines, no indentation
+- ALWAYS escape special characters in JSON string values: `"` → `\"`, `\` → `\\`, literal newlines → `\n`, tabs → `\t`
+- ALWAYS verify bracket closure before writing: every `{` has `}`, every `[` has `]`
+- NEVER leave trailing commas in arrays or objects
 </critical>
 
 - When a question spans multiple buckets (part client, part technical), split into two: CLIENT gets the business aspect, AGENCY gets the technical aspect. Both reference the original ID.

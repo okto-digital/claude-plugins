@@ -64,4 +64,13 @@ Per domain: status, checkpoint counts, questions generated. Cross-domain observa
 - NEVER generate questions for N/A checkpoints or NICE-TO-HAVE gaps
 - ALWAYS use exact checkpoint wording from the domain file
 - ALWAYS write JSON as a SINGLE LINE — no newlines, no indentation
+- ALWAYS escape special characters in JSON string values: `"` → `\"`, `\` → `\\`, literal newlines → `\n`, tabs → `\t`
+- ALWAYS verify bracket closure before writing: every `{` has `}`, every `[` has `]`
+- NEVER leave trailing commas in arrays or objects: `[1,2,3]` not `[1,2,3,]`
+- NEVER leave unquoted string values — all strings must be wrapped in `""`
 </critical>
+
+**Common JSON mistakes to avoid:**
+- Client text containing `"` (quotes in business names, slogans) — must be escaped as `\"`
+- URLs containing `&` or `=` — these are safe in JSON strings, do not double-escape
+- Multi-sentence evidence containing line breaks — replace with `\n` or join into one line

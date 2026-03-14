@@ -64,7 +64,15 @@ Dispatch selected groups via `dispatch-subagent`. Each dispatch provides:
 - Context file path: `{working_directory}/tmp/context-group-{letter}.json`
 - Model: sonnet | MCP hints: none
 
-**After each batch:** report per-domain status, questions generated, failures.
+**After each batch:**
+
+1. **Validate JSON outputs:**
+```bash
+scripts/validate-json.sh gap-analysis/G*-*.json gap-analysis/questions/G*-*-questions.json
+```
+If any file fails: attempt `jq -c '.' broken.json > broken.json.tmp && mv broken.json.tmp broken.json`. If jq also fails, re-dispatch the group containing the broken domain.
+
+2. Report per-domain status, questions generated, failures.
 
 ### Step 6: Consolidate with bash
 

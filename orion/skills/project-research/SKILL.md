@@ -138,10 +138,16 @@ Dispatch for substages 3.8, 3.9. R8 gets R3 + R7 paths. R9 gets R2 + R3 + R4 + R
 
 **If a skipped topic is listed as a dependency:** Omit that path. The researcher handles missing inputs gracefully.
 
-**Progress reporting after each wave:**
-- Which substages completed successfully
-- Any failures (and whether to retry or skip)
-- If stepped mode: pause for operator review
+**After each wave:**
+
+1. **Validate JSON outputs:**
+```bash
+scripts/validate-json.sh research/R*-*.json
+```
+If any file fails: attempt `jq -c '.' broken.json > broken.json.tmp && mv broken.json.tmp broken.json`. If jq also fails, re-dispatch the failed substage.
+
+2. Report which substages completed successfully, any failures (and whether to retry or skip).
+3. If stepped mode: pause for operator review.
 
 ### Step 6: Consolidate with bash
 

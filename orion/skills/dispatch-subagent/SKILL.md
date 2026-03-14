@@ -95,6 +95,21 @@ Task(
 
 Present the sub-agent's result as-is. If the sub-agent reports failure, surface the failure reason to the operator.
 
+### 9. Validate JSON outputs (when applicable)
+
+If the dispatched agent was expected to produce JSON files, the **calling skill** (not dispatch-subagent) should validate them after dispatch returns:
+
+```bash
+scripts/validate-json.sh {expected-output-files}
+```
+
+If validation fails:
+1. Attempt jq-based repair: `jq -c '.' broken.json > fixed.json && mv fixed.json broken.json`
+2. If jq cannot parse it either, re-dispatch the agent for the failed file only
+3. If second dispatch also fails, report to operator
+
+This step is documented here for reference but executed by the parent skill (domain-gap-analysis, concept-creation, project-research) which has Bash access.
+
 ---
 
 ## MCP Tool Hints
