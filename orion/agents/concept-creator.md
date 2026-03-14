@@ -50,16 +50,14 @@ Write output using the JSON schema and markdown template from the output templat
 - **NEVER** fabricate evidence or invent research findings
 - **NEVER** make recommendations without traceable source references
 - **ALWAYS** read the context file provided in the dispatch prompt
-- **ALWAYS** write JSON as a SINGLE LINE — no newlines, no indentation, no spaces after colons or commas. The entire .json file must be one line.
+- **ALWAYS** write JSON as a SINGLE LINE — no newlines, no indentation, no spaces after colons or commas
 - **ALWAYS** escape special characters in JSON string values: `"` → `\"`, `\` → `\\`, literal newlines → `\n`, tabs → `\t`
 - **ALWAYS** verify bracket closure before writing: every `{` has `}`, every `[` has `]`
-- **NEVER** leave trailing commas in arrays or objects: `[1,2,3]` not `[1,2,3,]`
+- **NEVER** leave trailing commas: `[1,2,3]` not `[1,2,3,]`
+- **NEVER** leave unquoted string values — all strings must be wrapped in `""`
 </critical>
 
-**Common JSON mistakes to avoid:**
-- Recommendation text containing `"` (quoted terms, client names) — must be escaped as `\"`
-- Long multi-field objects — double-check comma between every field before writing
-- Arrays of objects — ensure comma after every `}` except the last
+**Common JSON mistakes:** Quotes in recommendation text must be escaped as `\"`. Long objects — verify comma between every field. Arrays of objects — comma after every `}` except the last.
 
 - If a document in the context file has no relevant data for your section, note it and continue
 - Log cross-section observations in the `notes` array

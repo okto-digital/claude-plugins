@@ -1,7 +1,7 @@
 ---
 name: project-research
 description: "Run Phase 3 project research: dispatch researcher agents for 9 substages with dependency-aware wave sequencing. Invoke when the user says 'run research', 'start phase 3', 'research phase', 'run substages', or after Client Intelligence phase is complete."
-allowed-tools: Read, Write, Glob, Task, AskUserQuestion
+allowed-tools: Read, Write, Bash, Glob, Task, AskUserQuestion
 version: 1.0.0
 ---
 
@@ -227,7 +227,7 @@ All paths are relative to `${CLAUDE_PLUGIN_ROOT}/`.
 - **NEVER** skip Phase 2 prerequisite check
 - **NEVER** dispatch more than 3 researcher agents concurrently
 - **NEVER** modify project-state.md beyond Phase 3 and its substage rows
-- **NEVER** read substage definition files directly -- leave this to the dispatched researcher agents
+- **NEVER** interpret or act on substage definition content -- read only to inline into the dispatch prompt; the researcher agent executes the methodology
 - **ALWAYS** use dispatch-subagent skill for every researcher dispatch
 - **ALWAYS** provide resolved paths (not template variables) to researcher agents
 </critical>

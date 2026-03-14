@@ -19,7 +19,7 @@ Six phases, executed sequentially. Each phase produces JSON output, a markdown r
 | 1 | **INIT** | What is the high-level overview of what the client wants? | Project parameters, research config, structured notes |
 | 2 | **Client Intelligence** | Who is this client and what is their current state? | Client profile, digital footprint, competitive context |
 | 3 | **Research** (9 substages) | What does the market, audience, and competitive landscape look like? | 9 research documents (R1–R9), progressive competitor list, keyword map |
-| 4 | **Domain Gap Analysis** | What do we know vs. what do we still need to ask? | 21 domain scores, curated questions (Client/Agency/Deduced/Playbook) |
+| 4 | **Domain Gap Analysis** | What do we know vs. what do we still need to ask? | 21 domain scores, curated outputs (Client questions, Agency questions, Deductions, Playbook) |
 | 5 | **Concept Creation** | What should we build and how? | 9 concept sections: sitemap, functional, visual, technical architecture, content strategy, UX strategy, project roadmap, SEO strategy, compliance |
 | 6 | **Proposal & Brief** | What do we deliver to the client? | Modular proposal with selectable scope (must/should/nice-to-have) |
 
@@ -81,7 +81,8 @@ Phase deliverables:
 | D1 | Init |
 | D2 | Client Intelligence |
 | D3 | Research Overview |
-| D4 | Gap Analysis |
+| D4 | Gap Analysis (raw: D4-Gap-Analysis, D4-Questions, D4-Answers) |
+| D4-* | Curated: D4-Questions-Client (.json+.md), D4-Questions-Agency, D4-Deductions, D4-Agency-Playbook (.md) |
 | D5 | Concept |
 | D6 | Proposal |
 
@@ -195,6 +196,43 @@ scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R*.json 
 **Output:** `{"D1-Init":{...},"D2-Client-Intelligence":{...},"R1-SERP":{...}}`
 
 **Options:** `-o FILE` (write to file), `-p` (pretty-print), `-v` (verbose to stderr). Default is minified to stdout. Strips UTF-8 BOM, skips invalid JSON with warning, requires `jq`.
+
+### validate-json.sh — JSON Validation
+
+Validates JSON files using jq. Reports pass/fail per file with error details.
+
+**Location:** `scripts/validate-json.sh`
+
+```bash
+scripts/validate-json.sh gap-analysis/G*-*.json    # validate multiple files
+scripts/validate-json.sh -v D4-Gap-Analysis.json    # verbose
+```
+
+**Exit codes:** 0 (all valid), 1 (failures), 2 (no files / missing jq). Used by parent skills after every sub-agent dispatch wave.
+
+### compile-answers.sh — Curated Answer Bridge
+
+Merges curated answers (Client + Agency + Deductions) back into D4-Answers.json for use by resolve-answers.sh.
+
+**Location:** `scripts/compile-answers.sh`
+
+```bash
+scripts/compile-answers.sh /path/to/project -v
+```
+
+Auto-populates DEDUCED entries via `answer_for_d4`, maps CLIENT/AGENCY answers via `original_ids`. Requires `jq`.
+
+### resolve-answers.sh — Answer Insertion
+
+Inserts answered entries from D4-Answers.json into individual G-files. Sets finding status to FOUND (with `"Client: {text}"` evidence) or N/A, recalculates counts.
+
+**Location:** `scripts/resolve-answers.sh`
+
+```bash
+scripts/resolve-answers.sh D4-Answers.json gap-analysis/ -v
+```
+
+Requires `jq`. Skips unanswered entries (null). After insertion, answer-resolver agents rewrite evidence into coherent prose.
 
 ## How to Think
 

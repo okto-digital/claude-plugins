@@ -65,8 +65,7 @@ for file in "${files[@]}"; do
     fi
 
     # Validate with jq, capture stderr for error details
-    error_output=$(jq empty "$file" 2>&1)
-    if [[ $? -eq 0 ]]; then
+    if error_output=$(jq empty "$file" 2>&1); then
         $verbose && echo "PASS $file"
         passed=$((passed + 1))
     else

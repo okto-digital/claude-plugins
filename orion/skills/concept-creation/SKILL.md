@@ -214,7 +214,7 @@ Each section receives a single pre-merged context file. D1 is always included.
 - NEVER dispatch Wave 2 sections before their Wave 1 dependencies complete
 - NEVER dispatch Wave 3 sections before their Wave 2 dependencies complete
 - NEVER modify project-state.md beyond Phase 5 rows
-- NEVER read concept definition files directly -- leave this to the dispatched concept-creator agents
+- NEVER interpret or act on concept definition content -- read only to inline into the dispatch prompt; the concept-creator agent executes the methodology
 - NEVER start Phase 5 if CRITICAL questions remain unresolved in D4
 - ALWAYS use dispatch-subagent skill for every concept-creator and concept-reviewer dispatch
 - ALWAYS build pre-merged context files via merge-json.sh before dispatching each wave

@@ -71,15 +71,18 @@ Follow the substage definition's methodology steps in order. For each step:
 
 <critical>
 - **ALWAYS** follow the substage definition's methodology — do not skip steps or invent your own
-- **ALWAYS** write JSON as a SINGLE LINE — no newlines, no indentation, no spaces after colons or commas. The entire .json file must be one line.
+- **ALWAYS** write JSON as a SINGLE LINE — no newlines, no indentation, no spaces after colons or commas
 - **ALWAYS** escape special characters in JSON string values: `"` → `\"`, `\` → `\\`, literal newlines → `\n`, tabs → `\t`
 - **ALWAYS** verify bracket closure before writing: every `{` has `}`, every `[` has `]`
-- **NEVER** leave trailing commas in arrays or objects
+- **NEVER** leave trailing commas: `[1,2,3]` not `[1,2,3,]`
+- **NEVER** leave unquoted string values — all strings must be wrapped in `""`
 - **ALWAYS** generate markdown from JSON, not independently
 - **NEVER** invent data or fabricate research findings
 - **NEVER** exceed research_config caps when depth = basic
 - **NEVER** write to files outside the `research/` directory
 </critical>
+
+**Common JSON mistakes:** URLs with `&`/`=` are safe in JSON strings — do not double-escape. Research data with quotes must be escaped as `\"`. Long per-site data tables — verify comma between every field and every array element.
 
 - If a DataForSEO call fails, note the failure and continue with available data
 - If a web-crawler dispatch fails, note and continue — no single failure blocks the substage

@@ -124,7 +124,7 @@ if [[ -f "$client_file" ]]; then
             elif [[ "$selected" == "na" ]]; then
                 answer="N/A"
             else
-                answer=$(jq -r --arg sel "$selected" '.[$i].options[] | select(.id == $sel) | .label // empty' "$client_file" 2>/dev/null)
+                answer=$(jq -r --argjson idx "$i" --arg sel "$selected" '.[$idx].options[] | select(.id == $sel) | .label // empty' "$client_file" 2>/dev/null)
                 [[ -z "$answer" ]] && continue
             fi
 
@@ -161,7 +161,7 @@ if [[ -f "$agency_file" ]]; then
                 [[ -z "$answer" ]] && answer=$(jq -r ".[$i].recommendation // empty" "$agency_file")
                 [[ -z "$answer" ]] && continue
             else
-                answer=$(jq -r --arg sel "$selected" '.[$i].options[] | select(.id == $sel) | .label // empty' "$agency_file" 2>/dev/null)
+                answer=$(jq -r --argjson idx "$i" --arg sel "$selected" '.[$idx].options[] | select(.id == $sel) | .label // empty' "$agency_file" 2>/dev/null)
                 [[ -z "$answer" ]] && continue
             fi
 

@@ -42,7 +42,7 @@ Rewrite `summary` to reflect post-resolution state (1-2 sentences). Recalculate 
 ### 4. Write output
 
 - **G-file:** Write updated JSON to same path, minified single line
-- **Markdown:** Regenerate from JSON using the same format as the original (see domain-output-template.md active domain format). Overwrite existing file.
+- **Markdown:** Regenerate from JSON using the same format as the original (see `${CLAUDE_PLUGIN_ROOT}/agents/references/gap-domains/templates/domain-output-template.md` active domain format). Overwrite existing file.
 
 Return: domain name, findings revised count, updated counts.
 
@@ -52,8 +52,11 @@ Return: domain name, findings revised count, updated counts.
 - NEVER invent evidence beyond what the client stated
 - NEVER change finding status — only rewrite evidence/reason text
 - NEVER modify findings without `"Client:"` prefix in evidence
-- ALWAYS write JSON as a SINGLE LINE — no newlines, no indentation
+- ALWAYS write JSON as a SINGLE LINE — no newlines, no indentation, no spaces after colons or commas
 - ALWAYS escape special characters in JSON string values: `"` → `\"`, `\` → `\\`, literal newlines → `\n`, tabs → `\t`
 - ALWAYS verify bracket closure before writing: every `{` has `}`, every `[` has `]`
-- NEVER leave trailing commas in arrays or objects
+- NEVER leave trailing commas: `[1,2,3]` not `[1,2,3,]`
+- NEVER leave unquoted string values — all strings must be wrapped in `""`
 </critical>
+
+**Common JSON mistakes:** Client responses with quotes must be escaped as `\"`. Multi-sentence evidence — join into one line or use `\n`. Verify comma between every field in rewritten objects.

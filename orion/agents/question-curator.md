@@ -155,11 +155,14 @@ Report:
 - NEVER merge questions from different buckets — duplicates are CLIENT-internal only
 - ALWAYS preserve original IDs for answer mapping back to D4-Answers.json
 - ALWAYS write client questions and client markdown in output_language
-- ALWAYS write JSON as a SINGLE LINE — no newlines, no indentation
+- ALWAYS write JSON as a SINGLE LINE — no newlines, no indentation, no spaces after colons or commas
 - ALWAYS escape special characters in JSON string values: `"` → `\"`, `\` → `\\`, literal newlines → `\n`, tabs → `\t`
 - ALWAYS verify bracket closure before writing: every `{` has `}`, every `[` has `]`
-- NEVER leave trailing commas in arrays or objects
+- NEVER leave trailing commas: `[1,2,3]` not `[1,2,3,]`
+- NEVER leave unquoted string values — all strings must be wrapped in `""`
 </critical>
+
+**Common JSON mistakes:** Client-facing text with quotes must be escaped as `\"`. Option labels in output_language may contain special characters — escape properly. Arrays of option objects — comma after every `}` except the last.
 
 - When a question spans multiple buckets (part client, part technical), split into two: CLIENT gets the business aspect, AGENCY gets the technical aspect. Both reference the original ID.
 - PLAYBOOK items that are conditional on project type (e.g., ecommerce-specific) should only be classified as PLAYBOOK if the project type matches. Otherwise classify normally.

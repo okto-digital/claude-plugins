@@ -1,4 +1,5 @@
 ---
+name: web-crawler
 description: "Unified web crawling with 7-method cascade. Crawl any URL and return content tailored to caller's needs."
 tools: Read, Bash, WebFetch, mcp__mcp-curl__*, mcp__Apify__*, mcp__Control_Chrome__*, mcp__Claude_in_Chrome__*
 ---
