@@ -54,25 +54,25 @@ If C3 is deselected, C7 runs without technical architecture — warn but allow (
 
 ### Step 4: Build pre-merged context files
 
-Use `scripts/merge-json.sh` to build one context file per section. Every section receives the same base: D1 (project params), D3 (research TLDRs), D4 (gap analysis TLDRs). Wave 2/3 sections add their upstream C-files.
+Use `scripts/merge-json.sh` to build one context file per section. Every section receives the same base: D1 (project params), D2 (client intelligence), D3 (research TLDRs), D4 (gap analysis TLDRs). Wave 2/3 sections add their upstream C-files.
 
-D3 contains research TLDRs (~10-15KB) and D4 contains gap analysis TLDRs per domain (~5-10KB). Together they provide all research and gap evidence without loading individual R-files or G-files.
+D2 provides direct client facts (tech stack, team size, business model, integrations). D3 contains research TLDRs (~10-15KB) and D4 contains gap analysis TLDRs per domain (~5-10KB) with `source` paths to full files. Together they provide all pipeline intelligence. If a TLDR lacks detail for a specific recommendation, the concept-creator can read the full R-file or G-file via the `source` path.
 
 ```bash
-# Wave 1 — base context only (D1 + D3 + D4)
-scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json -o concept/context-C1.json
-scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json -o concept/context-C2.json
-scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json -o concept/context-C5.json
+# Wave 1 — base context only (D1 + D2 + D3 + D4)
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json -o concept/context-C1.json
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json -o concept/context-C2.json
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json -o concept/context-C5.json
 
 # Wave 2 — base + upstream C-files
-scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json concept/C2-Functional.json -o concept/context-C3.json
-scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json -o concept/context-C4.json
-scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json -o concept/context-C6.json
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json concept/C2-Functional.json -o concept/context-C3.json
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json -o concept/context-C4.json
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json -o concept/context-C6.json
 
 # Wave 3 — base + upstream C-files
-scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json concept/C2-Functional.json concept/C3-Technical-Architecture.json -o concept/context-C7.json
-scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json -o concept/context-C8.json
-scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json concept/C2-Functional.json -o concept/context-C9.json
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json concept/C2-Functional.json concept/C3-Technical-Architecture.json -o concept/context-C7.json
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json -o concept/context-C8.json
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json concept/C2-Functional.json -o concept/context-C9.json
 ```
 
 Only build context files for selected sections. If a source file does not exist (e.g., section skipped), merge-json.sh skips it with a warning — this is expected for optional upstream C-files.
@@ -195,19 +195,19 @@ Coherence:    concept-reviewer -> D5-Review-Notes.md
 
 ## Pre-Merge Context Table
 
-Every section receives the same base: D1 + D3 (research TLDRs) + D4 (gap analysis TLDRs). Wave 2/3 sections add upstream C-files.
+Every section receives the same base: D1 + D2 + D3 (research TLDRs) + D4 (gap analysis TLDRs). Wave 2/3 sections add upstream C-files.
 
 | Section | Base | Upstream C-files |
 |---|---|---|
-| C1-Sitemap | D1, D3, D4 | -- |
-| C2-Functional | D1, D3, D4 | -- |
-| C5-Visual | D1, D3, D4 | -- |
-| C3-Technical-Arch | D1, D3, D4 | C2 |
-| C4-Content-Strategy | D1, D3, D4 | C1 |
-| C6-UX-Strategy | D1, D3, D4 | C1 |
-| C7-Project-Roadmap | D1, D3, D4 | C1, C2, C3 |
-| C8-SEO-Strategy | D1, D3, D4 | C1 |
-| C9-Compliance | D1, D3, D4 | C2 |
+| C1-Sitemap | D1, D2, D3, D4 | -- |
+| C2-Functional | D1, D2, D3, D4 | -- |
+| C5-Visual | D1, D2, D3, D4 | -- |
+| C3-Technical-Arch | D1, D2, D3, D4 | C2 |
+| C4-Content-Strategy | D1, D2, D3, D4 | C1 |
+| C6-UX-Strategy | D1, D2, D3, D4 | C1 |
+| C7-Project-Roadmap | D1, D2, D3, D4 | C1, C2, C3 |
+| C8-SEO-Strategy | D1, D2, D3, D4 | C1 |
+| C9-Compliance | D1, D2, D3, D4 | C2 |
 
 ## Rules
 

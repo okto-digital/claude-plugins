@@ -193,10 +193,10 @@ The domain-finalizer adds TLDRs, rewrites `"Client:"` evidence, updates summary 
 **8d.** Build D4-Gap-Analysis.json — TLDR consolidation following D3 pattern:
 
 ```bash
-jq -s '{meta:{date:(now|todate),status:"resolved",active_domains:[.[]|select(.status=="ACTIVE")|.domain],inactive_domains:[.[]|select(.status=="INACTIVE")|.domain],total_found:([.[]|select(.status=="ACTIVE")|.counts.found]|add//0),total_gap:([.[]|select(.status=="ACTIVE")|.counts.gap]|add//0),total_critical_resolved:([.[]|select(.status=="ACTIVE")|.counts.critical_resolved]|add//0),total_critical_total:([.[]|select(.status=="ACTIVE")|.counts.critical_total]|add//0)},domains:[.[]|if .status=="ACTIVE" then {code,slug,domain,status,tldr,summary,counts} else {code,slug,domain,status,inactive_reason} end]}' gap-analysis/G*-*.json > D4-Gap-Analysis.json
+jq -s '{meta:{date:(now|todate),status:"resolved",active_domains:[.[]|select(.status=="ACTIVE")|.domain],inactive_domains:[.[]|select(.status=="INACTIVE")|.domain],total_found:([.[]|select(.status=="ACTIVE")|.counts.found]|add//0),total_gap:([.[]|select(.status=="ACTIVE")|.counts.gap]|add//0),total_critical_resolved:([.[]|select(.status=="ACTIVE")|.counts.critical_resolved]|add//0),total_critical_total:([.[]|select(.status=="ACTIVE")|.counts.critical_total]|add//0)},domains:[.[]|if .status=="ACTIVE" then {code,slug,domain,status,tldr,summary,counts,source:("gap-analysis/"+.code+"-"+.slug+".json")} else {code,slug,domain,status,inactive_reason} end]}' gap-analysis/G*-*.json > D4-Gap-Analysis.json
 ```
 
-Key: domains array contains TLDR + summary + counts per domain (not full findings). Full G-files remain in `gap-analysis/` for reference but are not read downstream.
+Key: domains array contains TLDR + summary + counts + `source` path per domain (not full findings). Full G-files remain in `gap-analysis/` and can be read via the `source` path if TLDRs lack detail for a specific recommendation.
 
 **8e.** Build D4-Gap-Analysis.md:
 

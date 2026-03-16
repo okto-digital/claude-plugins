@@ -20,7 +20,7 @@ The dispatch prompt provides:
 - **C-code and slug** (e.g., "C1", "Sitemap")
 - **Concept definition** — full content of the section definition file (purpose, methodology), inlined in the prompt
 - **Output template** — full content of the section template file (JSON schema, markdown template), inlined in the prompt
-- **Context file path** — path to the pre-merged context JSON file containing D1, D3 (research TLDRs), D4 (gap analysis TLDRs), and upstream C-files
+- **Context file path** — path to the pre-merged context JSON file containing D1, D2 (client intelligence), D3 (research TLDRs), D4 (gap analysis TLDRs), and upstream C-files
 
 ## Process
 
@@ -30,13 +30,21 @@ Both are provided inline in your dispatch prompt. From the definition, extract p
 
 ### 2. Read context file
 
-Read the context file at the provided path. It is a keyed JSON object where each key is a document code (e.g., `"D1-Init"`, `"D3-Research"`, `"D4-Gap-Analysis"`, `"C1-Sitemap"`) and each value is the full document content. D3 contains research TLDRs per substage (`substages[].tldr[]`). D4 contains gap analysis TLDRs per domain (`domains[].tldr[]`). Upstream C-files provide prior concept outputs. All relevant project data has been pre-selected and merged — you do not need to select or search for files.
+Read the context file at the provided path. It is a keyed JSON object where each key is a document code (e.g., `"D1-Init"`, `"D2-Client-Intelligence"`, `"D3-Research"`, `"D4-Gap-Analysis"`, `"C1-Sitemap"`) and each value is the full document content. D2 contains direct client facts (tech stack, team size, business model, integrations, current web presence).
+
+**D3 structure:** `substages[]` array. Each substage has `code` (e.g., "R1"), `slug`, `tldr[]` (10-20 telegraphic findings), and `source` (path to full R-file). When a section definition says "use R9", find the substage with `code: "R9"` and use its `tldr` array.
+
+**D4 structure:** `domains[]` array. Each domain has `code` (e.g., "G05"), `slug`, `domain`, `tldr[]` (5-10 telegraphic findings), `summary`, `counts`, and `source` (path to full G-file). When a section definition says "G15 scope constraints", find the domain with `code: "G15"` and use its `tldr` array.
+
+**Fallback:** TLDRs are your primary evidence. If a TLDR doesn't have enough detail for a specific recommendation, read the full file via the `source` path. Do this selectively — most recommendations can be grounded in TLDRs alone.
+
+Upstream C-files provide prior concept outputs. All relevant project data has been pre-selected and merged — you do not need to select or search for files.
 
 ### 3. Synthesise and produce output
 
-Follow the methodology in the concept definition file. Produce recommendations grounded in evidence from the context file. For each recommendation, note which source it derives from (e.g., "D3 research: competitor landscape TLDR", "D4 gap analysis: SEO domain TLDR — keyword targeting gap", "D4: business-context domain — client confirmed WordPress CMS").
+Follow the methodology in the concept definition file. Produce recommendations grounded in evidence from the context file. For each recommendation, note which source it derives from using the original R/G codes (e.g., "R2: keyword cluster 'web design services' — 1.2K monthly volume", "G15: project scope — client confirmed 3-month timeline", "G10: forms — contact form required, lead scoring gap").
 
-Use data from all documents in the context file — each was included because it is relevant to this section.
+Use data from all documents in the context file — each was included because it is relevant to this section. Navigate D3/D4 by matching the R/G codes from section definitions to the `code` field in `substages[]` and `domains[]`.
 
 ### 4. Write output
 
