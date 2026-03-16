@@ -40,7 +40,14 @@ Glob for `gap-analysis/G*-*.json`. Report existing outputs — skipped unless re
 
 ### Step 3: Domain selection
 
-Present groups from table above. AskUserQuestion with multiSelect=true. Pre-select groups with domains lacking outputs.
+Check `pipeline_defaults.gap_domains` in D1-Init.json:
+- `"all"` → select all 6 groups automatically, skip the question
+- `[list of domain codes]` → select only groups containing those codes, skip the question
+- `"ask"` (default) → present groups to operator
+
+When asking: present groups from table above. AskUserQuestion with multiSelect=true. Pre-select groups with domains lacking outputs.
+
+Conditional domains (G03, G04, G09, G12, G21) are automatically marked INACTIVE by the domain-analyst if not applicable to the project — the operator does not need to deselect them manually.
 
 ### Step 4: Pre-merge context
 
@@ -220,7 +227,13 @@ echo "# Domain Gap Analysis — $CLIENT
 jq -r '.domains[] | if .status == "ACTIVE" then "## \(.slug)\n**\(.domain)** — \(.summary)\n\n### TLDR\n" + ([.tldr[] | "- " + .] | join("\n")) + "\n\n---\n" else "## \(.slug)\n**\(.domain)** — INACTIVE: \(.inactive_reason)\n\n---\n" end' D4-Gap-Analysis.json >> D4-Gap-Analysis.md
 ```
 
-**8f.** Update Phase 4 status → `resolved`:
+**8f.** Cleanup context files:
+
+```bash
+rm -f tmp/context-group-*.json tmp/context-curator.json
+```
+
+**8g.** Update Phase 4 status → `resolved`:
 
 ```
 Answer resolution complete.

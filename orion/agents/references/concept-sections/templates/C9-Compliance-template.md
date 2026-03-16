@@ -6,6 +6,7 @@ Write JSON as **minified** (no whitespace, no indentation).
 
 ```json
 {
+  "tldr": ["string — max 15 telegraphic decision items, scope/solution/quantitative"],
   "code": "C9",
   "slug": "Compliance",
   "compliance": {
@@ -55,6 +56,10 @@ Write to `concept/C9-Compliance.json`.
 Generate `concept/C9-Compliance.md` from the JSON:
 
 ```markdown
+## TLDR
+- {tldr item 1}
+- {tldr item 2}
+
 ## Compliance
 
 ### WCAG Compliance

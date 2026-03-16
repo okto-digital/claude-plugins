@@ -6,6 +6,7 @@ Write JSON as **minified** (no whitespace, no indentation).
 
 ```json
 {
+  "tldr": ["string — max 15 telegraphic decision items, scope/solution/quantitative"],
   "code": "C1",
   "slug": "Sitemap",
   "sitemap": {
@@ -48,6 +49,10 @@ Write to `concept/C1-Sitemap.json`.
 Generate `concept/C1-Sitemap.md` from the JSON:
 
 ```markdown
+## TLDR
+- {tldr item 1}
+- {tldr item 2}
+
 ## Sitemap
 
 **Total traffic potential:** Conservative {conservative_monthly}/mo | Realistic {realistic_monthly}/mo | Optimistic {optimistic_monthly}/mo

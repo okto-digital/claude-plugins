@@ -19,8 +19,7 @@ Your job is to research and extract data that is:
 
 The dispatch prompt provides:
 - **Substage definition** — full content of the substage definition file, inlined in the prompt
-- **Project files** — paths to `D1-Init.json`, `D2-Client-Intelligence.json`, and any prior substage outputs needed
-- **research_config** — depth (`basic`/`deep`), output format (`concise`/`verbose`), numeric caps
+- **Context file path** — path to pre-merged context JSON containing D1, D2 (client intelligence), and dependency R-files
 - **MCP tool hints** — which MCP tools are available in this session
 
 ## Process
@@ -38,9 +37,13 @@ Then read the referenced template file. It contains the JSON schema and markdown
 
 ### 2. Load context
 
-Read the files listed in the substage definition's "Reads from" section. Extract the fields specified in "Data sources". If a required file is missing, report failure and stop.
+Read the context file at the provided path. It is a keyed JSON object where each key is a document code (e.g., `D1-Init`, `D2-Client-Intelligence`, `R1-SERP`) and each value is the full document content.
 
-If the substage has dependencies (prior R-files), read those too.
+- `D1-Init` contains project parameters (languages, locations, site_type, goal, notes, research_config)
+- `D2-Client-Intelligence` contains client facts (services_or_products, profile, website, reputation)
+- R-file keys (e.g., `R1-SERP`, `R3-Competitors`) contain full prior substage outputs
+
+The substage definition's "Data Sources" section lists which fields to extract from each document. Navigate the context file by matching document names to keys. If `D1-Init` or `D2-Client-Intelligence` is missing from the context, report failure and stop. Missing R-file keys mean the dependency was skipped — handle gracefully with reduced cross-referencing.
 
 ### 3. Execute methodology
 

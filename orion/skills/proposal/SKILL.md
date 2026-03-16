@@ -35,7 +35,9 @@ Read `project-state.md`. Extract project info and document status.
 If missing, stop: "Run project-init first."
 If Phase 5 (Concept Creation) not complete, stop: "Run concept-creation first."
 
-Read `D1-Init.json` for client name, project name, build_type, site_type, output_language.
+Read `D1-Init.json` for client name, project name, build_type, site_type, output_language, pipeline_defaults.
+
+**Proposal style:** Check `pipeline_defaults.proposal_style` — `"full"` (default behavior, all 9 sections + HTML), `"summary_only"` (skip Steps 10-12, produce JSON + MD only), or `"ask"` (prompt operator).
 
 **Language:** `output_language` (e.g., `"sk"` = Slovak, `"en"` = English) determines the language for ALL client-facing text in D6. Every prose field in JSON, every sentence in Markdown, and every visible text element in HTML must be written in this language. JSON field names, technical identifiers, and internal codes stay in English.
 
@@ -48,7 +50,7 @@ Read `D1-Init.json` for client name, project name, build_type, site_type, output
 - `D4-Gap-Analysis.json` — gap analysis TLDRs (for problem statement evidence)
 - `D5-Concept.json` — concept digest with TLDRs for all 9 sections + structured data for C1/C2/C7
 
-**D5 structure:** `sections[]` array, each entry has `code`, `slug`, `tldr[]`, `source`.
+**D5 structure:** Top-level `meta` object (`date`, `sections` code list, `count`) and `sections[]` array. Each section entry has `code`, `slug`, `tldr[]`, `source`.
 - C1 entry also has `sitemap` (page tree + traffic meta).
 - C2 entry also has `functional_requirements` (flat array with area/requirement/priority/complexity).
 - C7 entry also has `project_roadmap` (phases + launch_scope).

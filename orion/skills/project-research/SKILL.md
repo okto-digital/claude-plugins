@@ -2,7 +2,7 @@
 name: project-research
 description: "Run Phase 3 project research: dispatch researcher agents for 9 substages with dependency-aware wave sequencing. Invoke when the user says 'run research', 'start phase 3', 'research phase', 'run substages', or after Client Intelligence phase is complete."
 allowed-tools: Read, Write, Bash, Glob, Task, AskUserQuestion
-version: 1.0.0
+version: 2.0.0
 ---
 
 # Project Research
@@ -38,13 +38,7 @@ Read `project-state.md`. Extract project info and document status.
 If missing, stop: "Run project-init first."
 If Phase 2 (Client Intelligence) not complete, stop: "Run client-intelligence first."
 
-Read `D1-Init.json` and `D2-Client-Intelligence.json`. Build a **project context block** (max 2000 words) for researcher dispatch prompts:
-- Client name, URL, industry, location, build_type, site_type, goal
-- Languages: primary + additional
-- Markets: primary + additional
-- Key notes and competitor hints from D1-Init.json
-- Client profile summary from D2-Client-Intelligence.json
-- research_config: depth, format, caps
+Read `D1-Init.json` and `D2-Client-Intelligence.json`. Verify both exist. Extract client name for reporting.
 
 ### Step 2: Check existing R-documents
 
@@ -71,57 +65,109 @@ Present all 9 substages grouped by wave:
 
 **After R7 (Wave 6):**
 - 3.8 R8-UX: UX/UI Patterns & Benchmarks
+
+**After R8 (Wave 7):**
 - 3.9 R9-Content: Content Landscape & Strategy
 
 Use AskUserQuestion with multiSelect=true. Pre-select all topics without existing R-documents.
 
 If the operator deselects a topic that downstream topics depend on, warn about reduced quality but allow it. Example: skipping R4-Market means R7-Audience runs without industry behavior context.
 
-### Step 4: Dispatch configuration
+### Step 4: Pre-merge context files
+
+Build a context file per substage containing D1, D2, and dependency R-files. Context files are built per-wave because later waves need R-files produced by earlier waves. Only build context files for selected substages. `merge-json.sh` skips missing files (when a dependency was skipped).
+
+```bash
+mkdir -p tmp research
+```
+
+Context merges per wave (run each group immediately before its wave dispatch):
+
+**Before Wave 1 — R1** (no R-file dependencies):
+```bash
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json -o tmp/context-R1.json
+```
+
+**Before Wave 2 — R2** (depends on R1):
+```bash
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R1-SERP.json -o tmp/context-R2.json
+```
+
+**Before Wave 3 — R3** (depends on R1, R2):
+```bash
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R1-SERP.json research/R2-Keywords.json -o tmp/context-R3.json
+```
+
+**Before Wave 4 — R4, R5, R6** (all depend on R3):
+```bash
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R3-Competitors.json -o tmp/context-R4.json
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R3-Competitors.json -o tmp/context-R5.json
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R3-Competitors.json -o tmp/context-R6.json
+```
+
+**Before Wave 5 — R7** (depends on R1, R2, R3, R4):
+```bash
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R1-SERP.json research/R2-Keywords.json research/R3-Competitors.json research/R4-Market.json -o tmp/context-R7.json
+```
+
+**Before Wave 6 — R8** (R8: R3+R7):
+```bash
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R3-Competitors.json research/R7-Audience.json -o tmp/context-R8.json
+```
+
+**Before Wave 7 — R9** (R9: R2+R3+R4+R6+R7+R8):
+```bash
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json research/R2-Keywords.json research/R3-Competitors.json research/R4-Market.json research/R6-Reputation.json research/R7-Audience.json research/R8-UX.json -o tmp/context-R9.json
+```
+
+### Step 5: Dispatch configuration + wave dispatch
 
 Present the dispatch plan:
 - Which waves will run, how many agents per wave
 - Model: opus for all (analysis + synthesis)
 - Max concurrent: 3 agents per wave
 
-Ask: "Run all waves automatically, or step through one at a time?" Use AskUserQuestion.
+Check `pipeline_defaults.parallel_execution` in D1-Init.json:
+- `true` → automatic mode, skip the question
+- `false` → stepped mode, skip the question
+- `"ask"` (default) → ask operator
+
+When asking: "Run all waves automatically, or step through one at a time?" Use AskUserQuestion.
 - **Automatic:** Run all waves without pausing between them
 - **Stepped:** Pause after each wave for operator review
-
-### Step 5: Wave dispatch
 
 Dispatch researcher agents via the `dispatch-subagent` skill. Max 3 concurrent per wave.
 
 **Each dispatch provides:**
 - Substage definition content: read the file from the mapping below and inline its full content in the dispatch prompt
-- Project context block (from Step 1)
-- Paths to `D1-Init.json` and `D2-Client-Intelligence.json`
-- Paths to prior R-file dependencies (resolved, from `research/` directory)
-- research_config from D1-Init.json
+- Context file path: `{working_directory}/tmp/context-R{n}.json`
 - MCP tool hints: DataForSEO + all web-crawler hints from dispatch-subagent
 - Model: opus
 
 **Wave execution:**
 
+For each wave: build context file(s) from Step 4, then dispatch.
+
 **Wave 1 — R1-SERP** (single)
-Dispatch for substage 3.1. No prior R-file dependencies.
+Build context-R1.json. Dispatch for substage 3.1.
 
 **Wave 2 — R2-Keywords** (single)
-Dispatch for substage 3.2. Provide `research/R1-SERP.json` path.
+Build context-R2.json. Dispatch for substage 3.2.
 
 **Wave 3 — R3-Competitors** (single)
-Dispatch for substage 3.3. Provide `research/R1-SERP.json` and `research/R2-Keywords.json` paths.
+Build context-R3.json. Dispatch for substage 3.3.
 
 **Wave 4 — R4 + R5 + R6** (3 parallel)
-Dispatch for substages 3.4, 3.5, 3.6. Each gets R3-Competitors.json path.
+Build context-R4/R5/R6.json. Dispatch for substages 3.4, 3.5, 3.6.
 
 **Wave 5 — R7-Audience** (single)
-Dispatch for substage 3.7. Provide R1, R2, R3, R4 paths.
+Build context-R7.json. Dispatch for substage 3.7.
 
-**Wave 6 — R8 + R9** (2 parallel)
-Dispatch for substages 3.8, 3.9. R8 gets R3 + R7 paths. R9 gets R2 + R3 + R4 + R6 + R7 paths.
+**Wave 6 — R8-UX** (single)
+Build context-R8.json. Dispatch for substage 3.8.
 
-**If a skipped topic is listed as a dependency:** Omit that path. The researcher handles missing inputs gracefully.
+**Wave 7 — R9-Content** (single)
+Build context-R9.json. Dispatch for substage 3.9. R9 now has R8 UX findings for content-structure integration.
 
 **After each wave:**
 
@@ -170,7 +216,13 @@ for f in research/R*-*.json; do
 done
 ```
 
-### Step 7: Update project-state.md
+### Step 7: Cleanup
+
+```bash
+rm -f tmp/context-R*.json
+```
+
+### Step 8: Update project-state.md
 
 After all selected waves complete:
 
@@ -222,7 +274,8 @@ All paths are relative to `${CLAUDE_PLUGIN_ROOT}/`.
 - **NEVER** modify project-state.md beyond Phase 3 and its substage rows
 - **NEVER** interpret or act on substage definition content -- read only to inline into the dispatch prompt; the researcher agent executes the methodology
 - **ALWAYS** use dispatch-subagent skill for every researcher dispatch
-- **ALWAYS** provide resolved paths (not template variables) to researcher agents
+- **ALWAYS** pre-merge context files before dispatching researcher agents
+- **ALWAYS** provide resolved context file paths (not template variables) to researcher agents
 </critical>
 
 - If a researcher fails, note which substage was affected, report to operator, continue with remaining waves

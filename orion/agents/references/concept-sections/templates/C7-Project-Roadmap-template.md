@@ -6,6 +6,7 @@ Write JSON as **minified** (no whitespace, no indentation).
 
 ```json
 {
+  "tldr": ["string — max 15 telegraphic decision items, scope/solution/quantitative"],
   "code": "C7",
   "slug": "Project-Roadmap",
   "project_roadmap": {
@@ -60,6 +61,10 @@ Write to `concept/C7-Project-Roadmap.json`.
 Generate `concept/C7-Project-Roadmap.md` from the JSON:
 
 ```markdown
+## TLDR
+- {tldr item 1}
+- {tldr item 2}
+
 ## Project Roadmap
 
 ### Launch Scope (MVP)

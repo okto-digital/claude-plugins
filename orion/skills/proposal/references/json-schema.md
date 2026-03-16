@@ -49,7 +49,8 @@ Write JSON as **minified** (no whitespace, no indentation).
         "visual_direction": "string",
         "tone_of_voice": "string",
         "ux_approach": "string",
-        "seo_approach": "string"
+        "seo_approach": "string",
+        "compliance_approach": "string"
       }
     },
     "scope_of_work": {
@@ -160,9 +161,9 @@ Replaces the v1.0.0 `research_findings[]` array. Research data is now contextual
 
 ### proposed_solution
 
-Synthesised from C4 (content strategy), C5 (visual), C6 (UX), C8 (SEO), C9 (compliance). Replaces the v1.0.0 "Website Concept" section with a narrative framing.
+Synthesised from D5 concept TLDRs: C4 (content strategy), C5 (visual), C6 (UX), C8 (SEO), C9 (compliance). Replaces the v1.0.0 "Website Concept" section with a narrative framing.
 
-- `concept_highlights` -- one-sentence summaries per dimension, client-friendly language
+- `concept_highlights` -- one-sentence summaries per dimension, client-friendly language. `compliance_approach` covers WCAG level, GDPR, and any industry-specific regulations from C9.
 
 ### scope_of_work
 

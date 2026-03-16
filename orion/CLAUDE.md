@@ -97,6 +97,18 @@ MCP tool definitions consume context in every session (40-50k tokens with all se
 
 **Mitigations:** MCP Tool Search (`ENABLE_TOOL_SEARCH=auto:5`, set by project-init) loads on-demand. DataForSEO module filtering via `ENABLED_MODULES`. Phases 4-6 need zero MCP.
 
+## Skills
+
+| Skill | Phase | Purpose |
+|---|---|---|
+| `project-init` | 1 | Collect project parameters, write D1-Init.json, create project-state.md |
+| `client-intelligence` | 2 | Build client profile (D2) from web research, crawling, registry |
+| `project-research` | 3 | Dispatch 9 researcher agents in dependency-aware waves, consolidate D3 |
+| `domain-gap-analysis` | 4 | Dispatch domain-analyst agents, curate questions, finalize D4 |
+| `concept-creation` | 5 | Dispatch concept-creator agents in 3 waves, consolidate D5 |
+| `proposal` | 6 | Generate D6 proposal (JSON + MD + HTML) from D1-D5 |
+| `dispatch-subagent` | Shared | Dispatch protocol for all sub-agent spawning (MCP hints, model selection) |
+
 ## Utilities
 
 All in `scripts/`. Require `jq`.

@@ -6,6 +6,7 @@ Write JSON as **minified** (no whitespace, no indentation).
 
 ```json
 {
+  "tldr": ["string — max 15 telegraphic decision items, scope/solution/quantitative"],
   "code": "C4",
   "slug": "Content-Strategy",
   "content_strategy": {
@@ -55,6 +56,10 @@ Write to `concept/C4-Content-Strategy.json`.
 Generate `concept/C4-Content-Strategy.md` from the JSON:
 
 ```markdown
+## TLDR
+- {tldr item 1}
+- {tldr item 2}
+
 ## Content Strategy
 
 ### Tone of Voice

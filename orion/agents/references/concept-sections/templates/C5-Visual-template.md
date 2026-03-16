@@ -6,6 +6,7 @@ Write JSON as **minified** (no whitespace, no indentation).
 
 ```json
 {
+  "tldr": ["string — max 15 telegraphic decision items, scope/solution/quantitative"],
   "code": "C5",
   "slug": "Visual",
   "visual_direction": {
@@ -33,6 +34,10 @@ Write to `concept/C5-Visual.json`.
 Generate `concept/C5-Visual.md` from the JSON:
 
 ```markdown
+## TLDR
+- {tldr item 1}
+- {tldr item 2}
+
 ## Visual Direction
 
 - **Positioning & mood:** {positioning_mood}

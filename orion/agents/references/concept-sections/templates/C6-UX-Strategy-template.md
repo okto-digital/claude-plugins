@@ -6,6 +6,7 @@ Write JSON as **minified** (no whitespace, no indentation).
 
 ```json
 {
+  "tldr": ["string — max 15 telegraphic decision items, scope/solution/quantitative"],
   "code": "C6",
   "slug": "UX-Strategy",
   "ux_strategy": {
@@ -64,6 +65,10 @@ Write to `concept/C6-UX-Strategy.json`.
 Generate `concept/C6-UX-Strategy.md` from the JSON:
 
 ```markdown
+## TLDR
+- {tldr item 1}
+- {tldr item 2}
+
 ## UX Strategy
 
 ### Navigation Model

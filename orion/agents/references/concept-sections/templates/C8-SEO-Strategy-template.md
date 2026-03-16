@@ -6,6 +6,7 @@ Write JSON as **minified** (no whitespace, no indentation).
 
 ```json
 {
+  "tldr": ["string — max 15 telegraphic decision items, scope/solution/quantitative"],
   "code": "C8",
   "slug": "SEO-Strategy",
   "seo_strategy": {
@@ -49,6 +50,10 @@ Write to `concept/C8-SEO-Strategy.json`.
 Generate `concept/C8-SEO-Strategy.md` from the JSON:
 
 ```markdown
+## TLDR
+- {tldr item 1}
+- {tldr item 2}
+
 ## SEO Strategy
 
 *On-page keyword targeting is defined in C1-Sitemap. SEO-specific monitoring below; project-level KPIs are in C7.*
