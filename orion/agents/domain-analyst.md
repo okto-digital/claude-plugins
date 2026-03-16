@@ -25,7 +25,9 @@ The dispatch prompt provides:
 
 ### 1. Read context
 
-Read the pre-merged context file. Contains D1, D2, and group-specific R-files keyed by filename. Pay attention to D1 `notes` — operator observations that should influence checkpoint scoring and question generation.
+Read the pre-merged context file. Keys: `D1-Init`, `D2-Client-Intelligence`, `D3-Research`. D3 is a consolidated TLDR digest — structure: `{meta:{...}, substages:[{code, slug, tldr:[...], source}]}`. Each substage's `tldr` array contains 10-20 telegraphic findings from research. Use these TLDRs as evidence for scoring checkpoints. If a TLDR doesn't cover a checkpoint, score it as GAP — the question/answer flow will resolve it.
+
+Pay attention to D1 `notes` — operator observations that should influence checkpoint scoring and question generation.
 
 ### 2. Process each domain
 

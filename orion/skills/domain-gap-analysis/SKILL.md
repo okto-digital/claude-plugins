@@ -11,7 +11,7 @@ Dispatch domain-analyst agents for 6 domain groups, then consolidate into D4 del
 
 ## Domain Groups
 
-| Group | G-codes | Domains | Extra context (beyond D1, D2) |
+| Group | G-codes | Domains | Relevant research (via D3 TLDRs) |
 |---|---|---|---|
 | **A — Business & Strategy** | G05, G06, G15, G19 | business-context, competitive-landscape, project-scope, target-audience | R3, R4, R7 |
 | **B — Technical Foundation** | G13, G16, G20 | performance, security-and-compliance, technical-platform | R5 |
@@ -44,7 +44,7 @@ Present groups from table above. AskUserQuestion with multiSelect=true. Pre-sele
 
 ### Step 4: Pre-merge context
 
-For each selected group, merge D1, D2, and D3 (research TLDR digest) into a context file. D3 contains all 9 research TLDRs (~10-15KB) — small enough to include in every group. If a domain analyst needs granular data, it can read the full R-file via the `source` path in D3.
+For each selected group, merge D1, D2, and D3 (research TLDR digest) into a context file. D3 contains all 9 research TLDRs (~10-15KB) — small enough to include in every group. All groups receive the same context base. The "Relevant research" column in the table above is informational — it shows which substage TLDRs are most useful per group, but all TLDRs are available via D3.
 
 ```bash
 mkdir -p tmp gap-analysis/questions
@@ -96,7 +96,7 @@ jq '[.[] | {id, domain, checkpoint, answer: null}]' D4-Questions.json > D4-Answe
 
 # Markdown consolidation
 CLIENT=$(jq -r '.project.client' D1-Init.json)
-ACTIVE=$(jq '[.meta.active_domains|length]|.[0]' D4-Gap-Analysis.json)
+ACTIVE=$(jq '.meta.active_domains|length' D4-Gap-Analysis.json)
 TOTAL=$(jq '[.meta.active_domains,.meta.inactive_domains]|map(length)|add' D4-Gap-Analysis.json)
 CRIT=$(jq '.meta.total_critical_unresolved' D4-Gap-Analysis.json)
 QUESTIONS=$(jq '.meta.total_questions' D4-Gap-Analysis.json)
