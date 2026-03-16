@@ -1,0 +1,8 @@
+{
+  "name": "okto-website-content",
+  "version": "1.0.0",
+  "description": "Internal content management for oktodigital website — extraction, auditing, keyword research, writing in brand voice, PageOptimizer SEO optimization, and HTML export. 9-mode conversational agent with web-crawler and DataForSEO sub-agents.",
+  "author": {
+    "name": "okto digital"
+  }
+}

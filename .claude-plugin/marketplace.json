@@ -78,6 +78,11 @@
       "name": "orion",
       "source": "./orion",
       "description": "Orion — website discovery pipeline from research to proposal"
+    },
+    {
+      "name": "okto-website-content",
+      "source": "./okto-website-content",
+      "description": "Internal content management for oktodigital website — extraction, auditing, keyword research, writing in brand voice, PageOptimizer SEO optimization, and HTML export. 9-mode conversational agent with web-crawler and DataForSEO sub-agents."
     }
   ]
 }
