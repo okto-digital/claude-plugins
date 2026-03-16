@@ -15,10 +15,10 @@ Dispatch concept-creator agents for 9 concept sections in three dependency-aware
 
 Read `project-state.md`. Extract project info and document status.
 If missing, stop: "Run project-init first."
-If Phase 4 (Domain Gap Analysis) not complete, stop: "Run domain-gap-analysis first."
+If Phase 4 (Domain Gap Analysis) not resolved, stop: "Run domain-gap-analysis first."
 
 Read `D1-Init.json` for client name.
-Read `D4-Gap-Analysis.json` and check `meta.total_critical_unresolved`. If greater than zero, stop: "Resolve all CRITICAL questions in D4-Gap-Analysis.md before running concept creation. {n} CRITICAL questions remain unresolved."
+Verify `D4-Gap-Analysis.json` exists and `meta.status == "resolved"`. If missing or not resolved, stop: "Complete answer resolution in domain-gap-analysis before running concept creation."
 
 ### Step 2: Check existing concept outputs
 
@@ -54,25 +54,25 @@ If C3 is deselected, C7 runs without technical architecture — warn but allow (
 
 ### Step 4: Build pre-merged context files
 
-Use `scripts/merge-json.sh` to build one context file per section. D1 and D3 (research TLDR digest) are always included. G-files and upstream C-files are section-specific.
+Use `scripts/merge-json.sh` to build one context file per section. Every section receives the same base: D1 (project params), D3 (research TLDRs), D4 (gap analysis TLDRs). Wave 2/3 sections add their upstream C-files.
 
-D3 contains all 9 research TLDRs (~10-15KB) — small enough to include in every context. If a concept agent needs granular research data, it can read the full R-file via the `source` path in D3.
+D3 contains research TLDRs (~10-15KB) and D4 contains gap analysis TLDRs per domain (~5-10KB). Together they provide all research and gap evidence without loading individual R-files or G-files.
 
 ```bash
-# Wave 1
-scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G17-SEO.json gap-analysis/G18-Site-Structure.json gap-analysis/G15-Project-Scope.json -o concept/context-C1.json
-scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G10-Forms.json gap-analysis/G09-Ecommerce.json gap-analysis/G04-Booking.json gap-analysis/G02-Analytics.json gap-analysis/G16-Security.json gap-analysis/G01-Accessibility.json gap-analysis/G13-Performance.json gap-analysis/G21-User-Accounts.json -o concept/context-C2.json
-scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G08-Design.json -o concept/context-C5.json
+# Wave 1 — base context only (D1 + D3 + D4)
+scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json -o concept/context-C1.json
+scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json -o concept/context-C2.json
+scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json -o concept/context-C5.json
 
-# Wave 2
-scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G20-Technical.json gap-analysis/G16-Security.json gap-analysis/G13-Performance.json gap-analysis/G14-Post-Launch.json gap-analysis/G01-Accessibility.json concept/C2-Functional.json -o concept/context-C3.json
-scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G07-Content.json gap-analysis/G03-Blog.json gap-analysis/G12-Multilingual.json concept/C1-Sitemap.json -o concept/context-C4.json
-scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G10-Forms.json gap-analysis/G18-Site-Structure.json gap-analysis/G19-Target-Audience.json gap-analysis/G08-Design.json concept/C1-Sitemap.json -o concept/context-C6.json
+# Wave 2 — base + upstream C-files
+scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json concept/C2-Functional.json -o concept/context-C3.json
+scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json -o concept/context-C4.json
+scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json -o concept/context-C6.json
 
-# Wave 3
-scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G15-Project-Scope.json gap-analysis/G14-Post-Launch.json gap-analysis/G02-Analytics.json concept/C1-Sitemap.json concept/C2-Functional.json concept/C3-Technical-Architecture.json -o concept/context-C7.json
-scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G17-SEO.json gap-analysis/G12-Multilingual.json concept/C1-Sitemap.json -o concept/context-C8.json
-scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G01-Accessibility.json gap-analysis/G16-Security.json concept/C2-Functional.json -o concept/context-C9.json
+# Wave 3 — base + upstream C-files
+scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json concept/C2-Functional.json concept/C3-Technical-Architecture.json -o concept/context-C7.json
+scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json -o concept/context-C8.json
+scripts/merge-json.sh D1-Init.json D3-Research.json D4-Gap-Analysis.json concept/C2-Functional.json -o concept/context-C9.json
 ```
 
 Only build context files for selected sections. If a source file does not exist (e.g., section skipped), merge-json.sh skips it with a warning — this is expected for optional upstream C-files.
@@ -195,19 +195,19 @@ Coherence:    concept-reviewer -> D5-Review-Notes.md
 
 ## Pre-Merge Context Table
 
-Each section receives a single pre-merged context file. D1 is always included.
+Every section receives the same base: D1 + D3 (research TLDRs) + D4 (gap analysis TLDRs). Wave 2/3 sections add upstream C-files.
 
-| Section | R-files | G-files | Upstream C-files |
-|---|---|---|---|
-| C1-Sitemap | R9, R2 | G17, G18, G15 | -- |
-| C2-Functional | R3, R4 | G10, G09, G04, G02, G16, G01, G13, G21 | -- |
-| C5-Visual | R8, R7, R6 | G08 | -- |
-| C3-Technical-Arch | R5 | G20, G16, G13, G14, G01 | C2 |
-| C4-Content-Strategy | R9, R2, R7, R6 | G07, G03, G12 | C1 |
-| C6-UX-Strategy | R8, R7, R6 | G10, G18, G19, G08 | C1 |
-| C7-Project-Roadmap | -- | G15, G14, G02 | C1, C2, C3 |
-| C8-SEO-Strategy | R1, R2 | G17, G12 | C1 |
-| C9-Compliance | R5 | G01, G16 | C2 |
+| Section | Base | Upstream C-files |
+|---|---|---|
+| C1-Sitemap | D1, D3, D4 | -- |
+| C2-Functional | D1, D3, D4 | -- |
+| C5-Visual | D1, D3, D4 | -- |
+| C3-Technical-Arch | D1, D3, D4 | C2 |
+| C4-Content-Strategy | D1, D3, D4 | C1 |
+| C6-UX-Strategy | D1, D3, D4 | C1 |
+| C7-Project-Roadmap | D1, D3, D4 | C1, C2, C3 |
+| C8-SEO-Strategy | D1, D3, D4 | C1 |
+| C9-Compliance | D1, D3, D4 | C2 |
 
 ## Rules
 
@@ -217,7 +217,7 @@ Each section receives a single pre-merged context file. D1 is always included.
 - NEVER dispatch Wave 3 sections before their Wave 2 dependencies complete
 - NEVER modify project-state.md beyond Phase 5 rows
 - NEVER interpret or act on concept definition content -- read only to inline into the dispatch prompt; the concept-creator agent executes the methodology
-- NEVER start Phase 5 if CRITICAL questions remain unresolved in D4
+- NEVER start Phase 5 if D4-Gap-Analysis.json is missing or meta.status is not "resolved"
 - ALWAYS use dispatch-subagent skill for every concept-creator and concept-reviewer dispatch
 - ALWAYS build pre-merged context files via merge-json.sh before dispatching each wave
 - ALWAYS run bash consolidation after all sections complete

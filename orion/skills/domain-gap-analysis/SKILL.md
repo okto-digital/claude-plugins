@@ -2,12 +2,12 @@
 name: domain-gap-analysis
 description: "Run Phase 4 domain gap analysis: dispatch up to 6 grouped domain-analyst agents (2 batches of 3), consolidate findings and questions with bash. Invoke when the user says 'run gap analysis', 'domain analysis', 'start phase 4', 'run domains', or after Research phase is complete."
 allowed-tools: Read, Write, Bash, Glob, Task, AskUserQuestion
-version: 2.1.0
+version: 3.0.0
 ---
 
 # Domain Gap Analysis
 
-Dispatch domain-analyst agents for 6 domain groups, then consolidate into D4 deliverables using bash.
+Dispatch domain-analyst agents for 6 domain groups, curate questions, pause for answers, then finalize all domains and produce D4-Gap-Analysis.json (TLDR consolidation).
 
 ## Domain Groups
 
@@ -74,58 +74,43 @@ If any file fails: attempt `jq -c '.' broken.json > broken.json.tmp && mv broken
 
 2. Report per-domain status, questions generated, failures.
 
-### Step 6: Consolidate with bash
+### Step 6: Consolidate raw questions
 
 <critical>
 Use ONLY bash (jq, cat, echo). Do NOT Read any G-file, R-file, or D-file into context.
+All working files go to `gap-analysis/`. D4-Gap-Analysis.json does NOT exist yet — it is produced after answer resolution in Step 8.
 </critical>
 
 ```bash
-# JSON consolidation
-jq -s '{meta:{date:(now|todate),active_domains:[.[]|select(.status=="ACTIVE")|.domain],inactive_domains:[.[]|select(.status=="INACTIVE")|.domain],total_critical_unresolved:([.[]|select(.status=="ACTIVE")|(.counts.critical_total-.counts.critical_resolved)]|add//0),total_questions:([.[]|select(.status=="ACTIVE")|.counts.questions_generated]|add//0),status:"awaiting_answers"},domains:.}' gap-analysis/G*-*.json > D4-Gap-Analysis.json
-
 # Questions consolidation
 if ls gap-analysis/questions/G*-*-questions.json 1>/dev/null 2>&1; then
-  jq -s 'add' gap-analysis/questions/G*-*-questions.json > D4-Questions.json
+  jq -s 'add' gap-analysis/questions/G*-*-questions.json > gap-analysis/D4-Questions.json
 else
-  echo '[]' > D4-Questions.json
+  echo '[]' > gap-analysis/D4-Questions.json
 fi
 
 # Answers template
-jq '[.[] | {id, domain, checkpoint, answer: null}]' D4-Questions.json > D4-Answers.json
+jq '[.[] | {id, domain, checkpoint, answer: null}]' gap-analysis/D4-Questions.json > gap-analysis/D4-Answers.json
 
-# Markdown consolidation
-CLIENT=$(jq -r '.project.client' D1-Init.json)
-ACTIVE=$(jq '.meta.active_domains|length' D4-Gap-Analysis.json)
-TOTAL=$(jq '[.meta.active_domains,.meta.inactive_domains]|map(length)|add' D4-Gap-Analysis.json)
-CRIT=$(jq '.meta.total_critical_unresolved' D4-Gap-Analysis.json)
-QUESTIONS=$(jq '.meta.total_questions' D4-Gap-Analysis.json)
-DATE=$(date +%Y-%m-%d)
-echo "# Domain Gap Analysis -- $CLIENT
-*Generated: $DATE | Active domains: $ACTIVE/$TOTAL | Critical unresolved: $CRIT | Questions: $QUESTIONS*
-*Answer all CRITICAL questions in D4-Questions.json before proceeding to Concept Creation.*
+# Markdown versions
+jq -r '"# Raw Questions\n\n" + ([.[] | "- **[\(.id)]** \(.domain) — \(.question)"] | join("\n"))' gap-analysis/D4-Questions.json > gap-analysis/D4-Questions.md
+echo "# Answers\n\nAll answers pending." > gap-analysis/D4-Answers.md
 
----
-" > D4-Gap-Analysis.md
-cat gap-analysis/G*-*.md >> D4-Gap-Analysis.md
-echo "
----
-*Return D4-Questions.json with answers to proceed to Concept Creation.*" >> D4-Gap-Analysis.md
+# Count stats
+QUESTIONS=$(jq 'length' gap-analysis/D4-Questions.json)
+ACTIVE=$(jq -s '[.[]|select(.status=="ACTIVE")]|length' gap-analysis/G*-*.json)
+INACTIVE=$(jq -s '[.[]|select(.status=="INACTIVE")]|length' gap-analysis/G*-*.json)
+CRIT=$(jq -s '[.[]|select(.status=="ACTIVE")|(.counts.critical_total-.counts.critical_resolved)]|add//0' gap-analysis/G*-*.json)
 ```
 
 ### Step 6b: Question curation
 
 Dispatch the `question-curator` agent to classify, deduplicate, and rewrite raw questions.
 
-**Pre-merge context:** Reuse D1 + D2 context (same as domain analyst context but without R-files — curator only needs project parameters and client intelligence).
+**Pre-merge context:**
 
 ```bash
 scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json -o tmp/context-curator.json
-```
-
-**Extract output_language:**
-
-```bash
 OUTPUT_LANG=$(jq -r '."D1-Init".output_language // "en"' tmp/context-curator.json)
 ```
 
@@ -135,67 +120,113 @@ OUTPUT_LANG=$(jq -r '."D1-Init".output_language // "en"' tmp/context-curator.jso
 - Mode: Lightweight (no MCP)
 - Prompt payload:
   - Context file path: `{working_directory}/tmp/context-curator.json`
-  - Questions file path: `{working_directory}/D4-Questions.json`
-  - Output directory: `{working_directory}`
+  - Questions file path: `{working_directory}/gap-analysis/D4-Questions.json`
+  - Output directory: `{working_directory}/gap-analysis`
   - Output language: `{OUTPUT_LANG}`
 
 **After dispatch:** Verify all original question IDs are accounted for:
 
 ```bash
-ORIGINAL=$(jq 'length' D4-Questions.json)
-CLIENT=$(jq '[.[].original_ids[]] | length' D4-Questions-Client.json 2>/dev/null || echo 0)
-AGENCY=$(jq '[.[].original_ids[]] | length' D4-Questions-Agency.json 2>/dev/null || echo 0)
-DEDUCED=$(jq 'length' D4-Deductions.json 2>/dev/null || echo 0)
-PLAYBOOK=$(grep -c '\[G[0-9]*-Q[0-9]*\]' D4-Agency-Playbook.md 2>/dev/null || echo 0)
+ORIGINAL=$(jq 'length' gap-analysis/D4-Questions.json)
+CLIENT=$(jq '[.[].original_ids[]] | length' gap-analysis/D4-Questions-Client.json 2>/dev/null || echo 0)
+AGENCY=$(jq '[.[].original_ids[]] | length' gap-analysis/D4-Questions-Agency.json 2>/dev/null || echo 0)
+DEDUCED=$(jq 'length' gap-analysis/D4-Deductions.json 2>/dev/null || echo 0)
+PLAYBOOK=$(grep -c '\[G[0-9]*-Q[0-9]*\]' gap-analysis/D4-Agency-Playbook.md 2>/dev/null || echo 0)
 CURATED=$((CLIENT + AGENCY + DEDUCED + PLAYBOOK))
 if [[ "$CURATED" -lt "$ORIGINAL" ]]; then
     echo "WARNING: $((ORIGINAL - CURATED)) questions missing from curated output ($CURATED/$ORIGINAL)"
 fi
+
+# Curation summary
+cat > gap-analysis/D4-CURATION-SUMMARY.txt <<EOF
+Curation Summary — $(date +%Y-%m-%d)
+Original questions: $ORIGINAL
+Client: $CLIENT | Agency: $AGENCY | Deduced: $DEDUCED | Playbook: $PLAYBOOK
+Accounted: $CURATED/$ORIGINAL
+EOF
 ```
 
 ### Step 7: Update project-state.md
 
-Update Phase 4: status `complete`/`partial`, output files including curated outputs, date today.
+Update Phase 4: status `awaiting_answers`, output files including curated outputs, date today.
 
 ```
-Domain Gap Analysis complete.
+Domain Gap Analysis — awaiting answers.
   Groups: {n}/6 | Active: {n} | Inactive: {n} | Failed: {n or "none"}
   Critical unresolved: {n} | Questions: {n} (Client: {n}, Agency: {n}, Deduced: {n}, Playbook: {n})
-Output: D4-Gap-Analysis.json, D4-Questions.json, D4-Answers.json,
-        D4-Questions-Client.json, D4-Questions-Client.md,
-        D4-Questions-Agency.json, D4-Deductions.json, D4-Agency-Playbook.md
-Next: Fill in D4-Questions-Client.json + D4-Questions-Agency.json, then re-run to resolve.
+Working files: gap-analysis/D4-Questions-Client.json, D4-Questions-Agency.json, D4-Answers.json, etc.
+Next: Fill in gap-analysis/D4-Questions-Client.json + D4-Questions-Agency.json, then re-run to resolve.
 ```
 
 ### Step 8: Answer Resolution (conditional)
 
-First, compile curated answers into D4-Answers.json:
-
-**8a.** Run `scripts/compile-answers.sh {working_directory} -v` to merge CLIENT + AGENCY + DEDUCED answers into D4-Answers.json.
-
-Check if D4-Answers.json has answered entries after compilation:
+**8a.** Compile curated answers into D4-Answers.json:
 
 ```bash
-ANSWERED=$(jq '[.[] | select(.answer != null)] | length' D4-Answers.json)
-DOMAINS=$(jq '[.[] | select(.answer != null) | .domain] | unique | length' D4-Answers.json)
+scripts/compile-answers.sh {working_directory} -v
+
+# Regenerate D4-Answers.md with compiled answers
+jq -r '"# Compiled Answers\n\n" + ([.[] | if .answer != null then "- **[\(.id)]** \(.domain) — \(.answer)" else "- **[\(.id)]** \(.domain) — *(unanswered)*" end] | join("\n"))' gap-analysis/D4-Answers.json > gap-analysis/D4-Answers.md
+```
+
+Check if answers exist:
+
+```bash
+ANSWERED=$(jq '[.[] | select(.answer != null)] | length' gap-analysis/D4-Answers.json)
+DOMAINS=$(jq '[.[] | select(.answer != null) | .domain] | unique | length' gap-analysis/D4-Answers.json)
 ```
 
 Skip if `ANSWERED == 0`. Otherwise AskUserQuestion: "D4-Answers.json has {ANSWERED} answers across {DOMAINS} domains. Resolve?"
 
 If yes:
 
-**8b.** Run `scripts/resolve-answers.sh D4-Answers.json gap-analysis/ -v`
+**8b.** Resolve answers into G-files:
 
-**8c.** Dispatch `answer-resolver` per updated domain via `dispatch-subagent` (G-file path + markdown path, model sonnet, Lightweight mode, max 6 concurrent)
+```bash
+scripts/resolve-answers.sh gap-analysis/D4-Answers.json gap-analysis/ -v
+```
 
-**8d.** Rerun Step 6 bash commands to rebuild D4 consolidation files
+**8c.** Dispatch `domain-finalizer` for **ALL active domains** (not just answered ones) via `dispatch-subagent`. Each dispatch provides: G-file path + markdown path. Model: sonnet. Lightweight mode. Max 6 concurrent.
 
-**8e.** Update Phase 4 status → `resolved`
+The domain-finalizer adds TLDRs, rewrites `"Client:"` evidence, updates summary and counts for every active domain.
+
+**8d.** Build D4-Gap-Analysis.json — TLDR consolidation following D3 pattern:
+
+```bash
+jq -s '{meta:{date:(now|todate),status:"resolved",active_domains:[.[]|select(.status=="ACTIVE")|.domain],inactive_domains:[.[]|select(.status=="INACTIVE")|.domain],total_found:([.[]|select(.status=="ACTIVE")|.counts.found]|add//0),total_gap:([.[]|select(.status=="ACTIVE")|.counts.gap]|add//0),total_critical_resolved:([.[]|select(.status=="ACTIVE")|.counts.critical_resolved]|add//0),total_critical_total:([.[]|select(.status=="ACTIVE")|.counts.critical_total]|add//0)},domains:[.[]|if .status=="ACTIVE" then {code,slug,domain,status,tldr,summary,counts} else {code,slug,domain,status,inactive_reason} end]}' gap-analysis/G*-*.json > D4-Gap-Analysis.json
+```
+
+Key: domains array contains TLDR + summary + counts per domain (not full findings). Full G-files remain in `gap-analysis/` for reference but are not read downstream.
+
+**8e.** Build D4-Gap-Analysis.md:
+
+```bash
+CLIENT=$(jq -r '.project.client' D1-Init.json)
+ACTIVE=$(jq '.meta.active_domains|length' D4-Gap-Analysis.json)
+TOTAL=$(jq '[.meta.active_domains,.meta.inactive_domains]|map(length)|add' D4-Gap-Analysis.json)
+FOUND=$(jq '.meta.total_found' D4-Gap-Analysis.json)
+GAP=$(jq '.meta.total_gap' D4-Gap-Analysis.json)
+CRIT_R=$(jq '.meta.total_critical_resolved' D4-Gap-Analysis.json)
+CRIT_T=$(jq '.meta.total_critical_total' D4-Gap-Analysis.json)
+DATE=$(date +%Y-%m-%d)
+
+echo "# Domain Gap Analysis — $CLIENT
+*Generated: $DATE | Active: $ACTIVE/$TOTAL | Found: $FOUND | Gap: $GAP | Critical: $CRIT_R/$CRIT_T resolved*
+
+---
+" > D4-Gap-Analysis.md
+
+# Per-domain TLDR sections
+jq -r '.domains[] | if .status == "ACTIVE" then "## \(.slug)\n**\(.domain)** — \(.summary)\n\n### TLDR\n" + ([.tldr[] | "- " + .] | join("\n")) + "\n\n---\n" else "## \(.slug)\n**\(.domain)** — INACTIVE: \(.inactive_reason)\n\n---\n" end' D4-Gap-Analysis.json >> D4-Gap-Analysis.md
+```
+
+**8f.** Update Phase 4 status → `resolved`:
 
 ```
 Answer resolution complete.
-  Domains revised: {n} | Questions resolved: {total}
-  Critical unresolved: {x} (was {y})
+  Domains finalized: {n} | Questions resolved: {total}
+  Critical resolved: {x}/{y}
+Output: D4-Gap-Analysis.json, D4-Gap-Analysis.md
 Next: Run concept-creation.
 ```
 

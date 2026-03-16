@@ -17,7 +17,7 @@ Distill everything from Phases 1-5 into a client-facing proposal with 9 sections
 |---|---|---|
 | 1 | Title Page | D1 meta |
 | 2 | Executive Summary | Synthesis of all (written last) |
-| 3 | Problem Statement | D2, R-files, G-files |
+| 3 | Problem Statement | D2, D3 (research TLDRs), D4 (gap TLDRs) |
 | 4 | Proposed Solution | C4, C5, C6, C8, C9 |
 | 5 | Scope of Work & Deliverables | C2 modules + C1 sitemap |
 | 6 | Timeline & Milestones | C7 roadmap + module dependencies |
@@ -40,16 +40,15 @@ Read `D1-Init.json` for client name, project name, build_type, site_type, output
 ### Step 2: Scan available files
 
 Glob for all project files:
-- `D1-Init.json`, `D2-Client-Intelligence.json`, `D3-Research.json`
-- `gap-analysis/G*-*.json`
+- `D1-Init.json`, `D2-Client-Intelligence.json`, `D3-Research.json`, `D4-Gap-Analysis.json`
 - `concept/C*-*.json`
 
-**ALWAYS read:** D1-Init.json, D3-Research.json (contains TLDR from all 9 research substages), C1-Sitemap.json, C2-Functional.json.
+**ALWAYS read:** D1-Init.json, D3-Research.json (research TLDRs), D4-Gap-Analysis.json (gap analysis TLDRs), C1-Sitemap.json, C2-Functional.json.
 
 **Read selectively** based on relevance to each section:
 - D2 for client profile
-- D3 for research evidence (TLDR digest — do NOT read individual R-files unless D3 lacks specific detail)
-- G-files for gap analysis evidence
+- D3 for research evidence (TLDR digest — do NOT read individual R-files)
+- D4 for gap analysis evidence (TLDR digest — do NOT read individual G-files)
 - C4, C5, C6, C8, C9 for proposed solution narrative
 - C3 for technical context (if relevant to scope)
 - C7 for timeline and milestones
@@ -65,11 +64,11 @@ Populate from D1-Init.json:
 
 ### Step 4: Build problem statement
 
-Read D2 (client profile), R-files (research), and G-files (gap analysis). Extract:
+Read D2 (client profile), D3 (research TLDRs), and D4 (gap analysis TLDRs). Extract:
 
-1. **Current situation** -- 2-3 sentences describing where the client is today. Draw from D2 web presence assessment and R-file findings about current site performance.
-2. **Pain points** -- specific business problems the website should solve. Source from G-files (gaps identified) and D2 (weaknesses observed).
-3. **Key challenges** -- obstacles or constraints (technical, market, competitive). Source from R-files.
+1. **Current situation** -- 2-3 sentences describing where the client is today. Draw from D2 web presence assessment and D3 research findings about current site performance.
+2. **Pain points** -- specific business problems the website should solve. Source from D4 (gaps and TLDRs per domain) and D2 (weaknesses observed).
+3. **Key challenges** -- obstacles or constraints (technical, market, competitive). Source from D3 research TLDRs.
 4. **Evidence** -- grouped by research domain, max 3-5 findings per domain.
 
 **Selection criteria for evidence:**

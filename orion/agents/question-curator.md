@@ -3,7 +3,7 @@ name: question-curator
 description: |
   Classify, deduplicate, and rewrite D4 gap analysis questions into 4 buckets.
   Dispatched once after Step 6 consolidation by domain-gap-analysis via dispatch-subagent.
-  Produces 5 output files: Client questions (JSON + MD), Agency questions, Deductions, Playbook.
+  Produces 7 output files: Client questions (JSON + MD), Agency questions (JSON + MD), Deductions (JSON + MD), Playbook (MD).
   NOT invoked directly by the operator.
 tools:
   - Read
@@ -19,8 +19,8 @@ Post-processing agent for Phase 4 gap analysis questions. Domain analysts work i
 
 The dispatch prompt provides:
 - **Context file path** — absolute path to pre-merged context JSON (contains D1, D2)
-- **Questions file path** — absolute path to `D4-Questions.json` (raw consolidated questions)
-- **Output directory** — absolute path to the project root (outputs written here)
+- **Questions file path** — absolute path to `gap-analysis/D4-Questions.json` (raw consolidated questions)
+- **Output directory** — absolute path to `gap-analysis/` (all curated outputs written here)
 - **Output language** — the `output_language` value from D1-Init.json
 
 ## Process
@@ -123,10 +123,14 @@ All JSON files: minified, single line.
 [{"id":"AQ01","original_ids":["G13-Q06"],"domains":["performance"],"checkpoint":"...","severity":"IMPORTANT","question":"...","context":"...","recommendation":"...","options":[{"id":"a1","label":"..."},{"id":"a2","label":"..."},{"id":"a3","label":"..."},{"id":"other","label":"...","freetext":true}],"selected":null}]
 ```
 
+**D4-Questions-Agency.md** — Human-readable agency questionnaire. Group by discipline (Design, Development, SEO, etc.). Include recommendation for each question. Format for internal team review.
+
 **D4-Deductions.json** — Auto-answered with evidence chain:
 ```
 [{"id":"G01-Q01","domain":"accessibility","checkpoint":"...","original_question":"...","deduction":"WCAG 2.1 Level AA","confidence":0.85,"reasoning":"Client is EU-based. D1 notes: 'Basic WCAG compliance needed'. AA is EU standard.","source_evidence":["D1.notes: '...'","D1.project.location: '...'"],"answer_for_d4":"WCAG 2.1 Level AA -- EU standard"}]
 ```
+
+**D4-Deductions.md** — Human-readable deduction log. For each deduction: checkpoint, deduced answer, confidence, reasoning chain. Grouped by domain.
 
 **D4-Agency-Playbook.md** — Action items organized by discipline:
 - **Design:** visual/UX items
@@ -144,7 +148,7 @@ Report:
 - Total questions processed
 - Per-bucket counts: CLIENT, AGENCY, DEDUCED, PLAYBOOK
 - Duplicates merged (count)
-- Output files written (list)
+- Output files written (7 files: 3 JSON + 4 MD)
 
 ## Rules
 

@@ -24,7 +24,7 @@ Dispatch any registered agent as a sub-agent via the Task tool. Automatically se
 | domain-analyst | `${CLAUDE_PLUGIN_ROOT}/agents/domain-analyst.md` | Assess a group of domains' checkpoints, produce per-domain findings + questions |
 | concept-creator | `${CLAUDE_PLUGIN_ROOT}/agents/concept-creator.md` | Produce one concept section from pre-merged context, write per-section JSON + MD |
 | concept-reviewer | `${CLAUDE_PLUGIN_ROOT}/agents/concept-reviewer.md` | Read D5-Concept.json, check inter-section coherence, write D5-Review-Notes.md |
-| answer-resolver | `${CLAUDE_PLUGIN_ROOT}/agents/answer-resolver.md` | Revise one domain's G-file after mechanical answer insertion, rewrite evidence + summary |
+| domain-finalizer | `${CLAUDE_PLUGIN_ROOT}/agents/domain-finalizer.md` | Finalize one domain's G-file: rewrite client evidence, add TLDR, update summary + counts |
 | question-curator | `${CLAUDE_PLUGIN_ROOT}/agents/question-curator.md` | Classify, deduplicate, rewrite D4 questions into CLIENT/AGENCY/DEDUCED/PLAYBOOK buckets |
 
 ---

@@ -16,6 +16,7 @@ Write all JSON as **minified single line** (no whitespace, no indentation).
 
 ```json
 {
+  "tldr": ["string (telegraphic finding, decision-relevant — added by domain-finalizer, empty array initially)"],
   "code": "string (G-code, e.g. G05)",
   "slug": "string (e.g. Business)",
   "domain": "string (domain-id, e.g. business-context)",
@@ -102,6 +103,11 @@ Generate `gap-analysis/{code}-{slug}.md` from the JSON.
 ```markdown
 ## {Domain Name}
 **{domain-id}** — {found} FOUND, {partial} PARTIAL, {gap} GAP, {na} N/A | {critical_resolved}/{critical_total} CRITICAL resolved | {questions_generated} questions
+
+### TLDR
+- {tldr item 1}
+- {tldr item 2}
+(empty until domain-finalizer runs)
 
 ### {Section Name}
 - [FOUND] {checkpoint} — evidence: "{evidence}"

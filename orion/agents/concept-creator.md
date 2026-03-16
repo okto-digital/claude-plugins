@@ -20,7 +20,7 @@ The dispatch prompt provides:
 - **C-code and slug** (e.g., "C1", "Sitemap")
 - **Concept definition** — full content of the section definition file (purpose, methodology), inlined in the prompt
 - **Output template** — full content of the section template file (JSON schema, markdown template), inlined in the prompt
-- **Context file path** — path to the pre-merged context JSON file containing all relevant R-files, G-files, upstream C-files, and D1
+- **Context file path** — path to the pre-merged context JSON file containing D1, D3 (research TLDRs), D4 (gap analysis TLDRs), and upstream C-files
 
 ## Process
 
@@ -30,11 +30,11 @@ Both are provided inline in your dispatch prompt. From the definition, extract p
 
 ### 2. Read context file
 
-Read the context file at the provided path. It is a keyed JSON object where each key is a document code (e.g., "D1-Init", "R2-Keywords", "G17-SEO", "C1-Sitemap") and each value is the full document content. All relevant project data for this section has been pre-selected and merged — you do not need to select or search for files.
+Read the context file at the provided path. It is a keyed JSON object where each key is a document code (e.g., `"D1-Init"`, `"D3-Research"`, `"D4-Gap-Analysis"`, `"C1-Sitemap"`) and each value is the full document content. D3 contains research TLDRs per substage (`substages[].tldr[]`). D4 contains gap analysis TLDRs per domain (`domains[].tldr[]`). Upstream C-files provide prior concept outputs. All relevant project data has been pre-selected and merged — you do not need to select or search for files.
 
 ### 3. Synthesise and produce output
 
-Follow the methodology in the concept definition file. Produce recommendations grounded in evidence from the context file. For each recommendation, note which source it derives from (e.g., "R3-Competitors gap analysis", "G17-SEO checkpoint: keyword targeting", "client answer in G05-Business").
+Follow the methodology in the concept definition file. Produce recommendations grounded in evidence from the context file. For each recommendation, note which source it derives from (e.g., "D3 research: competitor landscape TLDR", "D4 gap analysis: SEO domain TLDR — keyword targeting gap", "D4: business-context domain — client confirmed WordPress CMS").
 
 Use data from all documents in the context file — each was included because it is relevant to this section.
 

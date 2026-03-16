@@ -6,10 +6,10 @@
 #   compile-answers.sh /path/to/project
 #   compile-answers.sh /path/to/project -v   # verbose
 #
-# Reads curated output files and populates D4-Answers.json:
-#   1. DEDUCED entries (D4-Deductions.json) → auto-populated via answer_for_d4
-#   2. CLIENT answers (D4-Questions-Client.json) → mapped via original_ids
-#   3. AGENCY answers (D4-Questions-Agency.json) → mapped via original_ids
+# Reads curated output files from gap-analysis/ and populates D4-Answers.json:
+#   1. DEDUCED entries (gap-analysis/D4-Deductions.json) → auto-populated via answer_for_d4
+#   2. CLIENT answers (gap-analysis/D4-Questions-Client.json) → mapped via original_ids
+#   3. AGENCY answers (gap-analysis/D4-Questions-Agency.json) → mapped via original_ids
 #
 # Each curated file maps back to original question IDs via the original_ids field.
 # Only entries with non-null selected/answer values are written.
@@ -60,13 +60,13 @@ if ! command -v jq &>/dev/null; then
     exit 1
 fi
 
-answers_file="$project_dir/D4-Answers.json"
-deductions_file="$project_dir/D4-Deductions.json"
-client_file="$project_dir/D4-Questions-Client.json"
-agency_file="$project_dir/D4-Questions-Agency.json"
+answers_file="$project_dir/gap-analysis/D4-Answers.json"
+deductions_file="$project_dir/gap-analysis/D4-Deductions.json"
+client_file="$project_dir/gap-analysis/D4-Questions-Client.json"
+agency_file="$project_dir/gap-analysis/D4-Questions-Agency.json"
 
 if [[ ! -f "$answers_file" ]]; then
-    echo "Error: D4-Answers.json not found at $answers_file" >&2
+    echo "Error: D4-Answers.json not found at $answers_file (expected in gap-analysis/)" >&2
     exit 1
 fi
 
@@ -190,4 +190,4 @@ total_questions=$(jq 'length' "$answers_file")
 total_answered=$(jq '[.[] | select(.answer != null)] | length' "$answers_file")
 total_unanswered=$((total_questions - total_answered))
 
-echo "$total_populated answers compiled into D4-Answers.json ($total_answered/$total_questions answered, $total_unanswered remaining)"
+echo "$total_populated answers compiled into gap-analysis/D4-Answers.json ($total_answered/$total_questions answered, $total_unanswered remaining)"
