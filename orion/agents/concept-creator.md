@@ -46,9 +46,36 @@ Follow the methodology in the concept definition file. Produce recommendations g
 
 Use data from all documents in the context file — each was included because it is relevant to this section. Navigate D3/D4 by matching the R/G codes from section definitions to the `code` field in `substages[]` and `domains[]`.
 
-### 4. Write output
+### 4. Build the TLDR
+
+After producing the full section output, distil the key decisions into a `tldr` array. This feeds D5-Concept.json — the digest that drives proposal generation. Different from research TLDRs (which capture findings), these capture **decisions**.
+
+**Selection filter — include if:**
+1. "Does this affect what we include in the proposal (scope, pricing, timeline)?" — include
+2. "Is this a key design/architecture decision the client should know?" — include
+3. "Is this implementation detail only relevant during build?" — exclude
+
+**What to capture:**
+- Scope decisions — page count and priorities, feature list with complexity, phase assignments
+- Solution choices — technology stack, visual direction, navigation model, content approach
+- Quantitative anchors — traffic estimates, page counts, requirement counts, phase counts
+- Constraints — compliance levels, performance targets, localization needs
+- Pricing signals — complexity markers, integration count, custom development areas
+- Deferred items — what is explicitly out of initial scope and why
+
+**Format rules:**
+- Maximum 15 items per section
+- One decision = one self-contained line
+- Numbers over adjectives ("12 pages" not "many pages")
+- Name the implication ("React + Next.js — SSR for SEO, higher dev cost")
+- Telegraphic style (no filler words)
+
+### 5. Write output
 
 Write output using the JSON schema and markdown template from the output template.
+
+**`tldr` MUST be the first field in the JSON output**, before `code` and `slug`. This matches the researcher pattern where TLDR leads the object.
+
 - **JSON:** Write `{working_directory}/concept/{C-code}-{slug}.json` as a single line (no newlines, no indentation). Example path: `{working_directory}/concept/C1-Sitemap.json`. Use the absolute working directory path from your dispatch prompt.
 - **Markdown:** Write `{working_directory}/concept/{C-code}-{slug}.md` from the JSON
 

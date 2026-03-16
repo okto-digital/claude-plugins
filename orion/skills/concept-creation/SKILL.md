@@ -2,7 +2,7 @@
 name: concept-creation
 description: "Run Phase 5 concept creation: dispatch concept-creator agents in three waves to produce 9 concept sections, consolidate into D5, then run coherence check. Invoke when the user says 'run concept creation', 'create concept', 'start phase 5', 'build concept', or after Domain Gap Analysis is complete with all CRITICAL questions resolved."
 allowed-tools: Read, Write, Bash, Glob, Task, AskUserQuestion
-version: 2.0.0
+version: 3.0.0
 ---
 
 # Concept Creation
@@ -106,36 +106,13 @@ If any file fails: attempt `jq -c '.' broken.json > broken.json.tmp && mv broken
 
 2. Report which sections completed and any failures.
 
-### Step 6: Consolidate with bash
+### Step 6: Pre-merge for coherence review
 
-<critical>
-**This step is purely mechanical.** Use ONLY bash commands (jq, cat, echo). Do NOT use the Read tool on any C-file or D-file. Extract counts and client name via jq, not by reading files into context. Reading output files here wastes thousands of tokens for no reason.
-</critical>
-
-After all sections complete, produce D5 with bash operations only.
-
-**JSON consolidation:**
+The reviewer needs full C-file data for cross-referencing. Build a temp merged file:
 
 ```bash
-jq -s '{meta:{date:(now|todate),sections:[.[].code],count:length},sections:.}' concept/C*-*.json > D5-Concept.json
-```
-
-**Markdown consolidation (all bash):**
-
-```bash
-CLIENT=$(jq -r '.project.client' D1-Init.json)
-COUNT=$(jq '.meta.count' D5-Concept.json)
-DATE=$(date +%Y-%m-%d)
-echo "# Website Concept -- $CLIENT
-*Generated: $DATE | Sections: $COUNT/9*
-*Review and approve this concept before proceeding to Proposal generation.*
-
----
-" > D5-Concept.md
-cat concept/C*-*.md >> D5-Concept.md
-echo "
----
-*Approve this concept to proceed to Proposal & Brief generation.*" >> D5-Concept.md
+mkdir -p tmp
+jq -s '{sections:.}' concept/C*-*.json > tmp/concept-review-input.json
 ```
 
 ### Step 7: Coherence check
@@ -143,20 +120,64 @@ echo "
 Dispatch the `concept-reviewer` agent via `dispatch-subagent`:
 - Agent: concept-reviewer
 - Model: opus (analytical review)
-- D5 path: `D5-Concept.json`
+- Concept data path: `tmp/concept-review-input.json`
 - Output: `D5-Review-Notes.md`
 
 Present the review notes to the operator. If conflicts exist, they should be resolved before proceeding to proposal.
 
-### Step 8: Clean up context files
+### Step 8: Build D5 digest
 
-Remove the pre-merged context files — they were temporary build artifacts:
+<critical>
+**This step is purely mechanical.** Use ONLY bash commands (jq, cat, echo). Do NOT use the Read tool on any C-file or D-file. Extract counts and client name via jq, not by reading files into context. Reading output files here wastes thousands of tokens for no reason.
+</critical>
+
+After coherence check, produce D5 with bash operations only.
+
+**JSON consolidation — TLDR digest with selective structured data:**
 
 ```bash
-rm -f concept/context-C*.json
+jq -s '{meta:{date:(now|todate),sections:[.[].code],count:length},sections:[.[]|{code,slug,tldr,source:("concept/"+.code+"-"+.slug+".json")}+(if .code=="C1" then {sitemap} elif .code=="C2" then {functional_requirements} elif .code=="C7" then {project_roadmap} else {} end)]}' concept/C*-*.json > D5-Concept.json
 ```
 
-### Step 9: Update project-state.md
+This extracts per section:
+- **ALL sections:** `code`, `slug`, `tldr[]`, `source` path to full C-file
+- **C1** additionally: `sitemap` object (page tree + meta) — compact, needed for Scope of Work
+- **C2** additionally: `functional_requirements` array — compact, needed for module assembly + Investment
+- **C7** additionally: `project_roadmap` object — compact, needed for Timeline
+
+Rationale for C1/C2/C7 structured data: the proposal's Scope of Work, Investment, and Timeline sections need item-level detail (page tree, requirement list, phase breakdown) that cannot be expressed as telegraphic bullets. These objects are compact (1-3KB each). All other sections (C3-C6, C8-C9) are fully served by their TLDRs for the proposal's narrative sections.
+
+**Markdown consolidation (TLDR digest):**
+
+```bash
+CLIENT=$(jq -r '.project.client' D1-Init.json)
+COUNT=$(jq '.meta.count' D5-Concept.json)
+DATE=$(date +%Y-%m-%d)
+echo "# Website Concept — $CLIENT
+*Generated: $DATE | Sections: $COUNT/9*
+
+---
+" > D5-Concept.md
+for f in concept/C*-*.json; do
+  CODE=$(jq -r '.code' "$f")
+  SLUG=$(jq -r '.slug' "$f")
+  echo "## $CODE — $SLUG" >> D5-Concept.md
+  echo "*Full detail: concept/${CODE}-${SLUG}.md*" >> D5-Concept.md
+  echo "" >> D5-Concept.md
+  jq -r '.tldr[]' "$f" | sed 's/^/- /' >> D5-Concept.md
+  echo "" >> D5-Concept.md
+done
+```
+
+### Step 9: Clean up temporary files
+
+Remove the pre-merged context files and temp review input — they were temporary build artifacts:
+
+```bash
+rm -f concept/context-C*.json tmp/concept-review-input.json
+```
+
+### Step 10: Update project-state.md
 
 Update Phase 5 (Concept Creation) row:
 - Status: `complete` (all sections processed) or `partial` (some skipped/failed)
@@ -188,9 +209,11 @@ Wave 3 (parallel):  C8-SEO    C9-Compliance   C7-Project-Roadmap
                                                     ^
                                                (C1, C2, C3)
 
-Consolidate:  D5-Concept.json + D5-Concept.md
+Consolidate:  tmp/concept-review-input.json (temp, full data)
                      |
 Coherence:    concept-reviewer -> D5-Review-Notes.md
+                     |
+D5 Digest:    D5-Concept.json (TLDRs + C1/C2/C7 data) + D5-Concept.md (TLDR summary)
 ```
 
 ## Pre-Merge Context Table

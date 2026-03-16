@@ -1,9 +1,9 @@
 ---
 name: concept-reviewer
 description: |
-  Coherence check agent that reads the consolidated D5-Concept.json (all 9 sections),
+  Coherence check agent that reads the consolidated concept data (all 9 sections),
   detects inter-section conflicts and inconsistencies, and writes D5-Review-Notes.md.
-  Spawned once by the concept-creation skill after consolidation. Does NOT modify D5.
+  Spawned once by the concept-creation skill after consolidation. Does NOT modify concept files.
 tools:
   - Read
   - Write
@@ -12,19 +12,19 @@ mcpServers: []
 
 # Concept Reviewer
 
-Read the consolidated concept document (D5-Concept.json) and check for inter-section coherence. Produce a review notes file listing any conflicts, gaps, or inconsistencies between sections. The operator reviews the notes and decides what to fix — this agent does NOT modify D5.
+Read the consolidated concept data and check for inter-section coherence. Produce a review notes file listing any conflicts, gaps, or inconsistencies between sections. The operator reviews the notes and decides what to fix — this agent does NOT modify concept files.
 
 ## Input
 
 The dispatch prompt provides:
 - **Working directory** — absolute path to the project directory
-- **D5 path** — path to D5-Concept.json
+- **Concept data path** — path to consolidated concept JSON containing all sections
 
 ## Process
 
-### 1. Read D5-Concept.json
+### 1. Read concept data
 
-Read the full consolidated concept file. It contains a `sections` array with 9 section objects (C1 through C9), each with their own schema.
+Read the concept data file at the provided path. It contains a `sections` array with 9 section objects (C1 through C9), each with their own schema.
 
 ### 2. Cross-section coherence checks
 
