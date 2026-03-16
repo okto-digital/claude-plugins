@@ -103,21 +103,6 @@ Dispatch researcher agents via the `dispatch-subagent` skill. Max 3 concurrent p
 
 **Wave execution:**
 
-**Before Wave 1 — DataForSEO mode selection:**
-
-Use AskUserQuestion:
-- question: "How should R1-SERP fetch DataForSEO data?"
-- options:
-  - label: "MCP (current setup)"
-    description: "Use DataForSEO MCP server. Requires MCP server running. No changes to current behavior."
-  - label: "Direct API (experimental)"
-    description: "Use dataforseo-api agent via mcp-curl HTTP calls. Saves ~26k context tokens. Requires mcp-curl MCP."
-
-If **MCP** chosen: dispatch researcher exactly as today. No additional fields.
-If **Direct API** chosen: add two extra fields to the R1 researcher dispatch context:
-  - `dataforseo_mode: api`
-  - `dataforseo_auth: {base64 token from CLAUDE.md API Credentials section}`
-
 **Wave 1 — R1-SERP** (single)
 Dispatch for substage 3.1. No prior R-file dependencies.
 
@@ -155,12 +140,12 @@ If any file fails: attempt `jq -c '.' broken.json > broken.json.tmp && mv broken
 **This step is purely mechanical.** Use ONLY bash commands (jq, cat, echo). Do NOT read any R-file into context — no Read tool, no opening JSON/MD files. The whole point is to merge files without consuming context tokens. If you read research files here, you are wasting thousands of tokens for no reason.
 </critical>
 
-After all waves complete, produce D3 from the per-substage files. This is a convenience consolidation for human review — downstream agents read individual R-files, not D3.
+After all waves complete, produce D3 as a **TLDR digest** — only the `tldr` arrays from each R-file. Full R-files stay in `research/` for detailed reference. Downstream agents read D3 or individual R-file `tldr` fields, not full R-files.
 
-**JSON consolidation:**
+**JSON consolidation (tldr only):**
 
 ```bash
-jq -s '{meta:{date:(now|todate),completed:[.[].code],count:length},substages:.}' research/R*-*.json > D3-Research.json
+jq -s '{meta:{date:(now|todate),completed:[.[].code],count:length},substages:[.[]|{code,slug,tldr,source:("research/"+.code+"-"+.slug+".json")}]}' research/R*-*.json > D3-Research.json
 ```
 
 **Markdown consolidation (all bash):**
@@ -174,7 +159,15 @@ echo "# Research Overview — $CLIENT
 
 ---
 " > D3-Research.md
-cat research/R*-*.md >> D3-Research.md
+for f in research/R*-*.json; do
+  CODE=$(jq -r '.code' "$f")
+  SLUG=$(jq -r '.slug' "$f")
+  echo "## $CODE — $SLUG" >> D3-Research.md
+  echo "*Full report: research/${CODE}-${SLUG}.md*" >> D3-Research.md
+  echo "" >> D3-Research.md
+  jq -r '.tldr[]' "$f" | sed 's/^/- /' >> D3-Research.md
+  echo "" >> D3-Research.md
+done
 ```
 
 ### Step 7: Update project-state.md

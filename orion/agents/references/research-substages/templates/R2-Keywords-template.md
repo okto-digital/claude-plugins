@@ -6,6 +6,7 @@ Write JSON as **minified** (no whitespace, no indentation).
 
 ```json
 {
+  "tldr": ["string — 10-20 telegraphic findings that would change what we propose, how we price it, or what we ask the client"],
   "code": "R2",
   "slug": "Keywords",
   "search_landscape": {
@@ -69,6 +70,12 @@ Generate `research/R2-Keywords.md` from the JSON:
 
 ```markdown
 # Keyword Opportunity — {Client Name}
+
+## TLDR
+
+{bulleted list from tldr array — one line per finding, telegraphic}
+
+---
 
 ## Overview
 {2-3 sentence summary: total opportunity size, competitive difficulty level,

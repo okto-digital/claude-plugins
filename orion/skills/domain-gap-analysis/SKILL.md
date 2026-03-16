@@ -44,13 +44,13 @@ Present groups from table above. AskUserQuestion with multiSelect=true. Pre-sele
 
 ### Step 4: Pre-merge context
 
-For each selected group, merge D1, D2, and group-specific R-files into a context file. D1 + D2 are always included; the "Extra context" column lists additional R-files per group.
+For each selected group, merge D1, D2, and D3 (research TLDR digest) into a context file. D3 contains all 9 research TLDRs (~10-15KB) — small enough to include in every group. If a domain analyst needs granular data, it can read the full R-file via the `source` path in D3.
 
 ```bash
 mkdir -p tmp gap-analysis/questions
 
-# Group {letter}
-scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json {R-files from table} -o tmp/context-group-{letter}.json
+# Same context base for all groups — D1 + D2 + D3
+scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json -o tmp/context-group-{letter}.json
 ```
 
 Run only for selected groups. merge-json.sh skips missing files with warnings.

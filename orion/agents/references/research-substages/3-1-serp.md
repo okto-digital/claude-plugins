@@ -71,8 +71,6 @@ Combine with location modifiers (city, region, country).
 
 Call `dataforseo_labs_google_ranked_keywords` on the client domain. Returns keywords the client already ranks for, with positions and traffic share.
 
-Call `dataforseo_labs_google_top_searches` on the client domain. Returns queries where the client domain appears in results.
-
 Merge any net-new keywords into the keyword list. Mark existing keywords with client position data.
 
 ### Step 4: SERP check
@@ -86,9 +84,11 @@ Record per keyword:
 
 ### Step 5: Intent classification
 
-Call `dataforseo_labs_search_intent` on the full keyword list.
-
 Classify each keyword as: `navigational`, `informational`, `commercial`, `transactional`.
+
+**Primary method:** Use SERP features from Step 4 to infer intent — shopping ads and product carousels signal `transactional`, local packs and map results signal `commercial`, featured snippets and PAA boxes signal `informational`, brand sitelinks signal `navigational`. When a keyword has mixed signals, classify by the dominant SERP feature type.
+
+**Fallback:** If intent remains ambiguous after SERP analysis, classify from keyword structure — brand terms → `navigational`, question words → `informational`, price/buy/order modifiers → `transactional`, service + location → `commercial`.
 
 ### Step 6: Volume estimation
 
@@ -113,7 +113,7 @@ For each keyword, suggest which page type it likely maps to based on intent and 
 
 ## Output
 
-Write output using the templates at `templates/R1-SERP-template.md`.
+Write output using the templates at `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/templates/R1-SERP-template.md`.
 
 ---
 

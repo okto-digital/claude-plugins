@@ -6,6 +6,7 @@ Write JSON as **minified** (no whitespace, no indentation).
 
 ```json
 {
+  "tldr": ["string — 10-20 telegraphic findings that would change what we propose, how we price it, or what we ask the client"],
   "code": "R7",
   "slug": "Audience",
   "audience_personas": {
@@ -89,6 +90,12 @@ Generate `research/R7-Audience.md` from the JSON:
 
 ```markdown
 # Audience & Personas — {Client Name}
+
+## TLDR
+
+{bulleted list from tldr array — one line per finding, telegraphic}
+
+---
 
 ## Overview
 {2-3 sentence narrative summarising who the audiences are, which persona is primary,

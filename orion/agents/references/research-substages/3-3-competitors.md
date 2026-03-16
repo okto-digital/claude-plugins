@@ -73,7 +73,7 @@ Compare client against the competitor set as a whole. Each gap is one line: what
 
 ## Output
 
-Write output using the templates at `templates/R3-Competitors-template.md`.
+Write output using the templates at `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/templates/R3-Competitors-template.md`.
 
 ---
 

@@ -58,14 +58,11 @@ Log selected pages in the JSON output.
 
 ### Step 2: Technology stack detection
 
-Call `technologies_domain_technologies` per domain (not per page). Returns full technology stack including CMS, frameworks, hosting signals, analytics tools, marketing tools, CDN, SSL status.
+Call `domain_analytics_technologies_domain_technologies` per domain (not per page). Returns full technology stack including CMS, frameworks, hosting signals, analytics tools, marketing tools, CDN, SSL status.
 
 ### Step 3: Performance and on-page analysis
 
-Call `onpage_pages` per page (homepage + up to 3 subpages per site). Returns:
-- Lighthouse scores: performance, accessibility, best practices, SEO (0–100)
-- Core Web Vitals: LCP, INP, CLS, TTFB
-- On-page signals: meta tags, headings, image optimisation, mobile readiness
+Call `on_page_lighthouse` per page (homepage + up to 3 subpages per site) for Lighthouse scores (performance, accessibility, best practices, SEO — 0–100). Call `on_page_instant_pages` per page for Core Web Vitals (LCP, INP, CLS, TTFB) and on-page signals (meta tags, headings, image optimisation, mobile readiness).
 
 ### Step 4: WCAG accessibility surface scan
 
@@ -97,7 +94,7 @@ Compare client against analysed competitors and reference sites. Each gap is one
 
 ## Output
 
-Write output using the templates at `templates/R5-Technology-template.md`.
+Write output using the templates at `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/templates/R5-Technology-template.md`.
 
 ---
 

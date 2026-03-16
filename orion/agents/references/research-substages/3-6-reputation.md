@@ -88,7 +88,7 @@ Compare client against analysed competitors. Each gap is one line: what's missin
 
 ## Output
 
-Write output using the templates at `templates/R6-Reputation-template.md`.
+Write output using the templates at `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/templates/R6-Reputation-template.md`.
 
 ---
 

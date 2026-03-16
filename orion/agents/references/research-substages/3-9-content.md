@@ -96,7 +96,6 @@ For each key page type, analyse how client and competitors structure content —
 Cross-reference with keyword intent data from R2-Keywords:
 - Content blocks top-ranking pages include that lower-ranking miss
 - Questions asked at each funnel stage that should be answered per page type
-- Schema markup patterns detectable from R5-Technology onpage data (if available)
 - FAQ and supporting content patterns correlating with strong SERP performance
 
 #### Step 5: Industry content standards
@@ -110,7 +109,7 @@ From R4-Market, identify:
 
 ## Output
 
-Write output using the templates at `templates/R9-Content-template.md`.
+Write output using the templates at `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/templates/R9-Content-template.md`.
 
 ---
 

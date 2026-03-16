@@ -40,15 +40,16 @@ Read `D1-Init.json` for client name, project name, build_type, site_type, output
 ### Step 2: Scan available files
 
 Glob for all project files:
-- `D1-Init.json`, `D2-Client-Intelligence.json`
-- `research/R*-*.json`
+- `D1-Init.json`, `D2-Client-Intelligence.json`, `D3-Research.json`
 - `gap-analysis/G*-*.json`
 - `concept/C*-*.json`
 
-**ALWAYS read:** D1-Init.json, C1-Sitemap.json, C2-Functional.json.
+**ALWAYS read:** D1-Init.json, D3-Research.json (contains TLDR from all 9 research substages), C1-Sitemap.json, C2-Functional.json.
 
 **Read selectively** based on relevance to each section:
-- D2, R-files, G-files for problem statement evidence
+- D2 for client profile
+- D3 for research evidence (TLDR digest — do NOT read individual R-files unless D3 lacks specific detail)
+- G-files for gap analysis evidence
 - C4, C5, C6, C8, C9 for proposed solution narrative
 - C3 for technical context (if relevant to scope)
 - C7 for timeline and milestones

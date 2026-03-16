@@ -62,6 +62,7 @@ Generate `D1-Init.md` from D1-Init.json using this template:
 - **SERP max keywords:** {research_config.serp_max_keywords}
 - **Search landscape max keywords:** {research_config.search_landscape_max_keywords}
 - **Max competitors:** {research_config.competitors_max}
+- **Debug output:** {research_config.debug}
 
 ## Pipeline Defaults
 - **Gap domains:** {pipeline_defaults.gap_domains}

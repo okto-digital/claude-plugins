@@ -6,6 +6,7 @@ Write JSON as **minified** (no whitespace, no indentation).
 
 ```json
 {
+  "tldr": ["string — 10-20 telegraphic findings that would change what we propose, how we price it, or what we ask the client"],
   "code": "R8",
   "slug": "UX",
   "ux_ui_patterns": {
@@ -113,6 +114,12 @@ Generate `research/R8-UX.md` from the JSON:
 
 ```markdown
 # UX/UI Patterns & Benchmarks — {Client Name}
+
+## TLDR
+
+{bulleted list from tldr array — one line per finding, telegraphic}
+
+---
 
 ## Overview
 {2-3 sentence narrative summarising the UX/UI landscape — dominant patterns,

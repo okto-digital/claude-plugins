@@ -59,7 +59,7 @@ Dispatch `web-crawler` sub-agent to fetch content from selected URLs and extract
 
 If DataForSEO MCP tools are available:
 
-Call `kw_data_google_trends_explore` on 3–5 core industry terms to assess macro momentum. Use primary language x location for local trends and English x global for international signals.
+Call `kw_data_dfs_trends_explore` on 3–5 core industry terms to assess macro momentum. Use primary language x location for local trends and English x global for international signals.
 
 ### Step 4: Research synthesis
 
@@ -104,7 +104,7 @@ Cross-cutting insights that combine findings from multiple dimensions above into
 
 ## Output
 
-Write output using the templates at `templates/R4-Market-template.md`.
+Write output using the templates at `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/templates/R4-Market-template.md`.
 
 ---
 

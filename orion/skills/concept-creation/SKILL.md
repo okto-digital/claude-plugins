@@ -54,23 +54,25 @@ If C3 is deselected, C7 runs without technical architecture — warn but allow (
 
 ### Step 4: Build pre-merged context files
 
-Use `scripts/merge-json.sh` to build one context file per section. D1 is always included.
+Use `scripts/merge-json.sh` to build one context file per section. D1 and D3 (research TLDR digest) are always included. G-files and upstream C-files are section-specific.
+
+D3 contains all 9 research TLDRs (~10-15KB) — small enough to include in every context. If a concept agent needs granular research data, it can read the full R-file via the `source` path in D3.
 
 ```bash
 # Wave 1
-scripts/merge-json.sh D1-Init.json research/R9-Content.json research/R2-Keywords.json gap-analysis/G17-SEO.json gap-analysis/G18-Site-Structure.json gap-analysis/G15-Project-Scope.json -o concept/context-C1.json
-scripts/merge-json.sh D1-Init.json research/R3-Competitors.json research/R4-Market.json gap-analysis/G10-Forms.json gap-analysis/G09-Ecommerce.json gap-analysis/G04-Booking.json gap-analysis/G02-Analytics.json gap-analysis/G16-Security.json gap-analysis/G01-Accessibility.json gap-analysis/G13-Performance.json gap-analysis/G21-User-Accounts.json -o concept/context-C2.json
-scripts/merge-json.sh D1-Init.json research/R8-UX.json research/R7-Audience.json research/R6-Reputation.json gap-analysis/G08-Design.json -o concept/context-C5.json
+scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G17-SEO.json gap-analysis/G18-Site-Structure.json gap-analysis/G15-Project-Scope.json -o concept/context-C1.json
+scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G10-Forms.json gap-analysis/G09-Ecommerce.json gap-analysis/G04-Booking.json gap-analysis/G02-Analytics.json gap-analysis/G16-Security.json gap-analysis/G01-Accessibility.json gap-analysis/G13-Performance.json gap-analysis/G21-User-Accounts.json -o concept/context-C2.json
+scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G08-Design.json -o concept/context-C5.json
 
 # Wave 2
-scripts/merge-json.sh D1-Init.json research/R5-Technology.json gap-analysis/G20-Technical.json gap-analysis/G16-Security.json gap-analysis/G13-Performance.json gap-analysis/G14-Post-Launch.json gap-analysis/G01-Accessibility.json concept/C2-Functional.json -o concept/context-C3.json
-scripts/merge-json.sh D1-Init.json research/R9-Content.json research/R2-Keywords.json research/R7-Audience.json research/R6-Reputation.json gap-analysis/G07-Content.json gap-analysis/G03-Blog.json gap-analysis/G12-Multilingual.json concept/C1-Sitemap.json -o concept/context-C4.json
-scripts/merge-json.sh D1-Init.json research/R8-UX.json research/R7-Audience.json research/R6-Reputation.json gap-analysis/G10-Forms.json gap-analysis/G18-Site-Structure.json gap-analysis/G19-Target-Audience.json gap-analysis/G08-Design.json concept/C1-Sitemap.json -o concept/context-C6.json
+scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G20-Technical.json gap-analysis/G16-Security.json gap-analysis/G13-Performance.json gap-analysis/G14-Post-Launch.json gap-analysis/G01-Accessibility.json concept/C2-Functional.json -o concept/context-C3.json
+scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G07-Content.json gap-analysis/G03-Blog.json gap-analysis/G12-Multilingual.json concept/C1-Sitemap.json -o concept/context-C4.json
+scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G10-Forms.json gap-analysis/G18-Site-Structure.json gap-analysis/G19-Target-Audience.json gap-analysis/G08-Design.json concept/C1-Sitemap.json -o concept/context-C6.json
 
 # Wave 3
-scripts/merge-json.sh D1-Init.json gap-analysis/G15-Project-Scope.json gap-analysis/G14-Post-Launch.json gap-analysis/G02-Analytics.json concept/C1-Sitemap.json concept/C2-Functional.json concept/C3-Technical-Architecture.json -o concept/context-C7.json
-scripts/merge-json.sh D1-Init.json research/R1-SERP.json research/R2-Keywords.json gap-analysis/G17-SEO.json gap-analysis/G12-Multilingual.json concept/C1-Sitemap.json -o concept/context-C8.json
-scripts/merge-json.sh D1-Init.json research/R5-Technology.json gap-analysis/G01-Accessibility.json gap-analysis/G16-Security.json concept/C2-Functional.json -o concept/context-C9.json
+scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G15-Project-Scope.json gap-analysis/G14-Post-Launch.json gap-analysis/G02-Analytics.json concept/C1-Sitemap.json concept/C2-Functional.json concept/C3-Technical-Architecture.json -o concept/context-C7.json
+scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G17-SEO.json gap-analysis/G12-Multilingual.json concept/C1-Sitemap.json -o concept/context-C8.json
+scripts/merge-json.sh D1-Init.json D3-Research.json gap-analysis/G01-Accessibility.json gap-analysis/G16-Security.json concept/C2-Functional.json -o concept/context-C9.json
 ```
 
 Only build context files for selected sections. If a source file does not exist (e.g., section skipped), merge-json.sh skips it with a warning — this is expected for optional upstream C-files.

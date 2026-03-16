@@ -6,6 +6,7 @@ Write JSON as **minified** (no whitespace, no indentation).
 
 ```json
 {
+  "tldr": ["string — 10-20 telegraphic findings that would change what we propose, how we price it, or what we ask the client"],
   "code": "R1",
   "slug": "SERP",
   "serp_research": {
@@ -63,6 +64,12 @@ Generate `research/R1-SERP.md` from the JSON:
 
 ```markdown
 # SERP Research — {Client Name}
+
+## TLDR
+
+{bulleted list from tldr array — one line per finding, telegraphic}
+
+---
 
 ## Overview
 {2-3 sentence summary: how competitive the SERP landscape is, whether the client

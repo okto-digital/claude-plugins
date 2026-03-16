@@ -6,6 +6,7 @@ Write JSON as **minified** (no whitespace, no indentation).
 
 ```json
 {
+  "tldr": ["string — 10-20 telegraphic findings that would change what we propose, how we price it, or what we ask the client"],
   "code": "R6",
   "slug": "Reputation",
   "reputation_social": {
@@ -106,6 +107,12 @@ Generate `research/R6-Reputation.md` from the JSON:
 
 ```markdown
 # Reputation & Social Proof — {Client Name}
+
+## TLDR
+
+{bulleted list from tldr array — one line per finding, telegraphic}
+
+---
 
 ## Overview
 {2-3 sentence narrative summarising the trust landscape — how the client compares

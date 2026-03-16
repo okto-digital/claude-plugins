@@ -80,7 +80,7 @@ Map the five-stage journey — awareness, consideration, decision, retention, ad
 
 ## Output
 
-Write output using the templates at `templates/R7-Audience-template.md`.
+Write output using the templates at `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/templates/R7-Audience-template.md`.
 
 ---
 

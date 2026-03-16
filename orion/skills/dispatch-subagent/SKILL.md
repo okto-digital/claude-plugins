@@ -20,7 +20,6 @@ Dispatch any registered agent as a sub-agent via the Task tool. Automatically se
 |---|---|---|
 | web-crawler | `${CLAUDE_PLUGIN_ROOT}/agents/web-crawler.md` | Crawl a URL, return content in requested format |
 | dataforseo | `${CLAUDE_PLUGIN_ROOT}/agents/dataforseo.md` | Fetch live SEO data (SERP, keywords, backlinks, on-page, competitors, AI visibility) |
-| dataforseo-api | `${CLAUDE_PLUGIN_ROOT}/agents/dataforseo-api.md` | Fetch DataForSEO data via direct HTTP API (mcp-curl) |
 | researcher | `${CLAUDE_PLUGIN_ROOT}/agents/researcher.md` | Execute one research substage, produce R{n}.json + R{n}.md |
 | domain-analyst | `${CLAUDE_PLUGIN_ROOT}/agents/domain-analyst.md` | Assess a group of domains' checkpoints, produce per-domain findings + questions |
 | concept-creator | `${CLAUDE_PLUGIN_ROOT}/agents/concept-creator.md` | Produce one concept section from pre-merged context, write per-section JSON + MD |
@@ -148,6 +147,10 @@ ALL file paths (Read and Write) MUST use absolute paths based on this directory.
 
 Use the built-in Read tool to read files. Use the built-in Write tool to write files. Use mcp-curl ONLY for HTTP requests. Use Bash for post-fetch processing (HTML stripping, scripts). NEVER use MCP tools for file operations.
 
+## Temporary Files
+
+ALL intermediate/temporary files (downloads, HTML stripping, debug logs, analysis scratch) MUST be written to `{working_directory}/tmp/`. NEVER write temporary files to the project root or any other directory.
+
 ## Agent Definition
 
 [full content of the agent definition file, inlined with ${CLAUDE_PLUGIN_ROOT} resolved]
@@ -177,6 +180,10 @@ Task(
 [absolute path of the current project directory]
 
 ALL file paths (Read and Write) MUST use absolute paths based on this directory. NEVER use relative paths — they resolve to the wrong location in Cowork sessions.
+
+## Temporary Files
+
+ALL intermediate/temporary files MUST be written to `{working_directory}/tmp/`. NEVER write temporary files to the project root.
 
 [Additional context if any]
 
