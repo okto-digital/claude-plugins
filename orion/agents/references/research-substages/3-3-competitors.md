@@ -25,7 +25,7 @@ From `D1-Init.json`:
 - `notes` — client-provided competitor URLs
 
 From `R1-SERP.json`:
-- `competitors` — commercial competitor domain list with keyword appearance counts
+- `competitors` — commercial competitor domain list with keyword appearance counts, local appearance counts, and scope (local/national/both)
 
 From `R2-Keywords.json`:
 - `gap_analysis.keywords_not_targeted` — domains owning keywords the client doesn't target
@@ -42,7 +42,12 @@ Merge competitor signals from three sources:
 - R1-SERP results — commercial domains appearing in organic results
 - R2-Keywords gap analysis — domains owning keywords the client doesn't target
 
-Deduplicate. Each domain gets a combined `keyword_appearances` score. Rank by score and trim to `research_config.competitors_max` (default: 5).
+Deduplicate. Rank by relevance, not raw frequency:
+- **Local competitors first** — domains with `scope: local` or `scope: both` from R1 are the client's direct market rivals. Weight `local_appearances` higher than general `keyword_appearances`.
+- **Ensure local representation** — at least half of the final list (e.g., 3 of 5) should be local/regional competitors if available. A national directory appearing in 20 keywords is less relevant than a local photographer appearing in 3 location keywords.
+- **Break ties by keyword gap ownership** — competitors from R2 gap analysis (domains owning keywords the client doesn't target) get a boost.
+
+Trim to `research_config.competitors_max` (default: 5).
 
 ### Step 2: Competitor profiling
 

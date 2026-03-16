@@ -11,7 +11,8 @@ Write JSON as **minified** (no whitespace, no indentation).
   "slug": "Keywords",
   "search_landscape": {
     "meta": {
-      "total_keywords": "number",
+      "total_keywords": "number (verified only)",
+      "unverified_count": "number",
       "cap_applied": "number",
       "date_run": "string",
       "competitors_analysed": []
@@ -22,13 +23,23 @@ Write JSON as **minified** (no whitespace, no indentation).
         "language": "string",
         "location": "string",
         "intent": "navigational | informational | commercial | transactional",
-        "volume": "number | null",
+        "volume": "number (verified > 0 only, no nulls in this array)",
         "difficulty": "number | null",
         "trend": "rising | stable | declining | seasonal | null",
         "priority": "high | medium | low",
         "cluster": "string",
         "source": "seed | expanded | gap_opportunity",
         "gap_competitor": "string | null"
+      }
+    ],
+    "unverified_candidates": [
+      {
+        "keyword": "string",
+        "language": "string",
+        "service_area": "string (e.g. Events, Social Media, Studio)",
+        "intent": "navigational | informational | commercial | transactional",
+        "rationale": "string (why this is worth testing)",
+        "validation_method": "string (e.g. paid social test, content experiment, Google Ads test)"
       }
     ],
     "gap_analysis": {
@@ -78,13 +89,23 @@ Generate `research/R2-Keywords.md` from the JSON:
 ---
 
 ## Overview
+*Verified keywords: {total_keywords} | Unverified candidates: {unverified_count} | Clusters: {cluster count}*
+
 {2-3 sentence summary: total opportunity size, competitive difficulty level,
 key gaps identified, top page groups by volume}
 
-## Keyword Table
+## Keyword Table (Verified Traffic)
 | Keyword | Intent | Volume | Difficulty | Trend | Priority | Cluster | Source |
 |---|---|---|---|---|---|---|---|
 | {keyword} | {intent} | {vol} | {kd} | {trend} | {priority} | {cluster} | {source} |
+
+## Unverified Candidates
+{Only if unverified_candidates is non-empty. Max 15 keywords grouped by service_area.}
+
+### {service_area}
+| Keyword | Intent | Rationale | Validation Method |
+|---|---|---|---|
+| {keyword} | {intent} | {rationale} | {validation_method} |
 
 ## Keyword Gap Analysis
 ### Keywords competitors rank for that we are not targeting

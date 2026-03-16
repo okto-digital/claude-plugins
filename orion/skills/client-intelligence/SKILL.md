@@ -65,7 +65,7 @@ Use `dispatch-subagent` to dispatch `web-crawler`. Get URL from D1-Init.json not
 3. Dispatch web-crawler for each high-value page (parallel where possible).
 4. Extract: site structure, navigation, messaging, tone of voice, CTA patterns, content presence.
 5. Extract **services or products** -- identify every distinct service/product the client offers. This list is critical for SERP keyword generation in the research stage.
-6. Flag **dark patterns or red flags** -- hidden content (hidden divs, display:none text), deceptive practices, grey-zone activities, adult/illegal content, cloaked links, or anything that could pose reputational or legal risk for the agency taking on this client.
+6. Flag **dark patterns or red flags** in the `red_flags` array -- hidden content (hidden divs, display:none text), deceptive practices, grey-zone activities, adult/illegal content, cloaked links, keyword stuffing (irrelevant or shady keywords in meta/content/alt tags), or anything that could pose reputational or legal risk for the agency taking on this client. Each flag needs type, severity (critical/warning/note), description, and evidence (URL or specific observation).
 
 ### Step 4R: Web search + social + reputation
 

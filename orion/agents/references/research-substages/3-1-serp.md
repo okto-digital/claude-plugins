@@ -48,14 +48,19 @@ Map each combination to DataForSEO `location_code` and `language_code` parameter
 
 ### Step 2: Keyword generation
 
-Call `dataforseo_labs_google_keyword_ideas` with seed keywords derived from:
-- `D2.services_or_products` (primary source) — each service/product name and category
+**2a. Build seed list BEFORE calling the API.** Do not pass a single generic word — construct a full seed list first:
+
+For each service/product from `D2.services_or_products`:
+- Generate 3–5 phrasing variants: noun forms, adjective forms, verb forms, common synonyms (e.g., "svadobný fotograf", "svadobná fotografia", "fotografovanie svadby", "fotenie svadby"). Natural phrasing per language — not literal translations.
+- Combine high-priority variants with location modifiers (city, region, country).
+
+Add brand-related seeds:
 - Client name and brand variants (including legal name if different)
 - INIT notes (competitor hints, operator keyword suggestions)
 
-For each service/product, generate multiple phrasings: noun forms, adjective forms, verb forms, and common synonyms (e.g., "svadobný fotograf", "svadobná fotografia", "fotografovanie svadby", "fotenie svadby"). Natural phrasing per language — not literal translations.
+The seed list should contain **15–30 seed phrases** before any API call. A single generic word (e.g., "fotograf") is never sufficient — it returns irrelevant results.
 
-Combine with location modifiers (city, region, country).
+**2b. Call `dataforseo_labs_google_keyword_ideas`** with the full seed list. Set `limit: 100` per call to ensure broad coverage. Run per language x location combination from the matrix.
 
 **Relevance guardrail:** Every keyword must describe a service the client actually delivers or a direct query about hiring/booking that service. Keywords about adjacent industries, complementary services the client does not offer, or generic topic words (e.g., "svadobný darček" for a photographer, "kameraman" if client does not offer video) are off-topic. Drop off-topic keywords before applying caps.
 
@@ -71,7 +76,9 @@ Combine with location modifiers (city, region, country).
 
 Call `dataforseo_labs_google_ranked_keywords` on the client domain. Returns keywords the client already ranks for, with positions and traffic share.
 
-Merge any net-new keywords into the keyword list. Mark existing keywords with client position data.
+**Flag shady/off-brand keywords.** If the client ranks for keywords unrelated to their services — adult content, grey-zone terms, keyword-stuffed phrases, or anything that doesn't match D2's services_or_products — do NOT merge them into the seed list. Instead, log them separately in `notes` with a warning (e.g., "Client ranks for 'akty fotografia' — off-brand, possible keyword stuffing on current site. Excluded from seeds."). This informs the operator and prevents shady keywords from contaminating downstream research.
+
+Merge only relevant net-new keywords into the keyword list. Mark existing keywords with client position data.
 
 ### Step 4: SERP check
 
@@ -96,7 +103,20 @@ Call `kw_data_google_ads_search_volume` on the full keyword list. Returns estima
 
 ### Step 7: Competitor frequency compilation
 
-Count domain appearances across all SERP results. Compile top 10 most frequently appearing domains (always 10 — `competitors_max` in research_config applies to R3 detailed profiling, not R1 frequency counting). Classify each by site type:
+Count domain appearances across all SERP results **with location weighting**:
+
+**7a. Primary location competitors.** Filter SERP results to keywords containing the client's primary location (city, region). Compile domains appearing in these location-specific SERPs — these are the client's **direct local competitors**. Even if a domain appears only 2-3 times, if those appearances are all in location keywords matching the client's service area, it's a real competitor.
+
+**7b. General competitors.** Count domain appearances across all remaining (non-location) SERP results for broader market competitors.
+
+**7c. Merge and rank.** Combine both lists. Each competitor gets:
+- `keyword_appearances` — total count across all SERPs
+- `local_appearances` — count in location-specific SERPs only
+- `scope` — `local` (appears mainly in client's location keywords), `national` (appears across broad keywords), `both`
+
+A domain with 3 local appearances is more relevant than one with 10 national appearances — the client competes with local businesses first.
+
+**7d. Compile top 10** (always 10 — `competitors_max` in research_config applies to R3 detailed profiling, not R1 frequency counting). Ensure at least 3 local competitors are included if available. Classify each by site type:
 - `commercial` — direct competitor selling same product/service
 - `directory` — aggregator or listing site
 - `media` — editorial, news, blog

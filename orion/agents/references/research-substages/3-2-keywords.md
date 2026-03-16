@@ -35,15 +35,24 @@ From `R1-SERP.json`:
 
 ### Step 1: Keyword expansion
 
-Call `dataforseo_labs_google_keyword_ideas` and `dataforseo_labs_google_related_keywords` on the seed keywords from R1-SERP. Run per language x location combination from the matrix.
+**Goal:** Cast a wide net (50–100 keyword ideas per service cluster), then keep only the traffic-driving, service-relevant, location-relevant winners.
 
-Deduplicate against existing keywords. **Relevance filter:** drop any expanded keyword that does not describe a service the client actually delivers or a direct query about hiring/booking that service. Keywords about adjacent industries or complementary services the client does not offer are off-topic (e.g., "svadobný darček" for a photographer). Add net-new relevant terms to the candidate list.
+Even in small markets (e.g., Slovakia), there are always keywords that drive real traffic — the job is to find them. Low absolute volume is fine if the keyword is high-intent and service-relevant. Zero volume is not — drop it.
+
+Call `dataforseo_labs_google_keyword_ideas` and `dataforseo_labs_google_related_keywords` on the seed keywords from R1-SERP. Set `limit: 200` per call to ensure broad expansion. Run per language x location combination from the matrix.
+
+**Multi-seed batching:** Do not pass all seeds in a single call — batch by semantic group (e.g., one call per service/product cluster of 3–5 related seeds). This produces more diverse results than one large batch. Each batch should return 50–100 keyword ideas.
+
+Deduplicate against existing keywords. **Relevance filter** (apply in this order):
+1. **Service match** — keyword must describe a service the client actually delivers or a direct query about hiring/booking that service. Off-topic keywords about adjacent industries or services the client does not offer are dropped (e.g., "svadobný darček" for a photographer).
+2. **Traffic potential** — keyword must have non-zero search volume. Prioritise keywords that actually drive clicks and traffic over vanity terms.
+3. **Location relevance** — for local/regional businesses, prioritise keywords with location intent or that match the client's service area.
 
 ### Step 2: Competitor rankings
 
 Call `dataforseo_labs_google_ranked_keywords` on top 3 commercial competitors from R1-SERP. Returns keywords each competitor ranks for, with positions and traffic share.
 
-Cross-reference against R1 keywords + expanded list. Keywords competitors rank for that are absent from the client's list are flagged as gap opportunities.
+Cross-reference against R1 keywords + expanded list. Keywords competitors rank for that are absent from the client's list are flagged as gap opportunities. **Tag source correctly:** keywords from R1 seeds = `seed`, from keyword_ideas/related_keywords = `expanded`, from competitor ranking gaps = `gap_opportunity`.
 
 ### Step 3: Domain intersection
 
@@ -59,25 +68,39 @@ Extract keyword difficulty from the `dataforseo_labs_google_keyword_ideas` respo
 
 ### Step 6: Trend analysis
 
-Call `kw_data_dfs_trends_explore` on the top 20 keywords by search volume. Classify each as:
+Call `kw_data_dfs_trends_explore` on the top 30 keywords by search volume. Classify each as:
 - `rising` — growing search interest
 - `stable` — consistent search interest
 - `declining` — shrinking search interest
 - `seasonal` — significant periodic spikes
 
-### Step 7: Prioritisation and capping
+### Step 7: Split verified vs unverified
 
-Score each keyword:
+After volume enrichment, split keywords into two buckets:
+
+- **Verified** — keywords with `volume > 0` (confirmed traffic). These are the main output.
+- **Unverified** — keywords where DataForSEO returned `null` volume. Null means no ads data — not necessarily zero searches, but unproven. These go to a separate `unverified_candidates` section.
+
+**Unverified rules:**
+- Cap at **15 best candidates** — pick by service relevance, intent strength, and cluster diversity
+- Do not mix unverified keywords into the main `keywords` array or `keyword_clusters`
+- Group unverified candidates by service area for easy scanning
+- Note recommended validation method per group (paid social test, content experiment, etc.)
+
+### Step 8: Prioritisation and capping
+
+Score **verified keywords only**. The goal is to surface keywords that will **drive real traffic to the client's website**:
 - High volume + low difficulty + commercial/transactional intent = highest priority
+- Service-specific + location-modified keywords rank above generic terms, even at lower volume
 - Rising trend boosts priority; declining trend downgrades regardless of volume
+- Gap opportunities (competitors rank, client doesn't) get priority boost — these are proven traffic drivers
 - Informational keywords retained but ranked lower unless content strategy signals need them
-- Gap opportunities (competitors rank, client doesn't) get priority boost
 
-Trim to `research_config.search_landscape_max_keywords` (default: 100). Log deprioritised keywords in `notes`.
+Trim to `research_config.search_landscape_max_keywords` (default: 100). The final list should represent the best traffic opportunities for the client's services in their market. Log deprioritised keywords in `notes`.
 
-### Step 8: Keyword clustering
+### Step 9: Keyword clustering
 
-Group the final keyword list into semantic clusters. Each cluster represents one topic that a single page should target.
+Group the **verified keyword list** into semantic clusters. Each cluster represents one topic that a single page should target.
 
 For each cluster:
 - **primary_keyword** — the highest-volume keyword in the cluster (the main target)
@@ -85,6 +108,8 @@ For each cluster:
 - **page_type** — suggested page type: `homepage`, `service`, `portfolio`, `location`, `blog`, `landing`, `other`
 - **total_volume** — sum of all keyword volumes in the cluster
 - **avg_difficulty** — average difficulty across cluster keywords
+
+**Drop clusters where zero keywords have verified volume.** If an entire service area produced only null-volume keywords, it belongs in `unverified_candidates`, not in the clusters.
 
 Use semantic similarity and SERP overlap to group: if two keywords return largely the same top 10 results, they belong in the same cluster. `dataforseo_labs_google_related_keywords` output from Step 1 informs this grouping.
 

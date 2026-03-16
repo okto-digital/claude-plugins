@@ -43,6 +43,8 @@ Write JSON as **minified** (no whitespace, no indentation).
         "domain": "string",
         "site_type": "commercial | directory | media | marketplace | informational",
         "keyword_appearances": "number",
+        "local_appearances": "number",
+        "scope": "local | national | both",
         "languages_detected": [],
         "notes": "string | null"
       }
@@ -91,9 +93,9 @@ appears, dominant site types in results}
 | {keyword} | {lang} | {loc} | {intent} | {vol} | {pos / —} | {domain} | {page_type} |
 
 ## Top Competitor Domains
-| Domain | Site Type | Appearances | Languages | Notes |
-|---|---|---|---|---|
-| {domain} | {type} | {count} | {langs} | {notes} |
+| Domain | Site Type | Appearances | Local | Scope | Languages | Notes |
+|---|---|---|---|---|---|---|
+| {domain} | {type} | {count} | {local_appearances} | {scope} | {langs} | {notes} |
 
 ## Notes
 - {note 1}

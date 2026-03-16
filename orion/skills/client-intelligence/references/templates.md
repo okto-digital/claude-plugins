@@ -59,6 +59,14 @@ All blocks are always present regardless of `build_type`. Fields with no availab
       "address": "string | null",
       "owners": []
     },
+    "red_flags": [
+      {
+        "type": "hidden_content | deceptive_practice | grey_zone_activity | adult_content | cloaked_links | keyword_stuffing | other",
+        "description": "string",
+        "severity": "critical | warning | note",
+        "evidence": "string (URL, selector, or specific observation)"
+      }
+    ],
     "key_findings": [
       "string",
       "string"
@@ -126,6 +134,12 @@ Generate `D2-Client-Intelligence.md` from the JSON. The Overview is a 2-3 senten
 - **Registration date:** {registration_date}
 - **Address:** {address}
 - **Owners:** {owners}
+
+## Red Flags
+{Only if red_flags is non-empty. Skip section entirely if no flags found.}
+| Type | Severity | Description | Evidence |
+|---|---|---|---|
+| {type} | {severity} | {description} | {evidence} |
 
 ## Key Findings
 - {finding 1}
