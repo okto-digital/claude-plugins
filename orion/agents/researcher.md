@@ -82,6 +82,8 @@ After completing all methodology steps, distill findings into a `tldr` array —
 
 **JSON:** Write `{working_directory}/research/{code}-{slug}.json` as a single line (no newlines, no indentation) following the template file's JSON schema. `tldr` is the first field, followed by `code`, `slug`, then the substage-specific data. Use the absolute working directory path from your dispatch prompt.
 
+**Self-validate JSON:** After writing, run `jq empty {working_directory}/research/{code}-{slug}.json`. If it fails, the JSON is broken — read the file back, fix the structural error (missing commas, unclosed brackets, unescaped quotes), and rewrite as a single line. Repeat until `jq empty` passes. Then compact: `jq -c '.' file.json > file.tmp && mv file.tmp file.json`.
+
 **Markdown:** Write `{working_directory}/research/{code}-{slug}.md` from the JSON following the template file's markdown template. The **TLDR section comes first** in the markdown, before detailed content.
 
 - If `output_format` = `concise`: markdown targets 1,800 characters or less (hard max 3,600)

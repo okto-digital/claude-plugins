@@ -125,7 +125,11 @@ All blocks are always present regardless of build_type. Fields with no data are 
 
 Generate from `D2-Client-Intelligence.json` using the markdown template in `${CLAUDE_PLUGIN_ROOT}/skills/client-intelligence/references/templates.md`.
 
-## Step 9: Update project-state.md
+## Step 9: Debug companion (when enabled)
+
+If `research_config.debug` is `true` in D1-Init.json: write `tmp/debug/D2-Client-Intelligence-debug.txt` — telegraphic bullet points, key facts only, data sources used, no prose, no template structure.
+
+## Step 10: Update project-state.md
 
 Update Phase 2 row: Status → `complete`, Output → `D2-Client-Intelligence.json`, Updated → today's date.
 

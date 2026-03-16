@@ -77,6 +77,7 @@ Write output using the JSON schema and markdown template from the output templat
 **`tldr` MUST be the first field in the JSON output**, before `code` and `slug`. This matches the researcher pattern where TLDR leads the object.
 
 - **JSON:** Write `{working_directory}/concept/{C-code}-{slug}.json` as a single line (no newlines, no indentation). Example path: `{working_directory}/concept/C1-Sitemap.json`. Use the absolute working directory path from your dispatch prompt.
+- **Self-validate JSON:** After writing, run `jq empty {path}`. If it fails, read back, fix the error, rewrite as single line. Compact: `jq -c '.' file.json > file.tmp && mv file.tmp file.json`.
 - **Markdown:** Write `{working_directory}/concept/{C-code}-{slug}.md` from the JSON
 
 ## Rules

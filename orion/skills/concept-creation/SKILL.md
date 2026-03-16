@@ -169,7 +169,11 @@ for f in concept/C*-*.json; do
 done
 ```
 
-### Step 9: Clean up temporary files
+### Step 9: Debug companion (when enabled)
+
+If `research_config.debug` is `true` in D1-Init.json: write `tmp/debug/D5-Concept-debug.txt` — completed sections, TLDR counts per section, review notes summary, any failures, no prose.
+
+### Step 10: Clean up temporary files
 
 Remove the pre-merged context files and temp review input — they were temporary build artifacts:
 
@@ -177,7 +181,7 @@ Remove the pre-merged context files and temp review input — they were temporar
 rm -f concept/context-C*.json tmp/concept-review-input.json
 ```
 
-### Step 10: Update project-state.md
+### Step 11: Update project-state.md
 
 Update Phase 5 (Concept Creation) row:
 - Status: `complete` (all sections processed) or `partial` (some skipped/failed)

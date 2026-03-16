@@ -233,7 +233,9 @@ jq -r '.domains[] | if .status == "ACTIVE" then "## \(.slug)\n**\(.domain)** —
 rm -f tmp/context-group-*.json tmp/context-curator.json
 ```
 
-**8g.** Update Phase 4 status → `resolved`:
+**8g.** Debug companion (when enabled): If `research_config.debug` is `true` in D1-Init.json, write `tmp/debug/D4-Gap-Analysis-debug.txt` — active/inactive domain counts, critical resolved ratio, question counts per bucket, no prose.
+
+**8h.** Update Phase 4 status → `resolved`:
 
 ```
 Answer resolution complete.

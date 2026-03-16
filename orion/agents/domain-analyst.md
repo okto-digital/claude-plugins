@@ -54,6 +54,8 @@ Complete all output files for one domain before starting the next.
 
 All paths `{working_directory}/` prefixed.
 
+**Self-validate JSON:** After writing each JSON file, run `jq empty {path}`. If it fails, read back, fix the error, rewrite as single line. Compact: `jq -c '.' file.json > file.tmp && mv file.tmp file.json`.
+
 ### 4. Return summary
 
 Per domain: status, checkpoint counts, questions generated. Cross-domain observations in `notes`.

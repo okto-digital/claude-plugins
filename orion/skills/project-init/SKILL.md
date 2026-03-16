@@ -79,6 +79,7 @@ Generate from D1-Init.json using `${CLAUDE_PLUGIN_ROOT}/skills/project-init/refe
 ### 6. Create Directories and Settings
 
 - Create subdirectories (skip existing): `research/`, `gap-analysis/`, `concept/`, `tmp/`
+- If debug is `true`: also create `tmp/debug/`
 - Add `tmp/` to `.gitignore` (create or append)
 - Create `.claude/settings.json` if absent (merge if exists, don't overwrite):
   ```json

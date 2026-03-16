@@ -31,7 +31,7 @@ Six phases, sequential. Each produces JSON output + markdown review + human revi
 - **JSON as source of truth** — All agent-to-agent data is minified JSON. Markdown files are disposable human-review views.
 - **Research depth/format** — Set at INIT. `basic` enforces caps; `deep` lets agents decide. `concise` keeps short; `verbose` allows depth.
 - **Output language** — When set in D1-Init.json, client-facing outputs MUST use that language (titles, labels). JSON keys, codes, enums stay English.
-- **Debug mode** — When `true`: every phase writes a `-debug.txt` companion (telegraphic, bullets, key facts only, no formatting) to `tmp/debug/`. When `ask`: prompt operator before first output of each phase. When `false`: skip. Default is `ask` — INIT asks during setup.
+- **Debug mode** — When `true`: every document (D2–D6, R1–R9, G01–G21, C1–C9) gets a `-debug.txt` companion in `tmp/debug/` (telegraphic, bullets, key facts only, no formatting). Sub-agents receive the debug instruction via `dispatch-subagent` Step 6; orchestrator skills write their own D-level companions. When `ask`: prompt operator before first output of each phase. When `false`: skip. Default is `ask` — INIT asks during setup.
 
 ## Data Architecture
 

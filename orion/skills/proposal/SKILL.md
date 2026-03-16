@@ -167,7 +167,11 @@ Set `<html lang="...">` to the `output_language` value from D1-Init.json (e.g., 
 
 The HTML must be self-contained (inline CSS, embedded fonts). Verify all 9 sections are present and print CSS would produce clean page breaks.
 
-### Step 13: Operator review
+### Step 13: Debug companion (when enabled)
+
+If `research_config.debug` is `true` in D1-Init.json: write `tmp/debug/D6-Proposal-debug.txt` — section count, module counts (selected/total), total hours, traffic potential numbers, evidence domain counts, no prose.
+
+### Step 14: Operator review
 
 Present D6-Proposal.md for operator review. The operator may:
 - Adjust module selection (toggle `selected` on/off)
@@ -178,7 +182,7 @@ Present D6-Proposal.md for operator review. The operator may:
 
 If changes are made, regenerate affected sections (timeline, investment) and rewrite all three D6 files.
 
-### Step 14: Update project-state.md
+### Step 15: Update project-state.md
 
 Update Phase 6 (Proposal & Brief) row:
 - Status: `complete`

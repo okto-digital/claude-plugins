@@ -216,13 +216,17 @@ for f in research/R*-*.json; do
 done
 ```
 
-### Step 7: Cleanup
+### Step 7: Debug companion (when enabled)
+
+If `research_config.debug` is `true` in D1-Init.json: write `tmp/debug/D3-Research-debug.txt` — list of completed substages, key TLDR counts per substage, any failures or skips, no prose.
+
+### Step 8: Cleanup
 
 ```bash
 rm -f tmp/context-R*.json
 ```
 
-### Step 8: Update project-state.md
+### Step 9: Update project-state.md
 
 After all selected waves complete:
 
