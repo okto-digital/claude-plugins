@@ -21,11 +21,10 @@ Dispatch any registered agent as a sub-agent via the Task tool. Automatically se
 | web-crawler | `${CLAUDE_PLUGIN_ROOT}/agents/web-crawler.md` | Crawl a URL, return content in requested format |
 | dataforseo | `${CLAUDE_PLUGIN_ROOT}/agents/dataforseo.md` | Fetch live SEO data (SERP, keywords, backlinks, on-page, competitors, AI visibility) |
 | researcher | `${CLAUDE_PLUGIN_ROOT}/agents/researcher.md` | Execute one research substage, produce R{n}-{slug}.txt |
-| domain-analyst | `${CLAUDE_PLUGIN_ROOT}/agents/domain-analyst.md` | Assess a group of domains' checkpoints, produce per-domain findings + questions |
+| domain-analyst | `${CLAUDE_PLUGIN_ROOT}/agents/domain-analyst.md` | Score domain group checkpoints against baseline-log, write to confirmed/client/agency output streams |
+| question-resolver | `${CLAUDE_PLUGIN_ROOT}/agents/question-resolver.md` | Resolve answered gap analysis questions into confirmed intelligence, update baseline-log |
 | concept-creator | `${CLAUDE_PLUGIN_ROOT}/agents/concept-creator.md` | Produce one concept section from pre-merged context, write per-section JSON + MD |
 | concept-reviewer | `${CLAUDE_PLUGIN_ROOT}/agents/concept-reviewer.md` | Read D5-Concept.json, check inter-section coherence, write D5-Review-Notes.md |
-| domain-finalizer | `${CLAUDE_PLUGIN_ROOT}/agents/domain-finalizer.md` | Finalize one domain's G-file: rewrite client evidence, add TLDR, update summary + counts |
-| question-curator | `${CLAUDE_PLUGIN_ROOT}/agents/question-curator.md` | Classify, deduplicate, rewrite D4 questions into CLIENT/AGENCY/DEDUCED/PLAYBOOK buckets |
 
 ---
 

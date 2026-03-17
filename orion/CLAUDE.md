@@ -35,7 +35,7 @@ Six phases, sequential. Each phase produces its output, updates `baseline-log.tx
 | 1 | **INIT** | High-level overview? | project.json, D1-Init.txt, baseline-log.txt |
 | 2 | **Client Intelligence** | Who is this client? | D2-Client-Intelligence.txt |
 | 3 | **Research** (9 substages) | What does the landscape look like? | R1–R9 .txt files, D3-Research.txt |
-| 4 | **Domain Gap Analysis** | What do we know vs. need to ask? | 21 domain scores, curated outputs |
+| 4 | **Domain Gap Analysis** | What do we know vs. need to ask? | D4-Confirmed.txt, D4-Questions-Client.txt, D4-Questions-Agency.txt |
 | 5 | **Concept Creation** | What should we build? | 9 concept sections (C1–C9) |
 | 6 | **Proposal & Brief** | What do we deliver? | Modular proposal with selectable scope |
 
@@ -81,7 +81,7 @@ All pipeline outputs are free-form TXT. No templates, no prescribed sections. Ag
 | Root | System files | project.json, baseline-log.txt, project-state.md |
 | Root | `D{n}-{Name}.txt` | D1-Init.txt, D2-Client-Intelligence.txt, D3-Research.txt |
 | `research/` | `R{n}-{Slug}.txt` | R1-SERP.txt, R2-Keywords.txt |
-| `gap-analysis/` | `G{nn}-{Name}.*` | G01-Site-Structure.*, ... (21 domains) |
+| `gap-analysis/questions/` | `{Group}-{type}.txt` | A-confirmed.txt, A-client.txt (per-group working files) |
 | `concept/` | `C{n}-{Name}.*` | C1-Sitemap.*, ... (9 sections) |
 
 Research substages:
@@ -92,7 +92,7 @@ Research substages:
 | R2 | Keywords | R5 | Technology | R8 | UX |
 | R3 | Competitors | R6 | Reputation | R9 | Content |
 
-G-codes (21 gap domains): see `domain-gap-analysis` skill.
+Domain groups (6 groups, 21 domains): see `domain-gap-analysis` skill.
 C-codes (9 concept sections): see `concept-creation` skill.
 
 ## MCP Tool Discipline
@@ -127,7 +127,7 @@ MCP tool definitions consume context in every session (40-50k tokens with all se
 | `project-init` | 1 | Collect project parameters, write project.json + D1-Init.txt + baseline-log.txt |
 | `client-intelligence` | 2 | Build client profile (D2) from web research, crawling, registry |
 | `project-research` | 3 | Dispatch 9 researcher agents in dependency-aware waves, consolidate D3 |
-| `domain-gap-analysis` | 4 | Dispatch domain-analyst agents, curate questions, finalize D4 |
+| `domain-gap-analysis` | 4 | Dispatch domain-analyst agents (6 groups), consolidate questions, resolve answers |
 | `concept-creation` | 5 | Dispatch concept-creator agents in 3 waves, consolidate D5 |
 | `proposal` | 6 | Generate D6 proposal (JSON + MD + HTML) from D1-D5 |
 | `dispatch-subagent` | Shared | Dispatch protocol for all sub-agent spawning (MCP hints, model selection) |
@@ -139,9 +139,7 @@ All in `scripts/`. Require `jq`.
 | Script | Purpose |
 |---|---|
 | `validate-json.sh` | Validate JSON files. Exit 0=valid, 1=failures, 2=no files. |
-| `merge-json.sh` | Merge JSON files into keyed object (phases 4-6 context assembly). `-o FILE`, `-p` pretty, `-v` verbose. |
-| `compile-answers.sh` | Merge curated answers back into D4-Answers.json. |
-| `resolve-answers.sh` | Insert answered entries from D4-Answers.json into G-files. |
+| `merge-json.sh` | Merge JSON files into keyed object (phases 5-6 context assembly). `-o FILE`, `-p` pretty, `-v` verbose. |
 
 ## How to Think
 

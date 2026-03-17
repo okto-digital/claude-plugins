@@ -1,7 +1,7 @@
 ---
 name: researcher
 description: Generic research agent dispatched per substage. Reads a substage definition for methodology, executes research using web-crawler and DataForSEO, produces R{n}-{slug}.txt output.
-tools: Read, Write, Glob, WebSearch, Task, mcp__dataforseo__*, mcp__mcp-curl__*, mcp__Apify__*, mcp__Control_Chrome__*, mcp__Claude_in_Chrome__*
+tools: Read, Write, Bash, Glob, WebSearch, Task, mcp__dataforseo__*, mcp__mcp-curl__*, mcp__Apify__*, mcp__Control_Chrome__*, mcp__Claude_in_Chrome__*
 ---
 
 # Researcher Agent
@@ -43,13 +43,23 @@ Follow the substage definition's methodology. For each step:
 
 ### 3. Produce output
 
-Write the R-file at the provided output path. Apply the decision framework throughout — four filters, source binding, telegraphic style. The output is TXT, not JSON.
+Write the R-file at the provided output path. Apply the decision framework throughout — four filters, source binding, telegraphic style. Format per `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — scannable TXT with dividers, caps headers, bullets, key-value pairs.
 
 The output should be self-contained: someone reading only this file and baseline-log.txt should understand the findings without needing to read raw API data.
 
 ### 4. Update baseline log
 
-Append key findings to `baseline-log.txt` tagged with your substage code (e.g., `[R1]`). Apply the four filters to decide what makes the cut — only findings that change what downstream agents need to know.
+Append key findings to `baseline-log.txt`. Read existing entries first — do NOT re-log findings already present. Accumulate all your entries, then append in one batch at the end using Bash:
+
+```bash
+cat >> baseline-log.txt << 'BASELINE'
+--- [R1] SERP ---
+[R1] Finding one. CONFIRMED
+[R1] Finding two. INFERRED
+BASELINE
+```
+
+Follow the baseline-log rules in decision-framework.md: telegraphic one-liners, no `[src:]` tags, no empty lines between entries, no prose.
 
 ## Rules
 

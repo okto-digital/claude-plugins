@@ -1,7 +1,7 @@
 ---
 name: client-intelligence
 description: "Build a client profile from online research and registry data. Invoke when the user says 'research the client', 'client intelligence', 'run phase 2', 'client profile', 'who is this client', or after INIT phase is complete."
-allowed-tools: Read, Write, Glob, WebSearch, Task, AskUserQuestion
+allowed-tools: Read, Write, Bash, Glob, WebSearch, Task, AskUserQuestion
 version: 2.0.0
 ---
 
@@ -89,15 +89,25 @@ Used by both paths.
 
 ## Step 6: Write D2-Client-Intelligence.txt
 
-Free-form TXT. Apply the decision framework — four filters, source binding, telegraphic style. The agent decides what structure serves this client best.
+Free-form TXT. Apply the decision framework — four filters, source binding, telegraphic style. Format per `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — scannable TXT with dividers, caps headers, bullets, key-value pairs. The agent decides what structure serves this client best.
 
 Source-tag everything: `[src: tool]` for crawled/searched data, `[src: registry]` for business registry, `[src: operator]` for notes, `[src: url]` for specific pages.
 
 Red flags (if any) should be clearly surfaced — these are escalation-level findings that affect whether the agency takes the project.
 
-## Step 7: Write baseline-log.txt
+## Step 7: Append to baseline-log.txt
 
-Append key findings tagged with `[D2]`. Apply the four filters — only findings that change what downstream agents need to know.
+Append key findings tagged with `[D2]`. Read existing entries first — do NOT re-log findings from `[INIT]`. Accumulate all entries, then append in one batch using Bash:
+
+```bash
+cat >> baseline-log.txt << 'BASELINE'
+--- [D2] CLIENT INTELLIGENCE ---
+[D2] Finding one. CONFIRMED
+[D2] Finding two. INFERRED
+BASELINE
+```
+
+Follow the baseline-log rules in decision-framework.md: telegraphic one-liners, no `[src:]` tags, no empty lines, no prose.
 
 ## Step 8: Debug companion (when enabled)
 
@@ -127,3 +137,4 @@ Summarize what was gathered and suggest the next step (project-research).
 ## Reference Files
 
 - `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — shared decision framework
+- `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — scannable output formatting
