@@ -2,9 +2,9 @@
 
 **Code:** R6
 **Slug:** Reputation
-**Output:** `research/R6-Reputation.json`, `research/R6-Reputation.md`
+**Output:** `research/R6-Reputation.txt`
 **Dependencies:** R3-Competitors
-**Reads from:** `D1-Init.json`, `D2-Client-Intelligence.json`, `R3-Competitors.json`
+**Reads from:** `project.json`, `baseline-log.txt`, `research/R3-Competitors.txt`
 **MCP tools:** none required; web-crawler (required), WebSearch (required)
 
 ---
@@ -21,17 +21,9 @@ Review samples are direct input for messaging in Concept Creation and Proposal �
 
 ## Data Sources
 
-From `D1-Init.json`:
-- `notes` — reference site URLs
-
-From `D2-Client-Intelligence.json`:
-- `website.url` — client domain
-- `social.platforms` — known social profiles
-- `reputation` — existing reputation signals
-
-From `R3-Competitors.json`:
-- `competitors` ranks 1–3 URLs and domains (all locked competitors when `deep`)
-- `competitors[].social` and `competitors[].reputation` — surface-level baseline. Use as starting point to deepen, not re-discover.
+From `project.json`: notes (reference site URLs).
+From `baseline-log.txt`: mission, client URL, known social profiles, existing reputation signals, all prior findings including D2 and R3 highlights.
+From `research/R3-Competitors.txt`: competitor ranks 1–3 URLs and domains (all locked competitors when `deep`), surface-level social and reputation baseline from R3. Use as starting point to deepen, not re-discover.
 
 ---
 
@@ -39,8 +31,8 @@ From `R3-Competitors.json`:
 
 | Site | Reviews | Social | Website Trust Signals |
 |---|---|---|---|
-| Client | Full | Full (max 5 posts/platform) | Case studies + testimonials |
-| Competitors rank 1–3 | Full | Full (max 5 posts/platform) | Case studies + testimonials |
+| Client | Full | Full | Case studies + testimonials |
+| Competitors rank 1–3 | Full | Full | Case studies + testimonials |
 | Reference sites | None | None | Case studies + testimonials only |
 
 When `research_depth` = `deep`: expand to all locked competitors from R3, not just ranks 1–3.
@@ -55,23 +47,11 @@ For each site, use WebSearch to find review profiles and dispatch `web-crawler` 
 - **Google Business profile** — overall rating, total review count
 - **Other platforms** — Trustpilot, industry-specific platforms, app stores if applicable
 
-Per platform capture:
-- Overall rating and total count
-- Review intensity — how frequently new reviews appear (active, moderate, sparse)
-- 3–4 sample positive reviews — what customers praise
-- 3–4 sample medium reviews — what customers find mixed
-- 3–4 sample negative reviews — what customers complain about
-- Response behaviour — does the business respond, how quickly, what tone
+Per platform capture: overall rating and count, review intensity (how frequently new reviews appear), sample reviews across positive/mixed/negative to surface patterns in what customers praise and complain about, and response behaviour (does the business respond, how quickly, what tone).
 
 ### Step 2: Social presence audit
 
-For each active social platform, dispatch `web-crawler` or use WebSearch to record:
-- Platform name, URL, follower count, verification status
-- Posting frequency — active (weekly+), moderate (monthly), dormant (no recent posts)
-- Up to 5 recent posts sampled per active platform
-- Content type observed — video, image, carousel, text, story
-- Tone of voice and communication style from sampled posts
-- Engagement quality signal — average likes/comments relative to follower count
+For each active social platform, dispatch `web-crawler` or use WebSearch. Capture: platform presence and follower count, posting frequency, content types used, tone of voice and communication style from sampled posts, and engagement quality relative to follower count.
 
 ### Step 3: Website trust signals
 
@@ -82,16 +62,12 @@ For each site, dispatch `web-crawler` to check:
 
 ### Step 4: Gap analysis
 
-Compare client against analysed competitors. Each gap is one line: what's missing + why it matters. Do not restate per-site findings — synthesise across sites. Covers reviews, social, communication style, and trust signals together in flat `gaps` + `opportunities` lists. Max 5 opportunities.
+Compare client against analysed competitors. Synthesise across sites — don't restate per-site findings. Cover reviews, social, communication style, and trust signals together.
 
 ---
 
 ## Output
 
-Write output using the templates at `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/templates/R6-Reputation-template.md`.
+Write `research/R6-Reputation.txt`. Apply the decision framework. Append key findings to `baseline-log.txt` tagged with `[R6]`.
 
----
-
-## What passes to the next substage
-
-`research/R6-Reputation.json` — Proposal reads `reviews.samples` for messaging intelligence (what customers praise and complain about). Concept Creation reads `gap_analysis.gaps` and `website_trust_signals` for page structure and trust element recommendations. R9-Content uses `social` tone of voice signals if available.
+Proposal reads review samples for messaging intelligence. Concept Creation reads gap analysis and website trust signals for page structure and trust element recommendations. R9-Content uses social tone of voice signals if available.

@@ -37,46 +37,6 @@
 
 ---
 
-## Markdown Template
-
-Generate `D1-Init.md` from D1-Init.json using this template:
-
-```markdown
-# Project Brief — {project.name}
-
-## Project
-- **Client:** {project.client}
-- **URL:** {project.url} or "none (new build)"
-- **Build type:** {project.build_type}
-- **Site type:** {project.site_type}
-- **Goal:** {project.goal}
-- **Primary language:** {project.languages.primary}
-- **Additional languages:** {project.languages.other} or "none"
-- **Output language:** {project.output_language}
-- **Primary market:** {project.location.primary}
-- **Additional markets:** {project.location.other} or "none"
-
-## Research Config
-- **Research depth:** {research_config.research_depth}
-- **Output format:** {research_config.output_format}
-- **SERP max keywords:** {research_config.serp_max_keywords}
-- **Search landscape max keywords:** {research_config.search_landscape_max_keywords}
-- **Max competitors:** {research_config.competitors_max}
-- **Debug output:** {research_config.debug}
-
-## Pipeline Defaults
-- **Gap domains:** {pipeline_defaults.gap_domains}
-- **Parallel execution:** {pipeline_defaults.parallel_execution}
-- **Proposal style:** {pipeline_defaults.proposal_style}
-
-## Notes
-- {notes[0]}
-- {notes[1]}
-- ...
-```
-
----
-
 ## Project State Template
 
 ```markdown
@@ -90,7 +50,7 @@ Generate `D1-Init.md` from D1-Init.json using this template:
 
 | Phase | Name | Status | Output | Updated |
 |---|---|---|---|---|
-| 1 | INIT | complete | D1-Init.json | {YYYY-MM-DD} |
+| 1 | INIT | complete | project.json, D1-Init.txt | {YYYY-MM-DD} |
 | 2 | Client Intelligence | -- | -- | -- |
 | 3 | Research | -- | -- | -- |
 | 4 | Domain Gap Analysis | -- | -- | -- |
@@ -112,4 +72,4 @@ Generate `D1-Init.md` from D1-Init.json using this template:
 | 3.9 | Content Landscape & Strategy | R9-Content | -- | -- | -- |
 ```
 
-Phase 1 (INIT) is marked `complete` immediately — producing D1-Init.json IS the INIT phase output.
+Phase 1 (INIT) is marked `complete` immediately — producing project.json, D1-Init.txt, and baseline-log.txt IS the INIT phase output.

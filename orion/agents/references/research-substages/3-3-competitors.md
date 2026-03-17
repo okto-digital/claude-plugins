@@ -2,9 +2,9 @@
 
 **Code:** R3
 **Slug:** Competitors
-**Output:** `research/R3-Competitors.json`, `research/R3-Competitors.md`
+**Output:** `research/R3-Competitors.txt`
 **Dependencies:** R1-SERP, R2-Keywords
-**Reads from:** `D1-Init.json`, `R1-SERP.json`, `R2-Keywords.json`
+**Reads from:** `project.json`, `baseline-log.txt`, `research/R1-SERP.txt`, `research/R2-Keywords.txt`
 **MCP tools:** DataForSEO (optional), web-crawler (required), WebSearch (required)
 
 ---
@@ -19,17 +19,10 @@ Every subsequent substage uses this finalised list as its reference. The `rank` 
 
 ## Data Sources
 
-From `D1-Init.json`:
-- `project.languages` — primary + additional languages
-- `project.location` — primary + additional markets
-- `notes` — client-provided competitor URLs
-
-From `R1-SERP.json`:
-- `competitors` — commercial competitor domain list with keyword appearance counts, local appearance counts, and scope (local/national/both)
-
-From `R2-Keywords.json`:
-- `gap_analysis.keywords_not_targeted` — domains owning keywords the client doesn't target
-- Enriched competitor signals from R2 domain intersection and competitor discovery steps
+From `project.json`: languages, location, notes (client-provided competitor URLs).
+From `baseline-log.txt`: mission, all prior findings including R1 and R2 highlights.
+From `research/R1-SERP.txt`: commercial competitor domains from organic results, keyword appearance counts, scope.
+From `research/R2-Keywords.txt`: domains owning keywords the client doesn't target, enriched competitor signals from domain intersection and competitor discovery.
 
 ---
 
@@ -44,7 +37,7 @@ Merge competitor signals from three sources:
 
 Deduplicate. Rank by relevance, not raw frequency:
 - **Local competitors first** — domains with `scope: local` or `scope: both` from R1 are the client's direct market rivals. Weight `local_appearances` higher than general `keyword_appearances`.
-- **Ensure local representation** — at least half of the final list (e.g., 3 of 5) should be local/regional competitors if available. A national directory appearing in 20 keywords is less relevant than a local photographer appearing in 3 location keywords.
+- **Favour local representation** — a national directory appearing in 20 keywords is less relevant than a local business appearing in 3 location keywords.
 - **Break ties by keyword gap ownership** — competitors from R2 gap analysis (domains owning keywords the client doesn't target) get a boost.
 
 Trim to `research_config.competitors_max` (default: 5).
@@ -69,21 +62,14 @@ Assess each competitor based on visible signals only — no deep analysis. Flag 
 
 ### Step 4: Gap analysis
 
-Compare client against the competitor set as a whole. Each gap is one line: what's weak + why it matters. Do not restate per-competitor findings — synthesise across sites.
-
-- Gaps — what competitors collectively do well that the client doesn't, market/language coverage gaps, positioning angles no one owns
-- Opportunities — concrete actions for the client to differentiate
+Compare client against the competitor set as a whole. Synthesise across sites — don't restate per-competitor findings. Surface gaps (what competitors do well that the client doesn't), coverage gaps (markets, languages), and differentiation opportunities.
 
 ---
 
 ## Output
 
-Write output using the templates at `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/templates/R3-Competitors-template.md`.
+Write `research/R3-Competitors.txt`. Apply the decision framework. Append key findings to `baseline-log.txt` tagged with `[R3]`.
 
----
-
-## What passes to the next substage
-
-`research/R3-Competitors.json` — this is the reference file for all substages R4 through R9. Contains the finalised competitor list with ranks, market/language footprints, and baseline profiles. R5-Technology, R6-Reputation use ranks 1–3 (`basic`; all locked competitors when `deep`). R8-UX uses all locked competitors regardless of depth.
+This is the reference file for all substages R4 through R9. R5-Technology, R6-Reputation use ranks 1–3 (`basic`; all locked competitors when `deep`). R8-UX uses all locked competitors regardless of depth.
 
 **The competitor list is now locked. No new competitors are added after this point.**

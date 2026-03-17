@@ -2,9 +2,9 @@
 
 **Code:** R5
 **Slug:** Technology
-**Output:** `research/R5-Technology.json`, `research/R5-Technology.md`
+**Output:** `research/R5-Technology.txt`
 **Dependencies:** R3-Competitors
-**Reads from:** `D1-Init.json`, `D2-Client-Intelligence.json`, `R3-Competitors.json`
+**Reads from:** `project.json`, `baseline-log.txt`, `research/R3-Competitors.txt`
 **MCP tools:** DataForSEO (required), web-crawler (optional)
 
 ---
@@ -21,15 +21,9 @@ Analysis is performed on the homepage plus max 3 subpages per site (conversion p
 
 ## Data Sources
 
-From `D1-Init.json`:
-- `project.site_type` — influences which page types to select for analysis
-- `notes` — reference site URLs
-
-From `D2-Client-Intelligence.json`:
-- `website.url` — client domain for analysis
-
-From `R3-Competitors.json`:
-- `competitors` ranks 1–3 URLs and domains (all locked competitors when `deep`)
+From `project.json`: site type, notes (reference site URLs).
+From `baseline-log.txt`: mission, client URL, all prior findings including D2 and R3 highlights.
+From `research/R3-Competitors.txt`: competitor ranks 1–3 URLs and domains (all locked competitors when `deep`).
 
 ---
 
@@ -54,7 +48,7 @@ For each site, identify the 3 most representative subpages by crawling the site 
 2. Category or content page (if exists)
 3. Other high value page (portfolio, FAQ, landing page, about page)
 
-Log selected pages in the JSON output.
+Log selected pages in the output.
 
 ### Step 2: Technology stack detection
 
@@ -88,16 +82,12 @@ Note as surface scan only — not a legal assessment.
 
 ### Step 6: Gap analysis
 
-Compare client against analysed competitors and reference sites. Each gap is one line: what's weak + why it matters. Do not restate per-site findings — synthesise across sites. Covers tech stack, performance, accessibility, and GDPR together in flat `gaps` + `opportunities` lists.
+Compare client against analysed competitors and reference sites. Synthesise across sites — don't restate per-site findings. Cover tech stack, performance, accessibility, and GDPR together.
 
 ---
 
 ## Output
 
-Write output using the templates at `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/templates/R5-Technology-template.md`.
+Write `research/R5-Technology.txt`. Apply the decision framework. Append key findings to `baseline-log.txt` tagged with `[R5]`.
 
----
-
-## What passes to the next substage
-
-`research/R5-Technology.json` — Concept Creation reads `gap_analysis.opportunities` and `tech_stack` for technology recommendations. Proposal reads `wcag`, `gdpr` and `gap_analysis.gaps` for compliance and technical recommendations.
+Concept Creation reads gap analysis opportunities and tech stack for technology recommendations. Proposal reads WCAG, GDPR and gap analysis gaps for compliance and technical recommendations.

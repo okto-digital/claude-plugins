@@ -20,7 +20,7 @@ Dispatch any registered agent as a sub-agent via the Task tool. Automatically se
 |---|---|---|
 | web-crawler | `${CLAUDE_PLUGIN_ROOT}/agents/web-crawler.md` | Crawl a URL, return content in requested format |
 | dataforseo | `${CLAUDE_PLUGIN_ROOT}/agents/dataforseo.md` | Fetch live SEO data (SERP, keywords, backlinks, on-page, competitors, AI visibility) |
-| researcher | `${CLAUDE_PLUGIN_ROOT}/agents/researcher.md` | Execute one research substage, produce R{n}.json + R{n}.md |
+| researcher | `${CLAUDE_PLUGIN_ROOT}/agents/researcher.md` | Execute one research substage, produce R{n}-{slug}.txt |
 | domain-analyst | `${CLAUDE_PLUGIN_ROOT}/agents/domain-analyst.md` | Assess a group of domains' checkpoints, produce per-domain findings + questions |
 | concept-creator | `${CLAUDE_PLUGIN_ROOT}/agents/concept-creator.md` | Produce one concept section from pre-merged context, write per-section JSON + MD |
 | concept-reviewer | `${CLAUDE_PLUGIN_ROOT}/agents/concept-reviewer.md` | Read D5-Concept.json, check inter-section coherence, write D5-Review-Notes.md |
@@ -66,7 +66,7 @@ Use the appropriate template based on dispatch mode (see templates below).
 
 ### 6. Debug log and debug output (when enabled)
 
-If `research_config.debug` is `true` in D1-Init.json:
+If `research_config.debug` is `true` in project.json:
 - Write the full dispatch prompt to `tmp/dispatch-{agent-name}-{timestamp}.md` before dispatching.
 - Append to the dispatch prompt: "Debug mode is ON. For every `.md` file you write, also write a `-debug.txt` companion in `tmp/debug/`: telegraphic, bullet points, key facts only, no prose, no template structure."
 

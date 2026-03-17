@@ -2,9 +2,9 @@
 
 **Code:** R2
 **Slug:** Keywords
-**Output:** `research/R2-Keywords.json`, `research/R2-Keywords.md`
+**Output:** `research/R2-Keywords.txt`
 **Dependencies:** R1-SERP
-**Reads from:** `D1-Init.json`, `R1-SERP.json`
+**Reads from:** `project.json`, `baseline-log.txt`, `research/R1-SERP.txt`
 **MCP tools:** DataForSEO (required)
 
 ---
@@ -17,17 +17,9 @@ Take the seed keyword list from R1-SERP and expand, enrich, and analyse it. Add 
 
 ## Data Sources
 
-From `D1-Init.json`:
-- `research_config.search_landscape_max_keywords` — hard cap (default: 100)
-- `research_config.research_depth` — `basic` enforces cap, `deep` treats it as guideline
-- `project.languages` — primary + additional languages
-- `project.location` — primary + additional markets
-
-From `R1-SERP.json`:
-- `keywords` — seed keyword list with intent and volume estimates
-- `client_rankings` — keywords the client already ranks for (baseline)
-- `competitors` — commercial competitor domain list
-- `meta.language_location_matrix` — search engine settings per language x location
+From `project.json`: research config (search_landscape_max_keywords, research_depth), languages, location.
+From `baseline-log.txt`: mission, all prior findings including R1 highlights.
+From `research/R1-SERP.txt`: seed keywords, client rankings, competitor domains, language x location matrix.
 
 ---
 
@@ -35,13 +27,13 @@ From `R1-SERP.json`:
 
 ### Step 1: Keyword expansion
 
-**Goal:** Cast a wide net (50–100 keyword ideas per service cluster), then keep only the traffic-driving, service-relevant, location-relevant winners.
+Cast a wide net, then keep only the traffic-driving, service-relevant, location-relevant winners.
 
 Even in small markets (e.g., Slovakia), there are always keywords that drive real traffic — the job is to find them. Low absolute volume is fine if the keyword is high-intent and service-relevant. Zero volume is not — drop it.
 
 Call `dataforseo_labs_google_keyword_ideas` and `dataforseo_labs_google_related_keywords` on the seed keywords from R1-SERP. Set `limit: 200` per call to ensure broad expansion. Run per language x location combination from the matrix.
 
-**Multi-seed batching:** Do not pass all seeds in a single call — batch by semantic group (e.g., one call per service/product cluster of 3–5 related seeds). This produces more diverse results than one large batch. Each batch should return 50–100 keyword ideas.
+**Multi-seed batching:** Do not pass all seeds in a single call — batch by semantic group (e.g., one call per service/product cluster of related seeds). This produces more diverse results than one large batch.
 
 Deduplicate against existing keywords. **Relevance filter** (apply in this order):
 1. **Service match** — keyword must describe a service the client actually delivers or a direct query about hiring/booking that service. Off-topic keywords about adjacent industries or services the client does not offer are dropped (e.g., "svadobný darček" for a photographer).
@@ -81,11 +73,7 @@ After volume enrichment, split keywords into two buckets:
 - **Verified** — keywords with `volume > 0` (confirmed traffic). These are the main output.
 - **Unverified** — keywords where DataForSEO returned `null` volume. Null means no ads data — not necessarily zero searches, but unproven. These go to a separate `unverified_candidates` section.
 
-**Unverified rules:**
-- Cap at **15 best candidates** — pick by service relevance, intent strength, and cluster diversity
-- Do not mix unverified keywords into the main `keywords` array or `keyword_clusters`
-- Group unverified candidates by service area for easy scanning
-- Note recommended validation method per group (paid social test, content experiment, etc.)
+Keep unverified keywords separate from verified ones. Pick the best candidates by service relevance and intent strength, group by service area, and note how they might be validated (paid social test, content experiment, etc.).
 
 ### Step 8: Prioritisation and capping
 
@@ -96,33 +84,20 @@ Score **verified keywords only**. The goal is to surface keywords that will **dr
 - Gap opportunities (competitors rank, client doesn't) get priority boost — these are proven traffic drivers
 - Informational keywords retained but ranked lower unless content strategy signals need them
 
-Trim to `research_config.search_landscape_max_keywords` (default: 100). The final list should represent the best traffic opportunities for the client's services in their market. Log deprioritised keywords in `notes`.
+Respect `research_config.search_landscape_max_keywords` as the cap. The final list should represent the best traffic opportunities for the client's services in their market.
 
 ### Step 9: Keyword clustering
 
 Group the **verified keyword list** into semantic clusters. Each cluster represents one topic that a single page should target.
 
-For each cluster:
-- **primary_keyword** — the highest-volume keyword in the cluster (the main target)
-- **supporting_keywords** — semantically related keywords that belong on the same page
-- **page_type** — suggested page type: `homepage`, `service`, `portfolio`, `location`, `blog`, `landing`, `other`
-- **total_volume** — sum of all keyword volumes in the cluster
-- **avg_difficulty** — average difficulty across cluster keywords
+Each cluster should identify the primary keyword (highest volume), supporting keywords, suggested page type, and aggregate metrics (volume, difficulty). Drop clusters where zero keywords have verified volume.
 
-**Drop clusters where zero keywords have verified volume.** If an entire service area produced only null-volume keywords, it belongs in `unverified_candidates`, not in the clusters.
-
-Use semantic similarity and SERP overlap to group: if two keywords return largely the same top 10 results, they belong in the same cluster. `dataforseo_labs_google_related_keywords` output from Step 1 informs this grouping.
-
-One keyword should appear in only one cluster. If a keyword could fit multiple clusters, assign it to the one with the closest semantic match.
+Use semantic similarity and SERP overlap to group: if two keywords return largely the same top 10 results, they belong in the same cluster. `dataforseo_labs_google_related_keywords` output from Step 1 informs this grouping. One keyword per cluster.
 
 ---
 
 ## Output
 
-Write output using the templates at `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/templates/R2-Keywords-template.md`.
+Write `research/R2-Keywords.txt`. Apply the decision framework. Append key findings to `baseline-log.txt` tagged with `[R2]`.
 
----
-
-## What passes to the next substage
-
-`research/R2-Keywords.json` — R3 reads the enriched competitor domain list (from R1 SERP appearances + R2 domain intersection + R2 competitor discovery) to build the final competitor profile list. The `keyword_clusters` block feeds into Concept Creation (C1-Sitemap) for hub-and-spoke architecture planning.
+R3 will read your output for: enriched competitor domain list (R1 SERP appearances + R2 domain intersection + R2 competitor discovery), keyword clusters for site architecture planning.

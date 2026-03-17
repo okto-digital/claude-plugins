@@ -2,9 +2,9 @@
 
 **Code:** R1
 **Slug:** SERP
-**Output:** `research/R1-SERP.json`, `research/R1-SERP.md`
+**Output:** `research/R1-SERP.txt`
 **Dependencies:** none (first substage)
-**Reads from:** `D1-Init.json`, `D2-Client-Intelligence.json`
+**Reads from:** `project.json`, `baseline-log.txt`
 **MCP tools:** DataForSEO (required)
 
 ---
@@ -19,19 +19,8 @@ Establish the initial keyword set, check current SERP positions for the client, 
 
 ## Data Sources
 
-From `D1-Init.json`:
-- `project.site_type`, `project.goal` — what the client offers
-- `project.languages` — primary + additional languages
-- `project.location` — primary + additional markets
-- `research_config.serp_max_keywords` — hard cap (default: 50)
-- `research_config.research_depth` — `basic` enforces cap, `deep` treats it as guideline
-- `notes` — competitor hints, SEO keyword suggestions from operator
-
-From `D2-Client-Intelligence.json`:
-- `services_or_products` — primary source for keyword generation
-- `profile` — industry, description, markets
-- `website.url` — client domain for position tracking
-- `registry` — legal name for brand variant queries
+From `project.json`: site type, goal, languages, location, research config (serp_max_keywords, research_depth), notes.
+From `baseline-log.txt`: mission, client profile, services/products, client URL, any prior findings.
 
 ---
 
@@ -50,33 +39,25 @@ Map each combination to DataForSEO `location_code` and `language_code` parameter
 
 **2a. Build seed list BEFORE calling the API.** Do not pass a single generic word — construct a full seed list first:
 
-For each service/product from `D2.services_or_products`:
-- Generate 3–5 phrasing variants: noun forms, adjective forms, verb forms, common synonyms (e.g., "svadobný fotograf", "svadobná fotografia", "fotografovanie svadby", "fotenie svadby"). Natural phrasing per language — not literal translations.
+For each service/product from `baseline-log.txt` (captured during D2 Client Intelligence):
+- Generate phrasing variants: noun forms, adjective forms, verb forms, common synonyms (e.g., "svadobný fotograf", "svadobná fotografia", "fotografovanie svadby", "fotenie svadby"). Natural phrasing per language — not literal translations.
 - Combine high-priority variants with location modifiers (city, region, country).
 
-Add brand-related seeds:
-- Client name and brand variants (including legal name if different)
-- INIT notes (competitor hints, operator keyword suggestions)
+Add brand-related seeds: client name and brand variants, INIT notes (competitor hints, operator keyword suggestions).
 
-The seed list should contain **15–30 seed phrases** before any API call. A single generic word (e.g., "fotograf") is never sufficient — it returns irrelevant results.
+Build a substantial seed list before any API call. A single generic word (e.g., "fotograf") is never sufficient — it returns irrelevant results.
 
 **2b. Call `dataforseo_labs_google_keyword_ideas`** with the full seed list. Set `limit: 100` per call to ensure broad coverage. Run per language x location combination from the matrix.
 
 **Relevance guardrail:** Every keyword must describe a service the client actually delivers or a direct query about hiring/booking that service. Keywords about adjacent industries, complementary services the client does not offer, or generic topic words (e.g., "svadobný darček" for a photographer, "kameraman" if client does not offer video) are off-topic. Drop off-topic keywords before applying caps.
 
-**Cap rules (when research_depth = basic):**
-- Max 10 keywords per service or product
-- Max 3 location modifier variants per keyword
-- Max 30 keywords per language x location combination
-- Hard total cap: `research_config.serp_max_keywords` (default: 50)
-
-**Priority if cap reached:** core service/product keywords first, brand variants second, location modifiers third. Log deprioritised keywords in `notes`.
+Respect `research_config.serp_max_keywords` as the total cap. When trimming, prioritise core service/product keywords over brand variants over location modifiers. Log deprioritised keywords in `notes`.
 
 ### Step 3: Client current rankings
 
 Call `dataforseo_labs_google_ranked_keywords` on the client domain. Returns keywords the client already ranks for, with positions and traffic share.
 
-**Flag shady/off-brand keywords.** If the client ranks for keywords unrelated to their services — adult content, grey-zone terms, keyword-stuffed phrases, or anything that doesn't match D2's services_or_products — do NOT merge them into the seed list. Instead, log them separately in `notes` with a warning (e.g., "Client ranks for 'akty fotografia' — off-brand, possible keyword stuffing on current site. Excluded from seeds."). This informs the operator and prevents shady keywords from contaminating downstream research.
+**Flag shady/off-brand keywords.** If the client ranks for keywords unrelated to their services — adult content, grey-zone terms, keyword-stuffed phrases — do NOT merge them into the seed list. Log them separately with a warning. This informs the operator and prevents shady keywords from contaminating downstream research.
 
 Merge only relevant net-new keywords into the keyword list. Mark existing keywords with client position data.
 
@@ -109,34 +90,18 @@ Count domain appearances across all SERP results **with location weighting**:
 
 **7b. General competitors.** Count domain appearances across all remaining (non-location) SERP results for broader market competitors.
 
-**7c. Merge and rank.** Combine both lists. Each competitor gets:
-- `keyword_appearances` — total count across all SERPs
-- `local_appearances` — count in location-specific SERPs only
-- `scope` — `local` (appears mainly in client's location keywords), `national` (appears across broad keywords), `both`
+**7c. Merge and rank.** Combine both lists. Track total keyword appearances, local appearances, and scope (local, national, both). A domain with 3 local appearances is more relevant than one with 10 national appearances — the client competes with local businesses first.
 
-A domain with 3 local appearances is more relevant than one with 10 national appearances — the client competes with local businesses first.
-
-**7d. Compile top 10** (always 10 — `competitors_max` in research_config applies to R3 detailed profiling, not R1 frequency counting). Ensure at least 3 local competitors are included if available. Classify each by site type:
-- `commercial` — direct competitor selling same product/service
-- `directory` — aggregator or listing site
-- `media` — editorial, news, blog
-- `marketplace` — multi-vendor platform
-- `informational` — Wikipedia, how-to, reference
-
-Only `commercial` domains carry forward to R2 and R3. All others are noted but not profiled.
+**7d. Compile top competitors.** Favour local representation. Classify each by site type — commercial, directory, media, marketplace, informational. Only `commercial` domains carry forward to R2 and R3. All others are noted but not profiled.
 
 ### Step 8: Page type suggestions
 
-For each keyword, suggest which page type it likely maps to based on intent and topic: `homepage`, `product_category`, `product_detail`, `service_page`, `blog`, `location_page`, `faq`, `landing_page`.
+For each keyword, suggest which page type it likely maps to based on intent and topic (e.g., homepage, service page, blog, location page, landing page, etc.).
 
 ---
 
 ## Output
 
-Write output using the templates at `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/templates/R1-SERP-template.md`.
+Write `research/R1-SERP.txt`. Apply the decision framework. Append key findings to `baseline-log.txt` tagged with `[R1]`.
 
----
-
-## What passes to the next substage
-
-`research/R1-SERP.json` — R2 reads: seed keywords for expansion, client current rankings as baseline, competitor domain list for gap analysis.
+R2 will read your output for: seed keywords, client current rankings, competitor domain list.

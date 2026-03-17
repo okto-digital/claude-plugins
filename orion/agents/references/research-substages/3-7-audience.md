@@ -2,9 +2,9 @@
 
 **Code:** R7
 **Slug:** Audience
-**Output:** `research/R7-Audience.json`, `research/R7-Audience.md`
+**Output:** `research/R7-Audience.txt`
 **Dependencies:** R1-SERP, R2-Keywords, R3-Competitors, R4-Market
-**Reads from:** `D1-Init.json`, `D2-Client-Intelligence.json`, `R1-SERP.json`, `R2-Keywords.json`, `R3-Competitors.json`, `R4-Market.json`
+**Reads from:** `project.json`, `baseline-log.txt`, `research/R1-SERP.txt`, `research/R2-Keywords.txt`, `research/R3-Competitors.txt`, `research/R4-Market.txt`
 **MCP tools:** none (synthesis only — no new data collection)
 
 ---
@@ -13,35 +13,18 @@
 
 The only fully synthesised substage in the research phase — performs no new scraping or API calls. Distils everything gathered across R1–R4 into structured human profiles. Every layout decision, content choice, and feature recommendation in later phases should be traceable back to a persona defined here.
 
-Maximum 3 personas total — one per primary audience segment.
+Keep the persona count tight — one per distinct audience segment. Fewer well-researched personas beat many shallow ones.
 
 ---
 
 ## Data Sources
 
-From `D1-Init.json`:
-- `project.goal`, `project.site_type` — what the client offers and wants to achieve
-- `notes` — audience signals from operator
-
-From `D2-Client-Intelligence.json`:
-- `profile` — client markets, industry, description
-- Audience context from client digital footprint
-
-From `R1-SERP.json`:
-- `keywords` — intent patterns, search behaviour signals
-
-From `R2-Keywords.json`:
-- `keywords` — keyword gap and audience segment signals
-- `keyword_clusters` — semantic keyword clusters with page type mapping
-
-From `R3-Competitors.json`:
-- `competitors` — competitor audience targeting signals, positioning, messaging
-
-From `R4-Market.json`:
-- `customer_behaviour` — discovery patterns, buying journey, content preferences, device preferences
-- `website_expectations` — standard functionality, trust signals, conversion patterns
-- `payment_patterns` — payment method expectations
-- `gap_analysis.opportunities` — market-to-website connections
+From `project.json`: goal, site type, notes (audience signals from operator).
+From `baseline-log.txt`: mission, client profile, all prior findings including D2, R1–R4 highlights.
+From `research/R1-SERP.txt`: intent patterns, search behaviour signals.
+From `research/R2-Keywords.txt`: keyword gap and audience segment signals, semantic keyword clusters with page type mapping.
+From `research/R3-Competitors.txt`: competitor audience targeting signals, positioning, messaging.
+From `research/R4-Market.txt`: customer behaviour, website expectations, payment patterns, gap analysis opportunities.
 
 ---
 
@@ -49,41 +32,22 @@ From `R4-Market.json`:
 
 ### Step 1: Audience segment definition
 
-Before building personas, define distinct audience segments based on all available research. Each segment gets:
-- Segment name and description
-- Size and importance signal (primary, secondary, tertiary)
-- How they were identified (INIT notes, competitor targeting, search intent, market research)
-
-Personas are built from segments — not the other way around.
+Before building personas, define distinct audience segments based on all available research. Segments come from the data (INIT notes, competitor targeting, search intent, market research) — personas are built from segments, not the other way around.
 
 ### Step 2: Persona construction
 
-For each segment (max 3) construct a persona profile. Be concise — short phrases, not paragraphs:
-- **Demographics:** name, age, location, occupation, income level, lifestyle
-- **Profile:** personality type, values, emotional triggers, objections, decision process (research-heavy vs impulsive, influences they trust). Combine psychographics and buying motivation — they overlap.
-- **Digital behaviour:** where they search, preferred content types, device preference, acquisition channel most likely to reach them
-- **Trust threshold:** high, medium, low
-- **Keyword mapping:** which keywords from R2-Keywords this persona uses at each funnel stage (awareness, consideration, decision)
-- **Messaging:** 1–2 positioning statements that resonate with this persona
-- **Primary flag:** one persona is flagged as the primary design target
+For each segment, construct a concise persona profile. Areas to cover: demographics, psychographics and buying motivation, digital behaviour and device preferences, trust threshold, keyword mapping across funnel stages (from R2-Keywords), and messaging angles. Flag one persona as the primary design target.
+
+Be concise — short phrases, not paragraphs. The persona should be a decision tool for downstream agents, not a character study.
 
 ### Step 3: User journey map per persona
 
-Map the five-stage journey — awareness, consideration, decision, retention, advocacy:
-
-| Stage | Mindset | Where They Go | Pain Points | Content Needed | Website Implication |
-|---|---|---|---|---|---|
-
-`Website Implication` per stage is the most important column — translates persona behaviour directly into website page and content requirements.
+Map the journey from awareness through advocacy. The most important output per stage is the **website implication** — what does the site need to do at this stage to move this persona forward? This translates persona behaviour directly into page and content requirements.
 
 ---
 
 ## Output
 
-Write output using the templates at `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/templates/R7-Audience-template.md`.
+Write `research/R7-Audience.txt`. Apply the decision framework. Append key findings to `baseline-log.txt` tagged with `[R7]`.
 
----
-
-## What passes to the next substage
-
-`research/R7-Audience.json` — Concept Creation reads `personas`, `journey_map.website_implication` and `keyword_mapping` directly for site structure and content planning. R8-UX and R9-Content use persona device preferences and trust thresholds to contextualise their findings.
+Concept Creation reads personas, journey map website implications and keyword mapping for site structure and content planning. R8-UX and R9-Content use persona device preferences and trust thresholds to contextualise their findings.
