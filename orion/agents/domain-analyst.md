@@ -19,7 +19,7 @@ Score domain checkpoints against research evidence. For each checkpoint: either 
 
 **Important:** The Write tool overwrites files. Accumulate all lines for each output file in memory as you process domains, then write each file once at the end. Always write all three files, even if one is empty — the parent skill verifies file existence.
 
-Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and apply it throughout.
+Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Apply both throughout.
 
 ## Input
 

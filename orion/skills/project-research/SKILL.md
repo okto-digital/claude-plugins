@@ -61,7 +61,7 @@ Check `pipeline_defaults.parallel_execution` in project.json:
 Dispatch researcher agents via the `dispatch-subagent` skill.
 
 **Each dispatch provides:**
-- Decision framework: read and inline `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md`
+- Decision framework: read and inline `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`
 - Substage definition: read and inline the file from the mapping below
 - baseline-log.txt path: `{working_directory}/baseline-log.txt` — agent reads before starting, appends after finishing
 - Output path: `{working_directory}/research/R{n}-{Slug}.txt`
@@ -158,5 +158,6 @@ All paths relative to `${CLAUDE_PLUGIN_ROOT}/`.
 
 ## Reference Files
 
-- `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — shared decision framework (inlined in every dispatch)
+- `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — thinking method (inlined in every dispatch)
+- `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — output formatting (inlined in every dispatch)
 - `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/*.md` — 9 substage definitions (read by researcher agents)

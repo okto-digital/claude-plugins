@@ -1,7 +1,25 @@
 # Decision Framework
 
+A thinking method, not a template. This defines HOW to decide what matters. Formatting rules (`${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`) define HOW to write it down.
+
+## Mission
+
 Your job is not to fill templates. Your job is to make downstream decisions easier.
+
 Every line of output should pass this test: "If I deleted this line, would the next phase produce a worse result?" If no, the line shouldn't exist.
+
+The mission reframes facts. Without it, "dual lightbox plugins installed" is a technical observation. With it, it becomes "technical debt = cleanup item in proposal scope." Same fact, completely different utility. The mission turns researchers into proposal builders.
+
+## Consumer Awareness
+
+Know who reads your output and what decisions they make with it. This shapes what you capture.
+
+- Research (R-files) → consumed by Gap Analysis, Concept, Proposal narrative
+- Gap Analysis (G-files) → consumed by Concept (scope), Proposal (pricing)
+- Concept (C-files) → consumed by Proposal (scope, timeline, investment)
+- Client Intelligence (D2) → consumed by everything downstream
+
+If you don't know who consumes your output, you can't judge what's decision-relevant.
 
 ## Four Filters
 
@@ -15,57 +33,38 @@ Apply in order to every piece of information you encounter:
 
 **4. Self-Containment** — "Can someone understand this line without reading anything else?" One fact per line. Each line stands alone. If it needs context, add the context inline.
 
-## Source Binding
-
-Every finding must reference where it came from. No source = drop the finding.
-
-**In R-files, D-files, G-files, C-files:** Tag with `[src: category]` — categories: `tool`, `document`, `registry`, `operator`, `url`, `other`.
-
-**In baseline-log.txt:** Do NOT use `[src: ...]` tags. The source is the phase tag itself — `[R1]`, `[D2]`, `[G05]`, `[C3]`. The reader knows where to look for detail.
-
-**Confidence** — end every finding with one of:
-- CONFIRMED — found directly in source, verifiable
-- INFERRED — deduced from available evidence
-- MISSING — looked for, not found (the absence IS the finding)
-
-Findings that affect scope or pricing need 2 independent sources for CONFIRMED. Single source = INFERRED. An agent that reports MISSING is more valuable than one that invents a plausible number.
-
 ## Hypothesis
 
-When your task has a testable assumption, start with it. Verify, quantify, report. When a hypothesis is wrong, that's often the most valuable finding — capture what challenged it and what it means for downstream decisions. The implication matters more than the fact.
+When your task has a testable assumption, start with it. Verify, quantify, report.
+
+When a hypothesis is wrong, that's often the most valuable finding. Capture three things:
+- **Status** — CONFIRMED / PARTIALLY CONFIRMED / CHALLENGED / INVALIDATED
+- **Challenged by** — the specific evidence (one line, self-contained, quantified)
+- **Implication** — how this changes the downstream decision
+
+The implication matters more than the fact. A challenged hypothesis without an implication is just a note. With an implication, it's a course correction.
+
+## Baseline Awareness
+
+Read `baseline-log.txt` before starting any work. It contains key findings from all preceding agents — the cumulative knowledge of what THIS project looks like.
+
+The baseline defines "typical" so you know what's worth noting (deviations) and what's noise (expected). A photographer having a portfolio page is expected — don't note. Zero CTAs and 4 clicks to contact is an anomaly — note it.
+
+Two baselines compound:
+- **Static** — what's typical for this project type (provided by substage definitions)
+- **Cumulative** — what prior agents found about THIS project (in baseline-log.txt)
+
+By later phases, the agent reads 20-40 lines and starts from a precise, evidence-backed model — not from "typical portfolio redesign."
+
+## Stopping Rule
+
+Done when you can answer the decision question, not when you've checked everything. If you've verified the hypothesis and captured the anomalies, stop. More research after the decision question is answered = noise.
 
 ## Escalation
 
 If you find something that changes the project framing — not just your current task — surface it immediately. Don't bury it as an anomaly.
 
-## Output Style
-
-TXT, not JSON. Telegraphic — no prose, no filler, no hedging. Self-contained. Source-tagged (in output files). Scannable formatting per `formatting-rules.md`.
-
-## Baseline Log
-
-<critical>
-The baseline log is a **signal index**, not a research summary. Only key findings that change downstream decisions. Telegraphic one-liners. No prose, no paragraphs, no roadmaps, no methodology notes.
-</critical>
-
-**Format:**
-```
---- [R1] SERP ---
-[R1] Client ranks for 2 keywords only, zero commercial keywords indexed. CONFIRMED
-[R1] "komerčná fotografia" greenfield — zero related keywords, jms-studio.sk sole occupant. CONFIRMED
-```
-
-**Rules:**
-- Start with a `--- [CODE] TITLE ---` header before your entries
-- Tag every line with your phase code: `[INIT]`, `[D2]`, `[R1]`–`[R9]`, `[D4]`, etc.
-- One fact per line. If it takes more than one line, split it or you're including too much
-- No `[src: ...]` tags — the phase code IS the source reference
-- No empty lines between your entries
-- End each line with CONFIRMED, INFERRED, or MISSING
-- **Deduplicate:** Read existing baseline-log entries BEFORE appending. If a finding already exists, do NOT re-log it. Only add if you bring new quantification or a materially different angle
-- **Append at once:** Accumulate all your entries, then append them in a single batch at the end of your work. Do not append incrementally during processing
-- Do NOT invent tags. The only valid confidence markers are CONFIRMED, INFERRED, MISSING. Do not use CRITICAL DECISION POINT or other ad-hoc labels
-- Never edit or delete existing lines — append only
+Examples: the local market has no websites (questions whether a website proposal is right), the client is legally prohibited from collecting leads (invalidates conversion-focused mission), 90% of the target audience uses RFPs not websites (changes the sales channel assumption).
 
 ## What Not To Do
 
@@ -74,3 +73,4 @@ The baseline log is a **signal index**, not a research summary. Only key finding
 - Do not ignore evidence that challenges the hypothesis
 - Do not include findings without a source tag (in output files) or phase tag (in baseline-log)
 - Do not fill gaps with plausible guesses — report MISSING
+- Do not generate more findings than pass the four filters — if you have 30+, you're not filtering hard enough

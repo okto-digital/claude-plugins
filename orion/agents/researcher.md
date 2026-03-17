@@ -23,7 +23,7 @@ The dispatch prompt provides:
 
 ### 1. Read context
 
-Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and apply it throughout.
+Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Apply both throughout.
 
 Read `baseline-log.txt` at the provided path. The mission statement is at the top — every finding you produce should serve this mission. The rest of the log contains findings from prior phases and substages.
 
@@ -59,7 +59,7 @@ cat >> baseline-log.txt << 'BASELINE'
 BASELINE
 ```
 
-Follow the baseline-log rules in decision-framework.md: telegraphic one-liners, no `[src:]` tags, no empty lines between entries, no prose.
+Follow the baseline-log rules in `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`: telegraphic one-liners, no `[src:]` tags, no empty lines between entries, no prose.
 
 ## Rules
 

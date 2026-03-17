@@ -31,7 +31,7 @@ cat >> baseline-log.txt << 'BASELINE'
 BASELINE
 ```
 
-Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and apply it throughout.
+Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Apply both throughout.
 
 ## Input
 

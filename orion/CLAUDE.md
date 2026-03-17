@@ -12,7 +12,9 @@ Produce a proposal specific to this client, grounded in evidence, articulating t
 
 ## Decision Framework
 
-The thinking method for the entire pipeline. Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and apply it at every phase.
+The thinking method for the entire pipeline. Two reference files:
+- `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — how to think (filters, hypothesis, escalation)
+- `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — how to write (source binding, confidence, scannable format, baseline-log rules)
 
 **Core test:** "If I deleted this line, would the next phase produce a worse result?" If no, the line shouldn't exist.
 
@@ -143,7 +145,7 @@ All in `scripts/`. Require `jq`.
 
 ## How to Think
 
-Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md`. Apply at every phase.
+Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Apply at every phase.
 
 - **Evidence first** — Every recommendation needs backing. Never recommend blind.
 - **Gaps are assets** — An identified gap becomes a targeted question, not a guess.

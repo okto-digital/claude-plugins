@@ -9,7 +9,7 @@ version: 2.0.0
 
 Build a profile of the client's current state through online research. Pure discovery — no analysis, no recommendations. Branches on `build_type` from project.json.
 
-Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and apply it throughout.
+Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Apply both throughout.
 
 ---
 
@@ -89,7 +89,7 @@ Used by both paths.
 
 ## Step 6: Write D2-Client-Intelligence.txt
 
-Free-form TXT. Apply the decision framework — four filters, source binding, telegraphic style. Format per `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — scannable TXT with dividers, caps headers, bullets, key-value pairs. The agent decides what structure serves this client best.
+Free-form TXT. Apply the decision framework (four filters) and formatting rules (`${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`) — scannable TXT with source binding, confidence markers, dividers, caps headers, bullets, key-value pairs. The agent decides what structure serves this client best.
 
 Source-tag everything: `[src: tool]` for crawled/searched data, `[src: registry]` for business registry, `[src: operator]` for notes, `[src: url]` for specific pages.
 
@@ -107,7 +107,7 @@ cat >> baseline-log.txt << 'BASELINE'
 BASELINE
 ```
 
-Follow the baseline-log rules in decision-framework.md: telegraphic one-liners, no `[src:]` tags, no empty lines, no prose.
+Follow the baseline-log rules in `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`: telegraphic one-liners, no `[src:]` tags, no empty lines, no prose.
 
 ## Step 8: Debug companion (when enabled)
 
