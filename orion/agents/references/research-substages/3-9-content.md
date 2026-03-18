@@ -3,6 +3,7 @@
 **Code:** R9
 **Slug:** Content
 **Output:** `research/R9-Content.txt`
+**Hypothesis:** Content exists but is unstructured and not aligned with keyword opportunities
 **Dependencies:** R3-Competitors, R7-Audience (hard); R2-Keywords, R4-Market, R6-Reputation (soft — available from prior waves); R8-UX (optional — may not be available if running in parallel)
 **Reads from:** `project.json`, `baseline-log.txt`, `research/R2-Keywords.txt`, `research/R3-Competitors.txt`, `research/R4-Market.txt`, `research/R7-Audience.txt`, `research/R6-Reputation.txt`, `research/R8-UX.txt` (if available)
 **MCP tools:** none required; web-crawler (required), WebSearch (required)
@@ -54,7 +55,7 @@ From R4-Market, identify industry content standards — content types customers 
 
 ## Output
 
-Write `research/R9-Content.txt`. Apply the decision framework. Append key findings to `baseline-log.txt` tagged with `[R9]`.
+Write `research/R9-Content.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R9]`.
 
 Final research output. Concept Creation reads brand voice findings for messaging direction and gap analysis for content strategy inputs. C1-Sitemap combines this with R2 keyword clusters for site architecture.
 

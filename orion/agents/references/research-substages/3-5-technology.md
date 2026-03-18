@@ -3,6 +3,7 @@
 **Code:** R5
 **Slug:** Technology
 **Output:** `research/R5-Technology.txt`
+**Hypothesis:** Current site is technically adequate but has specific performance or accessibility gaps
 **Dependencies:** R3-Competitors
 **Reads from:** `project.json`, `baseline-log.txt`, `research/R3-Competitors.txt`
 **MCP tools:** DataForSEO (required), web-crawler (optional)
@@ -88,6 +89,6 @@ Compare client against analysed competitors and reference sites. Synthesise acro
 
 ## Output
 
-Write `research/R5-Technology.txt`. Apply the decision framework. Append key findings to `baseline-log.txt` tagged with `[R5]`.
+Write `research/R5-Technology.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R5]`.
 
 Concept Creation reads gap analysis opportunities and tech stack for technology recommendations. Proposal reads WCAG, GDPR and gap analysis gaps for compliance and technical recommendations.

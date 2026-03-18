@@ -10,17 +10,6 @@ Every line of output should pass this test: "If I deleted this line, would the n
 
 The mission reframes facts. Without it, "dual lightbox plugins installed" is a technical observation. With it, it becomes "technical debt = cleanup item in proposal scope." Same fact, completely different utility. The mission turns researchers into proposal builders.
 
-## Consumer Awareness
-
-Know who reads your output and what decisions they make with it. This shapes what you capture.
-
-- Research (R-files) → consumed by Gap Analysis, Concept, Proposal narrative
-- Gap Analysis (G-files) → consumed by Concept (scope), Proposal (pricing)
-- Concept (C-files) → consumed by Proposal (scope, timeline, investment)
-- Client Intelligence (D2) → consumed by everything downstream
-
-If you don't know who consumes your output, you can't judge what's decision-relevant.
-
 ## Four Filters
 
 Apply in order to every piece of information you encounter:

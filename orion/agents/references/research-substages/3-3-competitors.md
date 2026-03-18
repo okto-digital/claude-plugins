@@ -3,6 +3,7 @@
 **Code:** R3
 **Slug:** Competitors
 **Output:** `research/R3-Competitors.txt`
+**Hypothesis:** Competitors have stronger web presence and working conversion paths
 **Dependencies:** R1-SERP, R2-Keywords
 **Reads from:** `project.json`, `baseline-log.txt`, `research/R1-SERP.txt`, `research/R2-Keywords.txt`
 **MCP tools:** DataForSEO (optional), web-crawler (required), WebSearch (required)
@@ -68,7 +69,7 @@ Compare client against the competitor set as a whole. Synthesise across sites â€
 
 ## Output
 
-Write `research/R3-Competitors.txt`. Apply the decision framework. Append key findings to `baseline-log.txt` tagged with `[R3]`.
+Write `research/R3-Competitors.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R3]`.
 
 This is the reference file for all substages R4 through R9. R5-Technology, R6-Reputation use ranks 1â€“3 (`basic`; all locked competitors when `deep`). R8-UX uses all locked competitors regardless of depth.
 

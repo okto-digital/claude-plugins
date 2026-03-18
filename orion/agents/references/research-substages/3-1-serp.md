@@ -3,6 +3,7 @@
 **Code:** R1
 **Slug:** SERP
 **Output:** `research/R1-SERP.txt`
+**Hypothesis:** Client is invisible in local search for core services
 **Dependencies:** none (first substage)
 **Reads from:** `project.json`, `baseline-log.txt`
 **MCP tools:** DataForSEO (required)
@@ -102,6 +103,6 @@ For each keyword, suggest which page type it likely maps to based on intent and 
 
 ## Output
 
-Write `research/R1-SERP.txt`. Apply the decision framework. Append key findings to `baseline-log.txt` tagged with `[R1]`.
+Write `research/R1-SERP.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R1]`.
 
 R2 will read your output for: seed keywords, client current rankings, competitor domain list.

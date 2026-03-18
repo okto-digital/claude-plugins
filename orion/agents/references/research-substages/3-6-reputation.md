@@ -3,6 +3,7 @@
 **Code:** R6
 **Slug:** Reputation
 **Output:** `research/R6-Reputation.txt`
+**Hypothesis:** Client lacks trust signals that competitors have established
 **Dependencies:** R3-Competitors
 **Reads from:** `project.json`, `baseline-log.txt`, `research/R3-Competitors.txt`
 **MCP tools:** none required; web-crawler (required), WebSearch (required)
@@ -68,6 +69,6 @@ Compare client against analysed competitors. Synthesise across sites — don't r
 
 ## Output
 
-Write `research/R6-Reputation.txt`. Apply the decision framework. Append key findings to `baseline-log.txt` tagged with `[R6]`.
+Write `research/R6-Reputation.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R6]`.
 
 Proposal reads review samples for messaging intelligence. Concept Creation reads gap analysis and website trust signals for page structure and trust element recommendations. R9-Content uses social tone of voice signals if available.

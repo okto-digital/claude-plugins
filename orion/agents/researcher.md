@@ -43,7 +43,7 @@ Follow the substage definition's methodology. For each step:
 
 ### 3. Produce output
 
-Write the R-file at the provided output path. Apply the decision framework throughout — four filters, source binding, telegraphic style. Format per `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — scannable TXT with dividers, caps headers, bullets, key-value pairs.
+Write the R-file at the provided output path. Apply both reference files: decision framework for filtering and hypothesis tracking, formatting rules for source binding, confidence markers, and scannable TXT layout.
 
 The output should be self-contained: someone reading only this file and baseline-log.txt should understand the findings without needing to read raw API data.
 
@@ -75,6 +75,7 @@ Follow the baseline-log rules in `${CLAUDE_PLUGIN_ROOT}/references/formatting-ru
 - If WebSearch returns no useful results, note and continue
 - Respect research_config limits from project.json
 - Return the full result to the orchestrator — do not summarize
+- **Sparse data:** If a substage yields very little (e.g., no DataForSEO results, no competitors found, blocked crawls), report what you found, note what's missing with MISSING tags, and stop. Do not pad thin findings with speculation. A short R-file with 5 solid findings beats a long one with filler
 
 ## Sub-agent Dispatch
 

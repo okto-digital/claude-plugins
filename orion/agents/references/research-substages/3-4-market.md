@@ -3,6 +3,7 @@
 **Code:** R4
 **Slug:** Market
 **Output:** `research/R4-Market.txt`
+**Hypothesis:** Industry trends create opportunities or constraints for the website approach
 **Dependencies:** R3-Competitors
 **Reads from:** `project.json`, `baseline-log.txt`, `research/R3-Competitors.txt`
 **MCP tools:** DataForSEO (optional), web-crawler (required), WebSearch (required)
@@ -66,6 +67,6 @@ Synthesise findings into concrete website decisions — cross-cutting insights t
 
 ## Output
 
-Write `research/R4-Market.txt`. Apply the decision framework. Append key findings to `baseline-log.txt` tagged with `[R4]`.
+Write `research/R4-Market.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R4]`.
 
 R7-Audience reads customer behaviour and website expectations as primary inputs for persona construction. Concept Creation reads gap analysis opportunities and trends directly.

@@ -82,7 +82,7 @@ Append `[D4]` entries to `baseline-log.txt`. Apply the four filters — only wha
 - NICE-TO-HAVE items flagged as NOTED
 - Industry standards (STANDARD items)
 
-Source-tag: `[src: gap-analysis]` for analyst findings, `[src: client]` for client answers, `[src: agency]` for agency decisions.
+Follow the baseline-log rules in `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`: telegraphic one-liners, no `[src:]` tags, no empty lines, no prose. End each line with CONFIRMED, INFERRED, or MISSING.
 
 ### 4. Return summary
 

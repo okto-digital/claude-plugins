@@ -91,7 +91,7 @@ Used by both paths.
 
 Free-form TXT. Apply the decision framework (four filters) and formatting rules (`${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`) — scannable TXT with source binding, confidence markers, dividers, caps headers, bullets, key-value pairs. The agent decides what structure serves this client best.
 
-Source-tag everything: `[src: tool]` for crawled/searched data, `[src: registry]` for business registry, `[src: operator]` for notes, `[src: url]` for specific pages.
+Source-tag every finding per `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` § Source Binding.
 
 Red flags (if any) should be clearly surfaced — these are escalation-level findings that affect whether the agency takes the project.
 

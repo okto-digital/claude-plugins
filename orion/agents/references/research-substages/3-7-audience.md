@@ -3,6 +3,7 @@
 **Code:** R7
 **Slug:** Audience
 **Output:** `research/R7-Audience.txt`
+**Hypothesis:** Target audience has specific device preferences and trust thresholds that affect UX decisions
 **Dependencies:** R1-SERP, R2-Keywords, R3-Competitors, R4-Market
 **Reads from:** `project.json`, `baseline-log.txt`, `research/R1-SERP.txt`, `research/R2-Keywords.txt`, `research/R3-Competitors.txt`, `research/R4-Market.txt`
 **MCP tools:** none (synthesis only — no new data collection)
@@ -48,6 +49,6 @@ Map the journey from awareness through advocacy. The most important output per s
 
 ## Output
 
-Write `research/R7-Audience.txt`. Apply the decision framework. Append key findings to `baseline-log.txt` tagged with `[R7]`.
+Write `research/R7-Audience.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R7]`.
 
 Concept Creation reads personas, journey map website implications and keyword mapping for site structure and content planning. R8-UX and R9-Content use persona device preferences and trust thresholds to contextualise their findings.

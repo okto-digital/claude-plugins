@@ -12,19 +12,9 @@ Produce a proposal specific to this client, grounded in evidence, articulating t
 
 ## Decision Framework
 
-The thinking method for the entire pipeline. Two reference files:
-- `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — how to think (filters, hypothesis, escalation)
+Two reference files govern every agent:
+- `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — how to think (mission, four filters, hypothesis, baseline awareness, stopping rule, escalation)
 - `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — how to write (source binding, confidence, scannable format, baseline-log rules)
-
-**Core test:** "If I deleted this line, would the next phase produce a worse result?" If no, the line shouldn't exist.
-
-**Four filters** applied to every piece of information:
-1. **Decision Relevance** — Would this change what we propose, price, ask, or recommend?
-2. **Anomaly Detection** — Is this different from what you'd expect?
-3. **Quantification** — Can you put a number on it?
-4. **Self-Containment** — Can someone understand this line without reading anything else?
-
-**Source binding** — Every finding references where it came from. No source = drop the finding.
 
 Agents are not template fillers. They think, filter, and produce findings that make downstream decisions easier.
 
@@ -68,9 +58,10 @@ The only structured data file in the pipeline. Contains: client metadata, langua
 Append-only cumulative knowledge file. Every agent reads it before starting, appends key findings after finishing.
 
 - `--- MISSION ---` block at the top (one sentence framing the entire pipeline)
-- Tagged entries: `[INIT]`, `[D2]`, `[R1]`...`[R9]`, then later phases
-- Source-tagged: `[src: operator]`, `[src: tool]`, `[src: registry]`, `[src: url]`
+- Tagged entries: `[INIT]`, `[D2]`, `[R1]`...`[R9]`, `[D4]`, then later phases
+- No `[src:]` tags — the phase code IS the source reference
 - Four filters applied to every entry — only what changes downstream decisions
+- Full rules: `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` § Baseline Log
 
 ### TXT Output
 
@@ -143,9 +134,7 @@ All in `scripts/`. Require `jq`.
 | `validate-json.sh` | Validate JSON files. Exit 0=valid, 1=failures, 2=no files. |
 | `merge-json.sh` | Merge JSON files into keyed object (phases 5-6 context assembly). `-o FILE`, `-p` pretty, `-v` verbose. |
 
-## How to Think
-
-Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Apply at every phase.
+## Consulting Principles
 
 - **Evidence first** — Every recommendation needs backing. Never recommend blind.
 - **Gaps are assets** — An identified gap becomes a targeted question, not a guess.

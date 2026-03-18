@@ -3,6 +3,7 @@
 **Code:** R2
 **Slug:** Keywords
 **Output:** `research/R2-Keywords.txt`
+**Hypothesis:** Untapped keyword opportunities exist in the client's service categories
 **Dependencies:** R1-SERP
 **Reads from:** `project.json`, `baseline-log.txt`, `research/R1-SERP.txt`
 **MCP tools:** DataForSEO (required)
@@ -98,6 +99,6 @@ Use semantic similarity and SERP overlap to group: if two keywords return largel
 
 ## Output
 
-Write `research/R2-Keywords.txt`. Apply the decision framework. Append key findings to `baseline-log.txt` tagged with `[R2]`.
+Write `research/R2-Keywords.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R2]`.
 
 R3 will read your output for: enriched competitor domain list (R1 SERP appearances + R2 domain intersection + R2 competitor discovery), keyword clusters for site architecture planning.
