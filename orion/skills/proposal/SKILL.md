@@ -47,7 +47,9 @@ Read `project.json` for client name, project name, build_type, site_type, output
 - `project.json` — project metadata, client name, output language, pipeline defaults
 - `D5-Concept.txt` — concatenation of all 9 concept sections as scannable TXT
 
-D5-Concept.txt contains all 9 concept sections separated by `--- C{n}-{Slug} ---` headers. Each section is scannable TXT with `====` dividers, CAPS headers, `•` bullets, `Key: Value` pairs. The concept sections already contain all evidence from research and gap analysis — the proposal does NOT need to read upstream pipeline files (D2, D3, D4, R-files, baseline-log).
+D5-Concept.txt contains up to 9 concept sections separated by `--- C{n}-{Slug} ---` headers. Each section is scannable TXT with `====` dividers, CAPS headers, `•` bullets, `Key: Value` pairs. If Phase 5 was partial (some sections skipped/failed), D5 will contain fewer than 9 — adapt the proposal to cover only the sections present.
+
+The concept sections already contain all evidence from research and gap analysis — the proposal does NOT need to read upstream pipeline files (D2, D3, D4, R-files, baseline-log).
 
 **Concept section quick reference:**
 - **C1-Sitemap** — page tree with priorities, keywords, traffic estimates (SITEMAP SUMMARY + PAGE TREE)
@@ -71,12 +73,12 @@ Populate from project.json:
 
 ### Step 4: Build problem statement
 
-Extract from concept sections — the evidence is already embedded in the concept via `[src: R/G codes]` and CONFIRMED/INFERRED tags. Build:
+The concept sections are solution-oriented — they propose what SHOULD BE. Extract the problems by reading what the solutions address. Evidence is embedded via `[src: R/G codes]` and CONFIRMED/INFERRED tags. Build:
 
-1. **Current situation** -- 2-3 sentences describing where the client is today. Draw from C1 (current SEO gaps implied by keyword opportunities), C8 (current SEO state), C3 (current technology state), C9 (current compliance gaps).
-2. **Pain points** -- specific business problems the website should solve. Source from C2 (functional gaps), C6 (conversion path gaps), C1 (missing pages for key search terms).
-3. **Key challenges** -- obstacles or constraints. Source from C3 (technical constraints), C7 (risks), C9 (compliance requirements).
-4. **Evidence** -- grouped by domain, max 3-5 findings per domain. Extract from the `[src: ...]` references and CONFIRMED findings within concept sections.
+1. **Current situation** -- 2-3 sentences describing where the client is today. Infer from: C1 (keyword opportunities = current SEO gaps), C8 (SEO monitoring targets = current deficiencies), C3 (technology recommendations = current tech limitations), C9 (compliance targets = current compliance gaps).
+2. **Pain points** -- specific business problems. Infer from: C2 (functional requirements = what's currently missing), C6 (conversion funnels = paths that don't exist yet), C1 (must-have pages = content gaps).
+3. **Key challenges** -- obstacles or constraints. Source from: C3 NOTES (technical constraints), C7 RISKS section, C9 (compliance complexity).
+4. **Evidence** -- grouped by concept domain, max 3-5 findings per domain. Extract CONFIRMED findings from within concept sections.
 
 **Selection criteria for evidence:**
 - Numbers over qualitative observations
@@ -84,7 +86,7 @@ Extract from concept sections — the evidence is already embedded in the concep
 - Gaps and opportunities over confirmations
 - Skip domains with no meaningful findings
 
-Group into: Search & SEO, Competitive Landscape, Market & Industry, Target Audience, Technology & Performance, Reputation & Trust, UX & Visual, Content.
+Group by concept domains: Sitemap & SEO (C1, C8), Functionality (C2), Technology (C3), Content & Voice (C4), Visual & UX (C5, C6), Compliance (C9).
 
 ### Step 5: Build proposed solution
 

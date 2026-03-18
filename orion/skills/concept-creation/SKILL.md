@@ -70,7 +70,7 @@ Each dispatch provides:
 - Source files: list of file paths from the Pre-Read Table below
 - Plugin root path: `${CLAUDE_PLUGIN_ROOT}`
 - Model: opus (synthesis and reasoning)
-- MCP hints: none (concept creation uses Read + Write + Edit only)
+- MCP hints: none (concept creation uses Read + Write + Edit + Bash only, no MCP tools)
 
 **Execution order:**
 1. **Wave 1** — C1 + C2 + C5 (3 parallel)
@@ -151,21 +151,21 @@ Next step: Review D5-Concept.txt and D5-Review-Notes.md, then run proposal.
 
 ## Pre-Read Table
 
-Every section reads baseline-log.txt and project.json. Additional source files per section:
+Every section reads `baseline-log.txt` and `project.json` from the working directory root. Additional source files per section (all paths relative to working directory):
 
 | Section | Additional Source Files |
 |---|---|
-| C1-Sitemap | R2-Keywords.txt, R9-Content.txt, D4 confirmed files |
-| C2-Functional | D2-Client-Intelligence.txt, D4 confirmed files |
-| C5-Visual | R8-UX.txt, R9-Content.txt |
-| C3-Technical-Architecture | C2-Functional.txt, R5-Technology.txt |
-| C4-Content-Strategy | C1-Sitemap.txt, R9-Content.txt |
-| C6-UX-Strategy | C1-Sitemap.txt, R7-Audience.txt, R8-UX.txt |
-| C7-Project-Roadmap | C1-Sitemap.txt, C2-Functional.txt, C3-Technical-Architecture.txt |
-| C8-SEO-Strategy | C1-Sitemap.txt, R1-SERP.txt, R2-Keywords.txt |
-| C9-Compliance | C2-Functional.txt, R5-Technology.txt |
+| C1-Sitemap | `research/R2-Keywords.txt`, `research/R9-Content.txt`, `D4-Confirmed.txt` |
+| C2-Functional | `D2-Client-Intelligence.txt`, `D4-Confirmed.txt` |
+| C5-Visual | `research/R8-UX.txt`, `research/R9-Content.txt` |
+| C3-Technical-Architecture | `concept/C2-Functional.txt`, `research/R5-Technology.txt` |
+| C4-Content-Strategy | `concept/C1-Sitemap.txt`, `research/R9-Content.txt` |
+| C6-UX-Strategy | `concept/C1-Sitemap.txt`, `research/R7-Audience.txt`, `research/R8-UX.txt` |
+| C7-Project-Roadmap | `concept/C1-Sitemap.txt`, `concept/C2-Functional.txt`, `concept/C3-Technical-Architecture.txt` |
+| C8-SEO-Strategy | `concept/C1-Sitemap.txt`, `research/R1-SERP.txt`, `research/R2-Keywords.txt` |
+| C9-Compliance | `concept/C2-Functional.txt`, `research/R5-Technology.txt` |
 
-Source file paths are relative to the working directory. Prefix with `{working_directory}/` for absolute paths. For R-files and D-files, use the `research/` and root directories respectively. For C-files, use `concept/`.
+Prefix all paths with `{working_directory}/` for absolute paths when passing to dispatch.
 
 Note: baseline-log.txt by Phase 5 contains 40-80 lines of cumulative findings from phases 1-4 plus [C1]-[C9] entries as waves complete. This IS the shared context. Individual files provide detail when the baseline-log entry isn't enough.
 

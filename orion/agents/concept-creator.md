@@ -9,6 +9,7 @@ tools:
   - Read
   - Write
   - Edit
+  - Bash
 mcpServers: []
 ---
 
@@ -57,7 +58,7 @@ Read project.json for project configuration (client name, languages, location, i
 Read the source files listed in the dispatch prompt:
 - D2-Client-Intelligence.txt for direct client facts (tech stack, team size, business model, integrations)
 - Relevant R-files for detailed research (per section definition methodology)
-- D4 confirmed/question files for gap analysis decisions
+- D4-Confirmed.txt for resolved gap analysis findings
 - Upstream C-files (wave 2/3 only — prior concept outputs)
 
 **Fallback:** baseline-log entries are your primary evidence. If a baseline-log entry doesn't have enough detail for a specific recommendation, read the full source file. Do this selectively — most recommendations can be grounded in baseline-log entries plus section-specific source files.
@@ -100,6 +101,15 @@ Append key DECISIONS to baseline-log.txt tagged with your section code (e.g., [C
 
 These are the concept TLDRs — what the proposal needs to know. They accumulate so Wave 2/3 agents see Wave 1 decisions via the baseline-log.
 
+**Append using bash heredoc** (single write, minimises interleave risk with parallel agents):
+```bash
+cat >> baseline-log.txt << 'BASELINE'
+--- [C1] SITEMAP ---
+[C1] 14 pages total, 8 must-have — driven by keyword clusters from R2. CONFIRMED
+[C1] Blog section with 3 topic clusters, 12 planned posts. INFERRED
+BASELINE
+```
+
 **Rules for baseline-log entries:**
 - Start with `--- [C{n}] {SECTION NAME} ---` header
 - Maximum 15 entries per section
@@ -109,6 +119,7 @@ These are the concept TLDRs — what the proposal needs to know. They accumulate
 - Name the implication ("React + Next.js — SSR for SEO, higher dev cost")
 - End each line with CONFIRMED, INFERRED, or MISSING
 - No empty lines between entries
+- Read existing baseline-log entries BEFORE appending — do NOT re-log findings already present
 
 **Selection filter — include if:**
 1. "Does this affect what we include in the proposal (scope, pricing, timeline)?" — include

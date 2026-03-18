@@ -23,8 +23,8 @@ Dispatch any registered agent as a sub-agent via the Task tool. Automatically se
 | researcher | `${CLAUDE_PLUGIN_ROOT}/agents/researcher.md` | Execute one research substage, produce R{n}-{slug}.txt |
 | domain-analyst | `${CLAUDE_PLUGIN_ROOT}/agents/domain-analyst.md` | Score domain group checkpoints against baseline-log, write to confirmed/client/agency output streams |
 | question-resolver | `${CLAUDE_PLUGIN_ROOT}/agents/question-resolver.md` | Resolve answered gap analysis questions into confirmed intelligence, update baseline-log |
-| concept-creator | `${CLAUDE_PLUGIN_ROOT}/agents/concept-creator.md` | Produce one concept section from pre-merged context, write per-section JSON + MD |
-| concept-reviewer | `${CLAUDE_PLUGIN_ROOT}/agents/concept-reviewer.md` | Read D5-Concept.json, check inter-section coherence, write D5-Review-Notes.md |
+| concept-creator | `${CLAUDE_PLUGIN_ROOT}/agents/concept-creator.md` | Produce one concept section as scannable TXT using ICIP sequence, update baseline-log |
+| concept-reviewer | `${CLAUDE_PLUGIN_ROOT}/agents/concept-reviewer.md` | Read concept C-files (TXT), check inter-section coherence, write D5-Review-Notes.md |
 
 ---
 

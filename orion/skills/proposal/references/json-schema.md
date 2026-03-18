@@ -144,7 +144,7 @@ Write to `D6-Proposal.json`.
 
 ### title_page
 
-`client_name` and `project_title` populated from `D1-Init.json` fields `project.client` and `project.name`. `prepared_by` defaults to "oktodigital" (not stored in D1). `date` is the generation date. `version` starts at "1.0".
+`client_name` and `project_title` populated from `project.json` fields `project.client` and `project.name`. `prepared_by` defaults to "oktodigital". `date` is the generation date. `version` starts at "1.0".
 
 ### executive_summary
 

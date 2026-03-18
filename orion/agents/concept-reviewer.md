@@ -127,7 +127,7 @@ Note: {whether this matters or can be ignored}
 ## Rules
 
 <critical>
-- NEVER modify any C-file or D5-Concept.txt — this is a read-only review
+- NEVER modify any C-file — this is a read-only review
 - NEVER fabricate findings — only report actual conflicts found in the data
 - ALWAYS reference specific section codes (C1, C2, etc.) in each finding
 - ALWAYS include suggested resolution for every finding

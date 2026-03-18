@@ -25,7 +25,7 @@ Define how the website communicates — tone of voice, messaging, and SEO conten
      - Primary pages with keyword targets and content notes (reference sitemap pages)
      - Supporting SEO pages with keyword targets and rationale
      - Blog topic clusters with keyword targets
-   - **Localisation notes** — language and cultural adaptation if secondary languages are active (from D1-Init.json language config)
+   - **Localisation notes** — language and cultural adaptation if secondary languages are active (from project.json language config)
 
 **Note:** Content phasing (what launches when) is handled by C7-Project-Roadmap. Within the SEO content plan, mark launch-critical pages vs post-launch content as an inline note per entry — but the phased delivery plan lives in C7.
 
