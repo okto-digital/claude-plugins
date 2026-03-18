@@ -1,13 +1,13 @@
 ---
 name: proposal
-description: "Generate D6: Proposal from all pipeline outputs (Phases 1-5). Produces JSON, Markdown, and branded HTML with print-ready CSS. Invoke when the user says 'generate proposal', 'write proposal', 'run phase 6', 'create brief', or after Concept Creation is reviewed and approved."
+description: "Generate D6: Proposal from concept outputs (Phase 5). Produces JSON, Markdown, and branded HTML with print-ready CSS. Invoke when the user says 'generate proposal', 'write proposal', 'run phase 6', 'create brief', or after Concept Creation is reviewed and approved."
 allowed-tools: Read, Write, Glob, AskUserQuestion
-version: 3.0.0
+version: 4.0.0
 ---
 
 # Proposal Generation
 
-Distill everything from Phases 1-5 into a client-facing proposal with 9 sections. Evidence-based but readable. Modular -- the client sees cost and time impact of including or deferring specific functionality.
+Distill concept outputs (Phase 5) into a client-facing proposal with 9 sections. Evidence-based but readable. Modular -- the client sees cost and time impact of including or deferring specific functionality.
 
 **Output:** `D6-Proposal.json` + `D6-Proposal.md` + `D6-Proposal.html`
 
@@ -15,12 +15,12 @@ Distill everything from Phases 1-5 into a client-facing proposal with 9 sections
 
 | # | Section | Primary data source |
 |---|---|---|
-| 1 | Title Page | D1 meta |
+| 1 | Title Page | project.json |
 | 2 | Executive Summary | Synthesis of all (written last) |
-| 3 | Problem Statement | D2, D3 (research TLDRs), D4 (gap TLDRs) |
-| 4 | Proposed Solution | D5 TLDRs for C4, C5, C6, C8, C9 |
-| 5 | Scope of Work & Deliverables | D5 C1 sitemap + C2 functional_requirements |
-| 6 | Timeline & Milestones | D5 C7 project_roadmap + module dependencies |
+| 3 | Problem Statement | D5 concept sections (evidence already embedded) |
+| 4 | Proposed Solution | D5 C4, C5, C6, C8, C9 sections |
+| 5 | Scope of Work & Deliverables | D5 C1 sitemap + C2 functional requirements |
+| 6 | Timeline & Milestones | D5 C7 project roadmap + module dependencies |
 | 7 | Investment | Module hours (operator adds rates) |
 | 8 | About Us | Placeholder for operator |
 | 9 | Conclusion & Acceptance | Next steps + signature block |
@@ -35,31 +35,34 @@ Read `project-state.md`. Extract project info and document status.
 If missing, stop: "Run project-init first."
 If Phase 5 (Concept Creation) not complete, stop: "Run concept-creation first."
 
-Read `D1-Init.json` for client name, project name, build_type, site_type, output_language, pipeline_defaults.
+Read `project.json` for client name, project name, build_type, site_type, output_language, pipeline_defaults.
 
 **Proposal style:** Check `pipeline_defaults.proposal_style` — `"full"` (default behavior, all 9 sections + HTML), `"summary_only"` (skip Steps 10-12, produce JSON + MD only), or `"ask"` (prompt operator).
 
 **Language:** `output_language` (e.g., `"sk"` = Slovak, `"en"` = English) determines the language for ALL client-facing text in D6. Every prose field in JSON, every sentence in Markdown, and every visible text element in HTML must be written in this language. JSON field names, technical identifiers, and internal codes stay in English.
 
-### Step 2: Scan available files
+### Step 2: Read concept data
 
 **ALWAYS read:**
-- `D1-Init.json` — project metadata, client name, output language
-- `D2-Client-Intelligence.json` — client profile (for problem statement)
-- `D3-Research.json` — research TLDRs (for problem statement evidence)
-- `D4-Gap-Analysis.json` — gap analysis TLDRs (for problem statement evidence)
-- `D5-Concept.json` — concept digest with TLDRs for all 9 sections + structured data for C1/C2/C7
+- `project.json` — project metadata, client name, output language, pipeline defaults
+- `D5-Concept.txt` — concatenation of all 9 concept sections as scannable TXT
 
-**D5 structure:** Top-level `meta` object (`date`, `sections` code list, `count`) and `sections[]` array. Each section entry has `code`, `slug`, `tldr[]`, `source`.
-- C1 entry also has `sitemap` (page tree + traffic meta).
-- C2 entry also has `functional_requirements` (flat array with area/requirement/priority/complexity).
-- C7 entry also has `project_roadmap` (phases + launch_scope).
+D5-Concept.txt contains all 9 concept sections separated by `--- C{n}-{Slug} ---` headers. Each section is scannable TXT with `====` dividers, CAPS headers, `•` bullets, `Key: Value` pairs. The concept sections already contain all evidence from research and gap analysis — the proposal does NOT need to read upstream pipeline files (D2, D3, D4, R-files, baseline-log).
 
-Do NOT read individual C-files or R-files — D5 contains everything needed for the proposal.
+**Concept section quick reference:**
+- **C1-Sitemap** — page tree with priorities, keywords, traffic estimates (SITEMAP SUMMARY + PAGE TREE)
+- **C2-Functional** — functional requirements by priority and area (MUST HAVE / SHOULD HAVE / NICE TO HAVE)
+- **C3-Technical-Architecture** — technology stack, hosting, integrations, operations
+- **C4-Content-Strategy** — tone of voice, messaging pillars, SEO content plan
+- **C5-Visual** — visual direction, colour/typography/imagery direction, references
+- **C6-UX-Strategy** — navigation, conversion funnels, CTA strategy, user flows
+- **C7-Project-Roadmap** — launch scope, phases, success metrics, risks
+- **C8-SEO-Strategy** — link acquisition, local/international SEO, monitoring
+- **C9-Compliance** — WCAG target, accessibility, legal, testing strategy
 
 ### Step 3: Build title page
 
-Populate from D1-Init.json:
+Populate from project.json:
 - `project_title` from project_name
 - `client_name` from client
 - `prepared_by` defaults to "oktodigital" if not set
@@ -68,12 +71,12 @@ Populate from D1-Init.json:
 
 ### Step 4: Build problem statement
 
-Read D2 (client profile), D3 (research TLDRs), and D4 (gap analysis TLDRs). Extract:
+Extract from concept sections — the evidence is already embedded in the concept via `[src: R/G codes]` and CONFIRMED/INFERRED tags. Build:
 
-1. **Current situation** -- 2-3 sentences describing where the client is today. Draw from D2 web presence assessment and D3 research findings about current site performance.
-2. **Pain points** -- specific business problems the website should solve. Source from D4 (gaps and TLDRs per domain) and D2 (weaknesses observed).
-3. **Key challenges** -- obstacles or constraints (technical, market, competitive). Source from D3 research TLDRs.
-4. **Evidence** -- grouped by research domain, max 3-5 findings per domain.
+1. **Current situation** -- 2-3 sentences describing where the client is today. Draw from C1 (current SEO gaps implied by keyword opportunities), C8 (current SEO state), C3 (current technology state), C9 (current compliance gaps).
+2. **Pain points** -- specific business problems the website should solve. Source from C2 (functional gaps), C6 (conversion path gaps), C1 (missing pages for key search terms).
+3. **Key challenges** -- obstacles or constraints. Source from C3 (technical constraints), C7 (risks), C9 (compliance requirements).
+4. **Evidence** -- grouped by domain, max 3-5 findings per domain. Extract from the `[src: ...]` references and CONFIRMED findings within concept sections.
 
 **Selection criteria for evidence:**
 - Numbers over qualitative observations
@@ -85,40 +88,41 @@ Group into: Search & SEO, Competitive Landscape, Market & Industry, Target Audie
 
 ### Step 5: Build proposed solution
 
-Read D5 sections for C4, C5, C6, C8, C9. Each section's `tldr[]` contains the key decisions. Synthesise into:
+Read C4, C5, C6, C8, C9 sections from D5-Concept.txt. Synthesise into:
 
 1. **Strategy overview** -- 2-3 paragraph narrative of the overall approach. Connect back to the pain points from Step 4. Write as a story, not a feature list.
 2. **Methodology** -- how the project will be executed (discovery-driven, iterative, etc.)
 3. **Desired outcome** -- what the finished website achieves for the business.
-4. **Concept highlights** -- one-sentence client-friendly summaries from TLDRs:
-   - Positioning and visual direction (C5 TLDRs)
-   - Tone of voice (C4 TLDRs)
-   - UX approach, navigation, conversion strategy (C6 TLDRs)
-   - SEO approach (C8 TLDRs)
-   - Compliance targets (C9 TLDRs)
+4. **Concept highlights** -- one-sentence client-friendly summaries:
+   - Positioning and visual direction (from C5 VISUAL DIRECTION section)
+   - Tone of voice (from C4 TONE OF VOICE section)
+   - UX approach, navigation, conversion strategy (from C6 sections)
+   - SEO approach (from C8 sections)
+   - Compliance targets (from C9 WCAG COMPLIANCE section)
 
 ### Step 6: Assemble scope of work
 
-Build from D5 concept digest:
-- **Sitemap:** D5 C1 section -> `sitemap.tree` (page tree with priorities + traffic) and `sitemap.meta` (totals)
-- **Functional requirements:** D5 C2 section -> `functional_requirements[]` (area, requirement, priority, complexity)
+Build from C1-Sitemap and C2-Functional sections in D5-Concept.txt:
+
+**Sitemap:** Extract from C1 PAGE TREE section:
+- Total page count from SITEMAP SUMMARY
+- Aggregate traffic potential (conservative, realistic, optimistic) from SITEMAP SUMMARY
+- Page tree with per-page priorities, keywords, traffic estimates
+
+**Functional requirements:** Extract from C2 MUST HAVE / SHOULD HAVE / NICE TO HAVE sections:
+- Each requirement has area, description, source, complexity
 
 **Modules:**
-1. Group related requirements from D5 C2 `functional_requirements[]` into work modules
+1. Group related requirements from C2 into work modules
 2. Assign category per the enum in `references/json-schema.md` (scope_of_work.modules[].category)
-3. Estimate hours per module from C2 complexity signals
+3. Estimate hours per module from C2 complexity signals (simple/moderate/complex)
 4. Set phase: `launch` or `post-launch`
 5. Set selection: `must_have` = `selected: true`; `should_have` and `nice_to_have` = `selected: false`
 6. Note dependencies between modules
 
-**Sitemap summary:**
-- Total page count from D5 C1 `sitemap.meta`
-- Aggregate traffic potential (conservative, realistic, optimistic) from `sitemap.meta`
-- Page tree with per-page traffic estimates from `sitemap.tree` (recursive, arbitrary depth)
-
 ### Step 7: Calculate timeline
 
-Read D5 C7 section -> `project_roadmap` object with `phases[]` and `launch_scope`. Build phased timeline from selected modules and dependencies.
+Read C7-Project-Roadmap section from D5-Concept.txt. Extract PHASES and LAUNCH SCOPE. Build phased timeline from selected modules and dependencies.
 
 - Map C7 phases to timeline entries with duration estimates
 - Add milestones for key dates (content freeze, UAT, launch)
@@ -163,13 +167,13 @@ Generate the full page content creatively inside `<div class="page">`, composing
 
 Design tokens and brand elements are documented in `${CLAUDE_PLUGIN_ROOT}/skills/proposal/references/design-tokens.md`. Use the correct category colours for module borders and priority badges. Use bracket numbers, corner accents, stat blocks, visual timelines, and other brand elements where they enhance readability.
 
-Set `<html lang="...">` to the `output_language` value from D1-Init.json (e.g., `<html lang="sk">`). The template defaults to `lang="en"` -- always override it.
+Set `<html lang="...">` to the `output_language` value from project.json (e.g., `<html lang="sk">`). The template defaults to `lang="en"` -- always override it.
 
 The HTML must be self-contained (inline CSS, embedded fonts). Verify all 9 sections are present and print CSS would produce clean page breaks.
 
 ### Step 13: Debug companion (when enabled)
 
-If `research_config.debug` is `true` in D1-Init.json: write `tmp/debug/D6-Proposal-debug.txt` — section count, module counts (selected/total), total hours, traffic potential numbers, evidence domain counts, no prose.
+If `debug` is `true` in project.json: write `tmp/debug/D6-Proposal-debug.txt` — section count, module counts (selected/total), total hours, traffic potential numbers, evidence domain counts, no prose.
 
 ### Step 14: Operator review
 
@@ -209,15 +213,16 @@ Pipeline complete. Review D6-Proposal.html in browser (Cmd+P for PDF).
 ## Writing Rules
 
 <critical>
-- **NEVER** fabricate findings, metrics, or traffic numbers -- every data point must trace to a pipeline file
+- **NEVER** fabricate findings, metrics, or traffic numbers -- every data point must trace to a concept section
 - **NEVER** include internal codes (R1, G05, C2, D2) in proposal text -- this is a client-facing document
 - **NEVER** include raw JSON or technical formatting in the proposal
+- **NEVER** read upstream pipeline files (D2, D3, D4, R-files, baseline-log) -- concept sections contain all needed data
 - **ALWAYS** write for a business audience -- lead with value and impact, not technical detail
 - **ALWAYS** present traffic estimates with the disclaimer that they are theoretical and depend on execution
 - **ALWAYS** write JSON as a single line (no newlines, no indentation)
 - **ALWAYS** include the About Us placeholder notice for the operator
 - **ALWAYS** include blank signature fields in the Conclusion section
-- **ALWAYS** write all client-facing text in the language specified by `output_language` from D1-Init.json -- section headings, prose, evidence summaries, module descriptions, timeline labels, everything the client reads. Only JSON field names and internal identifiers stay in English.
+- **ALWAYS** write all client-facing text in the language specified by `output_language` from project.json -- section headings, prose, evidence summaries, module descriptions, timeline labels, everything the client reads. Only JSON field names and internal identifiers stay in English.
 </critical>
 
 - Skip evidence domains that have no meaningful findings
