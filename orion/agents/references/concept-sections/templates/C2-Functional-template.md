@@ -1,55 +1,54 @@
-# C2-Functional — Output Templates
+# C2-Functional — Output Guide
 
-Write JSON as **minified** (no whitespace, no indentation).
+Write scannable TXT per formatting-rules.md conventions.
 
-## JSON Schema
+## Expected Structure
 
-```json
-{
-  "tldr": ["string — max 15 telegraphic decision items, scope/solution/quantitative"],
-  "code": "C2",
-  "slug": "Functional",
-  "functional_requirements": [
-    {
-      "area": "string",
-      "requirement": "string",
-      "priority": "must_have | should_have | nice_to_have",
-      "source": "string (e.g. 'G10-Forms: contact form checkpoint', 'R3-Competitors: competitor X has booking')",
-      "complexity": "simple | moderate | complex"
-    }
-  ],
-  "notes": ["string"]
-}
+```
+================================================================================
+FUNCTIONAL REQUIREMENTS SUMMARY
+================================================================================
+
+Total requirements: {number}
+Must have: {number} | Should have: {number} | Nice to have: {number}
+Complexity: Simple {n} | Moderate {n} | Complex {n}
+
+================================================================================
+MUST HAVE
+================================================================================
+
+{Area}:
+• {requirement} [src: {R/G/D2 code}] — {complexity}. CONFIRMED
+• {requirement} [src: {R/G/D2 code}] — {complexity}. CONFIRMED
+
+{Area}:
+• {requirement} [src: {R/G/D2 code}] — {complexity}. CONFIRMED
+
+================================================================================
+SHOULD HAVE
+================================================================================
+
+{Area}:
+• {requirement} [src: {R/G/D2 code}] — {complexity}. {CONFIRMED|INFERRED}
+
+================================================================================
+NICE TO HAVE
+================================================================================
+
+{Area}:
+• {requirement} [src: {R/G/D2 code}] — {complexity}. INFERRED
+
+================================================================================
+NOTES
+================================================================================
+
+• {Cross-section observation}
 ```
 
-Write to `concept/C2-Functional.json`.
+## Field Notes
 
-## Markdown Template
-
-Generate `concept/C2-Functional.md` from the JSON:
-
-```markdown
-## TLDR
-- {tldr item 1}
-- {tldr item 2}
-
-## Functional Requirements
-
-### Must Have
-| Requirement | Area | Source | Complexity |
-|---|---|---|---|
-| {requirement} | {area} | {source} | {complexity} |
-
-### Should Have
-| Requirement | Area | Source | Complexity |
-|---|---|---|---|
-| {requirement} | {area} | {source} | {complexity} |
-
-### Nice to Have
-| Requirement | Area | Source | Complexity |
-|---|---|---|---|
-| {requirement} | {area} | {source} | {complexity} |
-
-### Notes
-- {note 1}
-```
+- Group by priority tier first, then by functional area within each tier
+- Functional areas include: Core functionality, Ecommerce, User accounts, Booking/scheduling, Content management, Analytics, Integrations, GDPR/compliance, Performance, Accessibility
+- Skip areas that don't apply
+- Every requirement needs: source reference, complexity signal (simple/moderate/complex), confidence tag
+- C2 captures WHAT is needed. C3 covers HOW (technology). C9 covers compliance STRATEGY

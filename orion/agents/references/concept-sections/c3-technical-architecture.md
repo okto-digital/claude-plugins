@@ -2,8 +2,9 @@
 
 **Code:** C3
 **Slug:** Technical-Architecture
-**Output:** `concept/C3-Technical-Architecture.json`, `concept/C3-Technical-Architecture.md`
+**Output:** `concept/C3-Technical-Architecture.txt`
 **Wave:** 2 (depends on C2-Functional)
+**Hypothesis:** WordPress with managed hosting covers all requirements without custom architecture
 
 ## Purpose
 
@@ -37,4 +38,4 @@ Recommend the technology stack and operational architecture based on functional 
 
 ## Output
 
-Write output using the templates at `templates/C3-Technical-Architecture-template.md`.
+Follow output guide at `templates/C3-Technical-Architecture-template.md`.

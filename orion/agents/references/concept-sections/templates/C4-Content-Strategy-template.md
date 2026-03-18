@@ -1,102 +1,79 @@
-# C4-Content-Strategy — Output Templates
+# C4-Content-Strategy — Output Guide
 
-Write JSON as **minified** (no whitespace, no indentation).
+Write scannable TXT per formatting-rules.md conventions.
 
-## JSON Schema
+## Expected Structure
 
-```json
-{
-  "tldr": ["string — max 15 telegraphic decision items, scope/solution/quantitative"],
-  "code": "C4",
-  "slug": "Content-Strategy",
-  "content_strategy": {
-    "tone_of_voice": "string",
-    "tone_examples": ["string"],
-    "messaging_pillars": [
-      {
-        "pillar": "string",
-        "description": "string",
-        "persona": "string"
-      }
-    ],
-    "value_proposition": "string",
-    "seo_content_plan": {
-      "primary_pages": [
-        {
-          "page": "string (matches sitemap page name)",
-          "keyword_target": "string",
-          "content_notes": "string"
-        }
-      ],
-      "supporting_pages": [
-        {
-          "page": "string",
-          "keyword_target": "string",
-          "seo_rationale": "string"
-        }
-      ],
-      "blog_clusters": [
-        {
-          "cluster": "string",
-          "topics": ["string"],
-          "keyword_targets": ["string"]
-        }
-      ]
-    },
-    "localisation_notes": "string | null"
-  },
-  "notes": ["string"]
-}
+```
+================================================================================
+CONTENT STRATEGY SUMMARY
+================================================================================
+
+Primary language: {language}
+Secondary languages: {list or "none"}
+Messaging pillars: {count}
+SEO content pages: {primary count} primary + {supporting count} supporting + {cluster count} blog clusters
+
+================================================================================
+TONE OF VOICE
+================================================================================
+
+{Description of how the site should communicate — grounded in persona expectations and brand positioning}
+
+Examples:
+• DO: "{concrete phrase example}"
+• DO: "{concrete phrase example}"
+• AVOID: "{concrete phrase to avoid}"
+• AVOID: "{concrete phrase to avoid}"
+
+================================================================================
+MESSAGING PILLARS
+================================================================================
+
+• {Pillar name} — {description}. Persona: {who}. [src: {code}]
+• {Pillar name} — {description}. Persona: {who}. [src: {code}]
+• {Pillar name} — {description}. Persona: {who}. [src: {code}]
+
+================================================================================
+VALUE PROPOSITION
+================================================================================
+
+{Primary homepage value proposition statement}
+
+================================================================================
+SEO CONTENT PLAN
+================================================================================
+
+PRIMARY PAGES:
+• {Page name (from C1)} — KW: {keyword target} | Content notes: {direction}
+• {Page name (from C1)} — KW: {keyword target} | Content notes: {direction}
+
+SUPPORTING SEO PAGES:
+• {Page name} — KW: {keyword target} | Rationale: {why this page helps SEO}
+
+BLOG CLUSTERS:
+• {Cluster topic} — KW targets: {keywords}
+  └─ {Topic 1}
+  └─ {Topic 2}
+  └─ {Topic 3}
+
+================================================================================
+LOCALISATION
+================================================================================
+
+{Language and cultural adaptation notes, or "N/A — single language project"}
+
+================================================================================
+NOTES
+================================================================================
+
+• {Cross-section observation}
+• Content phasing (launch vs post-launch) handled by C7-Project-Roadmap
 ```
 
-Write to `concept/C4-Content-Strategy.json`.
+## Field Notes
 
-## Markdown Template
-
-Generate `concept/C4-Content-Strategy.md` from the JSON:
-
-```markdown
-## TLDR
-- {tldr item 1}
-- {tldr item 2}
-
-## Content Strategy
-
-### Tone of Voice
-{tone_of_voice}
-
-**Examples:**
-- "{example 1}"
-- "{example 2}"
-
-### Messaging Pillars
-| Pillar | Description | Persona |
-|---|---|---|
-| {pillar} | {description} | {persona} |
-
-### Value Proposition
-> {value_proposition}
-
-### SEO Content Plan
-
-#### Primary Pages
-| Page | Keyword Target | Content Notes |
-|---|---|---|
-| {page} | {keyword_target} | {content_notes} |
-
-#### Supporting SEO Pages
-| Page | Keyword Target | SEO Rationale |
-|---|---|---|
-| {page} | {keyword_target} | {seo_rationale} |
-
-#### Blog Clusters
-- **{cluster}** — {keyword_targets}
-  - {topic 1}
-  - {topic 2}
-
-### Localisation
-{localisation_notes or "N/A — single language project"}
-
-### Notes
-- {note 1}
-```
+- Primary pages must reference C1 sitemap page names — every must-have page should have content direction
+- Tone examples should be concrete phrases, not just adjectives
+- Blog clusters group related topics under keyword themes from R2
+- Mark launch-critical vs post-launch content as inline notes, but phased delivery is C7's domain

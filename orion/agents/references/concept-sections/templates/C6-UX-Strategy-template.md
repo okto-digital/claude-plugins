@@ -1,111 +1,91 @@
-# C6-UX-Strategy — Output Templates
+# C6-UX-Strategy — Output Guide
 
-Write JSON as **minified** (no whitespace, no indentation).
+Write scannable TXT per formatting-rules.md conventions.
 
-## JSON Schema
+## Expected Structure
 
-```json
-{
-  "tldr": ["string — max 15 telegraphic decision items, scope/solution/quantitative"],
-  "code": "C6",
-  "slug": "UX-Strategy",
-  "ux_strategy": {
-    "navigation": {
-      "primary": "string",
-      "mobile": "string",
-      "secondary": "string"
-    },
-    "conversion_funnels": [
-      {
-        "name": "string",
-        "persona": "string",
-        "path": "string (entry -> step -> ... -> target action)",
-        "rationale": "string"
-      }
-    ],
-    "cta_strategy": [
-      {
-        "page_type": "string",
-        "primary_cta": "string",
-        "secondary_cta": "string | null",
-        "placement_rationale": "string"
-      }
-    ],
-    "trust_elements": [
-      {
-        "element": "string",
-        "placement": "string",
-        "rationale": "string"
-      }
-    ],
-    "mobile_strategy": {
-      "approach": "string (mobile-first | responsive)",
-      "rationale": "string",
-      "content_priority": ["string"],
-      "interaction_notes": "string"
-    },
-    "user_flows": [
-      {
-        "name": "string",
-        "persona": "string",
-        "goal": "string",
-        "steps": ["string (page: action)"],
-        "desired_outcome": "string"
-      }
-    ]
-  },
-  "notes": ["string"]
-}
+```
+================================================================================
+UX STRATEGY SUMMARY
+================================================================================
+
+Navigation model: {primary approach}
+Conversion funnels: {count}
+Mobile approach: {mobile-first|responsive}
+Key user flows: {count}
+
+================================================================================
+NAVIGATION MODEL
+================================================================================
+
+Primary: {structure description — scale to C1 page count}
+Mobile: {mobile navigation approach}
+Secondary/utility: {footer nav, utility links}
+
+================================================================================
+CONVERSION FUNNELS
+================================================================================
+
+FUNNEL 1 — {name}:
+• Persona: {who}
+• Path: {entry page} -> {step} -> {step} -> {target action}
+• Rationale: {why this path} [src: {code}]
+
+FUNNEL 2 — {name}:
+• Persona: {who}
+• Path: {entry page} -> {step} -> {step} -> {target action}
+• Rationale: {why this path} [src: {code}]
+
+================================================================================
+CTA STRATEGY
+================================================================================
+
+• {Page type}: Primary CTA: {action} | Secondary: {action or "none"} | Rationale: {why} [src: {code}]
+• {Page type}: Primary CTA: {action} | Secondary: {action or "none"} | Rationale: {why}
+
+================================================================================
+TRUST ELEMENTS
+================================================================================
+
+• {Element} — Placement: {where} | Rationale: {why, per persona} [src: {code}]
+• {Element} — Placement: {where} | Rationale: {why, per persona}
+
+================================================================================
+MOBILE STRATEGY
+================================================================================
+
+Approach: {mobile-first|responsive} — {rationale} [src: {code}]
+Content priority (mobile): {ordered list of what appears first}
+Touch targets: {interaction considerations}
+
+================================================================================
+KEY USER FLOWS
+================================================================================
+
+FLOW 1 — {name}:
+• Persona: {who}
+• Goal: {what the user wants to achieve}
+• Steps: {page: action} -> {page: action} -> {page: action}
+• Outcome: {desired result}
+
+FLOW 2 — {name}:
+• Persona: {who}
+• Goal: {what the user wants to achieve}
+• Steps: {page: action} -> {page: action} -> {page: action}
+• Outcome: {desired result}
+
+================================================================================
+NOTES
+================================================================================
+
+• {Cross-section observation}
+• All page references must exist in C1 sitemap
 ```
 
-Write to `concept/C6-UX-Strategy.json`.
+## Field Notes
 
-## Markdown Template
-
-Generate `concept/C6-UX-Strategy.md` from the JSON:
-
-```markdown
-## TLDR
-- {tldr item 1}
-- {tldr item 2}
-
-## UX Strategy
-
-### Navigation Model
-- **Primary:** {primary}
-- **Mobile:** {mobile}
-- **Secondary:** {secondary}
-
-### Conversion Funnels
-{for each funnel}
-**{name}** (Persona: {persona})
-Path: {path}
-Rationale: {rationale}
-{end for}
-
-### CTA Strategy
-| Page Type | Primary CTA | Secondary CTA | Rationale |
-|---|---|---|---|
-| {page_type} | {primary_cta} | {secondary_cta} | {placement_rationale} |
-
-### Trust Elements
-| Element | Placement | Rationale |
-|---|---|---|
-| {element} | {placement} | {rationale} |
-
-### Mobile Strategy
-**Approach:** {approach} -- {rationale}
-**Content priority (mobile):** {content_priority}
-**Interaction notes:** {interaction_notes}
-
-### Key User Flows
-{for each flow}
-**{name}** (Persona: {persona})
-Goal: {goal}
-Steps: {steps joined by " -> "}
-Outcome: {desired_outcome}
-{end for}
-
-### Notes
-- {note 1}
-```
+- All page names in funnels and flows must reference pages from C1 sitemap
+- Navigation model must scale to C1 page count — don't propose 8-item primary nav for a 12-page site
+- 2-3 conversion funnels, 2-3 user flows — enough to cover primary personas
+- CTA strategy covers page types, not individual pages
+- C1 defines WHAT pages exist, C6 defines HOW users flow between them

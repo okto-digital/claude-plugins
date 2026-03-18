@@ -2,8 +2,9 @@
 
 **Code:** C4
 **Slug:** Content-Strategy
-**Output:** `concept/C4-Content-Strategy.json`, `concept/C4-Content-Strategy.md`
+**Output:** `concept/C4-Content-Strategy.txt`
 **Wave:** 2 (depends on C1-Sitemap)
+**Hypothesis:** Brand voice is undefined and content strategy needs to be built from scratch
 
 ## Purpose
 
@@ -30,4 +31,4 @@ Define how the website communicates — tone of voice, messaging, and SEO conten
 
 ## Output
 
-Write output using the templates at `templates/C4-Content-Strategy-template.md`.
+Follow output guide at `templates/C4-Content-Strategy-template.md`.

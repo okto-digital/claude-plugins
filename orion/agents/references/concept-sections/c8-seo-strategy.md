@@ -2,8 +2,9 @@
 
 **Code:** C8
 **Slug:** SEO-Strategy
-**Output:** `concept/C8-SEO-Strategy.json`, `concept/C8-SEO-Strategy.md`
+**Output:** `concept/C8-SEO-Strategy.txt`
 **Wave:** 3 (depends on C1-Sitemap)
+**Hypothesis:** SEO strategy goes beyond on-page optimization into link acquisition and local search
 
 ## Purpose
 
@@ -26,4 +27,4 @@ Define the SEO strategy beyond what C1 (keyword-page mapping) and C3 (technical 
 
 ## Output
 
-Write output using the templates at `templates/C8-SEO-Strategy-template.md`.
+Follow output guide at `templates/C8-SEO-Strategy-template.md`.

@@ -2,8 +2,9 @@
 
 **Code:** C6
 **Slug:** UX-Strategy
-**Output:** `concept/C6-UX-Strategy.json`, `concept/C6-UX-Strategy.md`
+**Output:** `concept/C6-UX-Strategy.txt`
 **Wave:** 2 (depends on C1-Sitemap)
+**Hypothesis:** Conversion paths are missing or broken in current site UX
 
 ## Purpose
 
@@ -26,4 +27,4 @@ Define how users move through the site: navigation patterns, conversion funnels,
 
 ## Output
 
-Write output using the templates at `templates/C6-UX-Strategy-template.md`.
+Follow output guide at `templates/C6-UX-Strategy-template.md`.

@@ -2,8 +2,9 @@
 
 **Code:** C1
 **Slug:** Sitemap
-**Output:** `concept/C1-Sitemap.json`, `concept/C1-Sitemap.md`
+**Output:** `concept/C1-Sitemap.txt`
 **Wave:** 1 (no upstream dependencies)
+**Hypothesis:** The site needs more pages than the client expects, driven by keyword opportunities
 
 ## Purpose
 
@@ -32,4 +33,4 @@ Build the full site structure as a nested page tree. Each page is mapped to a pe
 
 ## Output
 
-Write output using the templates at `templates/C1-Sitemap-template.md`.
+Follow output guide at `templates/C1-Sitemap-template.md`.

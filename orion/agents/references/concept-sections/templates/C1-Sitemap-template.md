@@ -1,70 +1,52 @@
-# C1-Sitemap — Output Templates
+# C1-Sitemap — Output Guide
 
-Write JSON as **minified** (no whitespace, no indentation).
+Write scannable TXT per formatting-rules.md conventions.
 
-## JSON Schema
+## Expected Structure
 
-```json
-{
-  "tldr": ["string — max 15 telegraphic decision items, scope/solution/quantitative"],
-  "code": "C1",
-  "slug": "Sitemap",
-  "sitemap": {
-    "meta": {
-      "total_pages": "number",
-      "traffic_potential": {
-        "conservative_monthly": "number",
-        "realistic_monthly": "number",
-        "optimistic_monthly": "number"
-      }
-    },
-    "tree": [
-      {
-        "name": "string",
-        "path": "string (URL path, e.g. /shop/caviar/beluga)",
-        "type": "string (homepage | landing | product | category | utility | blog | etc.)",
-        "priority": "must_have | should_have | nice_to_have",
-        "persona": "string | null",
-        "primary_keyword": "string | null",
-        "secondary_keywords": [],
-        "combined_volume": "number | null",
-        "traffic_est": {
-          "conservative": "number | null",
-          "realistic": "number | null",
-          "optimistic": "number | null"
-        },
-        "purpose": "string",
-        "children": []
-      }
-    ]
-  },
-  "notes": ["string"]
-}
+```
+================================================================================
+SITEMAP SUMMARY
+================================================================================
+
+Total pages: {number}
+Must have: {number} | Should have: {number} | Nice to have: {number}
+Traffic potential: Conservative {n}/mo | Realistic {n}/mo | Optimistic {n}/mo
+
+================================================================================
+PAGE TREE
+================================================================================
+
+MUST HAVE:
+• {Page Name} /{path} — Persona: {who} | KW: {keyword} ({vol}) | Traffic: {c}/{r}/{o}
+  └─ {Child Page} /{path} — Persona: {who} | KW: {keyword} ({vol}) | Traffic: {c}/{r}/{o}
+    └─ {Grandchild} /{path} — Persona: {who} | KW: {keyword} ({vol}) | Traffic: {c}/{r}/{o}
+
+SHOULD HAVE:
+• {Page Name} /{path} — Persona: {who} | KW: {keyword} ({vol}) | Traffic: {c}/{r}/{o}
+
+NICE TO HAVE:
+• {Page Name} /{path} — Persona: {who} | KW: {keyword} ({vol}) | Traffic: {c}/{r}/{o}
+
+UTILITY PAGES:
+• Privacy Policy /privacy — must_have, no traffic estimate
+• Cookie Policy /cookies — must_have, no traffic estimate
+• 404 /404 — must_have, no traffic estimate
+• Sitemap /sitemap — must_have, no traffic estimate
+
+================================================================================
+NOTES
+================================================================================
+
+• {Cross-section observation or methodology note}
+• Traffic: C = conservative (pos 6-10, ~4% CTR) / R = realistic (pos 3-5, ~8%) / O = optimistic (pos 1-2, ~20%)
+• Estimates represent opportunity scale, not guaranteed outcomes
 ```
 
-Write to `concept/C1-Sitemap.json`.
+## Field Notes
 
-## Markdown Template
-
-Generate `concept/C1-Sitemap.md` from the JSON:
-
-```markdown
-## TLDR
-- {tldr item 1}
-- {tldr item 2}
-
-## Sitemap
-
-**Total traffic potential:** Conservative {conservative_monthly}/mo | Realistic {realistic_monthly}/mo | Optimistic {optimistic_monthly}/mo
-**Total pages:** {total_pages}
-
-- **{Page Name}** `{path}` *({priority})* — Persona: {persona} | KW: {primary_keyword} ({combined_volume} vol) | Traffic: {c}/{r}/{o} mo
-  - **{Child Page}** `{path}` *({priority})* — Persona: {persona} | KW: {primary_keyword} ({combined_volume} vol) | Traffic: {c}/{r}/{o} mo
-    - **{Grandchild}** `{path}` *({priority})* — Persona: {persona} | KW: {primary_keyword} | Traffic: {c}/{r}/{o} mo
-
-*Traffic: C = conservative / R = realistic / O = optimistic monthly organic visits*
-*Estimates based on keyword volume and average organic CTR by position. Figures represent opportunity scale, not guaranteed outcomes.*
-
-### Notes
-- {note 1}
-```
+- Group pages by priority tier (MUST HAVE, SHOULD HAVE, NICE TO HAVE)
+- Preserve URL hierarchy using `└─` tree notation
+- Every non-utility page needs: persona, primary keyword, combined volume, traffic estimate at three tiers
+- Utility pages (privacy, cookie, 404, sitemap) are always must_have with no traffic estimates
+- Source references: tag keyword sources with `[src: R2]`, page additions with `[src: D4]`, etc.

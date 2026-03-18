@@ -1,13 +1,13 @@
 ---
 name: concept-creation
-description: "Run Phase 5 concept creation: dispatch concept-creator agents in three waves to produce 9 concept sections, consolidate into D5, then run coherence check. Invoke when the user says 'run concept creation', 'create concept', 'start phase 5', 'build concept', or after Domain Gap Analysis is complete with all CRITICAL questions resolved."
+description: "Run Phase 5 concept creation: dispatch concept-creator agents in three waves to produce 9 concept sections as scannable TXT, consolidate into D5, then run coherence check. Invoke when the user says 'run concept creation', 'create concept', 'start phase 5', 'build concept', or after Domain Gap Analysis is complete with all CRITICAL questions resolved."
 allowed-tools: Read, Write, Bash, Glob, Task, AskUserQuestion
-version: 3.0.0
+version: 4.0.0
 ---
 
 # Concept Creation
 
-Dispatch concept-creator agents for 9 concept sections in three dependency-aware waves, consolidate into D5-Concept using bash, then run a coherence check. This is the synthesis phase — it turns research and gap analysis into concrete, evidence-based recommendations.
+Dispatch concept-creator agents for 9 concept sections in three dependency-aware waves, consolidate into D5-Concept.txt using bash, then run a coherence check. This is the synthesis phase — it turns research and gap analysis into concrete, evidence-based recommendations using the ICIP thinking sequence.
 
 ## Process
 
@@ -17,12 +17,12 @@ Read `project-state.md`. Extract project info and document status.
 If missing, stop: "Run project-init first."
 If Phase 4 (Domain Gap Analysis) not resolved, stop: "Run domain-gap-analysis first."
 
-Read `D1-Init.json` for client name.
-Verify `D4-Gap-Analysis.json` exists and `meta.status == "resolved"`. If missing or not resolved, stop: "Complete answer resolution in domain-gap-analysis before running concept creation."
+Read `project.json` for client name and project configuration.
+Verify D4 status is resolved. If missing or not resolved, stop: "Complete answer resolution in domain-gap-analysis before running concept creation."
 
 ### Step 2: Check existing concept outputs
 
-Glob for `concept/C*-*.json` to find existing outputs.
+Glob for `concept/C*-*.txt` to find existing outputs.
 Report: "Found X existing concept sections: [list]. These will be skipped unless you want to re-run them."
 
 ### Step 3: Section selection
@@ -52,32 +52,7 @@ If the operator deselects a Wave 1 section that downstream sections depend on:
 
 If C3 is deselected, C7 runs without technical architecture — warn but allow (C7 has two other dependencies).
 
-### Step 4: Build pre-merged context files
-
-Use `scripts/merge-json.sh` to build one context file per section. Every section receives the same base: D1 (project params), D2 (client intelligence), D3 (research TLDRs), D4 (gap analysis TLDRs). Wave 2/3 sections add their upstream C-files.
-
-D2 provides direct client facts (tech stack, team size, business model, integrations). D3 contains research TLDRs (~10-15KB) and D4 contains gap analysis TLDRs per domain (~5-10KB) with `source` paths to full files. Together they provide all pipeline intelligence. If a TLDR lacks detail for a specific recommendation, the concept-creator can read the full R-file or G-file via the `source` path.
-
-```bash
-# Wave 1 — base context only (D1 + D2 + D3 + D4)
-scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json -o concept/context-C1.json
-scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json -o concept/context-C2.json
-scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json -o concept/context-C5.json
-
-# Wave 2 — base + upstream C-files
-scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json concept/C2-Functional.json -o concept/context-C3.json
-scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json -o concept/context-C4.json
-scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json -o concept/context-C6.json
-
-# Wave 3 — base + upstream C-files
-scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json concept/C2-Functional.json concept/C3-Technical-Architecture.json -o concept/context-C7.json
-scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json concept/C1-Sitemap.json -o concept/context-C8.json
-scripts/merge-json.sh D1-Init.json D2-Client-Intelligence.json D3-Research.json D4-Gap-Analysis.json concept/C2-Functional.json -o concept/context-C9.json
-```
-
-Only build context files for selected sections. If a source file does not exist (e.g., section skipped), merge-json.sh skips it with a warning — this is expected for optional upstream C-files.
-
-### Step 5: Dispatch concept creators
+### Step 4: Dispatch concept creators
 
 Dispatch selected sections via the `dispatch-subagent` skill.
 
@@ -85,107 +60,79 @@ Dispatch selected sections via the `dispatch-subagent` skill.
 
 Each dispatch provides:
 - C-code and slug (e.g., "C1", "Sitemap")
+- Solution framework: read `${CLAUDE_PLUGIN_ROOT}/references/solution-framework.md` and inline its full content
+- Formatting rules: read `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` and inline its full content
 - Concept definition: read `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/{filename}.md` and inline its full content
-- Output template: read `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/templates/{Code}-{Slug}-template.md` and inline its full content
-- Context file path: `concept/context-{C-code}.json`
+- Output guide: read `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/templates/{Code}-{Slug}-template.md` and inline its full content
+- baseline-log.txt path: `{working_directory}/baseline-log.txt`
+- project.json path: `{working_directory}/project.json`
+- Output path: `{working_directory}/concept/{C-code}-{Slug}.txt`
+- Source files: list of file paths from the Pre-Read Table below
+- Plugin root path: `${CLAUDE_PLUGIN_ROOT}`
 - Model: opus (synthesis and reasoning)
-- MCP hints: none (concept creation uses Read + Write only)
+- MCP hints: none (concept creation uses Read + Write + Edit only)
 
 **Execution order:**
 1. **Wave 1** — C1 + C2 + C5 (3 parallel)
-2. Wait for Wave 1. Build Wave 2 context files. **Wave 2** — C3 + C4 + C6 (3 parallel)
-3. Wait for Wave 2. Build Wave 3 context files. **Wave 3** — C7 + C8 + C9 (3 parallel)
+2. Wait for Wave 1. **Wave 2** — C3 + C4 + C6 (3 parallel)
+3. Wait for Wave 2. **Wave 3** — C7 + C8 + C9 (3 parallel)
 
 **After each wave:**
 
-1. **Validate JSON outputs:**
+1. Check that output files exist and have content:
 ```bash
-scripts/validate-json.sh concept/C*-*.json
+for f in concept/C*-*.txt; do
+  if [ ! -s "$f" ]; then
+    echo "EMPTY OR MISSING: $f"
+  fi
+done
 ```
-If any file fails: attempt `jq -c '.' broken.json > broken.json.tmp && mv broken.json.tmp broken.json`. If jq also fails, re-dispatch the failed section.
+If any file is empty or missing, re-dispatch the failed section.
 
 2. Report which sections completed and any failures.
 
-### Step 6: Pre-merge for coherence review
-
-The reviewer needs full C-file data for cross-referencing. Build a temp merged file:
-
-```bash
-mkdir -p tmp
-jq -s '{sections:.}' concept/C*-*.json > tmp/concept-review-input.json
-```
-
-### Step 7: Coherence check
+### Step 5: Coherence check
 
 Dispatch the `concept-reviewer` agent via `dispatch-subagent`:
 - Agent: concept-reviewer
 - Model: opus (analytical review)
-- Concept data path: `tmp/concept-review-input.json`
+- C-file paths: list of all concept TXT files (Glob `concept/C*-*.txt`)
+- Formatting rules: read `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` and inline its full content
 - Output: `D5-Review-Notes.md`
 
 Present the review notes to the operator. If conflicts exist, they should be resolved before proceeding to proposal.
 
-### Step 8: Build D5 digest
+### Step 6: Build D5 digest
 
 <critical>
-**This step is purely mechanical.** Use ONLY bash commands (jq, cat, echo). Do NOT use the Read tool on any C-file or D-file. Extract counts and client name via jq, not by reading files into context. Reading output files here wastes thousands of tokens for no reason.
+**This step is purely mechanical.** Use ONLY bash commands (cat, echo, date). Do NOT use the Read tool on any C-file or D-file. Do NOT read output files into context. This is a simple concatenation.
 </critical>
 
-After coherence check, produce D5 with bash operations only.
-
-**JSON consolidation — TLDR digest with selective structured data:**
+After coherence check, produce D5-Concept.txt with bash operations only:
 
 ```bash
-jq -s '{meta:{date:(now|todate),sections:[.[].code],count:length},sections:[.[]|{code,slug,tldr,source:("concept/"+.code+"-"+.slug+".json")}+(if .code=="C1" then {sitemap} elif .code=="C2" then {functional_requirements} elif .code=="C7" then {project_roadmap} else {} end)]}' concept/C*-*.json > D5-Concept.json
-```
-
-This extracts per section:
-- **ALL sections:** `code`, `slug`, `tldr[]`, `source` path to full C-file
-- **C1** additionally: `sitemap` object (page tree + meta) — compact, needed for Scope of Work
-- **C2** additionally: `functional_requirements` array — compact, needed for module assembly + Investment
-- **C7** additionally: `project_roadmap` object — compact, needed for Timeline
-
-Rationale for C1/C2/C7 structured data: the proposal's Scope of Work, Investment, and Timeline sections need item-level detail (page tree, requirement list, phase breakdown) that cannot be expressed as telegraphic bullets. These objects are compact (1-3KB each). All other sections (C3-C6, C8-C9) are fully served by their TLDRs for the proposal's narrative sections.
-
-**Markdown consolidation (TLDR digest):**
-
-```bash
-CLIENT=$(jq -r '.project.client' D1-Init.json)
-COUNT=$(jq '.meta.count' D5-Concept.json)
 DATE=$(date +%Y-%m-%d)
-echo "# Website Concept — $CLIENT
-*Generated: $DATE | Sections: $COUNT/9*
-
----
-" > D5-Concept.md
-for f in concept/C*-*.json; do
-  CODE=$(jq -r '.code' "$f")
-  SLUG=$(jq -r '.slug' "$f")
-  echo "## $CODE — $SLUG" >> D5-Concept.md
-  echo "*Full detail: concept/${CODE}-${SLUG}.md*" >> D5-Concept.md
-  echo "" >> D5-Concept.md
-  jq -r '.tldr[]' "$f" | sed 's/^/- /' >> D5-Concept.md
-  echo "" >> D5-Concept.md
+echo "Concept Overview — $DATE" > D5-Concept.txt
+echo "" >> D5-Concept.txt
+for f in concept/C*-*.txt; do
+  BASENAME=$(basename "$f" .txt)
+  echo "--- $BASENAME ---" >> D5-Concept.txt
+  cat "$f" >> D5-Concept.txt
+  echo "" >> D5-Concept.txt
 done
 ```
 
-### Step 9: Debug companion (when enabled)
+Same pattern as D3-Research.txt consolidation. Purely mechanical cat.
 
-If `research_config.debug` is `true` in D1-Init.json: write `tmp/debug/D5-Concept-debug.txt` — completed sections, TLDR counts per section, review notes summary, any failures, no prose.
+### Step 7: Debug companion (when enabled)
 
-### Step 10: Clean up temporary files
+If `debug` is `true` in project.json: write `tmp/debug/D5-Concept-debug.txt` — completed sections, line counts per section, review notes summary, any failures, no prose.
 
-Remove the pre-merged context files and temp review input — they were temporary build artifacts:
-
-```bash
-rm -f concept/context-C*.json tmp/concept-review-input.json
-```
-
-### Step 11: Update project-state.md
+### Step 8: Update project-state.md
 
 Update Phase 5 (Concept Creation) row:
 - Status: `complete` (all sections processed) or `partial` (some skipped/failed)
-- Output: `D5-Concept.json`
+- Output: `D5-Concept.txt`
 - Updated: today's date
 
 Display summary:
@@ -199,8 +146,28 @@ Concept Creation complete.
   Phase 5 status: complete | partial
   Review notes: D5-Review-Notes.md
 
-Next step: Review D5-Concept.md and D5-Review-Notes.md, then run proposal.
+Next step: Review D5-Concept.txt and D5-Review-Notes.md, then run proposal.
 ```
+
+## Pre-Read Table
+
+Every section reads baseline-log.txt and project.json. Additional source files per section:
+
+| Section | Additional Source Files |
+|---|---|
+| C1-Sitemap | R2-Keywords.txt, R9-Content.txt, D4 confirmed files |
+| C2-Functional | D2-Client-Intelligence.txt, D4 confirmed files |
+| C5-Visual | R8-UX.txt, R9-Content.txt |
+| C3-Technical-Architecture | C2-Functional.txt, R5-Technology.txt |
+| C4-Content-Strategy | C1-Sitemap.txt, R9-Content.txt |
+| C6-UX-Strategy | C1-Sitemap.txt, R7-Audience.txt, R8-UX.txt |
+| C7-Project-Roadmap | C1-Sitemap.txt, C2-Functional.txt, C3-Technical-Architecture.txt |
+| C8-SEO-Strategy | C1-Sitemap.txt, R1-SERP.txt, R2-Keywords.txt |
+| C9-Compliance | C2-Functional.txt, R5-Technology.txt |
+
+Source file paths are relative to the working directory. Prefix with `{working_directory}/` for absolute paths. For R-files and D-files, use the `research/` and root directories respectively. For C-files, use `concept/`.
+
+Note: baseline-log.txt by Phase 5 contains 40-80 lines of cumulative findings from phases 1-4 plus [C1]-[C9] entries as waves complete. This IS the shared context. Individual files provide detail when the baseline-log entry isn't enough.
 
 ## Dependency Graph
 
@@ -213,28 +180,10 @@ Wave 3 (parallel):  C8-SEO    C9-Compliance   C7-Project-Roadmap
                                                     ^
                                                (C1, C2, C3)
 
-Consolidate:  tmp/concept-review-input.json (temp, full data)
-                     |
 Coherence:    concept-reviewer -> D5-Review-Notes.md
                      |
-D5 Digest:    D5-Concept.json (TLDRs + C1/C2/C7 data) + D5-Concept.md (TLDR summary)
+D5 Digest:    D5-Concept.txt (concatenation of 9 C-files)
 ```
-
-## Pre-Merge Context Table
-
-Every section receives the same base: D1 + D2 + D3 (research TLDRs) + D4 (gap analysis TLDRs). Wave 2/3 sections add upstream C-files.
-
-| Section | Base | Upstream C-files |
-|---|---|---|
-| C1-Sitemap | D1, D2, D3, D4 | -- |
-| C2-Functional | D1, D2, D3, D4 | -- |
-| C5-Visual | D1, D2, D3, D4 | -- |
-| C3-Technical-Arch | D1, D2, D3, D4 | C2 |
-| C4-Content-Strategy | D1, D2, D3, D4 | C1 |
-| C6-UX-Strategy | D1, D2, D3, D4 | C1 |
-| C7-Project-Roadmap | D1, D2, D3, D4 | C1, C2, C3 |
-| C8-SEO-Strategy | D1, D2, D3, D4 | C1 |
-| C9-Compliance | D1, D2, D3, D4 | C2 |
 
 ## Rules
 
@@ -243,13 +192,11 @@ Every section receives the same base: D1 + D2 + D3 (research TLDRs) + D4 (gap an
 - NEVER dispatch Wave 2 sections before their Wave 1 dependencies complete
 - NEVER dispatch Wave 3 sections before their Wave 2 dependencies complete
 - NEVER modify project-state.md beyond Phase 5 rows
-- NEVER interpret or act on concept definition content -- read only to inline into the dispatch prompt; the concept-creator agent executes the methodology
-- NEVER start Phase 5 if D4-Gap-Analysis.json is missing or meta.status is not "resolved"
+- NEVER interpret or act on concept definition content — read only to inline into the dispatch prompt; the concept-creator agent executes the methodology
+- NEVER start Phase 5 if D4 gap analysis is not resolved
 - ALWAYS use dispatch-subagent skill for every concept-creator and concept-reviewer dispatch
-- ALWAYS build pre-merged context files via merge-json.sh before dispatching each wave
-- ALWAYS run bash consolidation after all sections complete
-- ALWAYS run coherence check after consolidation
-- ALWAYS clean up context files after coherence check
+- ALWAYS inline solution-framework.md and formatting-rules.md in every concept-creator dispatch
+- ALWAYS run coherence check after all waves complete
 </critical>
 
 - If a concept-creator fails, note which section was affected, report to operator, continue with remaining sections
@@ -275,11 +222,13 @@ All definition file paths are relative to `${CLAUDE_PLUGIN_ROOT}/agents/referenc
 ## Sub-agents
 
 Dispatched via dispatch-subagent:
-- **concept-creator** -- Produce one concept section, write per-section file pair (up to 9 instances, dispatched in 3 waves)
-- **concept-reviewer** -- Coherence check after consolidation, write D5-Review-Notes.md (1 instance)
+- **concept-creator** — Produce one concept section as scannable TXT, update baseline-log (up to 9 instances, dispatched in 3 waves)
+- **concept-reviewer** — Coherence check reading C-file TXTs directly, write D5-Review-Notes.md (1 instance)
 
 ## Reference files
 
-Read by concept-creator agents (inlined in dispatch prompt), not by this skill:
-- `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/*.md` -- 9 section definition files (purpose, methodology)
-- `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/templates/*.md` -- 9 output templates (JSON schema, markdown format)
+Inlined in every concept-creator dispatch prompt (read by this skill, not by agents):
+- `${CLAUDE_PLUGIN_ROOT}/references/solution-framework.md` — ICIP thinking sequence for solution agents
+- `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — Scannable TXT output conventions
+- `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/*.md` — 9 section definition files (purpose, methodology)
+- `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/templates/*.md` — 9 output guides (TXT structure)

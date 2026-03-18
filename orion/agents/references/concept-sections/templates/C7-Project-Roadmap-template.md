@@ -1,108 +1,89 @@
-# C7-Project-Roadmap — Output Templates
+# C7-Project-Roadmap — Output Guide
 
-Write JSON as **minified** (no whitespace, no indentation).
+Write scannable TXT per formatting-rules.md conventions.
 
-## JSON Schema
+## Expected Structure
 
-```json
-{
-  "tldr": ["string — max 15 telegraphic decision items, scope/solution/quantitative"],
-  "code": "C7",
-  "slug": "Project-Roadmap",
-  "project_roadmap": {
-    "launch_scope": {
-      "must_have": ["string (MVP items — pages and features)"],
-      "should_have": ["string (Phase 2 items)"],
-      "out_of_scope": ["string (explicitly excluded)"]
-    },
-    "phases": [
-      {
-        "phase": "number",
-        "name": "string",
-        "deliverables": ["string"],
-        "dependencies": ["string | null"],
-        "rationale": "string"
-      }
-    ],
-    "success_metrics": [
-      {
-        "timeframe": "string (launch | 3-month | 6-month | 12-month)",
-        "kpis": [
-          {
-            "metric": "string",
-            "target": "string",
-            "source": "string (which C-section or G-file drives this)"
-          }
-        ]
-      }
-    ],
-    "post_launch": {
-      "content_governance": "string",
-      "maintenance_schedule": "string",
-      "growth_roadmap": "string"
-    },
-    "risks": [
-      {
-        "risk": "string",
-        "impact": "high | medium | low",
-        "mitigation": "string",
-        "source": "string"
-      }
-    ]
-  },
-  "notes": ["string"]
-}
+```
+================================================================================
+LAUNCH SCOPE
+================================================================================
+
+MUST HAVE (Phase 1):
+• {page or feature} [src: C1/C2 priority]
+• {page or feature} [src: C1/C2 priority]
+
+SHOULD HAVE (Phase 2):
+• {page or feature} [src: C1/C2 priority]
+
+OUT OF SCOPE:
+• {item} — Reason: {why deferred}
+
+================================================================================
+PHASES
+================================================================================
+
+PHASE 1 — {name}:
+• Deliverables: {pages + features}
+• Dependencies: {what must exist first, or "none"}
+• Rationale: {why this grouping}
+
+PHASE 2 — {name}:
+• Deliverables: {pages + features}
+• Dependencies: {what must exist first}
+• Rationale: {why this grouping}
+
+PHASE 3 — {name} (if needed):
+• Deliverables: {pages + features}
+• Dependencies: {what must exist first}
+• Rationale: {why this grouping}
+
+================================================================================
+SUCCESS METRICS
+================================================================================
+
+LAUNCH:
+• {KPI}: {target} [src: {evidence}]
+• {KPI}: {target} [src: {evidence}]
+
+3 MONTHS:
+• {KPI}: {target} [src: {evidence}]
+
+6 MONTHS:
+• {KPI}: {target} [src: {evidence}]
+
+12 MONTHS:
+• {KPI}: {target} [src: {evidence}]
+
+================================================================================
+POST-LAUNCH
+================================================================================
+
+Content governance: {who publishes, review cadence}
+Maintenance: {updates, backups, security — system from C3, cadence here}
+Growth: {what to measure, when to expand}
+
+================================================================================
+RISKS
+================================================================================
+
+• {risk} — Impact: {high|medium|low} | Mitigation: {approach} [src: {code}]
+• {risk} — Impact: {high|medium|low} | Mitigation: {approach} [src: {code}]
+
+================================================================================
+NOTES
+================================================================================
+
+• {Cross-section observation}
+• Must-have items derived from C1/C2 priority tags
+• Technical constraints from C3 inform phase sequencing
 ```
 
-Write to `concept/C7-Project-Roadmap.json`.
+## Field Notes
 
-## Markdown Template
-
-Generate `concept/C7-Project-Roadmap.md` from the JSON:
-
-```markdown
-## TLDR
-- {tldr item 1}
-- {tldr item 2}
-
-## Project Roadmap
-
-### Launch Scope (MVP)
-**Must have:**
-- {must_have item}
-
-**Should have (Phase 2):**
-- {should_have item}
-
-**Out of scope:**
-- {out_of_scope item}
-
-### Phase Breakdown
-{for each phase}
-**Phase {phase}: {name}**
-Deliverables: {deliverables}
-Dependencies: {dependencies or "None"}
-Rationale: {rationale}
-{end for}
-
-### Success Metrics
-{for each timeframe}
-**{timeframe}:**
-| Metric | Target | Source |
-|---|---|---|
-| {metric} | {target} | {source} |
-{end for}
-
-### Post-Launch Plan
-- **Content governance:** {content_governance}
-- **Maintenance:** {maintenance_schedule}
-- **Growth roadmap:** {growth_roadmap}
-
-### Risks
-| Risk | Impact | Mitigation | Source |
-|---|---|---|---|
-| {risk} | {impact} | {mitigation} | {source} |
-
-### Notes
-- {note 1}
-```
+- Launch scope items must trace to C1 page priorities and C2 requirement priorities
+- Must-have items belong in Phase 1 — flag any priority inversion
+- Success metrics tied to business goals and C1 traffic potential — don't exceed optimistic estimates
+- 2-4 phases typically sufficient
+- Post-launch plan: C3 covers update systems, C7 covers schedule and ownership
+- Risks sourced from scope constraints, technical complexity, integration dependencies

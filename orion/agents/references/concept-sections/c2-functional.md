@@ -2,8 +2,9 @@
 
 **Code:** C2
 **Slug:** Functional
-**Output:** `concept/C2-Functional.json`, `concept/C2-Functional.md`
+**Output:** `concept/C2-Functional.txt`
 **Wave:** 1 (no upstream dependencies)
+**Hypothesis:** Core functionality gaps exist that require custom development
 
 ## Purpose
 
@@ -30,4 +31,4 @@ Define what the website needs to do. Every functional requirement is traceable t
 
 ## Output
 
-Write output using the templates at `templates/C2-Functional-template.md`.
+Follow output guide at `templates/C2-Functional-template.md`.

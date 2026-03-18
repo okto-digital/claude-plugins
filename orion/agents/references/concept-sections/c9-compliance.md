@@ -2,8 +2,9 @@
 
 **Code:** C9
 **Slug:** Compliance
-**Output:** `concept/C9-Compliance.json`, `concept/C9-Compliance.md`
+**Output:** `concept/C9-Compliance.txt`
 **Wave:** 3 (depends on C2-Functional)
+**Hypothesis:** Compliance requirements (WCAG, GDPR) are underestimated in current scope
 
 ## Purpose
 
@@ -26,4 +27,4 @@ Define the accessibility and legal compliance strategy: WCAG target, implementat
 
 ## Output
 
-Write output using the templates at `templates/C9-Compliance-template.md`.
+Follow output guide at `templates/C9-Compliance-template.md`.

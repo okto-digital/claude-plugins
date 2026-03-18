@@ -2,8 +2,9 @@
 
 **Code:** C5
 **Slug:** Visual
-**Output:** `concept/C5-Visual.json`, `concept/C5-Visual.md`
+**Output:** `concept/C5-Visual.txt`
 **Wave:** 1 (no upstream dependencies)
+**Hypothesis:** Visual direction must differentiate from competitors who all look similar
 
 ## Purpose
 
@@ -23,4 +24,4 @@ Define the visual direction for the website — not a design brief, but a direct
 
 ## Output
 
-Write output using the templates at `templates/C5-Visual-template.md`.
+Follow output guide at `templates/C5-Visual-template.md`.

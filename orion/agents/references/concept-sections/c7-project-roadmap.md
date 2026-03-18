@@ -2,8 +2,9 @@
 
 **Code:** C7
 **Slug:** Project-Roadmap
-**Output:** `concept/C7-Project-Roadmap.json`, `concept/C7-Project-Roadmap.md`
+**Output:** `concept/C7-Project-Roadmap.txt`
 **Wave:** 3 (depends on C1-Sitemap, C2-Functional, C3-Technical-Architecture)
+**Hypothesis:** Full scope exceeds a single launch — phased delivery is necessary
 
 ## Purpose
 
@@ -27,4 +28,4 @@ Define the phased delivery plan: what launches first, what follows, and what suc
 
 ## Output
 
-Write output using the templates at `templates/C7-Project-Roadmap-template.md`.
+Follow output guide at `templates/C7-Project-Roadmap-template.md`.
