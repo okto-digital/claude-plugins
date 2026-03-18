@@ -67,7 +67,7 @@ Each dispatch provides:
 - baseline-log.txt path: `{working_directory}/baseline-log.txt`
 - project.json path: `{working_directory}/project.json`
 - Output path: `{working_directory}/concept/{C-code}-{Slug}.txt`
-- Source files: list of file paths from the Pre-Read Table below
+- Upstream C-files: list of paths from the Source Table below (wave 2/3 only, empty for wave 1)
 - Plugin root path: `${CLAUDE_PLUGIN_ROOT}`
 - Model: opus (synthesis and reasoning)
 - MCP hints: none (concept creation uses Read + Write + Edit + Bash only, no MCP tools)
@@ -151,23 +151,23 @@ Next step: Review D5-Concept.txt and D5-Review-Notes.md, then run proposal.
 
 ## Pre-Read Table
 
-Every section reads `baseline-log.txt` and `project.json` from the working directory root. Additional source files per section (all paths relative to working directory):
+Every section reads `baseline-log.txt` and `project.json` from the working directory root. Wave 2/3 sections also read their upstream C-files:
 
-| Section | Additional Source Files |
-|---|---|
-| C1-Sitemap | `research/R2-Keywords.txt`, `research/R9-Content.txt`, `D4-Confirmed.txt` |
-| C2-Functional | `D2-Client-Intelligence.txt`, `D4-Confirmed.txt` |
-| C5-Visual | `research/R8-UX.txt`, `research/R9-Content.txt` |
-| C3-Technical-Architecture | `concept/C2-Functional.txt`, `research/R5-Technology.txt` |
-| C4-Content-Strategy | `concept/C1-Sitemap.txt`, `research/R9-Content.txt` |
-| C6-UX-Strategy | `concept/C1-Sitemap.txt`, `research/R7-Audience.txt`, `research/R8-UX.txt` |
-| C7-Project-Roadmap | `concept/C1-Sitemap.txt`, `concept/C2-Functional.txt`, `concept/C3-Technical-Architecture.txt` |
-| C8-SEO-Strategy | `concept/C1-Sitemap.txt`, `research/R1-SERP.txt`, `research/R2-Keywords.txt` |
-| C9-Compliance | `concept/C2-Functional.txt`, `research/R5-Technology.txt` |
+| Section | Wave | Upstream C-files |
+|---|---|---|
+| C1-Sitemap | 1 | -- |
+| C2-Functional | 1 | -- |
+| C5-Visual | 1 | -- |
+| C3-Technical-Architecture | 2 | `concept/C2-Functional.txt` |
+| C4-Content-Strategy | 2 | `concept/C1-Sitemap.txt` |
+| C6-UX-Strategy | 2 | `concept/C1-Sitemap.txt` |
+| C7-Project-Roadmap | 3 | `concept/C1-Sitemap.txt`, `concept/C2-Functional.txt`, `concept/C3-Technical-Architecture.txt` |
+| C8-SEO-Strategy | 3 | `concept/C1-Sitemap.txt` |
+| C9-Compliance | 3 | `concept/C2-Functional.txt` |
 
 Prefix all paths with `{working_directory}/` for absolute paths when passing to dispatch.
 
-Note: baseline-log.txt by Phase 5 contains 40-80 lines of cumulative findings from phases 1-4 plus [C1]-[C9] entries as waves complete. This IS the shared context. Individual files provide detail when the baseline-log entry isn't enough.
+**No R-files, no D-files.** baseline-log.txt by Phase 5 contains 40-80 lines of cumulative findings from phases 1-4 plus [C1]-[C9] entries as waves complete. This IS the shared context. If a baseline-log entry doesn't have enough detail for a specific recommendation, the agent flags it as INFERRED or MISSING — it does not read source files.
 
 ## Dependency Graph
 

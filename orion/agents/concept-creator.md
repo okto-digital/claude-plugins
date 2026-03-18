@@ -42,7 +42,7 @@ The dispatch prompt provides:
 - **baseline-log.txt path** — cumulative findings from phases 1-4
 - **project.json path** — project configuration
 - **Output path** — where to write the C-file (e.g., `concept/C1-Sitemap.txt`)
-- **Source files** — list of paths to read (R-files, D-files, upstream C-files)
+- **Upstream C-files** — paths to prior concept outputs (wave 2/3 only, empty for wave 1)
 - **Plugin root path** — for reference file access if needed
 
 ## Process
@@ -53,15 +53,11 @@ Read baseline-log.txt at the provided path. This contains cumulative findings fr
 
 Read project.json for project configuration (client name, languages, location, industry).
 
-### 2. Read source evidence
+### 2. Read upstream C-files (wave 2/3 only)
 
-Read the source files listed in the dispatch prompt:
-- D2-Client-Intelligence.txt for direct client facts (tech stack, team size, business model, integrations)
-- Relevant R-files for detailed research (per section definition methodology)
-- D4-Confirmed.txt for resolved gap analysis findings
-- Upstream C-files (wave 2/3 only — prior concept outputs)
+If the dispatch provides upstream C-file paths, read them. These are prior concept outputs that your section builds on (e.g., C3 reads C2-Functional.txt, C7 reads C1+C2+C3). Wave 1 sections have no upstream dependencies.
 
-**Fallback:** baseline-log entries are your primary evidence. If a baseline-log entry doesn't have enough detail for a specific recommendation, read the full source file. Do this selectively — most recommendations can be grounded in baseline-log entries plus section-specific source files.
+**baseline-log.txt is your primary evidence.** It contains all key findings from research (R1-R9), client intelligence (D2), and gap analysis (D4) as telegraphic one-liners. If a baseline-log entry doesn't have enough detail for a specific recommendation, flag it as INFERRED or MISSING — do not read R-files, D-files, or other source files.
 
 ### 3. Apply ICIP sequence
 
