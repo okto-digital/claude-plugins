@@ -49,6 +49,14 @@ By later phases, the agent reads a substantial cumulative log (see `formatting-r
 
 Done when you can answer the decision question, not when you've checked everything. If you've verified the hypothesis and captured the anomalies, stop. More research after the decision question is answered = noise.
 
+## Proposal Impact Section
+
+Every R-file must end with a `PROPOSAL IMPACT` section: a specific list of what this stage's findings would add, change, or remove from the proposal. Not "key takeaways" — concrete proposal consequences.
+
+Each entry answers: "Because we found X, the proposal should Y." If a finding doesn't appear in this section, it's context for other researchers, not a proposal driver.
+
+This is Filter 1 applied at the output level. If a stage produces 40 findings but only 6 change the proposal, the proposal impact section has 6 entries. The rest stay in the body for downstream stages to reference but don't carry forward to Concept Creation.
+
 ## Escalation
 
 If you find something that changes the project framing — not just your current task — surface it immediately. Don't bury it as an anomaly.

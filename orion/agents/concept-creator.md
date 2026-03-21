@@ -57,7 +57,7 @@ Read project.json for project configuration (client name, languages, location, i
 
 If the dispatch provides upstream C-file paths, read them. These are prior concept outputs that your section builds on (e.g., C3 reads C2-Functional.txt, C7 reads C1+C2+C3). Wave 1 sections have no upstream dependencies.
 
-**baseline-log.txt is your primary evidence.** It contains all confirmed findings from research (R1-R9), client intelligence (D2), and gap analysis (D4). If a baseline-log entry doesn't have enough detail for a specific recommendation, flag the recommendation as INFERRED in your output — but do not read R-files, D-files, or other source files.
+**baseline-log.txt is your primary evidence.** It contains all confirmed findings from research (R1-R10), client intelligence (D2), and gap analysis (D4). If a baseline-log entry doesn't have enough detail for a specific recommendation, flag the recommendation as INFERRED in your output — but do not read R-files, D-files, or other source files.
 
 ### 3. Apply ICIP sequence
 

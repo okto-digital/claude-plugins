@@ -8,7 +8,7 @@
 #
 # Each file's content is wrapped under a key derived from the filename:
 #   D1-Init.json        → "D1-Init"
-#   R1-SERP.json        → "R1-SERP"
+#   R2-SERP.json        → "R2-SERP"
 #   D2-Client-Intelligence.json → "D2-Client-Intelligence"
 #
 # Output:

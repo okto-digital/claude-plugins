@@ -1,11 +1,11 @@
-# Substage 3.4 — Industry & Market Context
+# Substage 3.5 — Industry & Market Context
 
-**Code:** R4
+**Code:** R5
 **Slug:** Market
-**Output:** `research/R4-Market.txt`
+**Output:** `research/R5-Market.txt`
 **Hypothesis:** Industry trends create opportunities or constraints for the website approach
-**Dependencies:** R3-Competitors
-**Reads from:** `project.json`, `baseline-log.txt`, `research/R1-SERP.txt`, `research/R2-Keywords.txt`, `research/R3-Competitors.txt`
+**Dependencies:** R4-Competitors
+**Reads from:** `project.json`, `baseline-log.txt`, `research/R2-SERP.txt`, `research/R3-Keywords.txt`, `research/R4-Competitors.txt`
 **MCP tools:** DataForSEO (optional), web-crawler (optional), WebSearch (required)
 
 ---
@@ -18,14 +18,14 @@ Research the broader industry environment the client operates in. Unlike previou
 
 ## Upstream Carry-Forward
 
-R1 provides keyword landscape signals (search demand patterns, SERP feature trends). R2 provides cluster intent distribution and page type recommendations. R3 provides competitive zones (service × market groupings), competitor positioning, and market signals from competitor profiles. Read all three before starting — they frame which markets and industries to research.
+R2 provides keyword landscape signals (search demand patterns, SERP feature trends). R3 provides cluster intent distribution and page type recommendations. R4 provides competitive zones (service × market groupings), competitor positioning, and market signals from competitor profiles. Read all three before starting — they frame which markets and industries to research.
 
 ## Minimum Scope
 
 Cover at least these areas. You may go beyond them if evidence warrants it. Every finding must connect to a concrete website decision — a page that should exist, a feature that's expected, a trust signal that's required, a content format that works, or a constraint that limits options. If a finding doesn't change what we propose or build, drop it.
 
 - Market state and maturity — industry stage (growing/mature/consolidating/disrupted), local vs global digital adoption comparison. Shapes expectations for website polish and feature completeness
-- Customer behaviour and buying journey — how customers research and decide, comparison patterns, reliance on reviews vs referrals vs direct search, decision cycle length. Directly shapes page types, content depth, and conversion flows. Flag explicitly as primary input for R7-Audience persona construction
+- Customer behaviour and buying journey — how customers research and decide, comparison patterns, reliance on reviews vs referrals vs direct search, decision cycle length. Directly shapes page types, content depth, and conversion flows. Flag explicitly as primary input for R6-Audience persona construction
 - Website functionality expectations — what customers expect from websites in this industry: booking systems, configurators, live chat, calculators, portals, e-commerce. What's table stakes vs differentiating. Note the local-vs-global gap — features standard globally but not yet adopted locally
 - Trust signals and credibility markers — what makes a business trustworthy online in this industry: certifications, memberships, awards, client logos, case studies, team credentials, security badges, regulatory markers. Ranked by importance
 - Regulatory and compliance requirements — hard constraints that override design preferences: GDPR/privacy, cookie consent, accessibility (EAA/WCAG), industry-specific regulations (financial disclosure, healthcare restrictions, licensing display), e-commerce regulations (consumer rights, returns, PCI DSS), local legal requirements (imprint page, business registration, terms)
@@ -35,18 +35,18 @@ Cover at least these areas. You may go beyond them if evidence warrants it. Ever
 ## Data Sources
 
 From `project.json`: site type, goal, languages, locations.
-From `baseline-log.txt`: mission, services/products, all prior findings including R1-R3 highlights.
-From `research/R1-SERP.txt`: keyword landscape signals, search demand patterns.
-From `research/R2-Keywords.txt`: cluster intent distribution, page type recommendations.
-From `research/R3-Competitors.txt`: competitive zones (define which markets to research), competitor positioning, market signals from profiles.
+From `baseline-log.txt`: mission, services/products, all prior findings including R2-R4 highlights.
+From `research/R2-SERP.txt`: keyword landscape signals, search demand patterns.
+From `research/R3-Keywords.txt`: cluster intent distribution, page type recommendations.
+From `research/R4-Competitors.txt`: competitive zones (define which markets to research), competitor positioning, market signals from profiles.
 
 ---
 
 ## Methodology — Processing Sequence
 
-Four steps. Step 1 scopes the research from R3's zones. Steps 2-3 gather data. Step 4 synthesises through the website lens.
+Four steps. Step 1 scopes the research from R4's zones. Steps 2-3 gather data. Step 4 synthesises through the website lens.
 
-**Step 1 — Define research scope from zones:** R3's competitive zones define which markets to research. Each unique market (location + language) in the zone map gets its own research thread. If there's an English/international dimension, add a global trends thread. For each thread, construct research queries in the appropriate language targeting the appropriate search engine and local sources.
+**Step 1 — Define research scope from zones:** R4's competitive zones define which markets to research. Each unique market (location + language) in the zone map gets its own research thread. If there's an English/international dimension, add a global trends thread. For each thread, construct research queries in the appropriate language targeting the appropriate search engine and local sources.
 
 **Step 2 — Search and source identification:** Construct search phrases across two layers per market thread:
 
@@ -78,10 +78,10 @@ For multi-market projects: produce a comparison highlighting where markets align
 
 ## Output
 
-Write `research/R4-Market.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R4]`.
+Write `research/R5-Market.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R5]`.
 
-**What R4 feeds downstream:**
-- Customer behaviour and buying journey → R7-Audience (primary input for persona construction)
+**What R5 feeds downstream:**
+- Customer behaviour and buying journey → R6-Audience (primary input for persona construction)
 - Website functionality expectations → Concept Creation functional requirements (C2)
 - Trust signals → Concept Creation (which trust elements pages must include)
 - Regulatory checklist → Concept Creation compliance requirements (C9), Proposal (non-negotiable deliverables)

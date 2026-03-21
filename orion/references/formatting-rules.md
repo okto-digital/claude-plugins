@@ -67,7 +67,7 @@ The baseline log is a **signal index**, not a research summary. Only CONFIRMED f
 **Format:**
 ```
 ================================================================================
-[R1] SERP — research/R1-SERP.txt
+[R2] SERP — research/R2-SERP.txt
 ================================================================================
 - Client ranks for 2 keywords only, zero commercial keywords indexed.
 - "komerčná fotografia" greenfield — zero related keywords, jms-studio.sk sole occupant.

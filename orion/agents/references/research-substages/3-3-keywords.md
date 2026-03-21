@@ -1,37 +1,37 @@
-# Substage 3.2 — Keyword Research & Opportunity Analysis
+# Substage 3.3 — Keyword Research & Opportunity Analysis
 
-**Code:** R2
+**Code:** R3
 **Slug:** Keywords
-**Output:** `research/R2-Keywords.txt`
+**Output:** `research/R3-Keywords.txt`
 **Hypothesis:** Untapped keyword opportunities exist in the client's service categories
-**Dependencies:** R1-SERP
-**Reads from:** `project.json`, `baseline-log.txt`, `research/R1-SERP.txt`
+**Dependencies:** R2-SERP
+**Reads from:** `project.json`, `baseline-log.txt`, `research/R2-SERP.txt`
 **MCP tools:** DataForSEO (required)
 
 ---
 
 ## Purpose
 
-Expand R1's seed keywords into the full keyword landscape, cluster them into page-level targets based on SERP overlap, score each cluster by feasibility and value, and produce a prioritised list of page recommendations that feeds directly into Concept Creation.
+Expand R2's seed keywords into the full keyword landscape, cluster them into page-level targets based on SERP overlap, score each cluster by feasibility and value, and produce a prioritised list of page recommendations that feeds directly into Concept Creation.
 
-**R1 mapped the battlefield. R2 plans the attack — which positions to take, in what order, and why.**
+**R2 mapped the battlefield. R3 plans the attack — which positions to take, in what order, and why.**
 
-## R1 Carry-Forward
+## R2 Carry-Forward
 
-R1 already provides seed keywords with volume, intent, client positions, competitor domains, and SERP composition. Before calling any API, read R1-SERP.txt fully and assess what's already available. Skip or reduce any step where R1 data is sufficient. Specifically:
+R2 already provides seed keywords with volume, intent, client positions, competitor domains, and SERP composition. Before calling any API, read R2-SERP.txt fully and assess what's already available. Skip or reduce any step where R2 data is sufficient. Specifically:
 
-- If R1 includes client rankings per keyword → use as baseline instead of re-fetching in Step 0
-- If R1 volume and intent data covers the seed list → skip re-enrichment for those keywords
-- If R1 competitor list is already typed and ranked → use directly in Step 1A without re-fetching
+- If R2 includes client rankings per keyword → use as baseline instead of re-fetching in Step 0
+- If R2 volume and intent data covers the seed list → skip re-enrichment for those keywords
+- If R2 competitor list is already typed and ranked → use directly in Step 1A without re-fetching
 
-The agent decides what to skip based on R1 completeness. Document skipped steps and reasoning in the output.
+The agent decides what to skip based on R2 completeness. Document skipped steps and reasoning in the output.
 
 ## Minimum Scope
 
 Cover at least these items. You may go beyond them if evidence warrants it.
 
 - Client keyword baseline — what the client currently ranks for (position, URL, volume), or confirmation of zero presence for new builds
-- Keyword discovery from three streams — competitor gap extraction, seed expansion via DataForSEO, agent-generated semantic candidates validated against real volume
+- Keyword discovery from up to three streams (sequential, with saturation checks) — competitor gap extraction first, seed expansion at adjusted depth, agent-generated candidates only for remaining gaps
 - Deduplication and enrichment — every keyword carries: volume, difficulty, CPC, intent, source stream, client position (or null)
 - Opportunity classification per keyword — NOT_TARGETED (no ranking), UNDERPERFORMING (pos 11+), COMPETITIVE (top 10 but below best competitor), OWNED (top 3 and above competitors)
 - Keyword clusters — keywords grouped by SERP overlap into page-level targets. Each cluster = one page on the future website
@@ -44,24 +44,30 @@ Cover at least these items. You may go beyond them if evidence warrants it.
 ## Data Sources
 
 From `project.json`: research config (search_landscape_max_keywords, research_depth), languages, locations, site_type (new vs redesign).
-From `baseline-log.txt`: mission, services/products, client URL, all prior findings including R1 highlights.
-From `research/R1-SERP.txt`: seed keywords with volume/intent/position, competitor domains (top 10 typed), language x location matrix, SERP composition patterns.
+From `baseline-log.txt`: mission, services/products, client URL, all prior findings including R2 highlights.
+From `research/R2-SERP.txt`: seed keywords with volume/intent/position, competitor domains (top 10 typed), language x location matrix, SERP composition patterns.
 
 ---
 
 ## Methodology — Processing Sequence
 
-Seven steps. Each builds on the previous. The agent may compress or skip steps where R1 data already covers the need.
+Seven steps. Each builds on the previous. The agent may compress or skip steps where R2 data already covers the need.
 
-**Step 0 — Client keyword baseline:** Establish what the client already ranks for before discovering new opportunities. Run ranked keywords on the client domain per language x location combination. For new builds (site_type = "new"), this returns minimal or no data — all discovered keywords default to NOT_TARGETED. Skip if R1 already includes comprehensive client rankings.
+**Step 0 — Client keyword baseline:** Establish what the client already ranks for before discovering new opportunities. Run ranked keywords on the client domain per language x location combination. For new builds (site_type = "new"), this returns minimal or no data — all discovered keywords default to NOT_TARGETED. Skip if R2 already includes comprehensive client rankings.
 
-**Step 1 — Keyword discovery (three streams):** Three independent sources, merged into one deduplicated list.
+**Step 1 — Keyword discovery (three streams, sequential with saturation checks):** Three sources run in priority order. After each stream, check coverage before deciding the next stream's depth.
 
-- **Stream A — Competitor gap extraction:** Pull ranked keywords for top 5 commercial competitors from R1. Identify keywords where competitors rank top 20 and client does not (or ranks below 20). These are highest-signal opportunities — proven demand in the client's exact market. Use domain intersection where available.
-- **Stream B — Seed expansion:** Expand R1 seed keywords into long-tail variants. Three passes in order: full-text expansion (keywords containing the seed phrase), related-keyword depth crawl (2 levels of "searches related to"), category-based relevance search (same product/service category, may not contain seed phrase). Batch by semantic group — one call per service/product cluster, not one massive call.
-- **Stream C — Agent-generated semantic candidates:** Generate keyword candidates from reasoning about the client's business: service × location modifiers, service × audience segments, service × problem/solution framing, service × comparison modifiers, industry terminology variations. All agent-generated keywords must be validated against DataForSEO for volume and difficulty before inclusion.
+- **Stream A — Competitor gap extraction (run first, highest signal):** Pull ranked keywords for top 5 commercial competitors from R2. Identify keywords where competitors rank top 20 and client does not (or ranks below 20). These are highest-signal opportunities — proven demand in the client's exact market. Use domain intersection where available.
 
-**Step 2 — Deduplication and enrichment:** Merge all streams. Remove exact duplicates. Ensure every keyword carries: keyword, volume, difficulty, CPC, competition level, intent, source stream, client position (from Step 0 or null). Tag source correctly: `seed` (from R1), `expanded` (from Stream B), `gap_opportunity` (from Stream A), `agent_generated` (from Stream C). Fill missing data points via bulk intent classification and bulk difficulty scoring.
+- **Saturation check after A:** Assess coverage against service lines and markets from baseline-log.txt. Do all client services have keyword representation? Are all language × location combinations covered? If coverage is strong across all zones, reduce Stream B depth. If specific service lines or markets are thin, note the gaps for targeted expansion.
+
+- **Stream B — Seed expansion (depth adjusted by saturation):** Expand R2 seed keywords into long-tail variants. If saturation check found strong coverage: limit to top 50 suggestions per seed, skip category-based expansion. If coverage is thin in specific zones: run full depth for those zones only. Three passes in order: full-text expansion (keywords containing the seed phrase), related-keyword depth crawl (2 levels of "searches related to"), category-based relevance search (same product/service category, may not contain seed phrase). Batch by semantic group — one call per service/product cluster, not one massive call.
+
+- **Saturation check after B:** Re-assess. Any service lines or markets still without keyword coverage? If all zones covered, skip Stream C entirely. If specific gaps remain, target Stream C at those gaps only.
+
+- **Stream C — Agent-generated semantic candidates (gap-filling only):** Generate keyword candidates only for service lines or markets still underrepresented after Streams A and B. Candidates from reasoning: service × location modifiers, service × audience segments, service × problem/solution framing, service × comparison modifiers, industry terminology variations. All agent-generated keywords must be validated against DataForSEO for volume and difficulty before inclusion. Skip entirely if saturation checks show full coverage.
+
+**Step 2 — Deduplication and enrichment:** Merge all streams. Remove exact duplicates. Ensure every keyword carries: keyword, volume, difficulty, CPC, competition level, intent, source stream, client position (from Step 0 or null). Tag source correctly: `seed` (from R2), `expanded` (from Stream B), `gap_opportunity` (from Stream A), `agent_generated` (from Stream C). Fill missing data points via bulk intent classification and bulk difficulty scoring.
 
 **Step 3 — Opportunity classification:** Using the client baseline from Step 0, classify each keyword: NOT_TARGETED (no ranking), UNDERPERFORMING (pos 11+), COMPETITIVE (top 10 but below best competitor), OWNED (top 3 and above — not an opportunity, skip). For new builds, all keywords = NOT_TARGETED.
 
@@ -117,12 +123,12 @@ KOS = (V × 0.15) + (I × 0.20) + (D × 0.20) + (G × 0.20) + (F × 0.25)
 
 ## Output
 
-Write `research/R2-Keywords.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R2]`.
+Write `research/R3-Keywords.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R3]`.
 
-**What R2 feeds downstream:**
+**What R3 feeds downstream:**
 - Keyword clusters with page type recommendations → Concept Creation sitemap (C1)
-- Enriched competitor domain list (R1 appearances + R2 domain intersection + R2 competitor discovery) → R3-Competitors
+- Enriched competitor domain list (R2 appearances + R3 domain intersection + R3 competitor discovery) → R4-Competitors
 - Opportunity scores → Concept Creation prioritisation (C7-Roadmap)
 - Intent classification per cluster → Concept Creation page type mapping (C1)
-- Gap analysis → R3-Competitors (which competitors own which clusters)
-- Verified vs unverified split → R9-Content (content experiment candidates)
+- Gap analysis → R4-Competitors (which competitors own which clusters)
+- Verified vs unverified split → R10-Content (content experiment candidates)

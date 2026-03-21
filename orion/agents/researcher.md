@@ -54,7 +54,7 @@ Append key findings to `baseline-log.txt`. Read existing entries first — do NO
 ```bash
 cat >> baseline-log.txt << 'BASELINE'
 ================================================================================
-[R1] SERP — research/R1-SERP.txt
+[R2] SERP — research/R2-SERP.txt
 ================================================================================
 - Finding one.
 - Finding two.

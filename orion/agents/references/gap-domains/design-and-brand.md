@@ -48,6 +48,7 @@
 | Professional photography available (team, office, products, work samples) | IMPORTANT |
 | Photography style preference (candid, staged, lifestyle, product-focused) | IMPORTANT |
 | Stock photography acceptable? With what restrictions? | IMPORTANT |
+| AI generated images acceptable? With what restrictions? | IMPORTANT |
 | Custom illustrations or icons needed? | NICE-TO-HAVE |
 | Video content planned for the site? | IMPORTANT |
 | Image style references (mood board, Pinterest board, example sites) | NICE-TO-HAVE |

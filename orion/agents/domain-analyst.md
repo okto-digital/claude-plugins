@@ -37,7 +37,7 @@ The dispatch prompt provides:
 Read `baseline-log.txt`. The mission statement is at the top — every assessment should serve this mission. Tagged entries from prior phases are your evidence base:
 - `[INIT]` — project facts and constraints
 - `[D2]` — client intelligence (tech stack, team size, business model, digital presence)
-- `[R1]`–`[R9]` — research findings (SERP, keywords, competitors, market, technology, reputation, audience, UX, content)
+- `[R1]`–`[R10]` — research findings (inventory, SERP, keywords, competitors, market, audience, reputation, technology, UX, content)
 
 Read `project.json` for project parameters — site type, build type, languages, locations, notes. Operator notes often contain signals that influence scoring.
 

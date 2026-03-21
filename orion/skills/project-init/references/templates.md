@@ -61,15 +61,16 @@
 
 | Sub | Name | Code | Status | Output | Updated |
 |---|---|---|---|---|---|
-| 3.1 | SERP & Search Landscape | R1-SERP | -- | -- | -- |
-| 3.2 | Keyword Opportunity | R2-Keywords | -- | -- | -- |
-| 3.3 | Competitor Landscape | R3-Competitors | -- | -- | -- |
-| 3.4 | Industry & Market Context | R4-Market | -- | -- | -- |
-| 3.5 | Technology & Performance | R5-Technology | -- | -- | -- |
-| 3.6 | Reputation & Social Proof | R6-Reputation | -- | -- | -- |
-| 3.7 | Audience & Personas | R7-Audience | -- | -- | -- |
-| 3.8 | UX/UI Patterns | R8-UX | -- | -- | -- |
-| 3.9 | Content Landscape & Strategy | R9-Content | -- | -- | -- |
+| 3.1 | Client Website Inventory | R1-Inventory | -- | -- | -- |
+| 3.2 | SERP & Search Landscape | R2-SERP | -- | -- | -- |
+| 3.3 | Keyword Opportunity | R3-Keywords | -- | -- | -- |
+| 3.4 | Competitor Landscape | R4-Competitors | -- | -- | -- |
+| 3.5 | Industry & Market Context | R5-Market | -- | -- | -- |
+| 3.6 | Audience & Personas | R6-Audience | -- | -- | -- |
+| 3.7 | Reputation & Social Proof | R7-Reputation | -- | -- | -- |
+| 3.8 | Technology & Performance | R8-Technology | -- | -- | -- |
+| 3.9 | UX/UI Patterns | R9-UX | -- | -- | -- |
+| 3.10 | Content Landscape & Strategy | R10-Content | -- | -- | -- |
 ```
 
 Phase 1 (INIT) is marked `complete` immediately — producing project.json, D1-Init.txt, and baseline-log.txt IS the INIT phase output.

@@ -1,8 +1,8 @@
-# Substage 3.1 — SERP Research
+# Substage 3.2 — SERP Research
 
-**Code:** R1
+**Code:** R2
 **Slug:** SERP
-**Output:** `research/R1-SERP.txt`
+**Output:** `research/R2-SERP.txt`
 **Hypothesis:** Client is invisible in local search for core services
 **Dependencies:** none (first substage)
 **Reads from:** `project.json`, `baseline-log.txt`
@@ -78,7 +78,7 @@ From all SERP results across all layers:
 - Directories and marketplaces noted separately as channel opportunities
 - Flag separately: city-level competitors, national competitors, cross-border competitors
 - A domain with 3 local appearances is more relevant than one with 10 national appearances — the client competes with local businesses first
-- Cap: top 10 commercial domains total. Top 5 by frequency become the competitor shortlist for R3-Competitors
+- Cap: top 10 commercial domains total. Top 5 by frequency become the competitor shortlist for R4-Competitors
 
 ---
 
@@ -87,7 +87,7 @@ From all SERP results across all layers:
 **DataForSEO — primary tool:**
 - SERP analysis per keyword — core endpoint. Returns full SERP including result types, positions, domains, URLs, titles, descriptions. Run per query across all layers with correct location + language + engine parameters.
 - Intent classification — classifies query intent. Run on the full keyword list after all SERP queries are complete.
-- Volume estimation — first pass volume estimate on seed keywords before full expansion in R2-Keywords.
+- Volume estimation — first pass volume estimate on seed keywords before full expansion in R3-Keywords.
 - Current rankings (redesign only) — what the client domain currently ranks for.
 - Current traffic (redesign only) — estimated organic traffic for the client domain.
 
@@ -98,13 +98,13 @@ Manual spot-checks on 3-5 highest-priority queries to visually confirm result ty
 
 ## Output
 
-Write `research/R1-SERP.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R1]`.
+Write `research/R2-SERP.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R2]`.
 
-**What R1 feeds downstream:**
-- Seed keyword list → R2-Keywords
-- Competitor domain list → R3-Competitors
-- Result type patterns → R9-Content (what content formats Google rewards)
+**What R2 feeds downstream:**
+- Seed keyword list → R3-Keywords
+- Competitor domain list → R4-Competitors
+- Result type patterns → R10-Content (what content formats Google rewards)
 - Ad density → Concept Creation sitemap (traffic estimate calibration)
-- People Also Ask → R2-Keywords (expansion seeds) and R9-Content (FAQ signals)
+- People Also Ask → R3-Keywords (expansion seeds) and R10-Content (FAQ signals)
 - Intent classification → Concept Creation (page type mapping across sitemap)
-- AI Overview presence → R9-Content (reduced-traffic-potential flags)
+- AI Overview presence → R10-Content (reduced-traffic-potential flags)
