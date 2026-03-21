@@ -11,6 +11,18 @@
 - Whether content differs by language beyond translation -- region-specific offers, legal text, imagery
 - What the maintenance burden is: every content update multiplied by number of languages
 
+## Research Provides
+
+**Expected confirmation rate:** MEDIUM (40-70%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [INIT] | Languages and locations configured |
+| [R3] Keywords | Keyword volumes per language market |
+| [R5] Market | Market comparison across regions |
+| [R1] Inventory | Current multilingual setup on existing site |
+| [D2] | Client's market presence across language regions |
+
 ---
 
 ## 1. Language Requirements

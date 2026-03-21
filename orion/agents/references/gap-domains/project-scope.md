@@ -9,6 +9,16 @@
 - Whether phased delivery is appropriate given budget and timeline constraints
 - What the client's risk tolerance is: launch lean and iterate, or launch complete
 
+## Research Provides
+
+**Expected confirmation rate:** LOW (<40%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [INIT] | Project parameters, build type, site type |
+| [D2] | Client business context and project triggers |
+| [R4] Competitors | Competitor scope and feature sets for benchmarking |
+
 ---
 
 ## 1. Timeline

@@ -9,6 +9,17 @@
 - Whether the client has thought about mobile navigation or just desktop
 - What happens when the site grows -- can the structure scale without a redesign
 
+## Research Provides
+
+**Expected confirmation rate:** MEDIUM (40-70%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [R1] Inventory | Current site page inventory, navigation structure |
+| [R3] Keywords | Page type recommendations from keyword clusters |
+| [R9] UX | Competitor navigation patterns, information architecture |
+| [R6] Audience | User flow expectations and content consumption patterns |
+
 ---
 
 ## 1. Page Inventory

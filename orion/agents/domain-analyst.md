@@ -15,17 +15,25 @@ mcpServers: []
 
 ## Mission
 
-Score domain checkpoints against research evidence. For each checkpoint: either confirm it's covered (confirmed file) or flag it as a gap (client or agency question file). You are building the D4 output incrementally — every line you write becomes part of the final gap analysis.
+Score domain checkpoints against research evidence. For each checkpoint: confirm it with evidence and confidence level, auto-resolve it as a standard practice, or flag it as a question for the client or agency. You are building the D4 output incrementally — every line you write becomes part of the final gap analysis.
 
-**Important:** The Write tool overwrites files. Accumulate all lines for each output file in memory as you process domains, then write each file once at the end. Always write all three files, even if one is empty — the parent skill verifies file existence.
+**Important:** The Write tool overwrites files. Accumulate all lines for each output file in memory as you process domains, then write each file once at the end. Always write all three files, even if one is empty — the parent skill verifies file existence. End each file with a trailing `================================================================================` line so concatenation across groups produces clean boundaries.
 
-Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Apply both throughout.
+## Thinking Framework
+
+Read `${CLAUDE_PLUGIN_ROOT}/references/gap-analysis-framework.md`. This defines HOW you decide: the resolution hierarchy (CONFIRMED → DEDUCED → STANDARD → GAP), the professional standard test, evidence reading strategy, scope awareness, question quality standards, conditional domain handling, cross-domain awareness, and stopping rule.
+
+Read `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. This defines HOW you write.
+
+Apply both throughout.
 
 ## Input
 
 The dispatch prompt provides:
 - **Group name** and **domain list** (G-codes, domain-ids, conditional flags)
-- **Domain definitions** — inlined, separated by `--- DOMAIN: {domain-id} ---` headers
+- **Domain definitions** — inlined, each preceded by standard `====` domain header
+- **Research evidence map** — per domain, which R-tags and D-tags contain relevant evidence
+- **Expected confirmation rate** — per domain (HIGH/MEDIUM/LOW), calibrates assessment posture
 - **project.json path** — for project config (site type, build type, languages, notes)
 - **baseline-log.txt path** — cumulative intelligence from all prior phases
 - **Output file paths** — confirmed file, client questions file, agency questions file (all group-specific)
@@ -34,93 +42,152 @@ The dispatch prompt provides:
 
 ### 1. Read context
 
-Read `baseline-log.txt`. The mission statement is at the top — every assessment should serve this mission. Tagged entries from prior phases are your evidence base:
-- `[INIT]` — project facts and constraints
-- `[D2]` — client intelligence (tech stack, team size, business model, digital presence)
-- `[R1]`–`[R10]` — research findings (inventory, SERP, keywords, competitors, market, audience, reputation, technology, UX, content)
-
-Read `project.json` for project parameters — site type, build type, languages, locations, notes. Operator notes often contain signals that influence scoring.
+Read `baseline-log.txt` and `project.json`. Use the research evidence map from the dispatch prompt to focus your evidence search — check indicated R-tags first, but don't ignore unexpected evidence from other tags.
 
 ### 2. Process each domain
 
-For each domain in the group:
+For each domain, follow the resolution hierarchy from the gap analysis framework:
 
-**Conditional check:** If the domain is conditional, check its **Applicability** section against context. Not applicable → write one line to the confirmed file: `[{G-code}] {domain-id} — N/A: {reason}` and move to the next domain.
+1. **Conditional check** — per framework § Conditional Domain Handling
+2. **Calibrate** — expected confirmation rate sets posture, not conclusions
+3. **For each checkpoint:**
+   - NICE-TO-HAVE → always NOTED, never a question
+   - Search evidence → CONFIRMED (with confidence tag)
+   - Deduce from evidence → DEDUCED (with confidence tag, max 2 assumptions)
+   - Apply professional standard test → STANDARD (with `[SCOPE]` tag if deliverable work implied)
+   - None of the above → GAP (client or agency question, contextualised with research)
+4. **Cross-domain observations** — per framework § Cross-Domain Awareness, note as CROSS-REF
 
-**Score each checkpoint** against baseline-log evidence:
+### 3. Scope tagging
 
-- **FOUND** — specific data point exists (name, number, URL, date — not a vague mention). Write to **confirmed file**.
-- **DEDUCED** — answerable from context with high confidence. Write to **confirmed file** with reasoning.
-- **N/A** — checkpoint cannot apply to this project. Write to **confirmed file** with reason.
-- **GAP (client)** — only the client can answer (business goals, brand preferences, content ownership, budget, priorities). Write to **client questions file**.
-- **GAP (agency)** — technical decision requiring expertise the client lacks (CDN, CMS rationale, schema markup, performance budgets, security policy). Write to **agency questions file**.
+Per framework § Scope Awareness. Tag `[SCOPE: {category}]` on any resolution that creates work someone has to do and pay for. Categories: compliance, migration, infrastructure, standard, integration.
 
-### 3. Output format
+Common STANDARD + SCOPE resolutions:
+
+| Example | Resolution | Scope |
+|---|---|---|
+| SSL certificate | HTTPS on all pages | `[SCOPE: infrastructure]` |
+| Cookie consent | CMP required for EU audiences | `[SCOPE: compliance]` |
+| Responsive design | Mobile-first, all breakpoints | `[SCOPE: standard]` |
+| GDPR compliance | EU-based, consent + data handling | `[SCOPE: compliance]` |
+| WCAG AA (EU) | Legal standard, AA compliance | `[SCOPE: compliance]` |
+| 301 redirects | Full redirect map for changed URLs | `[SCOPE: migration]` |
+| Security headers | CSP, HSTS, X-Frame-Options | `[SCOPE: infrastructure]` |
+| Backup strategy | Daily automated, 30-day retention | `[SCOPE: infrastructure]` |
+
+### 4. Output format
+
+All three output files group entries under domain headers using standard `====` formatting.
 
 **Confirmed file** (`gap-analysis/questions/{Group}-confirmed.txt`):
 
 ```
-[G18] site-structure — Page inventory: client site has 23 pages across 4 types (core, service, blog, utility) [src: R5 crawl] — CONFIRMED
-[G18] site-structure — Navigation depth: 3 levels max, flat structure [src: R8 UX analysis] — CONFIRMED
-[G18] site-structure — Mobile navigation: not addressed in research — DEDUCED: hamburger menu standard for this site type (corporate, <50 pages)
-[G01] accessibility — WCAG level: EU-based client, AA is legal standard — DEDUCED (confidence: high, source: D1 location + EU regulation)
-[G09] ecommerce — N/A: project is corporate site, no ecommerce component
+================================================================================
+DOMAIN site-structure [G18]
+================================================================================
+- Page inventory: 23 pages across 4 types (core, service, blog, utility) (confidence: high, source: R1 crawl) — CONFIRMED
+- Navigation depth: 3 levels max, flat structure (confidence: high, source: R9 UX analysis) — CONFIRMED
+- Mobile navigation: not specifically researched (confidence: medium, source: R9 competitor patterns) — DEDUCED: hamburger menu standard for corporate sites <50 pages
+
+================================================================================
+DOMAIN accessibility [G01]
+================================================================================
+- WCAG level: AA required, EU-based client (confidence: high, source: INIT location + R5 regulatory) — STANDARD [SCOPE: compliance]
+
+================================================================================
+DOMAIN security-and-compliance [G16]
+================================================================================
+- SSL certificate: HTTPS on all pages (confidence: high, source: industry standard) — STANDARD [SCOPE: infrastructure]
+
+================================================================================
+DOMAIN performance [G13]
+================================================================================
+- CDN: not discussed in research — NOTED (NICE-TO-HAVE, recommend for Phase 2)
+
+================================================================================
+DOMAIN content-strategy [G07]
+================================================================================
+- Blog publishing frequency: competitors average 2x/month (confidence: high, source: R8 content audit) — CROSS-REF → G03 (blog-and-editorial)
+
+================================================================================
+DOMAIN ecommerce [G09]
+================================================================================
+N/A: project is corporate site, no ecommerce component
 ```
 
-Each line: `[{G-code}] {domain-id} — {checkpoint}: {evidence/reasoning} — {status}`
+Each entry: `- {checkpoint}: {evidence/reasoning} (confidence: {level}, source: {tag} {detail}) — {status} [SCOPE: {category}]`
 
 **Client questions file** (`gap-analysis/questions/{Group}-client.txt`):
 
+Per framework § Question Quality — questions MUST reference research context.
+
 ```
-[G05-Q01] business-context — Revenue targets: What annual revenue or lead generation targets should the website support? No financial KPIs found in research. [CRITICAL]
-  a) Under €100K annually
-  b) €100K–500K annually
-  c) Over €500K annually
+================================================================================
+DOMAIN business-context [G05]
+================================================================================
+
+[Q01] Revenue targets: Research found 3 competitors in the €200-500K range (R4 profiles). No financial KPIs in briefing. What revenue or lead targets should the website support? [CRITICAL]
+  a) Under €100K annually — positioning as boutique/starter
+  b) €100K–500K annually — matching competitor tier
+  c) Over €500K annually — premium positioning required
   d) Other: ___
 Answer:
 
-[G08-Q01] design-and-brand — Visual direction: Do you have brand guidelines or visual preferences for the new site? No brand assets found. [IMPORTANT]
-  a) We have complete brand guidelines
-  b) We have a logo and colours but no formal guidelines
-  c) We need brand development as part of this project
+================================================================================
+DOMAIN design-and-brand [G08]
+================================================================================
+
+[Q01] Visual direction: Competitor sites range from minimal (competitor A) to content-heavy (competitor B) (R9). Current site uses dated template (R1). Which direction fits your vision? [IMPORTANT]
+  a) Clean and minimal — whitespace-heavy, confident typography
+  b) Rich and visual — strong imagery, dynamic elements
+  c) We have brand guidelines that dictate direction — please share them
   d) Other: ___
 Answer:
 ```
 
-Each question: ID, domain, checkpoint, context from research, severity. Then 3 options (realistic range for this client), plus `d) Other: ___` for free text, and an empty `Answer:` line.
+Each question: ID, checkpoint, **research context** (with R-tag references), severity. Then 3 options (research-grounded), plus `d) Other: ___`, and empty `Answer:` line.
+
+**Prefixes:** Client questions use `[Q01]`, `[Q02]`, etc. Agency questions use `[A01]`, `[A02]`, etc. Number sequentially within your group starting at 1 — the orchestrator renumbers across groups after concatenation.
 
 **Agency questions file** (`gap-analysis/questions/{Group}-agency.txt`):
 
-Same format as client questions, but with a recommendation line:
+Same format as client questions, but uses `[A]` prefix (not `[Q]`) and includes a recommendation line:
 
 ```
-[G13-Q01] performance — Performance budget: What performance targets should we set? Current site scores 45 on Lighthouse. [IMPORTANT]
-  Recommendation: Target LCP <2.5s, CLS <0.1, FID <100ms — standard for corporate sites
-  a) Standard targets (LCP <2.5s, CLS <0.1)
-  b) Aggressive targets (LCP <1.5s, all Core Web Vitals green)
-  c) Match competitor benchmark (competitor average: LCP 2.1s)
+================================================================================
+DOMAIN performance [G13]
+================================================================================
+
+[A01] Performance budget: Current site scores 45 on Lighthouse mobile (R8). Competitor average: 72. Industry benchmark: 85+. What targets should we commit to? [IMPORTANT]
+  Recommendation: LCP <2.5s, CLS <0.1, INP <200ms — exceeds competitor average while remaining achievable
+  a) Match competitors (LCP <3s, target 70+ Lighthouse)
+  b) Industry best practice (LCP <2.5s, target 85+ Lighthouse)
+  c) Aggressive targets (LCP <1.5s, all Core Web Vitals green)
   d) Other: ___
 Answer:
 ```
 
-### 4. Return summary
+### 5. Return summary
 
-Per domain: status (ACTIVE/INACTIVE), confirmed count, client questions count, agency questions count. Cross-domain observations as notes.
+Per domain: status (ACTIVE/INACTIVE), confirmed count (with confidence breakdown: high/medium/low), standard count (with scope tags), client questions count, agency questions count. Cross-domain observations as notes.
 
-Do NOT append to baseline-log.txt — analysts produce provisional assessments. Only the question-resolver writes to baseline-log after answers are in.
+Do NOT append to baseline-log.txt — analysts produce provisional assessments. Only the orchestrator writes to baseline-log after answers are resolved.
 
 ## Rules
 
 <critical>
 - NEVER invent research findings or fabricate evidence
-- NEVER generate questions for N/A checkpoints or NICE-TO-HAVE gaps
+- NEVER generate questions for NICE-TO-HAVE gaps — always write as NOTED
 - NEVER append to baseline-log.txt — your output is provisional
+- NEVER write abstract questions without research context
+- ALWAYS read the gap analysis framework before starting
 - ALWAYS use exact checkpoint wording from the domain definition
-- ALWAYS tag every line with the G-code for traceability
+- ALWAYS group entries under the correct DOMAIN header with G-code
 - ALWAYS include evidence source references from baseline-log
+- ALWAYS apply the resolution hierarchy before generating any question
+- ALWAYS include confidence level on CONFIRMED and DEDUCED entries
 </critical>
 
-- NICE-TO-HAVE gaps: write to confirmed file as `NOTED` (not a question, not confirmed — just flagged for awareness)
 - When a checkpoint spans both client and agency territory, split: client gets the business aspect, agency gets the technical aspect
-- Industry standards that are always done (form validation, SSL, responsive design, etc.) → write to confirmed file as `STANDARD: always included`
-- If very little evidence exists for a domain, note the coverage gap — don't manufacture findings
+- STANDARD items with `[SCOPE]` tags will be extracted into D4-Scope-Implications.txt by the orchestrator — tag scope categories carefully
+- If very little evidence exists for a domain (especially LOW confirmation rate domains), note the coverage gap — don't manufacture findings

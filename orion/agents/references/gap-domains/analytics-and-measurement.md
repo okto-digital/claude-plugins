@@ -9,6 +9,17 @@
 - How often someone will actually look at the data and make decisions from it
 - Whether conversion tracking is set up to measure what the business goals require
 
+## Research Provides
+
+**Expected confirmation rate:** LOW (<40%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [R8] Technology | Current analytics setup detected on client site (GA4, GTM, pixels) |
+| [R1] Inventory | Existing tracking scripts found during crawl |
+| [R4] Competitors | Competitor analytics tools detected |
+| [D2] | Client's current digital presence and marketing channels |
+
 ---
 
 ## 1. Analytics Foundation

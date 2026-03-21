@@ -798,22 +798,31 @@
   ============================================================
 
   This file is a CSS design system and component library, NOT a fixed layout.
-  Generate the full page content creatively based on D6-Proposal.json.
+  Generate the full page content creatively based on D6-Proposal.txt.
   Every proposal should be visually unique -- choose layouts and components
   based on the specific content and its emphasis.
 
 
   REQUIRED SECTIONS (always in this order)
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  1. Title Page      -- dark bg (.section--dark .grid-motif), logo, project title, client, meta
-  2. Executive Summary -- headline, overview, opportunity, traffic potential
-  3. The Challenge    -- current situation, pain points, challenges, evidence by domain
-  4. Our Approach     -- strategy narrative, methodology, desired outcome, concept highlights
-  5. Scope of Work    -- sitemap tree with traffic, modules grouped by category
-  6. Timeline         -- phased timeline, optional milestones, total duration
-  7. Investment       -- hours breakdown table, pricing note
-  8. About Us         -- placeholder (MUST include .placeholder-notice)
-  9. Conclusion       -- call to action, next steps, acceptance block with signature fields
+  1. Title Page              -- dark bg (.section--dark .grid-motif), logo, project title, client, date
+  2. Executive Summary       -- headline, overview, opportunity, investment headline number
+  3. Concept Brief           -- sitemap overview, visual direction, content strategy, key differentiators
+  4. Scope of Work           -- Sections A–F detail tables, then TOTALS with investment summary
+     A: Design & Development -- per-page table (template, complexity, design hrs, dev hrs, total)
+     B: Content Placement    -- template reuse pages (or "included in A")
+     C: External Functionality -- external integrations (or "included in A")
+     D: Tasks & Migrations   -- analytics, compliance, SEO, infrastructure, launch
+     E: Platform             -- conditional (only if platform is an add-on)
+     F: Project Management   -- PM percentage of A+B+C+D
+     TOTALS                  -- production hours, PM, grand total, rate, investment, third-party
+  5. Extra Services          -- optional add-on menu with hours, frequency, notes
+  6. Timeline                -- phased delivery schedule with weeks, deliverables, dependencies
+  7. Tier Comparison         -- CONDITIONAL: only when multiple tiers. Skip entirely for single tier.
+  8. Terms                   -- payment, revisions, ownership, maintenance (.placeholder-notice)
+  9. Client Responsibilities -- what only the client can provide
+
+  Quality Check Results and Notes from the TXT are INTERNAL — do NOT render in HTML.
 
 
   COMPONENT TOOLKIT (all CSS classes are pre-defined above)
@@ -857,8 +866,7 @@
   Tables:
     Standard table/thead/tbody/tfoot             Pre-styled
 
-  Signature:
-    .acceptance-block + .signature-row           Signature fields
+  Notices:
     .placeholder-notice                          Operator warning box
 
   Utilities:
@@ -870,28 +878,29 @@
 
   CREATIVE DIRECTION
   ~~~~~~~~~~~~~~~~~~
-  - Use stat blocks for key numbers (traffic potential, page count, total hours)
+  - Use stat blocks for key numbers (total hours, page count, template count)
   - Use the visual timeline (.timeline-visual) instead of a plain table for phases
   - Use corner accents on key content blocks for brand texture
   - Use bracket numbers { 01 } as section labels throughout
   - Use the four-color strip as a divider between major sections
   - Alternate section backgrounds: white / light / dark where appropriate
   - Title page: .section--dark with .grid-motif, centered, logo at top
-  - Consider accordions for evidence domains or module categories when there are many
-  - Use card grids for concept highlights (5 cards: positioning, visual, tone, UX, SEO)
-  - Use progress bars to visualize module hours distribution or category breakdowns
+  - Scope of Work: use tables for Sections A–F, use stat blocks for TOTALS
+  - Consider accordions for Section D tasks or Extra Services when there are many items
+  - Use card grids for Concept Brief highlights (pages, templates, key differentiators)
+  - Use progress bars to visualize hours distribution across Sections A–F
   - Sharp corners throughout (0px radius) -- built into the CSS, no overrides needed
   - All icons must be inline SVG: geometric, 2px stroke, square linecap, miter join
   - Footer always includes: copyright oktodigital + confidentiality note
-  - Add .section--break-before to sections 3, 5, 6, 7, 8, 9 for clean print breaks
+  - Add .section--break-before to sections 4, 5, 6, 7, 8, 9 for clean print breaks
 
 
   HARD RULES
   ~~~~~~~~~~
-  - MUST include all 9 sections in order
-  - MUST include .placeholder-notice in About Us section
-  - MUST include .acceptance-block with 3 signature rows (Client, Date, Signature)
-  - MUST include sitemap traffic disclaimer (italic, small text after tree)
+  - MUST include all required sections in order (skip §7 Tier Comparison for single-tier)
+  - MUST include .placeholder-notice in Terms section (operator fills in before delivery)
+  - MUST include all Section A–F tables in Scope of Work (mark empty sections "included in A")
+  - NEVER render Quality Check Results or Notes sections (these are internal)
   - NEVER skip sections even if data is sparse
   - NEVER add border-radius to any element (sharp corners are the brand)
   - Self-contained: no external resources except the font links in <head>

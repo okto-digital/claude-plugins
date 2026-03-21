@@ -11,6 +11,17 @@
 - Whether different user roles need different permissions or views
 - How forgotten passwords, account deletion, and data export are handled
 
+## Research Provides
+
+**Expected confirmation rate:** LOW (<40%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [D2] | Client business model and membership/portal needs |
+| [R8] Technology | Authentication systems detected on current site |
+| [R4] Competitors | Competitor login/portal implementations |
+| [R9] UX | Account management patterns in the industry |
+
 ---
 
 ## 1. Account Types and Access

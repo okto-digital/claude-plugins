@@ -9,6 +9,18 @@
 - How the client's positioning differs from the pack -- and whether their website reflects that
 - Whether the client has unrealistic expectations based on competitors with much larger budgets
 
+## Research Provides
+
+**Expected confirmation rate:** HIGH (70%+)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [R2] SERP | Commercial competitor domains with SERP frequency |
+| [R3] Keywords | Competitor keyword rankings and overlap |
+| [R4] Competitors | Full competitor profiles, zone map, tier classifications |
+| [R9] UX | Competitor design quality and feature comparison |
+| [R10] Content | Competitor content depth and messaging |
+
 ---
 
 ## 1. Competitor Identification

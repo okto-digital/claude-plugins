@@ -9,6 +9,18 @@
 - How local search matters -- Google Business Profile, map results, location pages
 - Whether content strategy and SEO strategy are aligned or pulling in different directions
 
+## Research Provides
+
+**Expected confirmation rate:** HIGH (70%+)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [R2] SERP | Current search visibility, SERP features, ranking positions |
+| [R3] Keywords | Full keyword opportunity analysis, clusters, search intent |
+| [R4] Competitors | Competitor SEO authority profiles, backlink summary |
+| [R1] Inventory | Current URL structure, meta tags, technical SEO signals |
+| [R7] Reputation | Online presence breadth, directory listings |
+
 ---
 
 ## 1. Search Visibility Goals

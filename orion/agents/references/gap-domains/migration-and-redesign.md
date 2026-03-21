@@ -11,6 +11,18 @@
 - What the rollback plan is if something goes wrong during migration
 - Whether the client has emotional attachment to elements of the current site that conflict with project goals
 
+## Research Provides
+
+**Expected confirmation rate:** MEDIUM (40-70%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [R1] Inventory | Current site page count, URL structure, content inventory |
+| [R8] Technology | Current platform, hosting, tech stack |
+| [R2] SERP | Current search rankings and visibility to preserve |
+| [R3] Keywords | High-value pages by keyword rankings |
+| [INIT] | Build type (redesign vs new) |
+
 ---
 
 ## 1. Current Site Assessment

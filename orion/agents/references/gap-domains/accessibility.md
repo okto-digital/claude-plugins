@@ -9,6 +9,17 @@
 - What the current site's accessibility state is (if redesign)
 - Whether the target audience includes users with known accessibility needs
 
+## Research Provides
+
+**Expected confirmation rate:** HIGH (70%+)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [R5] Market | Regulatory requirements (EAA, WCAG mandates by jurisdiction) |
+| [R9] UX | Competitor accessibility patterns, ARIA usage, keyboard navigation |
+| [INIT] | Client location → determines legal requirements |
+| [R8] Technology | Current site accessibility audit signals (Lighthouse scores) |
+
 ---
 
 ## 1. Compliance Level

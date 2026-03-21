@@ -9,6 +9,18 @@
 - How different audience segments find the business today
 - Whether there are secondary audiences with conflicting needs
 
+## Research Provides
+
+**Expected confirmation rate:** MEDIUM (40-70%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [R6] Audience | Audience personas, demographics, behavior patterns |
+| [R5] Market | Customer buying journey and decision patterns |
+| [D2] | Client's stated target market and customer base |
+| [R7] Reputation | Review sentiment revealing audience expectations |
+| [R3] Keywords | Search intent patterns revealing audience needs |
+
 ---
 
 ## 1. Primary Audience Definition

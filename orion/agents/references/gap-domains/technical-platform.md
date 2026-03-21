@@ -9,6 +9,17 @@
 - Whether performance, security, and scalability requirements match the chosen platform
 - What the client's hosting situation is and whether it constrains platform options
 
+## Research Provides
+
+**Expected confirmation rate:** MEDIUM (40-70%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [R8] Technology | Current tech stack, CMS, hosting, integrations detected |
+| [R1] Inventory | Current site platform signals from crawl |
+| [D2] | Client's technical capabilities and existing tools |
+| [R4] Competitors | Competitor technology choices for benchmarking |
+
 ---
 
 ## 1. CMS / Platform Choice

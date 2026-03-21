@@ -11,6 +11,17 @@
 - Whether the booking system needs to integrate with existing scheduling tools
 - How no-shows and cancellations are handled
 
+## Research Provides
+
+**Expected confirmation rate:** LOW (<40%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [D2] | Client business model and service delivery method |
+| [R8] Technology | Existing booking tools detected on client site |
+| [R4] Competitors | Competitor booking implementations |
+| [R9] UX | Booking flow patterns in the industry |
+
 ---
 
 ## 1. Booking Types and Services

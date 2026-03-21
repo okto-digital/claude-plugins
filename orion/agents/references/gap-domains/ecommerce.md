@@ -11,6 +11,17 @@
 - How shipping, tax, and returns are handled -- and whether automation is expected
 - Whether B2B and B2C customers have different purchasing flows
 
+## Research Provides
+
+**Expected confirmation rate:** LOW (<40%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [D2] | Client business model, product/service offering |
+| [R8] Technology | E-commerce platform detected on current site |
+| [R4] Competitors | Competitor e-commerce implementations |
+| [R5] Market | Industry e-commerce adoption and expectations |
+
 ---
 
 ## 1. Product Catalog

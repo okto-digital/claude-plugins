@@ -9,6 +9,16 @@
 - Whether a monitoring and alerting strategy exists for uptime and performance
 - How the site evolves after launch -- is there a roadmap or just ad hoc requests
 
+## Research Provides
+
+**Expected confirmation rate:** LOW (<40%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [D2] | Client team size, technical capabilities, current maintenance setup |
+| [R8] Technology | Current hosting and infrastructure details |
+| [INIT] | Project parameters and scope signals |
+
 ---
 
 ## 1. Maintenance Plan

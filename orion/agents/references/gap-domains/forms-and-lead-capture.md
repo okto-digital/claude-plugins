@@ -9,6 +9,18 @@
 - How many form types are needed and whether they serve different audiences
 - Whether spam prevention and form abandonment have been considered
 
+## Research Provides
+
+**Expected confirmation rate:** MEDIUM (40-70%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [R9] UX | Competitor form patterns, CTA strategies, conversion flows |
+| [R6] Audience | Audience decision journey and conversion triggers |
+| [R1] Inventory | Current site forms and CTAs found during crawl |
+| [D2] | Client's current lead handling and CRM usage |
+| [R8] Technology | CRM and marketing tools detected |
+
 ---
 
 ## 1. Contact and Inquiry Forms

@@ -9,6 +9,18 @@
 - Whether cookie consent, privacy policy, and terms of service are accounted for
 - What happens if security is breached -- reputational, legal, and financial exposure
 
+## Research Provides
+
+**Expected confirmation rate:** HIGH (70%+)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [R5] Market | Regulatory requirements by jurisdiction and industry |
+| [R8] Technology | Current SSL status, security headers, vulnerabilities |
+| [INIT] | Client location → determines GDPR, EAA, and other mandates |
+| [R1] Inventory | Current privacy policy, cookie handling, legal pages |
+| [D2] | Client industry for sector-specific compliance |
+
 ---
 
 ## 1. Core Security

@@ -1,234 +1,199 @@
 ---
 name: concept-creation
-description: "Run Phase 5 concept creation: dispatch concept-creator agents in three waves to produce 9 concept sections as scannable TXT, consolidate into D5, then run coherence check. Invoke when the user says 'run concept creation', 'create concept', 'start phase 5', 'build concept', or after Domain Gap Analysis is complete with all CRITICAL questions resolved."
+description: "Run Phase 5 concept creation: dispatch 3 concept-creator agents in parallel to produce tiered website concepts (Efficient, Competitive, Dominant), then build D5-Concept-Comparison.md. Invoke when the user says 'run concept creation', 'create concepts', 'start phase 5', 'build concepts', or after Domain Gap Analysis is complete."
 allowed-tools: Read, Write, Bash, Glob, Task, AskUserQuestion
-version: 4.0.0
+version: 5.0.0
 ---
 
 # Concept Creation
 
-Dispatch concept-creator agents for 9 concept sections in three dependency-aware waves, consolidate into D5-Concept.txt using bash, then run a coherence check. This is the synthesis phase — it turns research and gap analysis into concrete, evidence-based recommendations using the ICIP thinking sequence.
+Dispatch 3 concept-creator agents in parallel — one per tier (Efficient, Competitive, Dominant). Each agent independently builds a complete website concept across 8 dimensions. After all complete, build D5-Concept-Comparison.md showing differences across tiers.
+
+**Agents:** 3 concept-creator dispatches (all parallel) + 1 comparison builder = 4 total.
+
+**Root output:** D5-Concept-Comparison.md
+**Working files:** concept/Concept-Tier-1.md, concept/Concept-Tier-2.md, concept/Concept-Tier-3.md
+
+---
+
+## Tier Definitions
+
+| Tier | Name | Business Proposition |
+|---|---|---|
+| 1 | Efficient | Focused intervention. Fixes critical issues, captures top opportunities. Minimal investment, professional result. |
+| 2 | Competitive | Research-driven restructure. Every page exists for a research-backed reason. Outperform identified competitors. **Recommended.** |
+| 3 | Dominant | Full vision. Every opportunity including whitespace. Market leadership positioning. Requires ongoing content commitment. |
+
+**Floor rule:** Every tier must produce a site demonstrably better than the current website on every dimension the research identified as problematic.
+
+---
 
 ## Process
 
 ### Step 1: Load project context
 
-Read `project-state.md`. Extract project info and document status.
-If missing, stop: "Run project-init first."
-If Phase 4 (Domain Gap Analysis) not resolved, stop: "Run domain-gap-analysis first."
+Read `project-state.md`. If missing → "Run project-init first." If Phase 4 not resolved → "Run domain-gap-analysis first and resolve answers."
 
-Read `project.json` for client name and project configuration.
-Verify D4 status is resolved. If missing or not resolved, stop: "Complete answer resolution in domain-gap-analysis before running concept creation."
+Read `project.json` for project configuration. Verify `baseline-log.txt` exists.
 
-### Step 2: Check existing concept outputs
+Verify these D-files exist:
+- `D2-Client-Intelligence.txt`
+- `D4-Scope-Implications.txt`
+- `D4-Cross-Domain.txt`
+- `gap-analysis/confirmed.txt`
 
-Glob for `concept/C*-*.txt` to find existing outputs.
-Report: "Found X existing concept sections: [list]. These will be skipped unless you want to re-run them."
+If any are missing, stop with: "Phase 4 output incomplete. Missing: [list]."
 
-### Step 3: Section selection
+### Step 2: Check existing outputs
 
-Present all 9 concept sections grouped by wave:
+Glob for `concept/Concept-Tier-*.md`. If any exist, ask: "Found existing concept files: [list]. Overwrite?" If declined, skip to Step 4 (comparison).
 
-**Wave 1 (3 parallel, no dependencies):**
-- C1-Sitemap: Site structure with pages, keywords, traffic estimates
-- C2-Functional: Functional requirements grouped by area
-- C5-Visual: Visual direction and positioning
+### Step 3: Dispatch concept creators
 
-**Wave 2 (3 parallel, upstream dependencies):**
-- C3-Technical-Architecture: Technology and operational architecture (depends on C2)
-- C4-Content-Strategy: Tone, messaging, SEO content plan (depends on C1)
-- C6-UX-Strategy: Navigation, conversion funnels, user flows (depends on C1)
+```bash
+mkdir -p concept
+```
 
-**Wave 3 (3 parallel, upstream dependencies):**
-- C7-Project-Roadmap: Phased delivery plan, success metrics (depends on C1, C2, C3)
-- C8-SEO-Strategy: Link building, local/international SEO, monitoring (depends on C1)
-- C9-Compliance: Accessibility, legal, testing strategy (depends on C2)
-
-Use AskUserQuestion with multiSelect=true. Pre-select all sections that don't have existing outputs.
-
-If the operator deselects a Wave 1 section that downstream sections depend on:
-- Deselecting C1 → C4, C6, C7, C8 run without sitemap context — warn about reduced quality
-- Deselecting C2 → C3, C7, C9 run without functional requirements — warn about reduced quality
-
-If C3 is deselected, C7 runs without technical architecture — warn but allow (C7 has two other dependencies).
-
-### Step 4: Dispatch concept creators
-
-Dispatch selected sections via the `dispatch-subagent` skill.
-
-**Max concurrent: 3 agents.**
+Dispatch all 3 concept-creator agents in parallel via `dispatch-subagent`. All 3 concurrent — no sequential dependencies.
 
 Each dispatch provides:
-- C-code and slug (e.g., "C1", "Sitemap")
-- Solution framework: read `${CLAUDE_PLUGIN_ROOT}/references/solution-framework.md` and inline its full content
-- Formatting rules: read `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` and inline its full content
-- Concept definition: read `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/{filename}.md` and inline its full content
-- Output guide: read `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/templates/{Code}-{Slug}-template.md` and inline its full content
-- baseline-log.txt path: `{working_directory}/baseline-log.txt`
-- project.json path: `{working_directory}/project.json`
-- Output path: `{working_directory}/concept/{C-code}-{Slug}.txt`
-- Upstream C-files: list of paths from the Source Table below (wave 2/3 only, empty for wave 1)
-- Plugin root path: `${CLAUDE_PLUGIN_ROOT}`
-- Model: opus (synthesis and reasoning)
-- MCP hints: none (concept creation uses Read + Write + Edit + Bash only, no MCP tools)
+- **Tier number** (1, 2, or 3) and **tier name** (Efficient, Competitive, Dominant)
+- **Agent definition**: read `${CLAUDE_PLUGIN_ROOT}/agents/concept-creator.md` and inline its full content
+- **Concept methodology**: read `${CLAUDE_PLUGIN_ROOT}/references/concept-methodology.md` and inline its full content
+- **Solution framework**: read `${CLAUDE_PLUGIN_ROOT}/references/solution-framework.md` and inline its full content
+- **Formatting rules**: read `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` and inline its full content
+- **baseline-log.txt path**: `{working_directory}/baseline-log.txt`
+- **project.json path**: `{working_directory}/project.json`
+- **D-file paths**:
+  - `{working_directory}/D2-Client-Intelligence.txt`
+  - `{working_directory}/D4-Scope-Implications.txt`
+  - `{working_directory}/D4-Cross-Domain.txt`
+  - `{working_directory}/gap-analysis/confirmed.txt`
+- **Output path**: `{working_directory}/concept/Concept-Tier-{N}.md`
+- **Model**: opus | MCP hints: none
 
-**Execution order:**
-1. **Wave 1** — C1 + C2 + C5 (3 parallel)
-2. Wait for Wave 1. **Wave 2** — C3 + C4 + C6 (3 parallel)
-3. Wait for Wave 2. **Wave 3** — C7 + C8 + C9 (3 parallel)
-
-**After each wave:**
-
-1. Check that output files exist and have content:
+**After dispatch:** Verify all 3 output files exist and have content:
 ```bash
-for f in concept/C*-*.txt; do
+for f in concept/Concept-Tier-*.md; do
   if [ ! -s "$f" ]; then
     echo "EMPTY OR MISSING: $f"
   fi
 done
 ```
-If any file is empty or missing, re-dispatch the failed section.
 
-2. Report which sections completed and any failures.
+Report: "3 concepts generated: Tier 1 (Efficient), Tier 2 (Competitive), Tier 3 (Dominant)."
 
-### Step 5: Coherence check
+If any failed, report which tier failed and ask whether to re-dispatch.
 
-Dispatch the `concept-reviewer` agent via `dispatch-subagent`:
-- Agent: concept-reviewer
-- Model: opus (analytical review)
-- C-file paths: list of all concept TXT files (Glob `concept/C*-*.txt`)
+### Step 4: Build D5-Concept-Comparison.md
+
+Dispatch a comparison agent (model: sonnet) with:
+- Paths to all 3 concept files
 - Formatting rules: read `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` and inline its full content
-- Output: `D5-Review-Notes.md`
-
-Present the review notes to the operator. If conflicts exist, they should be resolved before proceeding to proposal.
-
-### Step 6: Build D5 digest
+- Instructions: read all 3 concepts, produce D5-Concept-Comparison.md at `{working_directory}/D5-Concept-Comparison.md`
 
 <critical>
-**This step is purely mechanical.** Use ONLY bash commands (cat, echo, date). Do NOT use the Read tool on any C-file or D-file. Do NOT read output files into context. This is a simple concatenation.
+The comparison document lists ONLY differences between tiers. Do not repeat shared elements. Concise format — one line per difference where possible.
 </critical>
 
-After coherence check, produce D5-Concept.txt with bash operations only:
+The agent writes `D5-Concept-Comparison.md` with this structure:
 
-```bash
-DATE=$(date +%Y-%m-%d)
-echo "Concept Overview — $DATE" > D5-Concept.txt
-echo "" >> D5-Concept.txt
-for f in concept/C*-*.txt; do
-  BASENAME=$(basename "$f" .txt)
-  echo "--- $BASENAME ---" >> D5-Concept.txt
-  cat "$f" >> D5-Concept.txt
-  echo "" >> D5-Concept.txt
-done
+```
+================================================================================
+CONCEPT COMPARISON — Differences by Dimension
+================================================================================
+
+Project: {client name}
+Date: {today}
+
+================================================================================
+1. STRUCTURE
+================================================================================
+Tier 1: {n} pages — {key characteristic}
+Tier 2: {n} pages — {key characteristic}
+Tier 3: {n} pages — {key characteristic}
+
+Pages unique to Tier 2: {list}
+Pages unique to Tier 3: {list}
+
+================================================================================
+2. TEMPLATES
+================================================================================
+Tier 1: {n} templates | Tier 2: {n} templates | Tier 3: {n} templates
+{Key differences only}
+
+... (all 8 dimensions) ...
+
+================================================================================
+SUMMARY
+================================================================================
+
+| Dimension | Tier 1 | Tier 2 | Tier 3 |
+|---|---|---|---|
+| Pages | {n} | {n} | {n} |
+| Templates | {n} | {n} | {n} |
+| Sections/template | {range} | {range} | {range} |
+| Functionality items | {n} | {n} | {n} |
+| Included tasks | {n} | {n} | {n} |
+| Optional tasks | {n} | {n} | {n} |
 ```
 
-Same pattern as D3-Research.txt consolidation. Purely mechanical cat.
+### Step 5: Debug companion (when enabled)
 
-### Step 7: Debug companion (when enabled)
+If `debug` is `true` in project.json: write `tmp/debug/D5-Concept-debug.txt` — line counts per tier, dimension coverage check (all 8 present in each?), baseline-log entries added per tier, any failures.
 
-If `debug` is `true` in project.json: write `tmp/debug/D5-Concept-debug.txt` — completed sections, line counts per section, review notes summary, any failures, no prose.
+### Step 6: Update project-state.md
 
-### Step 8: Update project-state.md
+Update Phase 5 row:
 
-Update Phase 5 (Concept Creation) row:
-- Status: `complete` (all sections processed) or `partial` (some skipped/failed)
-- Output: `D5-Concept.txt`
-- Updated: today's date
+```
+Concept Creation — complete.
+  Tier 1 (Efficient): concept/Concept-Tier-1.md
+  Tier 2 (Competitive): concept/Concept-Tier-2.md
+  Tier 3 (Dominant): concept/Concept-Tier-3.md
+  Comparison: D5-Concept-Comparison.md
+Next: Review concepts with client, select tier, then run proposal.
+```
 
 Display summary:
 
 ```
 Concept Creation complete.
 
-  Completed: {n}/9 sections
-  Skipped: [list or "none"]
-  Failed: [list or "none"]
-  Phase 5 status: complete | partial
-  Review notes: D5-Review-Notes.md
+  Tier 1 (Efficient): concept/Concept-Tier-1.md — {n} pages, {n} templates
+  Tier 2 (Competitive): concept/Concept-Tier-2.md — {n} pages, {n} templates
+  Tier 3 (Dominant): concept/Concept-Tier-3.md — {n} pages, {n} templates
+  Comparison: D5-Concept-Comparison.md
 
-Next step: Review D5-Concept.txt and D5-Review-Notes.md, then run proposal.
+Next step: Review concepts, select a tier, then run proposal.
 ```
 
-## Pre-Read Table
-
-Every section reads `baseline-log.txt` and `project.json` from the working directory root. Wave 2/3 sections also read their upstream C-files:
-
-| Section | Wave | Upstream C-files |
-|---|---|---|
-| C1-Sitemap | 1 | -- |
-| C2-Functional | 1 | -- |
-| C5-Visual | 1 | -- |
-| C3-Technical-Architecture | 2 | `concept/C2-Functional.txt` |
-| C4-Content-Strategy | 2 | `concept/C1-Sitemap.txt` |
-| C6-UX-Strategy | 2 | `concept/C1-Sitemap.txt` |
-| C7-Project-Roadmap | 3 | `concept/C1-Sitemap.txt`, `concept/C2-Functional.txt`, `concept/C3-Technical-Architecture.txt` |
-| C8-SEO-Strategy | 3 | `concept/C1-Sitemap.txt` |
-| C9-Compliance | 3 | `concept/C2-Functional.txt` |
-
-Prefix all paths with `{working_directory}/` for absolute paths when passing to dispatch.
-
-**No R-files, no D-files.** baseline-log.txt by Phase 5 contains confirmed findings from phases 1-4 plus [C1]-[C9] entries as waves complete. This IS the shared context. If a baseline-log entry doesn't have enough detail for a specific recommendation, the agent flags the recommendation as INFERRED in its output — it does not read source files.
-
-## Dependency Graph
-
-```
-Wave 1 (parallel):  C1-Sitemap    C2-Functional    C5-Visual
-                     |    \             |    \
-Wave 2 (parallel):  C4-Content  C6-UX  C3-Technical-Architecture
-                                              |
-Wave 3 (parallel):  C8-SEO    C9-Compliance   C7-Project-Roadmap
-                                                    ^
-                                               (C1, C2, C3)
-
-Coherence:    concept-reviewer -> D5-Review-Notes.md
-                     |
-D5 Digest:    D5-Concept.txt (concatenation of 9 C-files)
-```
+---
 
 ## Rules
 
 <critical>
-- NEVER dispatch more than 3 concept-creator agents concurrently
-- NEVER dispatch Wave 2 sections before their Wave 1 dependencies complete
-- NEVER dispatch Wave 3 sections before their Wave 2 dependencies complete
-- NEVER modify project-state.md beyond Phase 5 rows
-- NEVER interpret or act on concept definition content — read only to inline into the dispatch prompt; the concept-creator agent executes the methodology
 - NEVER start Phase 5 if D4 gap analysis is not resolved
-- ALWAYS use dispatch-subagent skill for every concept-creator and concept-reviewer dispatch
-- ALWAYS inline solution-framework.md and formatting-rules.md in every concept-creator dispatch
-- ALWAYS run coherence check after all waves complete
+- NEVER modify project-state.md beyond Phase 5 rows
+- ALWAYS use dispatch-subagent skill for every dispatch
+- ALWAYS inline concept-methodology.md, solution-framework.md, and formatting-rules.md in every concept-creator dispatch
+- ALWAYS verify all 3 output files exist after dispatch
 </critical>
 
-- If a concept-creator fails, note which section was affected, report to operator, continue with remaining sections
-- If a Wave 1 section fails and a downstream section depends on it, warn the operator and ask whether to proceed without the dependency or skip the downstream section
-- If a Wave 2 section fails and a Wave 3 section depends on it, same approach — warn and ask
-
-## C-code Mapping
-
-| Code | Definition File | Slug | Wave | Depends On |
-|---|---|---|---|---|
-| C1 | `c1-sitemap.md` | Sitemap | 1 | -- |
-| C2 | `c2-functional.md` | Functional | 1 | -- |
-| C5 | `c5-visual.md` | Visual | 1 | -- |
-| C3 | `c3-technical-architecture.md` | Technical-Architecture | 2 | C2 |
-| C4 | `c4-content-strategy.md` | Content-Strategy | 2 | C1 |
-| C6 | `c6-ux-strategy.md` | UX-Strategy | 2 | C1 |
-| C7 | `c7-project-roadmap.md` | Project-Roadmap | 3 | C1, C2, C3 |
-| C8 | `c8-seo-strategy.md` | SEO-Strategy | 3 | C1 |
-| C9 | `c9-compliance.md` | Compliance | 3 | C2 |
-
-All definition file paths are relative to `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/`.
+- If a concept-creator fails, report which tier, ask whether to re-dispatch
+- The 3 agents run independently — no shared context, no sequential dependencies
+- Each agent may produce genuinely different structural decisions — this is intentional and desired
+- The comparison document is a convenience, not a quality gate — differences between tiers are expected
 
 ## Sub-agents
 
 Dispatched via dispatch-subagent:
-- **concept-creator** — Produce one concept section as scannable TXT, update baseline-log (up to 9 instances, dispatched in 3 waves)
-- **concept-reviewer** — Coherence check reading C-file TXTs directly, write D5-Review-Notes.md (1 instance)
+- **concept-creator** — Build one complete tiered concept across 8 dimensions (3 instances, all parallel)
+- **comparison builder** — Generic agent that reads 3 concepts and extracts differences into D5 (1 instance, model: sonnet)
 
 ## Reference files
 
-Inlined in every concept-creator dispatch prompt (read by this skill, not by agents):
-- `${CLAUDE_PLUGIN_ROOT}/references/solution-framework.md` — ICIP thinking sequence for solution agents
+Inlined in every concept-creator dispatch (read by this skill, not by agents):
+- `${CLAUDE_PLUGIN_ROOT}/references/concept-methodology.md` — Tier model, 8 dimensions, structure process, template rules, classification tests
+- `${CLAUDE_PLUGIN_ROOT}/references/solution-framework.md` — ICIP thinking sequence
 - `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — Scannable TXT output conventions
-- `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/*.md` — 9 section definition files (purpose, methodology)
-- `${CLAUDE_PLUGIN_ROOT}/agents/references/concept-sections/templates/*.md` — 9 output guides (TXT structure)

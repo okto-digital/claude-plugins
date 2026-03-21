@@ -9,6 +9,17 @@
 - Who owns decisions and what internal politics might affect the project
 - Where the business sits in its market -- premium, value, niche, or generalist
 
+## Research Provides
+
+**Expected confirmation rate:** LOW (<40%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [D2] | Company profile, business model, digital presence, team signals |
+| [INIT] | Project facts, site type, build type, goals |
+| [R4] Competitors | Competitor business profiles for market context |
+| [R5] Market | Industry stage and market dynamics |
+
 ---
 
 ## 1. Business Identity

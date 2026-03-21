@@ -9,6 +9,18 @@
 - How content is structured across page types -- service pages, case studies, blog, etc.
 - Whether the client underestimates the effort content creation requires
 
+## Research Provides
+
+**Expected confirmation rate:** MEDIUM (40-70%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [R10] Content | Current content landscape, competitor content strategies |
+| [R1] Inventory | Existing content pages and types on client site |
+| [R6] Audience | Audience content preferences and consumption patterns |
+| [R3] Keywords | Content-keyword mapping opportunities |
+| [D2] | Client's existing content assets and brand materials |
+
 ---
 
 ## 1. Existing Content Inventory

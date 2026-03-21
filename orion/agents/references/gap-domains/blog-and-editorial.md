@@ -11,6 +11,17 @@
 - What content types are needed beyond text: video, infographics, case studies, podcasts
 - Whether a content calendar or editorial workflow exists
 
+## Research Provides
+
+**Expected confirmation rate:** LOW (<40%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [R10] Content | Current blog presence, publishing frequency, content types |
+| [R1] Inventory | Blog pages found during site crawl |
+| [R3] Keywords | Informational keyword clusters suitable for blog content |
+| [R4] Competitors | Competitor blog strategies and publishing patterns |
+
 ---
 
 ## 1. Content Publishing Goals

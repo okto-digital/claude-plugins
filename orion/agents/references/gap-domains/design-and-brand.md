@@ -9,6 +9,17 @@
 - What imagery and photography assets are available vs what needs to be sourced
 - Whether the client's design expectations match their budget
 
+## Research Provides
+
+**Expected confirmation rate:** LOW (<40%)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [R9] UX | Competitor design patterns, visual benchmarks |
+| [R1] Inventory | Current site design assessment, brand assets visible |
+| [D2] | Client's existing brand presence and materials |
+| [R10] Content | Imagery and media usage on current site |
+
 ---
 
 ## 1. Brand Identity Status

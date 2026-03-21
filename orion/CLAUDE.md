@@ -12,12 +12,15 @@ Produce a proposal specific to this client, grounded in evidence, articulating t
 
 ## Thinking Frameworks
 
-Three reference files govern every agent:
-- `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — how research agents think (mission, four filters, hypothesis, baseline awareness, stopping rule, escalation). Governs Phases 1-4.
+Four reference files govern agents by phase:
+- `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — how research agents think (mission, four filters, hypothesis, baseline awareness, stopping rule, escalation). Governs Phases 1-3.
+- `${CLAUDE_PLUGIN_ROOT}/references/gap-analysis-framework.md` — how domain analysts think (resolution hierarchy, professional standard test, evidence reading, scope awareness, question quality, conditional handling, cross-domain awareness). Governs Phase 4.
 - `${CLAUDE_PLUGIN_ROOT}/references/solution-framework.md` — how solution agents think (ICIP sequence, solution four filters, divergent-before-convergent, null hypothesis). Governs Phase 5 (concept creation).
 - `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — how all agents write (source binding, confidence levels, scannable TXT format, baseline-log rules).
 
-**Research agents** (Phases 1-4) collect and filter. They use the decision framework. They fail by collecting wrong things or inventing sources.
+**Research agents** (Phases 1-3) collect and filter. They use the decision framework. They fail by collecting wrong things or inventing sources.
+
+**Gap analysts** (Phase 4) resolve uncertainty. They use the gap analysis framework. They fail by asking questions they should resolve, or confirming things they should question. Their goal: every question that reaches the client *deserves* to be there.
 
 **Solution agents** (Phase 5) synthesize and propose. They use the solution framework and the ICIP sequence (Interpret → Challenge → Invert → Propose). They fail by connecting wrong dots — selective reading, premature conclusion, false synthesis.
 
@@ -32,7 +35,7 @@ Six phases, sequential. Each phase produces its output, updates `baseline-log.tx
 | 1 | **INIT** | High-level overview? | project.json, D1-Init.txt, baseline-log.txt |
 | 2 | **Client Intelligence** | Who is this client? | D2-Client-Intelligence.txt |
 | 3 | **Research** (10 substages) | What does the landscape look like? | R1–R10 .txt files, D3-Research-Synthesis.txt |
-| 4 | **Domain Gap Analysis** | What do we know vs. need to ask? | D4-Confirmed.txt, D4-Questions-Client.txt, D4-Questions-Agency.txt |
+| 4 | **Domain Gap Analysis** | What do we know vs. need to ask? | gap-analysis/ (working files), D4-Scope-Implications.txt, D4-Cross-Domain.txt |
 | 5 | **Concept Creation** | What should we build? | 9 concept sections (C1–C9 .txt), D5-Concept.txt |
 | 6 | **Proposal & Brief** | What do we deliver? | D6-Proposal.json, D6-Proposal.md, D6-Proposal.html |
 
@@ -45,7 +48,11 @@ Six phases, sequential. Each phase produces its output, updates `baseline-log.tx
 - **Progressive competitor list** — Seeded R2, expanded R3, locked R4. All subsequent substages use the locked list.
 - **Crawl cache** — Competitor pages cached at `tmp/competitors/{domain-slug}/{page-slug}.txt`. Substages R4–R10 reuse pages crawled by earlier waves — no redundant crawls.
 - **Research synthesis** — D3-Research-Synthesis.txt compresses all R-files into 6 decision areas for Concept Creation. Compression gate dispatched via Task tool — not new research.
-- **Domain analysis after research** — 21 domains scored after all 10 substages, giving richest context for gap detection.
+- **Domain analysis after research** — 21 domains scored after all 10 substages, giving richest context for gap detection. Each domain has a research evidence map (which R-tags to check) and expected confirmation rate (HIGH/MEDIUM/LOW) that calibrates analyst behavior.
+- **Auto-resolution** — Domain analysts auto-resolve best-practice checkpoints as STANDARD (SSL, GDPR, responsive design, etc.) with `[SCOPE]` tags when implementation work is implied. Reduces question volume while preserving scope visibility.
+- **Question deduplication** — After consolidation, cross-group duplicate questions merged (combined G-code references). Volume control enforced: client 8-15 target / 20 max, agency 10-20 target / 25 max. Happens before answer phase.
+- **Cross-domain synthesis** — After answer resolution (full picture available), orchestrator identifies contradictions, tensions, and compounding insights across domains. Written to D4-Cross-Domain.txt (root).
+- **Gap analysis file layout** — Working files in `gap-analysis/` (confirmed.txt, client-questions.txt, agency-questions.txt, per-group raw files in `questions/`). Only D4-Scope-Implications.txt and D4-Cross-Domain.txt promote to root — these are the Phase 4 deliverables for downstream phases.
 - **Research depth** — Set at INIT. `basic` enforces caps; `deep` lets agents decide.
 - **Output language** — When set in project.json, client-facing outputs MUST use that language (titles, labels). Codes and enums stay English.
 - **Debug mode** — When `true`: every document gets a `-debug.txt` companion in `tmp/debug/` (telegraphic, bullets, key facts only). When `ask`: prompt operator before first output of each phase. When `false`: skip. Default is `ask`.
@@ -81,9 +88,10 @@ All pipeline outputs are free-form TXT. No templates, no prescribed sections. Ag
 | Location | Pattern | Examples |
 |---|---|---|
 | Root | System files | project.json, baseline-log.txt, project-state.md |
-| Root | `D{n}-{Name}.txt` | D1-Init.txt, D2-Client-Intelligence.txt, D3-Research-Synthesis.txt |
+| Root | `D{n}-{Name}.txt` | D1-Init.txt, D2-Client-Intelligence.txt, D3-Research-Synthesis.txt, D4-Scope-Implications.txt, D4-Cross-Domain.txt |
 | `research/` | `R{n}-{Slug}.txt` | R1-Inventory.txt, R2-SERP.txt, R3-Keywords.txt |
-| `gap-analysis/questions/` | `{Group}-{type}.txt` | A-confirmed.txt, A-client.txt (per-group working files) |
+| `gap-analysis/` | Consolidated files | confirmed.txt, client-questions.txt, agency-questions.txt |
+| `gap-analysis/questions/` | `{Group}-{type}.txt` | A-confirmed.txt, A-client.txt (per-group raw files) |
 | `concept/` | `C{n}-{Name}.txt` | C1-Sitemap.txt, ... (9 sections) |
 
 Research substages:
@@ -133,7 +141,7 @@ Web-crawler cascade (agents try in order, first success wins): Desktop Commander
 | `project-init` | 1 | Initialize project (project.json, D1-Init.txt, baseline-log.txt), pipeline status, phase state updates |
 | `client-intelligence` | 2 | Build client profile (D2) via web-crawler, DataForSEO, registries, web search |
 | `project-research` | 3 | Dispatch 10 researcher agents in dependency-aware waves, synthesise D3 |
-| `domain-gap-analysis` | 4 | Dispatch domain-analyst agents (6 groups), consolidate questions, resolve answers |
+| `domain-gap-analysis` | 4 | Dispatch domain-analyst agents (6 groups), consolidate, cross-domain synthesis, question deduplication, scope extraction, resolve answers |
 | `concept-creation` | 5 | Dispatch concept-creator agents (ICIP sequence) in 3 waves, coherence check, consolidate D5 |
 | `proposal` | 6 | Generate D6 proposal (JSON + MD + HTML) from project.json + D5-Concept.txt |
 | `dispatch-subagent` | Shared | Dispatch protocol for all sub-agent spawning (MCP hints, model selection) |

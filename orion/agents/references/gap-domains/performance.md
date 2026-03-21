@@ -9,6 +9,17 @@
 - What the baseline is if a current site exists -- and whether specific pain points exist
 - Whether Core Web Vitals and search ranking impact have been explained
 
+## Research Provides
+
+**Expected confirmation rate:** HIGH (70%+)
+
+| Tag | What it provides for this domain |
+|---|---|
+| [R8] Technology | Current site Lighthouse scores, Core Web Vitals, tech stack performance |
+| [R4] Competitors | Competitor performance benchmarks |
+| [R1] Inventory | Current site page weight, asset analysis |
+| [R9] UX | Performance expectations in the industry |
+
 ---
 
 ## 1. Performance Expectations
