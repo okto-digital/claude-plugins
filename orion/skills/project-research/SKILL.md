@@ -155,9 +155,3 @@ All paths relative to `${CLAUDE_PLUGIN_ROOT}/`.
 ## Sub-agents
 
 - `researcher` (via dispatch-subagent) — execute one substage, produce R-file .txt (up to 9 instances, dispatched in waves)
-
-## Reference Files
-
-- `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — thinking method (inlined in every dispatch)
-- `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — output formatting (inlined in every dispatch)
-- `${CLAUDE_PLUGIN_ROOT}/agents/references/research-substages/*.md` — 9 substage definitions (read by researcher agents)

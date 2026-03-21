@@ -43,7 +43,7 @@ Two baselines compound:
 - **Static** — what's typical for this project type (provided by substage definitions)
 - **Cumulative** — what prior agents found about THIS project (in baseline-log.txt)
 
-By later phases, the agent reads 20-40 lines and starts from a precise, evidence-backed model — not from "typical portfolio redesign."
+By later phases, the agent reads a substantial cumulative log (see `formatting-rules.md` § Output Budgets for entry caps) and starts from a precise, evidence-backed model — not from "typical portfolio redesign."
 
 ## Stopping Rule
 

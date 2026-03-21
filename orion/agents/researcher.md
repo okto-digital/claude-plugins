@@ -23,7 +23,7 @@ The dispatch prompt provides:
 
 ### 1. Read context
 
-Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Apply both throughout.
+The dispatch prompt includes the decision framework and formatting rules inlined. Apply both throughout.
 
 Read `baseline-log.txt` at the provided path. The mission statement is at the top — every finding you produce should serve this mission. The rest of the log contains findings from prior phases and substages.
 
@@ -43,7 +43,7 @@ Follow the substage definition's methodology. For each step:
 
 ### 3. Produce output
 
-Write the R-file at the provided output path. Apply both reference files: decision framework for filtering and hypothesis tracking, formatting rules for source binding, confidence markers, and scannable TXT layout.
+Write the R-file at the provided output path. Apply both reference files: decision framework for filtering and hypothesis tracking, formatting rules for source binding, confidence markers (CONFIRMED/INFERRED/MISSING), and scannable TXT layout.
 
 The output should be self-contained: someone reading only this file and baseline-log.txt should understand the findings without needing to read raw API data.
 
@@ -61,7 +61,7 @@ cat >> baseline-log.txt << 'BASELINE'
 BASELINE
 ```
 
-Follow the baseline-log rules in `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Only confirmed findings — no confidence tags, no inferred data.
+Follow the baseline-log rules in the formatting rules. Only confirmed findings — no confidence tags (CONFIRMED/INFERRED/MISSING stay in R-files only, never in baseline-log).
 
 ## Rules
 

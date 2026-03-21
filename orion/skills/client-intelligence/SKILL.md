@@ -40,7 +40,16 @@ Use `build_type` from project.json and the information available to decide which
 ### Registries & structured data
 
 For commercial performance, legal, certifications and entity data. Direct lookups by entity name — structured, reliable, low noise.
-Determine the **legal entity name** first (often different from brand). Check project.json notes. If not found, ask the operator.
+
+**Resolve legal entity name first** (often different from brand). Try in this order — stop as soon as you have a confirmed match:
+
+1. **project.json** — check `notes` for an explicitly provided entity name. If present, use it directly
+2. **Existing website** — if a URL exists, scrape legal pages (footer, imprint, privacy policy, terms & conditions) for registered entity name, company ID, or VAT number
+3. **Registry search by client name** — if the client is the CEO or has known legal bindings to the entity, search the national business registry by the client's personal name. Review results carefully: verify the client name appears in the entity record (as director, owner, or authorized person) and that the entity's activity matches the project context. Multiple matches are common — do not guess
+4. **Ask the operator** — if none of the above yield a confident match, ask. Present any candidate entities you found with context (name, ID, activity, location) so the operator can confirm or correct
+
+If entity resolution fails or remains uncertain, record it as MISSING and continue. Some projects do not have a confirmed entity until the contract is signed — this is normal, not a blocker.
+
 Find the **national business registries** for the client's country. Example for Slovakia: `orsr.sk` (company register), `zrsr.sk` (trade licences), `finstat.sk` (financial data). For international fallback: `dnb.com`.
 
 ### DataForSEO endpoints

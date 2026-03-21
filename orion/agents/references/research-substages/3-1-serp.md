@@ -12,11 +12,26 @@
 
 ## Purpose
 
-Establish the initial keyword set, check current SERP positions for the client, classify search intent, estimate volumes, and compile the first competitor signal list from recurring SERP domains. This is the foundation that substages 3.2 and 3.3 build on.
+Establish the SERP landscape for the client's services. SERP results are a real-time snapshot of what Google considers the most relevant answers — reading them correctly tells you what type of content Google rewards, how competitive the space is, and what the user's intent is. Every SERP is Google's current best answer to what the user wants — and that tells us what the website needs to be.
 
-**This is BREADTH research (landscape mapping), not DEPTH research (keyword targeting). Map the battlefield — do not plan the attack.**
+**Breadth research (landscape mapping), not depth research (keyword targeting). Map the battlefield — do not plan the attack.**
 
----
+## Minimum Scope
+
+Cover at least these signals. You may go beyond them if evidence warrants it.
+
+- Result types present — organic, local pack, featured snippets, knowledge panels, shopping, image/video carousels, PAA boxes. The mix signals query intent and SERP complexity
+- Who is ranking — domains in positions 1-10, classified as commercial, directory, media, marketplace, or informational
+- Domain authority distribution — high-authority domains vs smaller niche sites. Mixed SERPs with smaller sites signal opportunity
+- Client position — current ranking per keyword (position 1-10 or null). Redesign baseline or new-build zero-presence confirmation
+- SERP volatility — same domains across related queries (settled, competitive) vs shifting results (contested, opportunity)
+- Local vs global signals — local pack presence, local TLDs vs global results. Determines local SEO vs authority-building strategy
+- Ad presence — paid ad count above organic. Heavy ads = organic pos 1 is visual pos 4-5, affects traffic estimate calibration
+- People Also Ask — adjacent questions and topics. Seeds keyword expansion and FAQ content signals
+- AI Overview presence — flag queries where AI Overviews appear. Reduced click-through, reduced traffic potential
+- Intent classification — navigational, informational, commercial, transactional per keyword
+- Seed keywords — consolidated list per keyword: keyword, volume, intent, client position, source layer
+- Competitor domains — consolidated list per domain: domain, type (commercial/directory/media/marketplace/informational), appearances, local appearances, scope
 
 ## Data Sources
 
@@ -25,79 +40,59 @@ From `baseline-log.txt`: mission, client profile, services/products, client URL,
 
 ---
 
-## Methodology
+## Language x Location x Search Engine Rules
 
-### Step 1: Language x location matrix
+**What drives results is location + language — not the domain.** Google personalises by detected location regardless of domain. google.com and google.sk return the same results for the same location. In DataForSEO, set `location`, `language`, and `search_engine` explicitly per query.
 
-For each language x location combination, determine the correct search engine settings:
-- Primary location + primary language → e.g., SK + Slovak → google.sk
-- Primary location + secondary language → e.g., SK + English → google.sk in English
-- Secondary location + language → e.g., CZ + Czech → google.cz
+**Matrix rules:**
+- Primary location + primary language + primary engine → always
+- Primary location + English + primary engine → if English is used in that market (B2B, expats, tourism)
+- Global + English + google.com → always (global demand check — only case where google.com adds distinct results)
+- Secondary language + own location + own engine → per secondary market (Czech → CZ + google.cz, Hungarian → HU + google.hu)
+- Cross-border market + own language + own engine → per stated market
 
-Map each combination to DataForSEO `location_code` and `language_code` parameters.
+Never mix languages and locations across wrong engines. A Slovak query never runs on google.com. A Czech query never runs on google.sk.
 
-### Step 2: Keyword generation
+---
 
-**2a. Build seed list BEFORE calling the API.** Do not pass a single generic word — construct a full seed list first:
+## Methodology — Operational Layers
 
-For each service/product from `baseline-log.txt` (captured during D2 Client Intelligence):
-- Generate phrasing variants: noun forms, adjective forms, verb forms, common synonyms (e.g., "svadobný fotograf", "svadobná fotografia", "fotografovanie svadby", "fotenie svadby"). Natural phrasing per language — not literal translations.
-- Combine high-priority variants with location modifiers (city, region, country).
+Four layers from narrowest to widest. Each layer only expands if the previous is complete.
 
-Add brand-related seeds: client name and brand variants, INIT notes (competitor hints, operator keyword suggestions).
+**Layer 1 — Brand & Current Rankings:** Client brand name, brand + service, brand + city. Redesign clients: also check current keyword rankings and organic traffic for the domain. New builds: null results confirm zero presence. Flag shady/off-brand keywords separately — do NOT merge into seed list.
 
-Build a substantial seed list before any API call. A single generic word (e.g., "fotograf") is never sufficient — it returns irrelevant results.
+**Layer 2 — Commercial Service/Product Keywords:** For each service/product from baseline-log.txt: bare term, + city, + country, + transactional modifiers (buy/order/price/near me). Generate natural phrasing variants per language — do not literally translate. Cap: max 5 queries per service/product category. Respect `research_config.serp_max_keywords` as total cap. Relevance guardrail: only keywords for services the client actually delivers — drop off-topic before applying caps.
 
-**2b. Call `dataforseo_labs_google_keyword_ideas`** with the full seed list. Set `limit: 100` per call to ensure broad coverage. Run per language x location combination from the matrix.
+**Layer 3 — Geographic Expansion:** Only if client operates in multiple cities/regions/markets. City: top 3 commercial queries per city, cap 3 cities. Region: use region name modifier. Country: primary always, secondary only if stated in INIT. Cross-border: own language x location x engine pair. Never expand beyond the client's stated operational footprint.
 
-**Relevance guardrail:** Every keyword must describe a service the client actually delivers or a direct query about hiring/booking that service. Keywords about adjacent industries, complementary services the client does not offer, or generic topic words (e.g., "svadobný darček" for a photographer, "kameraman" if client does not offer video) are off-topic. Drop off-topic keywords before applying caps.
+**Layer 4 — Language Overlay:** Applied to all previous layers. Every query runs in the correct language on the correct engine per the matrix rules above.
 
-Respect `research_config.serp_max_keywords` as the total cap. When trimming, prioritise core service/product keywords over brand variants over location modifiers. Log deprioritised keywords in `notes`.
+---
 
-### Step 3: Client current rankings
+## Competitor Extraction
 
-Call `dataforseo_labs_google_ranked_keywords` on the client domain. Returns keywords the client already ranks for, with positions and traffic share.
+From all SERP results across all layers:
+- Count domain appearances across all queries
+- Classify each domain: `commercial`, `directory`, `media`, `marketplace`, `informational`
+- Only `commercial` domains carry forward as competitors
+- Directories and marketplaces noted separately as channel opportunities
+- Flag separately: city-level competitors, national competitors, cross-border competitors
+- A domain with 3 local appearances is more relevant than one with 10 national appearances — the client competes with local businesses first
+- Cap: top 10 commercial domains total. Top 5 by frequency become the competitor shortlist for R3-Competitors
 
-**Flag shady/off-brand keywords.** If the client ranks for keywords unrelated to their services — adult content, grey-zone terms, keyword-stuffed phrases — do NOT merge them into the seed list. Log them separately with a warning. This informs the operator and prevents shady keywords from contaminating downstream research.
+---
 
-Merge only relevant net-new keywords into the keyword list. Mark existing keywords with client position data.
+## Tooling
 
-### Step 4: SERP check
+**DataForSEO — primary tool:**
+- SERP analysis per keyword — core endpoint. Returns full SERP including result types, positions, domains, URLs, titles, descriptions. Run per query across all layers with correct location + language + engine parameters.
+- Intent classification — classifies query intent. Run on the full keyword list after all SERP queries are complete.
+- Volume estimation — first pass volume estimate on seed keywords before full expansion in R2-Keywords.
+- Current rankings (redesign only) — what the client domain currently ranks for.
+- Current traffic (redesign only) — estimated organic traffic for the client domain.
 
-For every keyword in the list, call `serp_organic_live_advanced` with the correct location_code, language_code, and search engine.
-
-Record per keyword:
-- Client domain position (1–10 or `null` if not present)
-- All domains appearing in top 10
-- Top result domain
-
-### Step 5: Intent classification
-
-Classify each keyword as: `navigational`, `informational`, `commercial`, `transactional`.
-
-**Primary method:** Use SERP features from Step 4 to infer intent — shopping ads and product carousels signal `transactional`, local packs and map results signal `commercial`, featured snippets and PAA boxes signal `informational`, brand sitelinks signal `navigational`. When a keyword has mixed signals, classify by the dominant SERP feature type.
-
-**Fallback:** If intent remains ambiguous after SERP analysis, classify from keyword structure — brand terms → `navigational`, question words → `informational`, price/buy/order modifiers → `transactional`, service + location → `commercial`.
-
-### Step 6: Volume estimation
-
-Call `kw_data_google_ads_search_volume` on the full keyword list. Returns estimated monthly search volume per keyword per location.
-
-### Step 7: Competitor frequency compilation
-
-Count domain appearances across all SERP results **with location weighting**:
-
-**7a. Primary location competitors.** Filter SERP results to keywords containing the client's primary location (city, region). Compile domains appearing in these location-specific SERPs — these are the client's **direct local competitors**. Even if a domain appears only 2-3 times, if those appearances are all in location keywords matching the client's service area, it's a real competitor.
-
-**7b. General competitors.** Count domain appearances across all remaining (non-location) SERP results for broader market competitors.
-
-**7c. Merge and rank.** Combine both lists. Track total keyword appearances, local appearances, and scope (local, national, both). A domain with 3 local appearances is more relevant than one with 10 national appearances — the client competes with local businesses first.
-
-**7d. Compile top competitors.** Favour local representation. Classify each by site type — commercial, directory, media, marketplace, informational. Only `commercial` domains carry forward to R2 and R3. All others are noted but not profiled.
-
-### Step 8: Page type suggestions
-
-For each keyword, suggest which page type it likely maps to based on intent and topic (e.g., homepage, service page, blog, location page, landing page, etc.).
+**Web search — spot-check and validation:**
+Manual spot-checks on 3-5 highest-priority queries to visually confirm result types, ad density, local pack presence, People Also Ask boxes, and AI Overview presence. Some SERP features are not fully captured by API — visual confirmation adds signal quality.
 
 ---
 
@@ -105,4 +100,11 @@ For each keyword, suggest which page type it likely maps to based on intent and 
 
 Write `research/R1-SERP.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R1]`.
 
-R2 will read your output for: seed keywords, client current rankings, competitor domain list.
+**What R1 feeds downstream:**
+- Seed keyword list → R2-Keywords
+- Competitor domain list → R3-Competitors
+- Result type patterns → R9-Content (what content formats Google rewards)
+- Ad density → Concept Creation sitemap (traffic estimate calibration)
+- People Also Ask → R2-Keywords (expansion seeds) and R9-Content (FAQ signals)
+- Intent classification → Concept Creation (page type mapping across sitemap)
+- AI Overview presence → R9-Content (reduced-traffic-potential flags)

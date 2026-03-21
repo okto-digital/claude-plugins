@@ -36,7 +36,7 @@ Collect all mandatory fields before proceeding. Optional fields use defaults if 
 | Location (primary market + additional) | Yes | -- |
 | Notes (free-form from client meeting) | No | empty |
 | Research depth (`basic` / `deep`) | No | `basic` |
-| Output format (`verbose` / `concise`) | No | `concise` |
+| Output format (`detailed` / `concise`) | No | `concise` |
 | Gap domains (`ask` / `all` / `[list]`) | No | `ask` |
 | Parallel execution (`ask` / `true` / `false`) | No | `ask` |
 | Proposal style (`ask` / `full` / `summary_only`) | No | `ask` |
@@ -57,7 +57,7 @@ Write as **a single line** — no newlines, no indentation, no spaces after colo
 
 Schema and template: `${CLAUDE_PLUGIN_ROOT}/skills/project-init/references/templates.md` § JSON Schema.
 
-**research_config defaults:** `research_depth`: `basic`, `output_format`: `concise`, `serp_max_keywords`: 50, `search_landscape_max_keywords`: 100, `competitors_max`: 5. When `basic`: caps enforced. When `deep`: caps are guidelines. `output_format` affects Phase 3 research markdown length only (`concise`: ~1,800 chars, `verbose`: ~5,000 chars).
+**research_config defaults:** `research_depth`: `basic`, `output_format`: `concise`, `serp_max_keywords`: 50, `search_landscape_max_keywords`: 100, `competitors_max`: 5. When `basic`: caps enforced. When `deep`: caps are guidelines. `output_format` controls output budgets per `formatting-rules.md` § Output Budgets (`concise`: target budgets, `detailed`: hard max budgets).
 
 **pipeline_defaults:** `ask` = downstream skill prompts at runtime. Any other value = skip the question.
 
