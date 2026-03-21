@@ -1,4 +1,4 @@
-# Substage 3.2 — Keyword Opportunity
+# Substage 3.2 — Keyword Research & Opportunity Analysis
 
 **Code:** R2
 **Slug:** Keywords
@@ -12,88 +12,106 @@
 
 ## Purpose
 
-Take the seed keyword list from R1-SERP and expand, enrich, and analyse it. Add real search volume and keyword difficulty data, identify trend momentum, surface competitor keyword gaps, and produce the final prioritised keyword list organised by page intent. This is the definitive keyword reference for all downstream phases.
+Expand R1's seed keywords into the full keyword landscape, cluster them into page-level targets based on SERP overlap, score each cluster by feasibility and value, and produce a prioritised list of page recommendations that feeds directly into Concept Creation.
 
----
+**R1 mapped the battlefield. R2 plans the attack — which positions to take, in what order, and why.**
+
+## R1 Carry-Forward
+
+R1 already provides seed keywords with volume, intent, client positions, competitor domains, and SERP composition. Before calling any API, read R1-SERP.txt fully and assess what's already available. Skip or reduce any step where R1 data is sufficient. Specifically:
+
+- If R1 includes client rankings per keyword → use as baseline instead of re-fetching in Step 0
+- If R1 volume and intent data covers the seed list → skip re-enrichment for those keywords
+- If R1 competitor list is already typed and ranked → use directly in Step 1A without re-fetching
+
+The agent decides what to skip based on R1 completeness. Document skipped steps and reasoning in the output.
+
+## Minimum Scope
+
+Cover at least these items. You may go beyond them if evidence warrants it.
+
+- Client keyword baseline — what the client currently ranks for (position, URL, volume), or confirmation of zero presence for new builds
+- Keyword discovery from three streams — competitor gap extraction, seed expansion via DataForSEO, agent-generated semantic candidates validated against real volume
+- Deduplication and enrichment — every keyword carries: volume, difficulty, CPC, intent, source stream, client position (or null)
+- Opportunity classification per keyword — NOT_TARGETED (no ranking), UNDERPERFORMING (pos 11+), COMPETITIVE (top 10 but below best competitor), OWNED (top 3 and above competitors)
+- Keyword clusters — keywords grouped by SERP overlap into page-level targets. Each cluster = one page on the future website
+- Cluster enrichment — per cluster: primary keyword, cluster volume, average difficulty, dominant intent, opportunity classification, SERP composition (who ranks, what features appear)
+- Opportunity scoring — Keyword Opportunity Score (KOS) per cluster using the weighted formula below
+- Page type recommendation — each cluster mapped to: core service page, supporting content, local variation, comparison page, or aspirational target
+- Competitor anchor — at least one commercial competitor must rank top 10 for a cluster to be classified as actionable. Clusters with only Wikipedia/directories/forums = UNPROVEN
+- Verified vs unverified split — keywords with confirmed volume separate from null-volume candidates
 
 ## Data Sources
 
-From `project.json`: research config (search_landscape_max_keywords, research_depth), languages, location.
-From `baseline-log.txt`: mission, all prior findings including R1 highlights.
-From `research/R1-SERP.txt`: seed keywords, client rankings, competitor domains, language x location matrix.
+From `project.json`: research config (search_landscape_max_keywords, research_depth), languages, locations, site_type (new vs redesign).
+From `baseline-log.txt`: mission, services/products, client URL, all prior findings including R1 highlights.
+From `research/R1-SERP.txt`: seed keywords with volume/intent/position, competitor domains (top 10 typed), language x location matrix, SERP composition patterns.
 
 ---
 
-## Methodology
+## Methodology — Processing Sequence
 
-### Step 1: Keyword expansion
+Seven steps. Each builds on the previous. The agent may compress or skip steps where R1 data already covers the need.
 
-Cast a wide net, then keep only the traffic-driving, service-relevant, location-relevant winners.
+**Step 0 — Client keyword baseline:** Establish what the client already ranks for before discovering new opportunities. Run ranked keywords on the client domain per language x location combination. For new builds (site_type = "new"), this returns minimal or no data — all discovered keywords default to NOT_TARGETED. Skip if R1 already includes comprehensive client rankings.
 
-Even in small markets (e.g., Slovakia), there are always keywords that drive real traffic — the job is to find them. Low absolute volume is fine if the keyword is high-intent and service-relevant. Zero volume is not — drop it.
+**Step 1 — Keyword discovery (three streams):** Three independent sources, merged into one deduplicated list.
 
-Call `dataforseo_labs_google_keyword_ideas` and `dataforseo_labs_google_related_keywords` on the seed keywords from R1-SERP. Set `limit: 200` per call to ensure broad expansion. Run per language x location combination from the matrix.
+- **Stream A — Competitor gap extraction:** Pull ranked keywords for top 5 commercial competitors from R1. Identify keywords where competitors rank top 20 and client does not (or ranks below 20). These are highest-signal opportunities — proven demand in the client's exact market. Use domain intersection where available.
+- **Stream B — Seed expansion:** Expand R1 seed keywords into long-tail variants. Three passes in order: full-text expansion (keywords containing the seed phrase), related-keyword depth crawl (2 levels of "searches related to"), category-based relevance search (same product/service category, may not contain seed phrase). Batch by semantic group — one call per service/product cluster, not one massive call.
+- **Stream C — Agent-generated semantic candidates:** Generate keyword candidates from reasoning about the client's business: service × location modifiers, service × audience segments, service × problem/solution framing, service × comparison modifiers, industry terminology variations. All agent-generated keywords must be validated against DataForSEO for volume and difficulty before inclusion.
 
-**Multi-seed batching:** Do not pass all seeds in a single call — batch by semantic group (e.g., one call per service/product cluster of related seeds). This produces more diverse results than one large batch.
+**Step 2 — Deduplication and enrichment:** Merge all streams. Remove exact duplicates. Ensure every keyword carries: keyword, volume, difficulty, CPC, competition level, intent, source stream, client position (from Step 0 or null). Tag source correctly: `seed` (from R1), `expanded` (from Stream B), `gap_opportunity` (from Stream A), `agent_generated` (from Stream C). Fill missing data points via bulk intent classification and bulk difficulty scoring.
 
-Deduplicate against existing keywords. **Relevance filter** (apply in this order):
-1. **Service match** — keyword must describe a service the client actually delivers or a direct query about hiring/booking that service. Off-topic keywords about adjacent industries or services the client does not offer are dropped (e.g., "svadobný darček" for a photographer).
-2. **Traffic potential** — keyword must have non-zero search volume. Prioritise keywords that actually drive clicks and traffic over vanity terms.
-3. **Location relevance** — for local/regional businesses, prioritise keywords with location intent or that match the client's service area.
+**Step 3 — Opportunity classification:** Using the client baseline from Step 0, classify each keyword: NOT_TARGETED (no ranking), UNDERPERFORMING (pos 11+), COMPETITIVE (top 10 but below best competitor), OWNED (top 3 and above — not an opportunity, skip). For new builds, all keywords = NOT_TARGETED.
 
-### Step 2: Competitor rankings
+**Step 4 — Clustering (two-pass):** Group keywords that Google treats as the same search intent. Each cluster = one page.
 
-Call `dataforseo_labs_google_ranked_keywords` on top 3 commercial competitors from R1-SERP. Returns keywords each competitor ranks for, with positions and traffic share.
+- **Pass 1 — Core keyword grouping (fast, free):** Group by the `core_keyword` property that DataForSEO returns with every keyword response. Handles singular/plural, word order, minor phrasing differences. No extra API calls. Result: initial cluster draft, ~70-80% accuracy.
+- **Pass 2 — SERP overlap validation (accurate, costs API calls):** For the top 30-50 highest-value clusters from Pass 1 (ranked by combined volume), run SERP queries and compare top 10 organic URLs between keyword pairs. Threshold: 3+ shared URLs in top 10 = same cluster. 0-2 shared = split. Two clusters from Pass 1 showing high mutual overlap = merge.
 
-Cross-reference against R1 keywords + expanded list. Keywords competitors rank for that are absent from the client's list are flagged as gap opportunities. **Tag source correctly:** keywords from R1 seeds = `seed`, from keyword_ideas/related_keywords = `expanded`, from competitor ranking gaps = `gap_opportunity`.
+Why two passes: full SERP-based clustering for 500 keywords = 500 API calls + O(n²) comparisons. Two-pass limits expensive SERP calls to the clusters that will actually become pages.
 
-### Step 3: Domain intersection
+**Step 5 — Cluster enrichment:** Each validated cluster gets: primary keyword (highest volume), cluster intent (majority vote — flag mixed-intent clusters for potential split), cluster volume (sum of all keyword volumes), average difficulty, opportunity classification (majority of keywords: NEW_PAGE / OPTIMIZE / COMPETE), SERP composition (which competitors rank + average position, whether directories/Wikipedia/forums dominate, which SERP features appear).
 
-Derive keyword overlap from the `dataforseo_labs_google_ranked_keywords` data already obtained in Step 2. Compare keywords across the client domain and each competitor — shared keywords are overlap, keywords only one domain ranks for are unique. No separate API call needed.
+**Step 6 — Scoring and page type recommendation:** Score each cluster using KOS (see formula below). Then map to page type: core service/product pages (commercial/transactional, aligned with client services), supporting content (informational, builds topical authority), local/regional variations (same topic, location-specific), comparison/alternative pages ("[service] vs [alternative]", high conversion), aspirational targets (high-value but fierce competition — flag as requiring pillar-page strategy).
 
-### Step 4: Competitor discovery
+**Step 7 — Capping and split:** Respect `research_config.search_landscape_max_keywords` as the verified keyword cap. Split output into verified (volume > 0) and unverified (null volume). Unverified go to a separate section — group by service area, note validation suggestions (paid social test, content experiment).
 
-Call `dataforseo_labs_google_competitors_domain` on the client domain. Surfaces additional competing domains not found in R1 SERP results. Add any net-new commercial competitors to the competitor list.
+---
 
-### Step 5: Difficulty scoring
+## Opportunity Scoring — KOS Formula
 
-Extract keyword difficulty from the `dataforseo_labs_google_keyword_ideas` responses obtained in Step 1 — each result includes a difficulty score alongside volume. For any remaining keywords without difficulty data (e.g., from related_keywords), call `dataforseo_labs_google_keyword_ideas` with those keywords as seeds to retrieve difficulty scores.
+```
+KOS = (V × 0.15) + (I × 0.20) + (D × 0.20) + (G × 0.20) + (F × 0.25)
+```
 
-### Step 6: Trend analysis
+| Factor | Weight | Measures | Scoring |
+|---|---|---|---|
+| V — Volume | 15% | Combined cluster search volume | Normalised against other clusters |
+| I — Intent | 20% | Commercial/transactional alignment | Transactional 1.0, Commercial 0.8, Informational 0.4, Navigational 0.1 |
+| D — Difficulty | 20% | Inverse competitive difficulty | 0-30 = 1.0, 31-50 = 0.7, 51-70 = 0.4, 71-100 = 0.1 |
+| G — Gap | 20% | Competitor presence where client is absent | 3+ competitors rank, client doesn't = 1.0. Fewer or client present = lower |
+| F — Feasibility | 25% | How quickly results can be achieved | OPTIMIZE 1.0, COMPETE 0.7, NEW_PAGE low-diff 0.5, NEW_PAGE high-diff 0.2 |
 
-Call `kw_data_dfs_trends_explore` on the top 30 keywords by search volume. Classify each as:
-- `rising` — growing search interest
-- `stable` — consistent search interest
-- `declining` — shrinking search interest
-- `seasonal` — significant periodic spikes
+**Feasibility gets highest weight (25%)** — this is a website proposal. Clients need achievable results. A keyword with amazing volume is worthless if it requires 18 months of link building.
 
-### Step 7: Split verified vs unverified
+**Volume gets lowest weight (15%)** — high-volume keywords are often high-difficulty and informational. Chasing volume leads to proposals full of blog post recommendations instead of revenue-driving service pages.
 
-After volume enrichment, split keywords into two buckets:
+---
 
-- **Verified** — keywords with `volume > 0` (confirmed traffic). These are the main output.
-- **Unverified** — keywords where DataForSEO returned `null` volume. Null means no ads data — not necessarily zero searches, but unproven. These go to a separate `unverified_candidates` section.
+## Tooling
 
-Keep unverified keywords separate from verified ones. Pick the best candidates by service relevance and intent strength, group by service area, and note how they might be validated (paid social test, content experiment, etc.).
+**DataForSEO — primary tool:**
+- Ranked keywords per domain — client baseline (Step 0) and competitor keyword extraction (Step 1A). Returns keywords, positions, URLs, volume, difficulty, intent.
+- Domain intersection — gap identification between client and competitors (Step 1A).
+- Keyword suggestions, related keywords, keyword ideas — seed expansion streams (Step 1B). Each returns volume, difficulty, and core_keyword clustering signal.
+- Keyword overview (bulk) — validate agent-generated candidates, up to 700 per call (Step 1C).
+- Search intent (bulk) — classify intent for up to 1,000 keywords per call (Step 2).
+- Bulk keyword difficulty — difficulty for up to 1,000 keywords per call (Step 2).
+- SERP organic results — top 10 URLs per keyword for cluster validation (Step 4, Pass 2).
 
-### Step 8: Prioritisation and capping
-
-Score **verified keywords only**. The goal is to surface keywords that will **drive real traffic to the client's website**:
-- High volume + low difficulty + commercial/transactional intent = highest priority
-- Service-specific + location-modified keywords rank above generic terms, even at lower volume
-- Rising trend boosts priority; declining trend downgrades regardless of volume
-- Gap opportunities (competitors rank, client doesn't) get priority boost — these are proven traffic drivers
-- Informational keywords retained but ranked lower unless content strategy signals need them
-
-Respect `research_config.search_landscape_max_keywords` as the cap. The final list should represent the best traffic opportunities for the client's services in their market.
-
-### Step 9: Keyword clustering
-
-Group the **verified keyword list** into semantic clusters. Each cluster represents one topic that a single page should target.
-
-Each cluster should identify the primary keyword (highest volume), supporting keywords, suggested page type, and aggregate metrics (volume, difficulty). Drop clusters where zero keywords have verified volume.
-
-Use semantic similarity and SERP overlap to group: if two keywords return largely the same top 10 results, they belong in the same cluster. `dataforseo_labs_google_related_keywords` output from Step 1 informs this grouping. One keyword per cluster.
+**Estimated API calls per project:** 30-80 depending on keyword volume and competitor count. Main cost driver is Step 4 SERP validation — limit to top 30-50 clusters.
 
 ---
 
@@ -101,4 +119,10 @@ Use semantic similarity and SERP overlap to group: if two keywords return largel
 
 Write `research/R2-Keywords.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R2]`.
 
-R3 will read your output for: enriched competitor domain list (R1 SERP appearances + R2 domain intersection + R2 competitor discovery), keyword clusters for site architecture planning.
+**What R2 feeds downstream:**
+- Keyword clusters with page type recommendations → Concept Creation sitemap (C1)
+- Enriched competitor domain list (R1 appearances + R2 domain intersection + R2 competitor discovery) → R3-Competitors
+- Opportunity scores → Concept Creation prioritisation (C7-Roadmap)
+- Intent classification per cluster → Concept Creation page type mapping (C1)
+- Gap analysis → R3-Competitors (which competitors own which clusters)
+- Verified vs unverified split → R9-Content (content experiment candidates)

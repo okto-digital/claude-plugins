@@ -6,64 +6,95 @@
 **Hypothesis:** Competitors have stronger web presence and working conversion paths
 **Dependencies:** R1-SERP, R2-Keywords
 **Reads from:** `project.json`, `baseline-log.txt`, `research/R1-SERP.txt`, `research/R2-Keywords.txt`
-**MCP tools:** DataForSEO (optional), web-crawler (required), WebSearch (required)
+**MCP tools:** DataForSEO (required), web-crawler (required)
 
 ---
 
 ## Purpose
 
-Consolidate competitor signals from R1-SERP and R2-Keywords into a finalised competitor list (capped at `research_config.competitors_max`). Build a structured intelligence profile for each — who they are, what they do, how they're doing. The competitor list is locked at the end of this substage. No new competitors are added after R3.
+Consolidate all competitor signals from R1 and R2, select the final competitor roster organised by competitive zones, profile each competitor at the business and SEO authority level, and produce the overlap matrix that every downstream stage references.
 
-Every subsequent substage uses this finalised list as its reference. The `rank` field determines which competitors receive deeper analysis later.
+**This is a profile-and-lock stage — it answers "who and how big," not "how do they do it." Deep analysis of competitors' technology, reputation, UX, and content belongs in later stages.**
 
----
+## R1/R2 Carry-Forward
+
+R1 provides: commercial competitor domains with SERP appearance counts, local appearances, scope classification, and domain typing. R2 provides: keyword clusters with competitor rankings per cluster, domain intersection data, gap analysis, page type recommendations. Before calling any API, read both R-files fully and assess what's reusable. Specifically:
+
+- R1's competitor frequency table → direct input to Step 2 selection criteria
+- R2's cluster-level competitor rankings → direct input to Step 1 zone definition and Step 5 overlap matrix
+- R2's domain intersection data → reuse for overlap matrix instead of re-fetching
+- R2's competitor keyword extraction → reuse for authority profile keyword counts
+
+Document what data was carried forward and what required new API calls.
+
+## Minimum Scope
+
+Cover at least these items. You may go beyond them if evidence warrants it.
+
+- Competitive zones — defined by service category × market (location + language), derived from R2's keyword clusters. Each zone groups the clusters where a distinct set of competitors emerges
+- Competitor roster — deduplicated list of all unique commercial competitor domains across all zones. Maximum 15 unique competitors. Each domain typed and tagged with which zones it appears in
+- Business profile per competitor — company name, positioning statement, services offered (mapped against client's services), markets served, apparent company size, unique selling proposition, pricing signals, primary CTA. From homepage + about page + services pages only
+- SEO authority profile per competitor — domain rank, total ranked keywords, estimated organic traffic, keyword position distribution (top 3/10/20/50), backlink summary (total backlinks, referring domains), top 5-10 performing pages by traffic
+- Competitive overlap matrix per zone — keyword clusters × competitors showing positions. Highlights convergence (proven demand) and whitespace (uncontested clusters)
+- Tier classification per zone — each competitor classified as direct threat (high overlap, similar services, comparable authority), aspirational benchmark (much stronger, learning target), or niche competitor (lower authority, dominant in specific cluster)
+- Multi-zone threats — competitors appearing in 3+ zones flagged separately as primary strategic threats regardless of per-zone tier
 
 ## Data Sources
 
-From `project.json`: languages, location, notes (client-provided competitor URLs).
-From `baseline-log.txt`: mission, all prior findings including R1 and R2 highlights.
-From `research/R1-SERP.txt`: commercial competitor domains from organic results, keyword appearance counts, scope.
-From `research/R2-Keywords.txt`: domains owning keywords the client doesn't target, enriched competitor signals from domain intersection and competitor discovery.
+From `project.json`: languages, locations, notes (client-provided competitor URLs), research config (competitors_max).
+From `baseline-log.txt`: mission, services/products, all prior findings including R1 and R2 highlights.
+From `research/R1-SERP.txt`: commercial competitor domains with appearance counts, local appearances, scope, domain typing.
+From `research/R2-Keywords.txt`: keyword clusters with competitor rankings, domain intersection data, gap analysis, page type recommendations, service mappings.
 
 ---
 
-## Methodology
+## Methodology — Processing Sequence
 
-### Step 1: Competitor list consolidation
+Six steps. Steps 1-2 define who to analyse. Steps 3-4 profile each competitor. Steps 5-6 build the cross-reference outputs.
 
-Merge competitor signals from three sources:
-- INIT notes — any competitor URLs provided directly by the operator
-- R1-SERP results — commercial domains appearing in organic results
-- R2-Keywords gap analysis — domains owning keywords the client doesn't target
+**Step 1 — Define competitive zones:** A zone is the intersection of service category × market (location + language). Zones are not invented — they emerge from R2's cluster data. Each keyword cluster already has a service mapping, location, and language from R2. Group clusters by service × market to define zones. Rank zones by combined cluster volume from R2. Zones in the bottom quartile by volume may be deprioritised — flagged but not given full competitor analysis.
 
-Deduplicate. Rank by relevance, not raw frequency:
-- **Local competitors first** — domains with `scope: local` or `scope: both` from R1 are the client's direct market rivals. Weight `local_appearances` higher than general `keyword_appearances`.
-- **Favour local representation** — a national directory appearing in 20 keywords is less relevant than a local business appearing in 3 location keywords.
-- **Break ties by keyword gap ownership** — competitors from R2 gap analysis (domains owning keywords the client doesn't target) get a boost.
+**Step 2 — Select competitors per zone:** Input: all commercial domains from R1 (SERP frequency) and R2 (keyword gap, cluster SERP composition). Only domains typed as `commercial` in R1 are eligible. Select top 3-5 per zone by: keyword overlap (how many zone clusters does this competitor rank for), SERP frequency (R1 appearances for this zone's keywords), service overlap (does the competitor actually offer the same services), comparable scale (favour competitors of similar or slightly higher authority over massive multinationals). Compile the full roster — all unique competitors across all zones. Cap at 15 unique domains. If the zone map produces more, drop the weakest single-zone competitors that don't add unique insight. Also produce the zone map showing which competitors appear in which zones. Multi-zone competitors (3+ zones) are typically the most important — they're the client's truest direct threats.
 
-Trim to `research_config.competitors_max` (default: 5).
+**Step 3 — Business profile per competitor:** Done once per unique competitor in the roster. Dispatch web-crawler sub-agent for each competitor's homepage, about page, and services pages. Extract: company name, positioning statement (hero section or meta description), services offered (mapped against client's services — flag overlap and gaps), markets served (locations, languages, verticals), apparent company size (team page signals, years in business), unique selling proposition (what they lead with), pricing signals (visible prices, "request a quote", package tiers, or "not public"), primary CTA (what action the website pushes). This is lightweight scraping — homepage + about + services only. If a page beyond these three is needed, it belongs in a later stage.
 
-### Step 2: Competitor profiling
+**Step 4 — SEO authority profile per competitor:** Done once per unique competitor. Pull from DataForSEO: domain rank/authority score, total ranked keywords in target market, estimated monthly organic traffic, keyword position distribution (how many in top 3/10/20/50), backlink summary (total backlinks, referring domains — not a full audit, just the authority gap picture), top 5-10 pages by estimated traffic (reveals content strategy shape without a full content analysis). Reuse R2's ranked_keywords and domain intersection data where available — the main new calls are domain rank overview, relevant pages, and backlink summary.
 
-For each competitor in the locked list, perform a surface intelligence scan:
+**Step 5 — Competitive overlap matrix:** The key output. Per zone: build a table of keyword clusters × competitors showing positions. From R2's cluster data and Step 4 rankings. Highlight: convergence points (multiple competitors rank for the same cluster = proven demand, client must be there), single-competitor clusters (niche strength or unique positioning angle), zero-competitor clusters (whitespace opportunities already flagged in R2). This matrix directly feeds the proposal's competitive positioning argument.
 
-**Website scrape** — dispatch `web-crawler` sub-agent for each competitor homepage. Extract: structure, messaging, tone of voice, CTAs, content presence.
+**Step 6 — Tier classification:** Done per zone, not globally. Same competitor may be classified differently across zones. Direct threat: high keyword overlap, similar services, comparable or stronger authority. Aspirational benchmark: much stronger authority, broader market, but overlapping on key clusters — study for best practices, don't set unrealistic expectations. Niche competitor: lower authority overall but dominant in a specific cluster — quick wins for the proposal. Flag multi-zone competitors (3+ zones) separately as primary strategic threats regardless of per-zone tier.
 
-**Social presence** — use WebSearch to find active social profiles. Note which platforms are active and posting activity level.
+---
 
-**Reputation surface scan** — use WebSearch for Google rating, review count, notable mentions.
+## Scope Boundaries
 
-**Market and language footprint** — which markets and languages they operate in, based on website language versions and content.
+**What R3 does:** Define zones, select roster, profile business + SEO authority, build overlap matrix, classify tiers.
 
-**SERP context** — from R1-SERP data, which language x location combinations they appeared in and how often.
+**What R3 does NOT do:**
+- Crawl competitor sites for tech stack → R5-Technology
+- Analyse reviews or social proof → R6-Reputation
+- Evaluate design patterns, navigation, conversion flows → R8-UX
+- Perform deep content audits or topical coverage analysis → R9-Content
+- Build audience personas → R7-Audience
 
-### Step 3: Strengths and weaknesses assessment
+**Boundary rule:** If it requires visiting the competitor's website page-by-page beyond homepage, about page, and services pages, it belongs in a later stage.
 
-Assess each competitor based on visible signals only — no deep analysis. Flag obvious strengths (strong content, clear positioning, high review count) and weaknesses (thin content, poor UX signals, weak social presence, missing markets).
+---
 
-### Step 4: Gap analysis
+## Tooling
 
-Compare client against the competitor set as a whole. Synthesise across sites — don't restate per-competitor findings. Surface gaps (what competitors do well that the client doesn't), coverage gaps (markets, languages), and differentiation opportunities.
+**DataForSEO — authority profiling:**
+- Domain rank overview — authority score, traffic estimate, keyword counts per competitor. One call per competitor.
+- Bulk traffic estimation — traffic estimates for all competitors in one call.
+- Relevant pages — top performing pages per competitor. One call per competitor.
+- Backlink summary — total backlinks, referring domains. One call per competitor.
+- Ranked keywords — position distribution per competitor. Reuse from R2 where available.
+- Domain intersection — keyword overlap. Reuse from R2 where available.
+
+**Web-crawler — business profiling:**
+- Dispatch per competitor for homepage + about + services pages. Lightweight scrape for business profile data points.
+
+**Estimated API calls per project:** 15-30 new calls depending on roster size. Steps 5-6 primarily reuse data from R1 and R2.
 
 ---
 
@@ -71,6 +102,14 @@ Compare client against the competitor set as a whole. Synthesise across sites �
 
 Write `research/R3-Competitors.txt`. Apply the decision framework and formatting rules. Append key findings to `baseline-log.txt` tagged with `[R3]`.
 
-This is the reference file for all substages R4 through R9. R5-Technology, R6-Reputation use ranks 1–3 (`basic`; all locked competitors when `deep`). R8-UX uses all locked competitors regardless of depth.
-
 **The competitor list is now locked. No new competitors are added after this point.**
+
+This is the reference file for all substages R4 through R9. Later stages use the roster, zone map, and tier classifications to scope their own analysis.
+
+**What R3 feeds downstream:**
+- Locked competitor roster + zone map → R4-Market, R5-Technology, R6-Reputation, R7-Audience, R8-UX, R9-Content
+- SEO authority profiles → R5-Technology (benchmark), Concept Creation (realistic targets)
+- Overlap matrix → Concept Creation sitemap (which clusters must have pages), Proposal (competitive positioning argument)
+- Tier classifications → Concept Creation (priority ordering), Proposal (competitive narrative)
+- Top performing pages per competitor → R9-Content (content strategy shape)
+- Business profiles → R8-UX (context for navigation/CTA analysis), Proposal (competitive landscape section)
