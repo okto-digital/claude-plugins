@@ -43,7 +43,7 @@ Six phases, sequential. Each phase produces its output, updates `baseline-log.tx
 
 ### Key design decisions
 
-- **Decision-driven output** — Research agents apply four research filters; concept agents apply four solution filters. No templates, no prescribed output structure. Output is TXT — telegraphic, source-tagged, self-contained lines.
+- **Decision-driven output** — Research agents apply the research filters; concept agents apply the solution filters. No templates, no prescribed output structure. Output is TXT — telegraphic, source-tagged, self-contained lines.
 - **baseline-log.txt** — Cumulative knowledge file. Mission statement first, then tagged entries from every phase. Each agent reads before starting, appends after finishing. Later phases see earlier findings.
 - **project.json** — System config consumed by bash/jq. Single-line JSON. Languages, locations, research_config. The only structured data file in the pipeline.
 - **Research ordering** — R2→R3→R4 sequential (SERP → Keywords → Competitors, each feeds the next). R1 (Inventory) runs parallel with R2. Others can run in parallel once dependencies met.
@@ -58,7 +58,7 @@ Six phases, sequential. Each phase produces its output, updates `baseline-log.tx
 - **Research depth** — Set at INIT. `basic` enforces caps; `deep` lets agents decide.
 - **Output language** — When set in project.json, client-facing outputs MUST use that language (titles, labels). Codes and enums stay English.
 - **Debug mode** — When `true`: every document gets a `-debug.txt` companion in `tmp/debug/` (telegraphic, bullets, key facts only). When `ask`: prompt operator before first output of each phase. When `false`: skip. Default is `ask`.
-- **Sub-agent dispatch** — All sub-agents (researchers, domain analysts, concept creators, web-crawler, dataforseo) spawned via Task tool using `dispatch-subagent` protocol. Agent definitions inlined in dispatch prompt with resolved `${CLAUDE_PLUGIN_ROOT}` paths and MCP tool hints.
+- **Sub-agent dispatch** — All sub-agents (researchers, domain analysts, concept creators, proposal-creator, web-crawler, dataforseo) spawned via Task tool. Most use `dispatch-subagent` protocol with agent definitions inlined and `${CLAUDE_PLUGIN_ROOT}` paths resolved. Proposal skill dispatches directly (lightweight, no MCP).
 
 ## Data Architecture
 
@@ -81,9 +81,9 @@ Append-only cumulative knowledge file. Every agent reads it before starting, app
 - Research filters applied to every entry — only what changes downstream decisions
 - Full rules: `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` § Baseline Log
 
-### TXT Output
+### Output Format
 
-All pipeline outputs are free-form TXT. No templates, no prescribed sections. Agents decide what structure serves the project best. Decision framework enforced throughout.
+Pipeline outputs are free-form — agents decide what structure serves the project best. Research and analysis outputs are `.txt` (scannable TXT format). Concept files are `.md`. Proposal produces both `.txt` and `.html`. Decision framework enforced throughout.
 
 ### Document Naming
 
@@ -144,7 +144,7 @@ Web-crawler cascade (agents try in order, first success wins): mcp-curl → Bash
 | `client-intelligence` | 2 | Build client profile (D2) via web-crawler, DataForSEO, registries, web search |
 | `project-research` | 3 | Dispatch 10 researcher agents in dependency-aware waves, synthesise D3 |
 | `domain-gap-analysis` | 4 | Dispatch domain-analyst agents (6 groups), consolidate, cross-domain synthesis, question deduplication, scope extraction, resolve answers |
-| `concept-creation` | 5 | Dispatch concept-creator agents (ICIP sequence) in 3 waves, coherence check, consolidate D5 |
+| `concept-creation` | 5 | Dispatch 3 concept-creator agents in parallel (one per tier), build D5-Concept-Comparison.md |
 | `proposal` | 6 | Generate D6 proposal (TXT + HTML) from selected concept tier(s) and pricing spreadsheet |
 | `dispatch-subagent` | Shared | Dispatch protocol for all sub-agent spawning (MCP hints, model selection) |
 

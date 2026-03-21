@@ -23,6 +23,7 @@ Dispatch any registered agent as a sub-agent via the Task tool. Automatically se
 | researcher | `${CLAUDE_PLUGIN_ROOT}/agents/researcher.md` | Execute one research substage, produce R{n}-{slug}.txt |
 | domain-analyst | `${CLAUDE_PLUGIN_ROOT}/agents/domain-analyst.md` | Score domain group checkpoints against baseline-log, write to confirmed/client/agency output streams |
 | concept-creator | `${CLAUDE_PLUGIN_ROOT}/agents/concept-creator.md` | Build one complete website concept for an assigned tier (8 dimensions), update baseline-log |
+| proposal-creator | `${CLAUDE_PLUGIN_ROOT}/agents/proposal-creator.md` | Generate priced proposal from concept tier using methodology and pricing spreadsheet |
 
 ---
 
