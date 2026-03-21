@@ -10,7 +10,7 @@ Every line of output should pass this test: "If I deleted this line, would the n
 
 The mission reframes facts. Without it, "dual lightbox plugins installed" is a technical observation. With it, it becomes "technical debt = cleanup item in proposal scope." Same fact, completely different utility. The mission turns researchers into proposal builders.
 
-## Four Filters
+## Research Filters
 
 Apply in order to every piece of information you encounter:
 
@@ -70,4 +70,4 @@ Examples: the local market has no websites (questions whether a website proposal
 - Do not ignore evidence that challenges the hypothesis
 - Do not include findings without a source tag (in output files) or phase tag (in baseline-log)
 - Do not fill gaps with plausible guesses — report MISSING
-- Do not generate more findings than pass the four filters — if you have 30+, you're not filtering hard enough
+- Do not generate more findings than pass the research filters — if you have 30+, you're not filtering hard enough

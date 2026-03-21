@@ -38,7 +38,7 @@ Solution agents have two distinct jobs that must never happen simultaneously:
 
 Most agents skip divergent and go straight to convergent — they produce the first plausible solution, not the best one. The ICIP sequence forces both: INTERPRET and CHALLENGE are divergent. INVERT and PROPOSE are convergent.
 
-## Four Filters (Solution)
+## Solution Filters
 
 Adapted from the research filters. Applied to every recommendation:
 

@@ -12,19 +12,21 @@ Produce a proposal specific to this client, grounded in evidence, articulating t
 
 ## Thinking Frameworks
 
-Four reference files govern agents by phase:
-- `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — how research agents think (mission, four filters, hypothesis, baseline awareness, stopping rule, escalation). Governs Phases 1-3.
+Six reference files govern agents by phase:
+- `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — how research agents think (mission, research filters, hypothesis, baseline awareness, stopping rule, escalation). Governs Phases 1-3.
 - `${CLAUDE_PLUGIN_ROOT}/references/gap-analysis-framework.md` — how domain analysts think (resolution hierarchy, professional standard test, evidence reading, scope awareness, question quality, conditional handling, cross-domain awareness). Governs Phase 4.
-- `${CLAUDE_PLUGIN_ROOT}/references/solution-framework.md` — how solution agents think (ICIP sequence, solution four filters, divergent-before-convergent, null hypothesis). Governs Phase 5 (concept creation).
+- `${CLAUDE_PLUGIN_ROOT}/references/solution-framework.md` — how solution agents think (ICIP sequence, solution filters, divergent-before-convergent, null hypothesis). Governs Phase 5.
+- `${CLAUDE_PLUGIN_ROOT}/references/concept-methodology.md` — how concepts are structured (tier model, 8 dimensions, structure process, template rules, classification tests). Governs Phase 5.
+- `${CLAUDE_PLUGIN_ROOT}/references/proposal-methodology.md` — how proposals are priced (10-step process, assessment rules, classification rules, quality checks, pricing spreadsheet URL). Governs Phase 6.
 - `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — how all agents write (source binding, confidence levels, scannable TXT format, baseline-log rules).
 
 **Research agents** (Phases 1-3) collect and filter. They use the decision framework. They fail by collecting wrong things or inventing sources.
 
 **Gap analysts** (Phase 4) resolve uncertainty. They use the gap analysis framework. They fail by asking questions they should resolve, or confirming things they should question. Their goal: every question that reaches the client *deserves* to be there.
 
-**Solution agents** (Phase 5) synthesize and propose. They use the solution framework and the ICIP sequence (Interpret → Challenge → Invert → Propose). They fail by connecting wrong dots — selective reading, premature conclusion, false synthesis.
+**Solution agents** (Phase 5) synthesize and propose. They use the solution framework (ICIP sequence) and concept methodology (tier model, 8 dimensions). They fail by connecting wrong dots — selective reading, premature conclusion, false synthesis.
 
-**Proposal** (Phase 6) distills concept outputs into a client-facing document. It reads only D5 concept data — no upstream pipeline files.
+**Proposal** (Phase 6) turns a selected concept tier into a priced proposal. It reads concept files, D4 scope implications, baseline-log, project.json, and fetches pricing from a Google Sheet. Governed by proposal-methodology.md.
 
 ## Discovery Pipeline
 
@@ -36,8 +38,8 @@ Six phases, sequential. Each phase produces its output, updates `baseline-log.tx
 | 2 | **Client Intelligence** | Who is this client? | D2-Client-Intelligence.txt |
 | 3 | **Research** (10 substages) | What does the landscape look like? | R1–R10 .txt files, D3-Research-Synthesis.txt |
 | 4 | **Domain Gap Analysis** | What do we know vs. need to ask? | gap-analysis/ (working files), D4-Scope-Implications.txt, D4-Cross-Domain.txt |
-| 5 | **Concept Creation** | What should we build? | 9 concept sections (C1–C9 .txt), D5-Concept.txt |
-| 6 | **Proposal & Brief** | What do we deliver? | D6-Proposal.json, D6-Proposal.md, D6-Proposal.html |
+| 5 | **Concept Creation** | What should we build? | concept/Concept-Tier-{1,2,3}.md, D5-Concept-Comparison.md |
+| 6 | **Proposal** | What does it cost? | D6-Proposal.txt, D6-Proposal.html |
 
 ### Key design decisions
 
@@ -76,7 +78,7 @@ Append-only cumulative knowledge file. Every agent reads it before starting, app
 - Scannable sections: `====` divider + `[CODE] TITLE — source/path.txt` + `====` divider
 - `- ` bullet per finding, telegraphic
 - Section header identifies the source — no inline `[src:]` tags needed
-- Four filters applied to every entry — only what changes downstream decisions
+- Research filters applied to every entry — only what changes downstream decisions
 - Full rules: `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` § Baseline Log
 
 ### TXT Output
@@ -88,11 +90,11 @@ All pipeline outputs are free-form TXT. No templates, no prescribed sections. Ag
 | Location | Pattern | Examples |
 |---|---|---|
 | Root | System files | project.json, baseline-log.txt, project-state.md |
-| Root | `D{n}-{Name}.txt` | D1-Init.txt, D2-Client-Intelligence.txt, D3-Research-Synthesis.txt, D4-Scope-Implications.txt, D4-Cross-Domain.txt |
+| Root | `D{n}-{Name}.{txt,md}` | D1-Init.txt, D2-Client-Intelligence.txt, D3-Research-Synthesis.txt, D4-Scope-Implications.txt, D4-Cross-Domain.txt, D5-Concept-Comparison.md, D6-Proposal.txt |
 | `research/` | `R{n}-{Slug}.txt` | R1-Inventory.txt, R2-SERP.txt, R3-Keywords.txt |
 | `gap-analysis/` | Consolidated files | confirmed.txt, client-questions.txt, agency-questions.txt |
 | `gap-analysis/questions/` | `{Group}-{type}.txt` | A-confirmed.txt, A-client.txt (per-group raw files) |
-| `concept/` | `C{n}-{Name}.txt` | C1-Sitemap.txt, ... (9 sections) |
+| `concept/` | `Concept-Tier-{N}.md` | Concept-Tier-1.md, Concept-Tier-2.md, Concept-Tier-3.md |
 
 Research substages:
 
@@ -105,7 +107,7 @@ Research substages:
 | R5 | Market | R10 | Content |
 
 Domain groups (6 groups, 21 domains): see `domain-gap-analysis` skill.
-C-codes (9 concept sections): see `concept-creation` skill.
+Concept tiers (3 tiers, 8 dimensions each): see `concept-creation` skill.
 
 ## MCP Tool Discipline
 
@@ -130,7 +132,7 @@ MCP tool definitions consume context in every session (40-50k tokens with all se
 | 3 Research | DataForSEO + web-crawler cascade | Yes |
 | 4-6 | None | Yes |
 
-Web-crawler cascade (agents try in order, first success wins): Desktop Commander → mcp-curl → Apify → Chrome Control → Chrome Automation → WebFetch.
+Web-crawler cascade (agents try in order, first success wins): mcp-curl → Bash curl → Apify → Chrome Control Fetch → Chrome Automation Nav → WebFetch → Paste-in.
 
 **Mitigations:** MCP Tool Search (`ENABLE_TOOL_SEARCH=auto:5`, set by project-init) loads on-demand. DataForSEO module filtering via `ENABLED_MODULES`. Phases 4-6 need zero MCP.
 
@@ -143,7 +145,7 @@ Web-crawler cascade (agents try in order, first success wins): Desktop Commander
 | `project-research` | 3 | Dispatch 10 researcher agents in dependency-aware waves, synthesise D3 |
 | `domain-gap-analysis` | 4 | Dispatch domain-analyst agents (6 groups), consolidate, cross-domain synthesis, question deduplication, scope extraction, resolve answers |
 | `concept-creation` | 5 | Dispatch concept-creator agents (ICIP sequence) in 3 waves, coherence check, consolidate D5 |
-| `proposal` | 6 | Generate D6 proposal (JSON + MD + HTML) from project.json + D5-Concept.txt |
+| `proposal` | 6 | Generate D6 proposal (TXT + HTML) from selected concept tier(s) and pricing spreadsheet |
 | `dispatch-subagent` | Shared | Dispatch protocol for all sub-agent spawning (MCP hints, model selection) |
 
 ## Utilities

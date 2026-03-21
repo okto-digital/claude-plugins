@@ -117,7 +117,7 @@ State capability requirements that constrain the proposal's tech choices. Platfo
 
 ### 10. Write output
 
-Write the concept file at the output path as scannable TXT per formatting-rules.md.
+Write the concept file at the output path following formatting-rules.md conventions for scannable structure.
 
 **Required structure:**
 

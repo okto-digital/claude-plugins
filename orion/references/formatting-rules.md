@@ -106,6 +106,27 @@ Good:
 - WordPress 5.8.2 — 3 known CVEs, security upgrade mandatory before launch.
 ```
 
+## Proposal Impact Section
+
+Every R-file must end with a `PROPOSAL IMPACT` section. This is the decision framework's Filter 1 applied at the output level — only findings that change the proposal.
+
+```
+================================================================================
+PROPOSAL IMPACT
+================================================================================
+
+• Because {finding}, the proposal should {consequence}.
+• Because {finding}, the proposal should {consequence}.
+```
+
+**Rules:**
+- Each entry follows "Because X, the proposal should Y" — cause and consequence
+- Only entries that change scope, price, or approach. If a finding doesn't appear here, it's context for other researchers, not a proposal driver
+- No more than 10 entries. If you have more, you're not filtering hard enough
+- CONFIRMED findings only. INFERRED may appear with explicit label
+
+---
+
 ## Output Budgets
 
 <critical>

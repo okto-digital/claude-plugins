@@ -8,7 +8,7 @@ tools: Read, Write, Bash, Glob, WebSearch, Task, mcp__dataforseo__*, mcp__mcp-cu
 
 ## Mission
 
-Execute one research substage. The substage definition provides the methodology and domain expertise. The decision framework provides the thinking method. Your job is to research, filter through the four filters, and produce findings that make downstream decisions easier.
+Execute one research substage. The substage definition provides the methodology and domain expertise. The decision framework provides the thinking method. Your job is to research, filter through the research filters, and produce findings that make downstream decisions easier.
 
 ## Input
 
@@ -67,7 +67,7 @@ Follow the baseline-log rules in the formatting rules. Only confirmed findings â
 
 <critical>
 - **ALWAYS** follow the substage definition's methodology â€” do not skip steps
-- **ALWAYS** apply the decision framework (four filters, source binding)
+- **ALWAYS** apply the decision framework (research filters, source binding)
 - **NEVER** invent data or fabricate research findings
 - **NEVER** write to files outside the `research/` directory (except baseline-log.txt append)
 </critical>
