@@ -18,25 +18,25 @@ MUST HAVE
 ================================================================================
 
 {Area}:
-• {requirement} [src: {R/G/D2 code}] — {complexity}. CONFIRMED
-• {requirement} [src: {R/G/D2 code}] — {complexity}. CONFIRMED
+• {requirement} [src: {R/G/D2 code}] — {complexity}
+• {requirement} [src: {R/G/D2 code}] — {complexity}
 
 {Area}:
-• {requirement} [src: {R/G/D2 code}] — {complexity}. CONFIRMED
+• {requirement} [src: {R/G/D2 code}] — {complexity}
 
 ================================================================================
 SHOULD HAVE
 ================================================================================
 
 {Area}:
-• {requirement} [src: {R/G/D2 code}] — {complexity}. {CONFIRMED|INFERRED}
+• {requirement} [src: {R/G/D2 code}] — {complexity}
 
 ================================================================================
 NICE TO HAVE
 ================================================================================
 
 {Area}:
-• {requirement} [src: {R/G/D2 code}] — {complexity}. INFERRED
+• {requirement} [src: {R/G/D2 code}] — {complexity}
 
 ================================================================================
 NOTES
@@ -50,5 +50,5 @@ NOTES
 - Group by priority tier first, then by functional area within each tier
 - Functional areas include: Core functionality, Ecommerce, User accounts, Booking/scheduling, Content management, Analytics, Integrations, GDPR/compliance, Performance, Accessibility
 - Skip areas that don't apply
-- Every requirement needs: source reference, complexity signal (simple/moderate/complex), confidence tag
+- Every requirement needs: source reference, complexity signal (simple/moderate/complex)
 - C2 captures WHAT is needed. C3 covers HOW (technology). C9 covers compliance STRATEGY

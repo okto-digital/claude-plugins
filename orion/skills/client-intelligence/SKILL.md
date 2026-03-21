@@ -2,14 +2,82 @@
 name: client-intelligence
 description: "Build a client profile from online research and registry data. Invoke when the user says 'research the client', 'client intelligence', 'run phase 2', 'client profile', 'who is this client', or after INIT phase is complete."
 allowed-tools: Read, Write, Bash, Glob, WebSearch, Task, AskUserQuestion
-version: 2.0.0
+version: 3.0.0
 ---
 
 # Client Intelligence
 
-Build a profile of the client's current state through online research. Pure discovery — no analysis, no recommendations. Branches on `build_type` from project.json.
+Build a profile of the client's current state through online research. Pure discovery — no analysis, no recommendations.
 
-Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Apply both throughout.
+Read `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Apply throughout.
+
+## Minimum Scope
+
+Cover at least these domains. You may go beyond them if evidence warrants it.
+
+- Identity & positioning
+- Products & services
+- Business model
+- Target audience
+- Market position
+- Geographic & language footprint
+- Digital presence
+- Content & communication
+- Reputation & trust
+- Social presence
+- Commercial performance signals
+- Legal & compliance
+- Certifications & memberships
+- Technology footprint
+- Partnerships & ecosystem
+- Goals & constraints
+- Red flags
+
+## Tooling
+
+Use `build_type` from project.json and the information available to decide which tools apply. A redesign with an existing URL opens up scraping and DataForSEO. A new build without a URL relies on registries, search, and operator input. Use what makes sense — skip what doesn't apply.
+
+### Registries & structured data
+
+For commercial performance, legal, certifications and entity data. Direct lookups by entity name — structured, reliable, low noise.
+Determine the **legal entity name** first (often different from brand). Check project.json notes. If not found, ask the operator.
+Find the **national business registries** for the client's country. Example for Slovakia: `orsr.sk` (company register), `zrsr.sk` (trade licences), `finstat.sk` (financial data). For international fallback: `dnb.com`.
+
+### DataForSEO endpoints
+
+For digital presence, technology footprint and reputation signals. Use `dispatch-subagent` to dispatch `dataforseo`.
+
+- `/seo dataforseo tech <domain>` — technology stack
+- `/seo dataforseo whois <domain>` — domain registration, ownership, age
+- `/seo dataforseo onpage <url>` — surface scan of existing site
+- `/seo dataforseo top-searches <domain>` — what people search in relation to this domain
+- `/seo dataforseo listings <keyword>` — business listings, Google Business profile signals
+- `/seo dataforseo ranked <domain>` — current keyword rankings (if site exists)
+- `/seo dataforseo backlinks <domain>` — who links to them, from where
+
+### Web scraping & fetching
+
+For identity, positioning, content, communication, social and trust signals. Use `dispatch-subagent` to dispatch `web-crawler`.
+
+- Direct website scrape — homepage, about, services/products, contact, pricing, team, portfolio
+- Social platform profiles — LinkedIn, Instagram, Facebook, TikTok, YouTube (public data)
+- Google Business profile — rating, review count, category, photos
+- Review platforms — Google Reviews, Trustpilot, industry-specific platforms
+- Press and media mentions — news search for brand name
+
+### Web search
+
+For reputation, certifications, partnerships, press coverage and anything not found via direct lookup. Search in the client's primary language first, then broader. Combine brand name with domain-specific terms: reviews, certifications, memberships, partnerships, awards, news.
+
+### Human input only
+
+Some domains cannot be fully researched externally:
+
+- Goals & constraints — from INIT notes and gap analysis answers only
+- Business model details — partially inferable, confirmed only by client
+- Target audience intent — inferable from notes, confirmed in gap analysis
+
+If you need more sources or input data, ask the operator.
 
 ---
 
@@ -21,99 +89,41 @@ Read `baseline-log.txt`.
 
 If `D2-Client-Intelligence.txt` already exists, warn: "Phase 2 output already exists. Overwrite?" If declined, stop.
 
-## Step 2: Branch on build_type
+## Step 2: Research
 
-- `new` → **New Build Path** (Steps 3N–4N)
-- `redesign` → **Redesign Path** (Steps 3R–5R)
+Work through the minimum scope domains using the tooling above. Adapt to what's available — a new build with no URL skips scraping and DataForSEO site tools. A redesign uses everything.
 
----
+Extract **services or products** — every distinct service/product the client offers. This list drives SERP keyword generation in Phase 3.
 
-## New Build Path
+Flag **red flags** — hidden content, deceptive practices, grey-zone activities, adult/illegal content, cloaked links, keyword stuffing, anything that could pose reputational or legal risk for the agency. Each flag needs: what it is, how severe, where you found it.
 
-### Step 3N: Extract from INIT notes + registry lookup
+## Step 3: Write D2-Client-Intelligence.txt
 
-Parse project.json notes for client profile information. Then run the **Registry Lookup** (see below). For new builds, this is the primary data source — there's no website to crawl.
-
-### Step 4N: Write output
-
-→ Go to **Step 6: Write D2-Client-Intelligence.txt**.
-
----
-
-## Redesign Path
-
-### Step 3R: Website crawl
-
-Use `dispatch-subagent` to dispatch `web-crawler`. Get URL from project.json.
-
-1. Crawl homepage. Output instructions: "Return extended summary with key facts. Telegraphic, no prose."
-2. From homepage content, identify 3-10 high-value pages (about, services, products, team, portfolio, contact, pricing).
-3. Dispatch web-crawler for each high-value page (parallel where possible).
-4. From crawled pages, extract what passes the four filters — focus on what changes downstream decisions about scope, positioning, or approach.
-5. Extract **services or products** — every distinct service/product the client offers. This list drives SERP keyword generation in Phase 3.
-6. Flag **red flags** — hidden content, deceptive practices, grey-zone activities, adult/illegal content, cloaked links, keyword stuffing, anything that could pose reputational or legal risk for the agency. Each flag needs: what it is, how severe, where you found it.
-
-### Step 4R: Web search + social + reputation
-
-**Web search** — primary language (all queries) + secondary languages (first 2 queries). Localize naturally.
-
-- `"[company name]"`
-- `"[company name] [reviews]"`
-- `"[company name] [industry]"`
-- `"[company name] [news] [current year]"`
-
-**Social media:** Identify active platforms from website links and search results. Note activity level, engagement quality, sentiment.
-
-**Reputation:** Google Business profile, industry review platforms, press coverage, awards and certifications.
-
-### Step 5R: Registry lookup
-
-Run the **Registry Lookup** (see below).
-
-→ Go to **Step 6: Write D2-Client-Intelligence.txt**.
-
----
-
-## Registry Lookup
-
-Used by both paths.
-
-1. Determine the **legal entity name** (often different from brand). Check project.json notes first. If not found, ask the operator.
-2. Determine country from project.json → `project.location.primary`.
-3. **Slovak company** → WebSearch: `site:finstat.sk "[legal entity name]"`. Fetch if match found.
-4. **Other countries** → WebSearch: `site:dnb.com "[legal entity name]"`. Fetch if match found.
-5. Extract: legal name, registration ID, founded year, legal form, revenue range, employee count, registered address.
-6. If no match, note "No business registry data available" and continue.
-
----
-
-## Step 6: Write D2-Client-Intelligence.txt
-
-Free-form TXT. Apply the decision framework (four filters) and formatting rules (`${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`) — scannable TXT with source binding, confidence markers, dividers, caps headers, bullets, key-value pairs. The agent decides what structure serves this client best.
-
-Source-tag every finding per `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` § Source Binding.
+Free-form TXT — scannable, source-tagged, the agent decides what structure serves this client best. Source-tag every finding per `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` § Source Binding.
 
 Red flags (if any) should be clearly surfaced — these are escalation-level findings that affect whether the agency takes the project.
 
-## Step 7: Append to baseline-log.txt
+## Step 4: Append to baseline-log.txt
 
-Append key findings tagged with `[D2]`. Read existing entries first — do NOT re-log findings from `[INIT]`. Accumulate all entries, then append in one batch using Bash:
+Read existing entries first — do NOT re-log findings from `[INIT]`. Accumulate all entries, then append in one batch using Bash:
 
 ```bash
 cat >> baseline-log.txt << 'BASELINE'
---- [D2] CLIENT INTELLIGENCE ---
-[D2] Finding one. CONFIRMED
-[D2] Finding two. INFERRED
+================================================================================
+[D2] CLIENT INTELLIGENCE — D2-Client-Intelligence.txt
+================================================================================
+- Finding one.
+- Finding two.
 BASELINE
 ```
 
-Follow the baseline-log rules in `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`: telegraphic one-liners, no `[src:]` tags, no empty lines, no prose.
+Follow the baseline-log rules in `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Only confirmed findings — no confidence tags, no inferred data.
 
-## Step 8: Debug companion (when enabled)
+## Step 5: Debug companion (when enabled)
 
-If `research_config.debug` is `true` in project.json: write `tmp/debug/D2-Client-Intelligence-debug.txt` — data sources used, pages crawled, search queries run, no prose.
+If `debug` is `true` in project.json: write `tmp/debug/D2-Client-Intelligence-debug.txt` — data sources used, pages crawled, search queries run, no prose.
 
-## Step 9: Update project-state.md
+## Step 6: Update project-state.md
 
 Update Phase 2 row: Status → `complete`, Output → `D2-Client-Intelligence.txt`, Updated → today's date. Do not modify any other rows.
 
@@ -124,17 +134,10 @@ Summarize what was gathered and suggest the next step (project-research).
 ## Rules
 
 <critical>
-- **NEVER** skip research for redesign builds — the research-first approach is core
-- **NEVER** invent findings or fabricate data points — report MISSING, don't guess
+- **NEVER** invent findings or fabricate data points — if you can't find it, report it as not found
 - **NEVER** modify project-state.md beyond the Phase 2 row
 </critical>
 
-- If web-crawler fails on a page, note the failure and continue with available data
-- If WebSearch returns no results, note and continue
-- If registry lookup finds nothing, note and continue — registry is supplementary
+- If a tool fails or returns no results, note the failure and continue with available data
 - If very little data can be gathered, warn operator and ask whether to proceed or provide additional context
-
-## Reference Files
-
-- `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — shared decision framework
-- `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — scannable output formatting
+- Do not make up information to fill gaps — gaps are valuable signals for downstream phases

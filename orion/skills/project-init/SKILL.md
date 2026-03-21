@@ -47,22 +47,11 @@ Collect all mandatory fields before proceeding. Optional fields use defaults if 
 After mandatory fields are collected, use AskUserQuestion: "Before I finalize, would you like to configure pipeline options (debug output, gap domains, parallel execution, proposal style)?"
 
 - **"No, use defaults"** → skip to Step 3. All `ask` variables stay as `ask` (downstream skills prompt at runtime).
-- **"Yes, let me configure"** → present each `ask`-type variable via AskUserQuestion:
+- **"Yes, let me configure"** → present each `ask`-type variable via AskUserQuestion. Skip any the operator already set explicitly in Step 1.
 
-| Variable | Options |
-|---|---|
-| Debug output | `true` (generate telegraphic debug companions) / `false` (skip) |
-| Gap domains | `all` (21 domains) / `ask` (decide at Phase 4) / custom list |
-| Parallel execution | `true` / `false` / `ask` (decide per phase) |
-| Proposal style | `full` / `summary_only` / `ask` (decide at Phase 6) |
+### 3. Write project.json
 
-Skip any variable the operator already set explicitly in Step 1.
-
-### 3. Process Notes
-
-Structure raw notes into clean, discrete statements. Remove noise, preserve strategic signals. No notes = empty array.
-
-### 4. Write project.json
+Process raw notes into clean, discrete statements first. Remove noise, preserve strategic signals. No notes = empty array.
 
 Write as **a single line** — no newlines, no indentation, no spaces after colons or commas.
 
@@ -72,28 +61,21 @@ Schema and template: `${CLAUDE_PLUGIN_ROOT}/skills/project-init/references/templ
 
 **pipeline_defaults:** `ask` = downstream skill prompts at runtime. Any other value = skip the question.
 
-### 5. Write D1-Init.txt
+### 4. Write D1-Init.txt and baseline-log.txt
 
-The mission document. Free-form TXT — no template, no mandatory sections, you decide the structure. Use telegraphic style.
+Read `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Apply throughout.
 
-Read `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` and `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Apply both:
+**D1-Init.txt** — The mission document. Free-form TXT, telegraphic style, no template. You decide the structure.
 
-1. **Start with the mission statement.** One sentence that frames the entire pipeline — why this project exists and what every finding downstream should serve.
-2. **Then capture project facts from project.json.** Apply the four filters — only include what would change a downstream agent's output. Telegraphic. Self-contained lines. Notes from the operator often contain the anomalies worth capturing.
+1. **Start with the mission statement.** One sentence framing the entire pipeline — why this project exists and what every finding downstream should serve.
+2. **Then capture project facts from project.json.** Only include what would change a downstream agent's output. Notes from the operator often contain the anomalies worth capturing.
 
-The agent decides what structure serves this project best. No prescribed sections.
+**baseline-log.txt** — Cumulative knowledge file. Every downstream agent reads it before starting, appends after finishing. Append-only — downstream agents add but never edit existing lines.
 
-### 6. Write baseline-log.txt
+1. **First line: the mission statement** (same as D1-Init.txt).
+2. **Then: `[INIT]` entries.** Telegraphic. Follow baseline-log rules from formatting-rules.md.
 
-Create `baseline-log.txt`. This is the cumulative knowledge file — every downstream agent reads it before starting, appends after finishing.
-
-**First line: the mission statement** from D1-Init.txt, inside a `--- MISSION ---` block.
-
-**Then: INIT entries.** Apply the four filters from `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` to decide what makes the cut. Tag with `[INIT]`. Telegraphic. Follow baseline-log rules from `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`.
-**Rules:** Append-only. Downstream agents add to this file but never edit existing lines.
-
-
-### 7. Create Directories and Settings
+### 5. Create Directories and Settings
 
 - Create subdirectories (skip existing): `research/`, `gap-analysis/`, `concept/`, `tmp/`
 - If debug is `true`: also create `tmp/debug/`
@@ -103,11 +85,11 @@ Create `baseline-log.txt`. This is the cumulative knowledge file — every downs
   {"env":{"ENABLE_TOOL_SEARCH":"auto:5"}}
   ```
 
-### 8. Create project-state.md
+### 6. Create project-state.md
 
 Use template from `${CLAUDE_PLUGIN_ROOT}/skills/project-init/references/templates.md` § Project State Template. Mark Phase 1 (INIT) as `complete` with today's date. All others start as `--`.
 
-### 9. Confirm
+### 7. Confirm
 
 Summarize what was created (project.json, D1-Init.txt, baseline-log.txt, project-state.md, directories). Suggest next step (client-intelligence). Stop.
 
@@ -139,25 +121,13 @@ Summarize what was created (project.json, D1-Init.txt, baseline-log.txt, project
 
 ---
 
-## State Update Convention
-
-Each downstream skill updates `project-state.md` after producing output:
-1. Read → 2. Find matching row → 3. Set Status=`complete`, Output=path, Updated=date → 4. Write
-
----
-
 ## Critical Rules
 
 - **NEVER** proceed without all mandatory fields.
 - **NEVER** skip notes processing — empty notes = empty array in JSON.
 - **ALWAYS** write project.json as a single line.
-- **ALWAYS** generate D1-Init.txt applying the decision framework, not from a template.
-- **ALWAYS** write baseline-log.txt with INIT entries before creating project-state.md.
+- **ALWAYS** generate D1-Init.txt as free-form TXT, not from a template.
+- **ALWAYS** write baseline-log.txt before creating project-state.md.
 - **ALWAYS** mark Phase 1 complete in project-state.md after initialize.
 - **ALWAYS** run Step 2 (Configure Pipeline) — never silently default `ask` variables.
 
-## Reference Files
-
-- `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — thinking method (four filters, hypothesis, escalation)
-- `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — output formatting (source binding, confidence, scannable style, baseline-log rules)
-- `${CLAUDE_PLUGIN_ROOT}/skills/project-init/references/templates.md` — JSON schema, project-state template

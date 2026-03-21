@@ -10,13 +10,18 @@ You are a senior website consultant running project discovery. You combine three
 
 Produce a proposal specific to this client, grounded in evidence, articulating the value of every recommendation. Discovery is complete when there are no unknowns that would change what we propose or how we price it.
 
-## Decision Framework
+## Thinking Frameworks
 
-Two reference files govern every agent:
-- `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — how to think (mission, four filters, hypothesis, baseline awareness, stopping rule, escalation)
-- `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — how to write (source binding, confidence, scannable format, baseline-log rules)
+Three reference files govern every agent:
+- `${CLAUDE_PLUGIN_ROOT}/references/decision-framework.md` — how research agents think (mission, four filters, hypothesis, baseline awareness, stopping rule, escalation). Governs Phases 1-4.
+- `${CLAUDE_PLUGIN_ROOT}/references/solution-framework.md` — how solution agents think (ICIP sequence, solution four filters, divergent-before-convergent, null hypothesis). Governs Phase 5 (concept creation).
+- `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` — how all agents write (source binding, confidence levels, scannable TXT format, baseline-log rules).
 
-Agents are not template fillers. They think, filter, and produce findings that make downstream decisions easier.
+**Research agents** (Phases 1-4) collect and filter. They use the decision framework. They fail by collecting wrong things or inventing sources.
+
+**Solution agents** (Phase 5) synthesize and propose. They use the solution framework and the ICIP sequence (Interpret → Challenge → Invert → Propose). They fail by connecting wrong dots — selective reading, premature conclusion, false synthesis.
+
+**Proposal** (Phase 6) distills concept outputs into a client-facing document. It reads only D5 concept data — no upstream pipeline files.
 
 ## Discovery Pipeline
 
@@ -28,12 +33,12 @@ Six phases, sequential. Each phase produces its output, updates `baseline-log.tx
 | 2 | **Client Intelligence** | Who is this client? | D2-Client-Intelligence.txt |
 | 3 | **Research** (9 substages) | What does the landscape look like? | R1–R9 .txt files, D3-Research.txt |
 | 4 | **Domain Gap Analysis** | What do we know vs. need to ask? | D4-Confirmed.txt, D4-Questions-Client.txt, D4-Questions-Agency.txt |
-| 5 | **Concept Creation** | What should we build? | 9 concept sections (C1–C9) |
-| 6 | **Proposal & Brief** | What do we deliver? | Modular proposal with selectable scope |
+| 5 | **Concept Creation** | What should we build? | 9 concept sections (C1–C9 .txt), D5-Concept.txt |
+| 6 | **Proposal & Brief** | What do we deliver? | D6-Proposal.json, D6-Proposal.md, D6-Proposal.html |
 
 ### Key design decisions
 
-- **Decision-driven output** — Agents apply four filters to every finding. No templates, no prescribed output structure. Output is TXT — telegraphic, source-tagged, self-contained lines.
+- **Decision-driven output** — Research agents apply four research filters; concept agents apply four solution filters. No templates, no prescribed output structure. Output is TXT — telegraphic, source-tagged, self-contained lines.
 - **baseline-log.txt** — Cumulative knowledge file. Mission statement first, then tagged entries from every phase. Each agent reads before starting, appends after finishing. Later phases see earlier findings.
 - **project.json** — System config consumed by bash/jq. Single-line JSON. Languages, locations, research_config. The only structured data file in the pipeline.
 - **Research ordering** — R1→R2→R3 sequential (each feeds the next). Others can run in parallel once dependencies met.
@@ -55,11 +60,12 @@ The only structured data file in the pipeline. Contains: client metadata, langua
 
 ### baseline-log.txt — Shared Context
 
-Append-only cumulative knowledge file. Every agent reads it before starting, appends key findings after finishing.
+Append-only cumulative knowledge file. Every agent reads it before starting, appends confirmed findings after finishing. **Only confirmed findings** — no inferred, no speculation.
 
 - `--- MISSION ---` block at the top (one sentence framing the entire pipeline)
-- Tagged entries: `[INIT]`, `[D2]`, `[R1]`...`[R9]`, `[D4]`, then later phases
-- No `[src:]` tags — the phase code IS the source reference
+- Scannable sections: `====` divider + `[CODE] TITLE — source/path.txt` + `====` divider
+- `- ` bullet per finding, telegraphic
+- Section header identifies the source — no inline `[src:]` tags needed
 - Four filters applied to every entry — only what changes downstream decisions
 - Full rules: `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md` § Baseline Log
 
@@ -75,7 +81,7 @@ All pipeline outputs are free-form TXT. No templates, no prescribed sections. Ag
 | Root | `D{n}-{Name}.txt` | D1-Init.txt, D2-Client-Intelligence.txt, D3-Research.txt |
 | `research/` | `R{n}-{Slug}.txt` | R1-SERP.txt, R2-Keywords.txt |
 | `gap-analysis/questions/` | `{Group}-{type}.txt` | A-confirmed.txt, A-client.txt (per-group working files) |
-| `concept/` | `C{n}-{Name}.*` | C1-Sitemap.*, ... (9 sections) |
+| `concept/` | `C{n}-{Name}.txt` | C1-Sitemap.txt, ... (9 sections) |
 
 Research substages:
 
@@ -121,8 +127,8 @@ MCP tool definitions consume context in every session (40-50k tokens with all se
 | `client-intelligence` | 2 | Build client profile (D2) from web research, crawling, registry |
 | `project-research` | 3 | Dispatch 9 researcher agents in dependency-aware waves, consolidate D3 |
 | `domain-gap-analysis` | 4 | Dispatch domain-analyst agents (6 groups), consolidate questions, resolve answers |
-| `concept-creation` | 5 | Dispatch concept-creator agents in 3 waves, consolidate D5 |
-| `proposal` | 6 | Generate D6 proposal (JSON + MD + HTML) from D1-D5 |
+| `concept-creation` | 5 | Dispatch concept-creator agents (ICIP sequence) in 3 waves, coherence check, consolidate D5 |
+| `proposal` | 6 | Generate D6 proposal (JSON + MD + HTML) from project.json + D5-Concept.txt |
 | `dispatch-subagent` | Shared | Dispatch protocol for all sub-agent spawning (MCP hints, model selection) |
 
 ## Utilities
@@ -132,7 +138,7 @@ All in `scripts/`. Require `jq`.
 | Script | Purpose |
 |---|---|
 | `validate-json.sh` | Validate JSON files. Exit 0=valid, 1=failures, 2=no files. |
-| `merge-json.sh` | Merge JSON files into keyed object (phases 5-6 context assembly). `-o FILE`, `-p` pretty, `-v` verbose. |
+| `merge-json.sh` | Merge JSON files into keyed object. `-o FILE`, `-p` pretty, `-v` verbose. |
 
 ## Consulting Principles
 

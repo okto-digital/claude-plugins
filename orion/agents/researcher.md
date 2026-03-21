@@ -53,13 +53,15 @@ Append key findings to `baseline-log.txt`. Read existing entries first — do NO
 
 ```bash
 cat >> baseline-log.txt << 'BASELINE'
---- [R1] SERP ---
-[R1] Finding one. CONFIRMED
-[R1] Finding two. INFERRED
+================================================================================
+[R1] SERP — research/R1-SERP.txt
+================================================================================
+- Finding one.
+- Finding two.
 BASELINE
 ```
 
-Follow the baseline-log rules in `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`: telegraphic one-liners, no `[src:]` tags, no empty lines between entries, no prose.
+Follow the baseline-log rules in `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Only confirmed findings — no confidence tags, no inferred data.
 
 ## Rules
 

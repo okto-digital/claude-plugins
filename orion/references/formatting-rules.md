@@ -61,24 +61,24 @@ PRIORITY 2 — Important:
 ## Baseline Log
 
 <critical>
-The baseline log is a **signal index**, not a research summary. Only key findings that change downstream decisions. Telegraphic one-liners. No prose, no paragraphs, no roadmaps, no methodology notes.
+The baseline log is a **signal index**, not a research summary. Only CONFIRMED findings that directly influence website design, development, or scope decisions. If a finding doesn't change what we build, how we build it, or what we propose — it does not belong here. No prose, no paragraphs, no roadmaps, no methodology notes.
 </critical>
 
 **Format:**
 ```
---- [R1] SERP ---
-[R1] Client ranks for 2 keywords only, zero commercial keywords indexed. CONFIRMED
-[R1] "komerčná fotografia" greenfield — zero related keywords, jms-studio.sk sole occupant. CONFIRMED
+================================================================================
+[R1] SERP — research/R1-SERP.txt
+================================================================================
+- Client ranks for 2 keywords only, zero commercial keywords indexed.
+- "komerčná fotografia" greenfield — zero related keywords, jms-studio.sk sole occupant.
 ```
 
 **Rules:**
-- Start with a `--- [CODE] TITLE ---` header before your entries
-- Tag every line with your phase code: `[INIT]`, `[D2]`, `[R1]`–`[R9]`, `[D4]`, etc.
-- One fact per line. If it takes more than one line, split it or you're including too much
-- No `[src: ...]` tags — the phase code IS the source reference
-- No empty lines between your entries
-- End each line with CONFIRMED, INFERRED, or MISSING
+- Use `====` divider (80 chars) + `[CODE] TITLE — source/file/path.txt` + `====` divider as section header
+- `- ` bullet per finding. One fact per line — if it takes more than one line, split it or you're including too much
+- **Only confirmed findings.** No INFERRED, no MISSING, no confidence tags. The baseline log is evidence, not speculation
+- No `[src: ...]` tags — the section header identifies the source
+- No empty lines between entries within a section
 - **Deduplicate:** Read existing baseline-log entries BEFORE appending. If a finding already exists, do NOT re-log it. Only add if you bring new quantification or a materially different angle
 - **Append at once:** Accumulate all your entries, then append them in a single batch at the end of your work. Do not append incrementally during processing
-- Do NOT invent tags. The only valid confidence markers are CONFIRMED, INFERRED, MISSING. Do not use CRITICAL DECISION POINT or other ad-hoc labels
 - Never edit or delete existing lines — append only

@@ -167,7 +167,7 @@ Every section reads `baseline-log.txt` and `project.json` from the working direc
 
 Prefix all paths with `{working_directory}/` for absolute paths when passing to dispatch.
 
-**No R-files, no D-files.** baseline-log.txt by Phase 5 contains 40-80 lines of cumulative findings from phases 1-4 plus [C1]-[C9] entries as waves complete. This IS the shared context. If a baseline-log entry doesn't have enough detail for a specific recommendation, the agent flags it as INFERRED or MISSING — it does not read source files.
+**No R-files, no D-files.** baseline-log.txt by Phase 5 contains confirmed findings from phases 1-4 plus [C1]-[C9] entries as waves complete. This IS the shared context. If a baseline-log entry doesn't have enough detail for a specific recommendation, the agent flags the recommendation as INFERRED in its output — it does not read source files.
 
 ## Dependency Graph
 

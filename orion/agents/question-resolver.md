@@ -26,8 +26,10 @@ cat >> D4-Confirmed.txt << 'RESOLVED'
 RESOLVED
 
 cat >> baseline-log.txt << 'BASELINE'
---- [D4] GAP ANALYSIS ---
-[D4] Finding one. CONFIRMED
+================================================================================
+[D4] GAP ANALYSIS — gap-analysis/
+================================================================================
+- Finding one.
 BASELINE
 ```
 
@@ -82,7 +84,7 @@ Append `[D4]` entries to `baseline-log.txt`. Apply the four filters — only wha
 - NICE-TO-HAVE items flagged as NOTED
 - Industry standards (STANDARD items)
 
-Follow the baseline-log rules in `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`: telegraphic one-liners, no `[src:]` tags, no empty lines, no prose. End each line with CONFIRMED, INFERRED, or MISSING.
+Follow the baseline-log rules in `${CLAUDE_PLUGIN_ROOT}/references/formatting-rules.md`. Only confirmed findings — no confidence tags, no inferred data.
 
 ### 4. Return summary
 

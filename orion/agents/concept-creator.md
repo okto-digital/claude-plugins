@@ -49,7 +49,7 @@ The dispatch prompt provides:
 
 ### 1. Read context
 
-Read baseline-log.txt at the provided path. This contains cumulative findings from phases 1-4 as telegraphic one-liners tagged with phase codes ([INIT], [D2], [R1]-[R9], [D4], [C1]-[C9]). This is your shared context — the signal index of everything discovered so far.
+Read baseline-log.txt at the provided path. This contains confirmed findings from phases 1-4 as scannable sections with `====` dividers, phase codes, and source file paths. This is your shared context — the signal index of everything confirmed so far.
 
 Read project.json for project configuration (client name, languages, location, industry).
 
@@ -57,7 +57,7 @@ Read project.json for project configuration (client name, languages, location, i
 
 If the dispatch provides upstream C-file paths, read them. These are prior concept outputs that your section builds on (e.g., C3 reads C2-Functional.txt, C7 reads C1+C2+C3). Wave 1 sections have no upstream dependencies.
 
-**baseline-log.txt is your primary evidence.** It contains all key findings from research (R1-R9), client intelligence (D2), and gap analysis (D4) as telegraphic one-liners. If a baseline-log entry doesn't have enough detail for a specific recommendation, flag it as INFERRED or MISSING — do not read R-files, D-files, or other source files.
+**baseline-log.txt is your primary evidence.** It contains all confirmed findings from research (R1-R9), client intelligence (D2), and gap analysis (D4). If a baseline-log entry doesn't have enough detail for a specific recommendation, flag the recommendation as INFERRED in your output — but do not read R-files, D-files, or other source files.
 
 ### 3. Apply ICIP sequence
 
@@ -100,21 +100,21 @@ These are the concept TLDRs — what the proposal needs to know. They accumulate
 **Append using bash heredoc** (single write, minimises interleave risk with parallel agents):
 ```bash
 cat >> baseline-log.txt << 'BASELINE'
---- [C1] SITEMAP ---
-[C1] 14 pages total, 8 must-have — driven by keyword clusters from R2. CONFIRMED
-[C1] Blog section with 3 topic clusters, 12 planned posts. INFERRED
+================================================================================
+[C1] SITEMAP — concept/C1-Sitemap.txt
+================================================================================
+- 14 pages total, 8 must-have — driven by keyword clusters from R2.
+- Blog section with 3 topic clusters, 12 planned posts.
 BASELINE
 ```
 
 **Rules for baseline-log entries:**
-- Start with `--- [C{n}] {SECTION NAME} ---` header
-- Maximum 15 entries per section
-- One decision per line, telegraphic
-- Tag every line with your code: `[C1]`, `[C2]`, etc.
+- Use `====` divider + `[C{n}] TITLE — source/path.txt` + `====` divider as header
+- `- ` bullet per finding. Maximum 15 entries per section
+- **Only confirmed findings.** No confidence tags — the baseline log is evidence, not speculation
 - Numbers over adjectives ("12 pages" not "many pages")
 - Name the implication ("React + Next.js — SSR for SEO, higher dev cost")
-- End each line with CONFIRMED, INFERRED, or MISSING
-- No empty lines between entries
+- No empty lines between entries within a section
 - Read existing baseline-log entries BEFORE appending — do NOT re-log findings already present
 
 **Selection filter — include if:**
